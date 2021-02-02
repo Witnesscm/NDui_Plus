@@ -1,0 +1,90 @@
+local _, ns = ...
+local B, C, L, DB, P = unpack(ns)
+local S = P:GetModule("Skins")
+
+local _G = getfenv(0)
+local select = select
+
+function S:TradeLog()
+	if not IsAddOnLoaded("TradeLog") then return end
+
+	B.ReskinCheck(TBT_AnnounceCB)
+	B.ReskinDropDown(TBT_AnnounceChannelDropDown)
+	UIDropDownMenu_SetWidth(TBT_AnnounceChannelDropDown, 60)
+
+	B.StripTextures(TradeListFrame)
+	B.SetBD(TradeListFrame)
+	B.Reskin(TradeListKeepOnlyTodayButton)
+	B.ReskinClose(TradeListFrameClose)
+	B.ReskinCheck(TradeListOnlyCompleteCB)
+	B.ReskinSlider(TradeLogFrameScaleSlider)
+	B.ReskinScroll(TradeListScrollFrameScrollBar)
+	TradeListScrollFrameScrollBar:SetBackdrop(nil)
+	TradeListScrollFrameScrollBar.SetBackdrop = B.Dummy
+
+	for i = 1, 6 do
+		local header = _G["TradeListFrameColumnHeader"..i]
+		B.StripTextures(header)
+	end
+
+	B.StripTextures(TradeLogFrame)
+	B.SetBD(TradeLogFrame)
+	B.ReskinClose(TradeLogFrameClose)
+	B.CreateMF(TradeLogFrame)
+
+	local function reskinButton(bu)
+		_G[bu:GetName().."IconTexture"]:SetTexCoord(.08, .92, .08, .92)
+		bu:GetHighlightTexture():SetColorTexture(1, 1, 1, .25)
+		B.CreateBDFrame(bu, .25)
+		local bd = B.CreateBDFrame(bu, .25)
+		bd:SetPoint("TOPLEFT", bu, "TOPRIGHT")
+		bd:SetPoint("BOTTOMRIGHT", 80, 0)
+	end
+
+	for i = 1, MAX_TRADE_ITEMS do
+		_G["TradeLogPlayerItem"..i.."SlotTexture"]:Hide()
+		_G["TradeLogPlayerItem"..i.."NameFrame"]:Hide()
+		_G["TradeLogRecipientItem"..i.."SlotTexture"]:Hide()
+		_G["TradeLogRecipientItem"..i.."NameFrame"]:Hide()
+
+		reskinButton(_G["TradeLogPlayerItem"..i.."ItemButton"])
+		reskinButton(_G["TradeLogRecipientItem"..i.."ItemButton"])
+	end
+
+	local function reskinTBT()
+		B.Reskin(TradeFrameTargetWhisperButton)
+		B.Reskin(TradeFrameTargetEmote1Button)
+		B.Reskin(TradeFrameTargetEmote2Button)
+
+		for i = 1, TradeFrame:GetNumRegions() do
+			local region = select(i, TradeFrame:GetRegions())
+			if region:GetObjectType() == "FontString" and region:GetName() == nil then
+				region:Hide()
+			end
+		end
+
+		local buttons = {"TradeFramePlayerSpell1Button", "TradeFramePlayerSpell2Button", "TradeFramePlayerSpell3Button"}
+		for _, button in next, buttons do
+			local bu = _G[button]
+			if bu then
+				B.ReskinIcon(bu:GetNormalTexture())
+				bu:GetHighlightTexture():SetColorTexture(1, 1, 1, .25)
+			end
+		end
+	end
+
+	if TBTFrame then		-- version check
+		C_Timer.After(.5, reskinTBT)
+	end
+
+	if RecentTradeFrame then		-- version check
+		RecentTradeFrame:ClearAllPoints()
+		RecentTradeFrame:SetPoint("TOPLEFT", TradeFrame, "TOPRIGHT", 3, 0)
+		RecentTradeFrame:SetPoint("BOTTOMLEFT", TradeFrame, "BOTTOMRIGHT", 3, 0)
+		B.StripTextures(RecentTradeFrame)
+		B.SetBD(RecentTradeFrame)
+		B.ReskinClose(RecentTradeFrameClose)
+	end
+end
+
+S:RegisterSkin("TradeLog", S.TradeLog)
