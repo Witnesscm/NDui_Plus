@@ -78,6 +78,7 @@ P.DefaultSettings = {
 		ProgDungeons = true,
 		ProgAchievement = true,
 		MountsSource = true,
+		HideCreator = false,
 	},
 	Misc = {
 		LootSpecManager = false,
@@ -86,6 +87,9 @@ P.DefaultSettings = {
 		QuickSpecSwap = true,
 		PauseToSlash = true,
 		QuestHelper = true,
+		CopyMog = true,
+		ShowHideVisual = true,
+		ShowIllusion = true,
 	},
 }
 

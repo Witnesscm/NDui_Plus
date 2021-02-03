@@ -34,12 +34,12 @@ local function createExtraGUI(parent, name, title, scrollFrame)
 
 	if scrollFrame then
 		local scroll = CreateFrame("ScrollFrame", nil, frame, "UIPanelScrollFrameTemplate")
-		scroll:SetSize(240, frame:GetHeight() - 60)
+		scroll:SetSize(frame:GetWidth() - 40, frame:GetHeight() - 60)
 		scroll:SetPoint("TOPLEFT", 10, -50)
 		scroll.bg = B.CreateBDFrame(scroll, .3)
 		scroll.bg:SetAllPoints()
 		scroll.child = CreateFrame("Frame", nil, scroll)
-		scroll.child:SetSize(240, 1)
+		scroll.child:SetSize(frame:GetWidth() - 40, 1)
 		scroll:SetScrollChild(scroll.child)
 		B.ReskinScroll(scroll.ScrollBar)
 
@@ -217,6 +217,7 @@ G.OptionList = { -- type, key, value, name, horizon, data, callback, tooltip
 	},
 	[5] = {
 		{1, "Tooltip", "MountsSource", L["MountsSource"].."*", nil, nil, nil, L["MountsSourceTip"]},
+		{1, "Tooltip", "HideCreator", L["HideCreator"].."*", true, nil, nil, L["HideCreatorTip"]},
 		{},
 		{1, "Tooltip", "Progression", HeaderTag..L["Progression"].."*", nil, nil, nil, L["ProgressionTip"]},
 		{1, "Tooltip", "ShowByShift", L["ShowByShift"].."*", true},
@@ -238,6 +239,10 @@ G.OptionList = { -- type, key, value, name, horizon, data, callback, tooltip
 		{1, "Misc", "LootSpecManager", HeaderTag..L["LootSpecManagerEnable"], nil, nil, nil, L["LootSpecManagerTip"]},
 		{},
 		{1, "Misc", "TalentManager", HeaderTag..L["TalentManagerEnable"]},
+		{},
+		{1, "Misc", "CopyMog", HeaderTag..L["CopyMogEnable"], nil, nil, nil, L["CopyMogTip"]},
+		{1, "Misc", "ShowHideVisual", L["ShowHideVisual"].."*"},
+		{1, "Misc", "ShowIllusion", L["ShowIllusion"].."*", true},
 	},
 }
 
@@ -512,25 +517,76 @@ function P:OpenGUI()
 	helpInfo:SetScript("OnClick", setupChangelog)
 
 	local credit = CreateFrame("Button", nil, gui)
-	credit:SetPoint("TOPLEFT", 10, -5)
+	credit:SetPoint("TOPRIGHT", -50, -5)
 	credit:SetSize(40, 40)
 	credit.Icon = credit:CreateTexture(nil, "ARTWORK")
 	credit.Icon:SetAllPoints()
 	credit.Icon:SetTexture(DB.creditTex)
 	credit:SetHighlightTexture(DB.creditTex)
 	credit.title = "Credits"
-	B.AddTooltip(credit, "ANCHOR_LEFT", "|n"..GetAddOnMetadata(addonName, "X-Credits"), "info")
+	B.AddTooltip(credit, "ANCHOR_RIGHT", "|n"..GetAddOnMetadata(addonName, "X-Credits"), "info")
+
+	local toggle = CreateFrame("Button", nil, gui)
+	toggle:SetPoint("TOPLEFT", 25, -5)
+	toggle:SetSize(40, 40)
+	toggle.Icon = toggle:CreateTexture(nil, "ARTWORK")
+	toggle.Icon:SetAllPoints()
+	toggle.Icon:SetTexture(P.SwapTex)
+	toggle:SetHighlightTexture(P.SwapTex)
+	B.AddTooltip(toggle, "ANCHOR_RIGHT", "NDui", "info")
+	toggle:SetScript("OnClick", function()
+		_G.GameMenuFrameNDui:Click()
+		gui:Hide()
+	end)
 
 	if not NDuiPlusDB["Changelog"].Version or NDuiPlusDB["Changelog"].Version ~= P.Version then
 		setupChangelog()
 		NDuiPlusDB["Changelog"].Version = P.Version
 	end
 
+	local function showLater(event)
+		if event == "PLAYER_REGEN_DISABLED" then
+			if gui:IsShown() then
+				gui:Hide()
+				B:RegisterEvent("PLAYER_REGEN_ENABLED", showLater)
+			end
+		else
+			gui:Show()
+			B:UnregisterEvent(event, showLater)
+		end
+	end
+	B:RegisterEvent("PLAYER_REGEN_DISABLED", showLater)
+
 	SelectTab(1)
 end
 
-function G:OnLogin()
+function G:SetupToggle()
+	local NDuiGUI = _G.NDuiGUI
+	if not NDuiGUI or NDuiGUI.ToggleButton then return end
 
+	local toggle = CreateFrame("Button", nil, NDuiGUI)
+	toggle:SetPoint("TOPLEFT", 60, -5)
+	toggle:SetSize(40, 40)
+	toggle.Icon = toggle:CreateTexture(nil, "ARTWORK")
+	toggle.Icon:SetAllPoints()
+	toggle.Icon:SetTexture(P.SwapTex)
+	toggle:SetHighlightTexture(P.SwapTex)
+	B.AddTooltip(toggle, "ANCHOR_RIGHT", "NDui_Plus", "info")
+	toggle:SetScript("OnClick", function()
+		P:OpenGUI()
+		PlaySound(SOUNDKIT.IG_MAINMENU_OPTION)
+		NDuiGUI:Hide()
+	end)
+
+	NDuiGUI.ToggleButton = toggle
+end
+
+function G:OnLogin()
+	P:Delay(.5, function()
+		local NDuiBtn = _G.GameMenuFrameNDui
+		if not NDuiBtn then return end
+		NDuiBtn:HookScript("PostClick",G.SetupToggle)
+	end)
 end
 
 SlashCmdList['NDUI_PLUS'] = function(msg)
@@ -545,6 +601,7 @@ SlashCmdList['NDUI_PLUS'] = function(msg)
 		_G.DEFAULT_CHAT_FRAME:AddMessage("|cFF70B8FFNDui_Plus:|r Debug " .. format(NDuiPlusDB["Debug"] and "on" or "off"))
 	else
 		P:OpenGUI()
+		PlaySound(SOUNDKIT.IG_MAINMENU_OPTION)
 	end
 end
 SLASH_NDUI_PLUS1 = "/ndp"
