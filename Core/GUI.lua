@@ -127,6 +127,10 @@ local function updateUFsRoleTex()
 	P:GetModule("UnitFrames"):UpdateRoleTex()
 end
 
+local function updateUFsAurasFilter()
+	P:GetModule("UnitFrames"):UpdateAurasFilter()
+end
+
 local function updateUFsFader()
 	P:GetModule("UnitFrames"):UpdateUFsFader()
 end
@@ -177,6 +181,7 @@ G.OptionList = { -- type, key, value, name, horizon, data, callback, tooltip
 	[2] = {
 		{1, "UnitFrames", "NameColor", L["NameColor"].."*", nil, nil, updateUFsNameText, L["NameColorTip"]},
 		{1, "UnitFrames", "RoleTex", L["RoleTex"].."*", true, nil, updateUFsRoleTex},
+		{1, "UnitFrames", "OnlyPlayerDebuff", L["OnlyPlayerDebuff"].."*", nil, nil, updateUFsAurasFilter, L["OnlyPlayerDebuffTip"]},
 		{},
 		{1, "UnitFrames", "Fader", HeaderTag..L["UnitFramesFader"].."*", nil, nil, updateUFsFader, L["UnitFramesFaderTip"]},
 		{},

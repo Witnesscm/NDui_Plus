@@ -4,7 +4,7 @@
 ## Author: Witness
 ## Notes: NDui Mod
 ## RequiredDeps: NDui
-## Version: 1.3.0
+## Version: 1.3.1
 ## SavedVariables: NDuiPlusDB
 ## SavedVariablesPerCharacter: NDuiPlusCharDB
 

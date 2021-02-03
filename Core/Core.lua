@@ -32,6 +32,7 @@ P.DefaultSettings = {
 	UnitFrames= {
 		NameColor = false,
 		RoleTex = false,
+		OnlyPlayerDebuff = false,
 		Fader = false,
 		Hover = true,
 		Combat = true,

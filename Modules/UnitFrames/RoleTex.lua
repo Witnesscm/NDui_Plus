@@ -2,6 +2,7 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 local oUF = _G.oUF or ns.oUF
 local UF = P:GetModule("UnitFrames")
+local NUF = B:GetModule("UnitFrames")
 
 local defaultTex = "Interface\\LFGFrame\\LFGROLE"
 
@@ -12,6 +13,15 @@ function UF:UpdateRoleTex()
 			role:SetTexture(UF.db["RoleTex"] and P.RoleTex or defaultTex)
 		end
 	end
+end
+
+function UF:SetIconsHook()
+	hooksecurefunc(NUF, "CreateIcons", function(self, frame)
+		local role = frame.GroupRoleIndicator
+		if role then
+			role:SetTexture(UF.db["RoleTex"] and P.RoleTex or defaultTex)
+		end
+	end)
 end
 
 do -- RaidTool

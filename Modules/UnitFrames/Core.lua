@@ -40,7 +40,9 @@ function UF:OnLogin()
 
 	P:Delay(1, function()
 		UF:SetupNameText()
+		UF:SetIconsHook()
 		UF:UpdateRoleTex()
 		UF:UpdateUFsFader()
+		UF:UpdateAurasFilter()
 	end)
 end

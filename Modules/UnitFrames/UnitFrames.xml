@@ -2,4 +2,5 @@
 	<Script file="Core.lua"/>
 	<Script file="Fader.lua"/>
 	<Script file="RoleTex.lua"/>
+	<Script file="Auras.lua"/>
 </Ui>

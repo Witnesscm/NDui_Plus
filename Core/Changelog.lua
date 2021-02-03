@@ -2,6 +2,9 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 
 P.Changelog = [[
+v1.3.1
+[鼠标提示] 修复对比成就时可能出现的报错
+
 v1.3.0
 |cffFF1414重写控制台|r，部分选项需要重新设置
 [动作条] 重写全局渐隐
