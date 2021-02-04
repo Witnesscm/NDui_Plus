@@ -7,18 +7,23 @@ on:
 
 
 jobs:
-  release:
+  build:
     runs-on: ubuntu-latest
-    env:
-      CF_API_KEY: ${{ secrets.CF_API_KEY }}
-      GITHUB_OAUTH: ${{ secrets.GITHUB_TOKEN }}
+
     steps:
-      - name: Clone project
+      - name: 拉取分支
         uses: actions/checkout@v1
         with:
-          fetch-depth: 5
+          fetch-depth: 1
 
-      - name: Package and release
+      - name: 创建包
         uses: BigWigsMods/packager@master
+        env:
+          CF_API_KEY: ${{ secrets.CF_API_KEY }}
+          GITHUB_OAUTH: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 上传到 Github Actions
+        uses: actions/upload-artifact@v2
         with:
-          args: release.sh -p 389434
+          name: NDui_Plus
+          path: .release/*.zip
