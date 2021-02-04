@@ -473,6 +473,7 @@ local function scrollBarHook(self, delta)
 end
 
 function P:OpenGUI()
+	if InCombatLockdown() then UIErrorsFrame:AddMessage(DB.InfoColor..ERR_NOT_IN_COMBAT) return end
 	if gui then gui:Show() return end
 
 	-- Main Frame
