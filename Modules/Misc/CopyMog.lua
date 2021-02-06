@@ -142,14 +142,14 @@ local function getInspectSources()
 		local sourceID = appearanceSources[i]
 		if sourceID and sourceID ~= NO_TRANSMOG_SOURCE_ID then
 			local isHideVisual, sourceType, itemModID, itemID, itemName, itemQuality = GetSourceInfo(sourceID)
-			if not isHideVisual or NDuiPlusDB["Misc"]["ShowHideVisual"] then
+			if not isHideVisual or M.db["ShowHideVisual"] then
 				local sourceTextColorized = GenerateSource(sourceID, sourceType, itemModID, itemQuality)
 				table.insert(ItemList, {["SlotID"] = i, ["Name"] = itemName, ["Source"] = sourceTextColorized})
 			end
 		end
 	end
 
-	if not NDuiPlusDB["Misc"]["ShowIllusion"] then return end
+	if not M.db["ShowIllusion"] then return end
 
 	if mainHandEnchant > 0 then
 		local illusionName, sourceText = GetIllusionSource(mainHandEnchant)
@@ -185,14 +185,14 @@ local function getPlayerSources()
 		local appliedSourceID, appliedVisualID = GetSlotVisualID(slotId, Enum.TransmogType.Appearance)
 		if appliedVisualID > 0 and appliedSourceID and appliedSourceID ~= NO_TRANSMOG_SOURCE_ID then
 			local isHideVisual, sourceType, itemModID, itemID, itemName, itemQuality = GetSourceInfo(appliedSourceID)
-			if not isHideVisual or NDuiPlusDB["Misc"]["ShowHideVisual"] then
+			if not isHideVisual or M.db["ShowHideVisual"] then
 				local sourceTextColorized = GenerateSource(appliedSourceID, sourceType, itemModID, itemQuality)
 				table.insert(ItemList, {["SlotID"] = slotId, ["Name"] = itemName, ["Source"] = sourceTextColorized})
 			end
 		end
 	end
 
-	if not NDuiPlusDB["Misc"]["ShowIllusion"] then return end
+	if not M.db["ShowIllusion"] then return end
 
 	local mainHandEnchant = GetSlotVisualID(16, Enum.TransmogType.Illusion)
 	if mainHandEnchant > 0 then
@@ -236,31 +236,39 @@ local function createCopyButton(parent)
 	return button
 end
 
-local function loadFunc(event, addon)
-	if not NDuiPlusDB["Misc"]["CopyMog"] then return end
-
-	if event == "PLAYER_ENTERING_WORLD" then
-		local button = createCopyButton(PaperDollFrame)
-		button:SetPoint("BOTTOMLEFT", 5, 6)
-		button:SetScript("OnClick", function()
-			createGearFrame()
-			getPlayerSources()
-			copyTexts()
-		end)
-
-		B:UnregisterEvent(event, loadFunc)
-	elseif event == "ADDON_LOADED" and addon == "Blizzard_InspectUI" then
-		local button = createCopyButton(InspectPaperDollFrame)
-		button:SetPoint("BOTTOMLEFT", 5, 6)
-		button:SetScript("OnClick", function()
-			createGearFrame()
-			getInspectSources()
-			copyTexts()
-		end)
-
-		B:UnregisterEvent(event, loadFunc)
-	end
+local function createInspectButton()
+	local button = createCopyButton(_G.InspectPaperDollFrame)
+	button:SetPoint("BOTTOMLEFT", 5, 6)
+	button:SetScript("OnClick", function()
+		createGearFrame()
+		getInspectSources()
+		copyTexts()
+	end)
 end
 
-B:RegisterEvent("PLAYER_ENTERING_WORLD", loadFunc)
-B:RegisterEvent("ADDON_LOADED", loadFunc)
+function M:CopyMog()
+	if not M.db["CopyMog"] then return end
+
+	local function loadFunc(event, addon)
+		if addon == "Blizzard_InspectUI" then
+			createInspectButton()
+			B:UnregisterEvent(event, loadFunc)
+		end
+	end
+
+	if IsAddOnLoaded("Blizzard_InspectUI") then
+		createInspectButton()
+	else
+		B:RegisterEvent("ADDON_LOADED", loadFunc)
+	end
+
+	local button = createCopyButton(_G.PaperDollFrame)
+	button:SetPoint("BOTTOMLEFT", 5, 6)
+	button:SetScript("OnClick", function()
+		createGearFrame()
+		getPlayerSources()
+		copyTexts()
+	end)
+end
+
+M:RegisterMisc("CopyMog", M.CopyMog)
