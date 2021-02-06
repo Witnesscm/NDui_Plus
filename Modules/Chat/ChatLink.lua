@@ -57,7 +57,7 @@ local function AddTradeIcon(Hyperlink)
 end
 
 function CH:ChatLinkfilter(event, msg, ...)
-	if NDuiPlusDB["Chat"]["Icon"] then
+	if CH.db["Icon"] then
 		msg = gsub(msg, "(|H%w+:%d+:.-|h.-|h)", AddChatIcon)
 		msg = gsub(msg, "(|Henchant:%d+|h.-|h)", AddEnchantIcon)
 		msg = gsub(msg, "(|H%w+:%d+|h.-|h)", AddTalentIcon)
@@ -75,7 +75,7 @@ function CH:ChatLinkIcon()
 	-- fix send message
 	hooksecurefunc("ChatEdit_OnTextChanged", function(self, userInput)
 		local text = self:GetText()
-		if userInput and NDuiPlusDB["Chat"]["Icon"] then
+		if userInput and CH.db["Icon"] then
 			local newText, count = gsub(text, "|T.+|t", "")
 			if count > 0 then
 				self:SetText(newText)

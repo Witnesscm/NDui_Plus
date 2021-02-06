@@ -6,7 +6,7 @@ local _G = getfenv(0)
 
 function S:ButtonForge()
 	if not IsAddOnLoaded("ButtonForge") then return end
-	if not NDuiPlusDB["Skins"]["ButtonForge"] then return end
+	if not S.db["ButtonForge"] then return end
 
 	local Bar = B:GetModule("Actionbar")
 

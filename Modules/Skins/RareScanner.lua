@@ -7,7 +7,7 @@ local _G = getfenv(0)
 
 function S:RareScanner()
 	if not IsAddOnLoaded("RareScanner") then return end
-	if not NDuiPlusDB["Skins"]["RareScanner"] then return end
+	if not S.db["RareScanner"] then return end
 
 	-- Scanner Button
 	local button = _G.scanner_button

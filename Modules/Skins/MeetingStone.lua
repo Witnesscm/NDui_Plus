@@ -90,7 +90,7 @@ end
 
 function S:MeetingStone()
 	if not IsAddOnLoaded("MeetingStone") and not IsAddOnLoaded("MeetingStonePlus") then return end
-	if not NDuiPlusDB["Skins"]["MeetingStone"] then return end
+	if not S.db["MeetingStone"] then return end
 
 	local MS = LibStub('AceAddon-3.0'):GetAddon('MeetingStone')
 	local MSEnv = LibStub("NetEaseEnv-1.0")._NSList[MS.baseName]

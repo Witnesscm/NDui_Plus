@@ -1,6 +1,4 @@
-#@retail@
 ## Interface: 90002
-#@end-retail@
 ## Title: |cff0080ffNDui|r Plus
 ## Author: Witness
 ## Notes: NDui Mod

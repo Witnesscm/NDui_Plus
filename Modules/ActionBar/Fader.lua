@@ -149,9 +149,7 @@ function AB:UpdateActionBar()
 end
 
 function AB:GlobalFade()
-	if not NDuiPlusDB["ActionBar"]["GlobalFade"] then return end
-
-	AB.db = NDuiPlusDB["ActionBar"]
+	if not AB.db["GlobalFade"] then return end
 
 	AB.fadeParent = CreateFrame("Frame", "NDuiPlus_Fader", _G.UIParent, "SecureHandlerStateTemplate")
 	RegisterStateDriver(AB.fadeParent, "visibility", "[petbattle] hide; show")

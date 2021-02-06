@@ -14,7 +14,7 @@ function S:Ace3()
 	local AceGUI = LibStub and LibStub('AceGUI-3.0', true)
 
 	if not AceGUI then return end
-	if not NDuiPlusDB["Skins"]["Ace3"] then return end
+	if not S.db["Ace3"] then return end
 
 	if AceGUITooltip then
 		AceGUITooltip:HookScript("OnShow", TT.ReskinTooltip)
@@ -402,14 +402,14 @@ end
 function S:Ace3_MetaIndex(k, v)
 	if k == 'RegisterAsContainer' then
 		rawset(self, k, function(s, w, ...)
-			if NDuiPlusDB["Skins"]["Ace3"] then
+			if S.db["Ace3"] then
 				S.Ace3_RegisterAsContainer(s, w, ...)
 			end
 			return v(s, w, ...)
 		end)
 	elseif k == 'RegisterAsWidget' then
 		rawset(self, k, function(...)
-			if NDuiPlusDB["Skins"]["Ace3"] then
+			if S.db["Ace3"] then
 				S.Ace3_RegisterAsWidget(...)
 			end
 			return v(...)

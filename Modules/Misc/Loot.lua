@@ -1,6 +1,6 @@
 local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
-local module = P:RegisterModule("Loot")
+local LT = P:RegisterModule("Loot")
 ----------------------------
 -- Improved Loot Frame, by Cybeloras_
 -- RayUI Loot, by fgprodigal
@@ -10,8 +10,8 @@ local select, format = select, format
 local min, max, abs, floor, upper = math.min, math.max, math.abs, math.floor, string.upper
 local GetNumLootItems, LootSlotHasItem, GetLootSlotLink, GetLootSlotInfo = GetNumLootItems, LootSlotHasItem, GetLootSlotLink, GetLootSlotInfo
 
-function module:OnLogin()
-	if not NDuiPlusDB["Loot"]["Enable"] then return end
+function LT:OnLogin()
+	if not LT.db["Enable"] then return end
 	if not C.db["Skins"]["Loot"] then P:Print("需要启用NDui拾取框美化") return end
 
 	for i = 1, LootFrame:GetNumRegions() do
@@ -111,7 +111,7 @@ function module:OnLogin()
 		end
 	end)
 
-	if not NDuiPlusDB["Loot"]["Announce"] then return end
+	if not LT.db["Announce"] then return end
 
 	local chn = { "say", "guild", "party", "raid"}
 	local chncolor = {
@@ -124,7 +124,7 @@ function module:OnLogin()
 	local function Announce(chn)
 		local nums = GetNumLootItems()
 		if(nums == 0) then return end
-		if NDuiPlusDB["Loot"]["AnnounceTitle"] then
+		if LT.db["AnnounceTitle"] then
 			if UnitIsPlayer("target") or not UnitExists("target") then -- Chests are hard to identify!
 				SendChatMessage(format("*** %s ***", "箱子中的战利品"), chn)
 			else
@@ -140,7 +140,7 @@ function module:OnLogin()
 			-- end
 			local link = GetLootSlotLink(i)
 			local quality = select(5, GetLootSlotInfo(i))
-			if link and quality and quality >= NDuiPlusDB["Loot"]["AnnounceRarity"] then
+			if link and quality and quality >= LT.db["AnnounceRarity"] then
 				local messlink = "- %s"
 				SendChatMessage(format(messlink, link), chn)
 			end

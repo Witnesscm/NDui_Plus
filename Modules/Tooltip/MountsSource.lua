@@ -47,7 +47,7 @@ function T:MountsSource()
 	if IsAddOnLoaded("MountsSource") then return end
 
 	hooksecurefunc(GameTooltip, "SetUnitAura", function(self, ...)
-		if not NDuiPlusDB["Tooltip"]["MountsSource"] then return end
+		if not T.db["MountsSource"] then return end
 
 		local id = select(10, UnitAura(...))
 		if not id then return end

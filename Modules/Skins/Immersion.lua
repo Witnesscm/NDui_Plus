@@ -4,7 +4,7 @@ local S = P:GetModule("Skins")
 
 function S:Immersion()
 	if not IsAddOnLoaded("Immersion") then return end
-	if not NDuiPlusDB["Skins"]["Immersion"] then return end
+	if not S.db["Immersion"] then return end
 
 	local cr, cg, cb = DB.r, DB.g, DB.b
 

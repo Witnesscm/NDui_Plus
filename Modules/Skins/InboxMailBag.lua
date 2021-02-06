@@ -6,7 +6,7 @@ local _G = getfenv(0)
 
 function S:InboxMailBag()
 	if not IsAddOnLoaded("InboxMailBag") then return end
-	if not NDuiPlusDB["Skins"]["InboxMailBag"] then return end
+	if not S.db["InboxMailBag"] then return end
 
 	local function delayFunc()
 		local index = 3

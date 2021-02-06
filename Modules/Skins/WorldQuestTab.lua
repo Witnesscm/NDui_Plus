@@ -95,7 +95,7 @@ end
 
 function S:WorldQuestTab()
 	if not IsAddOnLoaded("WorldQuestTab") then return end
-	if not NDuiPlusDB["Skins"]["WorldQuestTab"] then return end
+	if not S.db["WorldQuestTab"] then return end
 
 	WQT_WorldQuestFrame.Background:Hide()
 	B.StripTextures(WQT_QuestLogFiller)

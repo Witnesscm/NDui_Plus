@@ -27,7 +27,7 @@ end
 do -- RaidTool
 	local Misc = B:GetModule("Misc")
 	hooksecurefunc(Misc, "RaidTool_RoleCount", function(self, frame)
-		if not NDuiPlusDB["UnitFrames"]["RoleTex"] then return end
+		if not UF.db["RoleTex"] then return end
 
 		if frame.roleFrame then
 			for i = 1, frame.roleFrame:GetNumRegions() do

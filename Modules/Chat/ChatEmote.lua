@@ -114,7 +114,7 @@ local function EmoteButton_OnLeave(self)
 end
 
 function CH:ChatEmote()
-	if not NDuiPlusDB["Chat"]["Emote"] then return end
+	if not CH.db["Emote"] then return end
 
 	for _, event in pairs(CH.ChatEvents) do
 		ChatFrame_AddMessageEventFilter(event, filter)

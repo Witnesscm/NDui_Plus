@@ -6,7 +6,7 @@ local _G = getfenv(0)
 
 function S:TinyInspect()
 	if not IsAddOnLoaded("TinyInspect") then return end
-	if not NDuiPlusDB["Skins"]["TinyInspect"] then return end
+	if not S.db["TinyInspect"] then return end
 
 	hooksecurefunc("ShowInspectItemListFrame", function(_, parent)
 		local frame = parent.inspectFrame

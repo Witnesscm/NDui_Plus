@@ -100,7 +100,7 @@ local function updateABFaderAlpha()
 	local AB = P:GetModule("ActionBar")
 	if not AB.fadeParent then return end
 
-	AB.fadeParent:SetAlpha(NDuiPlusDB["ActionBar"]["Alpha"])
+	AB.fadeParent:SetAlpha(AB.db["Alpha"])
 end
 
 local function updateABFaderSettings()
@@ -108,7 +108,7 @@ local function updateABFaderSettings()
 	if not AB.fadeParent then return end
 
 	AB:UpdateFaderSettings()
-	AB.fadeParent:SetAlpha(NDuiPlusDB["ActionBar"]["Alpha"])
+	AB.fadeParent:SetAlpha(AB.db["Alpha"])
 end
 
 local function updateABFaderState()
@@ -116,7 +116,7 @@ local function updateABFaderState()
 	if not AB.fadeParent then return end
 
 	AB:UpdateActionBar()
-	AB.fadeParent:SetAlpha(NDuiPlusDB["ActionBar"]["Alpha"])
+	AB.fadeParent:SetAlpha(AB.db["Alpha"])
 end
 
 local function updateUFsNameText()
@@ -155,7 +155,7 @@ G.TabList = {
 	L["Misc"],
 }
 
-G.OptionList = { -- type, key, value, name, horizon, data, callback, tooltip
+G.OptionList = { -- type, key, value, name, horizon, data, callback, tooltip, scripts
 	[1] = {
 		{1, "ActionBar", "ComboGlow", HeaderTag..L["ComboGlow"], nil, nil, nil, L["ComboGlowTip"]},
 		{},
@@ -315,7 +315,7 @@ local function CreateOption(i)
 	local parent, offset = guiPage[i].child, 20
 
 	for _, option in pairs(G.OptionList[i]) do
-		local optType, key, value, name, horizon, data, callback, tooltip = unpack(option)
+		local optType, key, value, name, horizon, data, callback, tooltip, scripts = unpack(option)
 		-- Checkboxes
 		if optType == 1 then
 			local cb = B.CreateCheckBox(parent)
@@ -453,12 +453,16 @@ local function CreateOption(i)
 				if optType and type(optType) == "string" then
 					offset = offset + 10
 					B.CreateFS(parent, 14, optType, nil, "TOP", 0, -offset + 8)
-					--B.CreateFS(parent, 14, optType, nil, "TOPLEFT", 20, -offset + 8)
 				end
 				local line = B.SetGradient(parent, "H", 1, 1, 1, .25, .25, 420, C.mult)
 				line:SetPoint("TOPLEFT", 20, -offset - 12)
 			end
 			offset = offset + 35
+		end
+		if scripts then
+			for type, handler in pairs(scripts) do
+				parent:HookScript(type, handler)
+			end
 		end
 	end
 

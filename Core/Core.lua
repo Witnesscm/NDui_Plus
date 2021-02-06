@@ -2,6 +2,7 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 
 local pairs, type, pcall= pairs, type, pcall
+local modules, initQueue = {}, {}
 
 P.DefaultSettings = {
 	Debug = false,
@@ -47,7 +48,6 @@ P.DefaultSettings = {
 		MaxAlpha = 1,
 	},
 	Chat = {
-		Enable = true,
 		Emote = false,
 		ClassColor = true,
 		RaidIndex = false,
@@ -133,6 +133,10 @@ loader:SetScript("OnEvent", function(self, _, addon)
 	P:InitialSettings(P.DefaultSettings, NDuiPlusDB)
 	P:InitialSettings(P.CharacterSettings, NDuiPlusCharDB)
 
+	for _, module in next, initQueue do
+		module.db = NDuiPlusDB[module.name]
+	end
+
 	P:BuildTextureTable()
 	P:ReplaceTexture()
 
@@ -176,8 +180,6 @@ function P:VersionCheck_Compare(new, old)
 end
 
 -- Modules
-local modules, initQueue = {}, {}
-
 function P:RegisterModule(name)
 	if modules[name] then P:Print("Module <"..name.."> has been registered.") return end
 	local module = {}

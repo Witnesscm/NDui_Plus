@@ -29,7 +29,7 @@ local function addRaidIndex(fullName, nameString, nameText)
 end
 
 function CH:UpdateRaidIndex(text, ...)
-	if IsInRaid() and NDuiPlusDB["Chat"]["RaidIndex"] then
+	if IsInRaid() and CH.db["RaidIndex"] then
 		text = text:gsub("|Hplayer:([^:|]+)([^%[]+)%[([^%]]+)%]|h", addRaidIndex)
 	end
 

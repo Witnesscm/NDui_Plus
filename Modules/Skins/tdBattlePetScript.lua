@@ -29,7 +29,7 @@ end
 
 function S:tdBattlePetScript()
 	if not IsAddOnLoaded("tdBattlePetScript") then return end
-	if not NDuiPlusDB["Skins"]["tdBattlePetScript"] then return end
+	if not S.db["tdBattlePetScript"] then return end
 
 	local tdBattlePetScript = _G.tdBattlePetScript
 	local GUI = LibStub('tdGUI-1.0')

@@ -20,7 +20,6 @@ function T:HideCreatedString()
 end
 
 function T:OnLogin()
-	T.db = NDuiPlusDB["Tooltip"]
 	T.myGUID = UnitGUID("player")
 	T.myFaction = UnitFactionGroup("player")
 

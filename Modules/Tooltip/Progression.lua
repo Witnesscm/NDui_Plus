@@ -185,7 +185,7 @@ function T:UpdateProgression(guid, faction)
 	cache[guid].info = cache[guid].info or {}
 	cache[guid].timer = GetTime()
 
-	if NDuiPlusDB["Tooltip"]["ProgAchievement"] then
+	if T.db["ProgAchievement"] then
 		for name, achievementID in pairs(specialAchievements) do
 			local completed, month, day, year = GetAchievementInfoByID(guid, 14532)
 			local completedString = "|cff888888" .. L["Not Completed"] .. "|r"
@@ -199,7 +199,7 @@ function T:UpdateProgression(guid, faction)
 		end
 	end
 
-	if NDuiPlusDB["Tooltip"]["ProgRaids"] then
+	if T.db["ProgRaids"] then
 		cache[guid].info.raids = {}
 		for _, tier in ipairs(tiers) do
 			cache[guid].info.raids[tier] = {}
@@ -226,7 +226,7 @@ function T:UpdateProgression(guid, faction)
 		end
 	end
 
-	if NDuiPlusDB["Tooltip"]["ProgDungeons"] then
+	if T.db["ProgDungeons"] then
 		cache[guid].info.mythicDungeons = {}
 		cache[guid].info.mythicDungeons.times = GetBossKillTimes(guid, 7399)
 
@@ -247,7 +247,7 @@ function T:SetProgressionInfo(guid)
 		local found = false
 
 		if leftTipText then
-			if NDuiPlusDB["Tooltip"]["ProgAchievement"] then
+			if T.db["ProgAchievement"] then
 				for name, achievementID in pairs(specialAchievements) do
 					if strfind(leftTipText, locales[name].short) then
 						local rightTip = _G["GameTooltipTextRight" .. i]
@@ -265,7 +265,7 @@ function T:SetProgressionInfo(guid)
 
 			found = false
 		
-			if NDuiPlusDB["Tooltip"]["ProgRaids"] then
+			if T.db["ProgRaids"] then
 				for _, tier in ipairs(tiers) do
 					for _, level in ipairs(levels) do
 						if strfind(leftTipText, locales[tier].short) and strfind(leftTipText, locales[level].full) then
@@ -286,7 +286,7 @@ function T:SetProgressionInfo(guid)
 
 			found = false
 
-			if NDuiPlusDB["Tooltip"]["ProgDungeons"] then
+			if T.db["ProgDungeons"] then
 				for name, achievementID in pairs(dungeonAchievements) do
 					if strfind(leftTipText, locales[name].short) then
 						local rightTip = _G["GameTooltipTextRight" .. i]
@@ -307,7 +307,7 @@ function T:SetProgressionInfo(guid)
 
 	if updated then return end
 
-	if NDuiPlusDB["Tooltip"]["ProgAchievement"] then
+	if T.db["ProgAchievement"] then
 		GameTooltip:AddLine(" ")
 		for name, achievementID in pairs(specialAchievements) do
 			local left = format("%s:", locales[name].short)
@@ -316,7 +316,7 @@ function T:SetProgressionInfo(guid)
 		end
 	end
 
-	if NDuiPlusDB["Tooltip"]["ProgRaids"] and cache[guid].info.raids then
+	if T.db["ProgRaids"] and cache[guid].info.raids then
 		GameTooltip:AddLine(" ")
 		GameTooltip:AddLine(L["Raids"])
 
@@ -331,7 +331,7 @@ function T:SetProgressionInfo(guid)
 		end
 	end
 
-	if NDuiPlusDB["Tooltip"]["ProgDungeons"] and cache[guid].info.mythicDungeons then
+	if T.db["ProgDungeons"] and cache[guid].info.mythicDungeons then
 		GameTooltip:AddLine(" ")
 		GameTooltip:AddLine(L["MythicDungeons"] .. " [" .. cache[guid].info.mythicDungeons.times .. "]")
 		for name, achievementID in pairs(dungeonAchievements) do
@@ -362,11 +362,11 @@ function T:GetAchievementInfo(GUID)
 end
 
 function T:AddProgression()
-	if not NDuiPlusDB["Tooltip"]["Progression"] then return end
+	if not T.db["Progression"] then return end
 
 	if InCombatLockdown() then return end
 
-	if NDuiPlusDB["Tooltip"]["ShowByShift"] and not IsShiftKeyDown() then return end
+	if T.db["ShowByShift"] and not IsShiftKeyDown() then return end
 
 	local unit = NT.GetUnit(self)
 	if not unit or not CanInspect(unit) or not UnitIsPlayer(unit) then return end

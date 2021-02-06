@@ -34,7 +34,7 @@ function M.DU_CreateButton(name, frame, label, width, height, point, relativeTo,
 end
 
 function M:DressUp()
-	if not NDuiPlusDB["Misc"]["DressUp"] then return end
+	if not M.db["DressUp"] then return end
 
 	local OneNake = M.DU_CreateButton("DressUpOneNake", DressUpFrame, WEAPON, 75, 22, "RIGHT", DressUpFrameResetButton, "LEFT", -2, 0)
 	OneNake:SetScript("OnClick", function()
@@ -65,7 +65,7 @@ end
 
 -- Credit: ElvUI_WindTools
 function M:PauseToSlash()
-	if not NDuiPlusDB["Misc"]["PauseToSlash"] then return end
+	if not M.db["PauseToSlash"] then return end
 
 	hooksecurefunc("ChatEdit_OnTextChanged", function(self, userInput)
 		local text = self:GetText()
@@ -94,7 +94,7 @@ function M:TalentUI_Load(addon)
 end
 
 function M:DoubleClickSpecSwap()
-	if not NDuiPlusDB["Misc"]["QuickSpecSwap"] then return end
+	if not M.db["QuickSpecSwap"] then return end
 
 	if IsAddOnLoaded("Blizzard_TalentUI") then
 		M:HookSpecButton()

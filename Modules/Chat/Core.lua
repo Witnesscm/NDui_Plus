@@ -100,7 +100,7 @@ function CH:ClassFilter(message)
 end
 
 function CH:UpdateBubbleColor()
-	if not NDuiPlusDB["Chat"]["ClassColor"] then return end
+	if not CH.db["ClassColor"] then return end
 
 	local backdrop = self.backdrop
 	local str = backdrop and backdrop.String
@@ -130,7 +130,7 @@ function CH:UpdateChatColor(event, msg, ...)
 end
 
 function CH:ChatClassColor()
-	if not NDuiPlusDB["Chat"]["ClassColor"] then return end
+	if not CH.db["ClassColor"] then return end
 
 	for _, event in pairs(CH.ChatEvents) do
 		ChatFrame_AddMessageEventFilter(event, CH.UpdateChatColor)
@@ -142,8 +142,6 @@ function CH:ChatClassColor()
 end
 
 function CH:OnLogin()
-	if not NDuiPlusDB["Chat"]["Enable"] then return end
-
 	self:ChatEmote()
 	self:ChatClassColor()
 	self:ChatRaidIndex()

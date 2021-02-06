@@ -82,7 +82,7 @@ function AB.CreateHandler(event)
 end
 
 function AB:ComboGlow()
-	if not NDuiPlusDB["ActionBar"]["ComboGlow"] then return end
+	if not AB.db["ComboGlow"] then return end
 
 	AB.GlowSpells = AllGlowSpells[DB.MyClass]
 	if not AB.GlowSpells then return end
