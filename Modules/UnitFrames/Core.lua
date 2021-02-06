@@ -15,6 +15,8 @@ function UF:SetTag(frame)
 			frame:Tag(name, "[fulllevel] "..colorStr.."[name][afkdnd]")
 		elseif mystyle == "focus" then
 			frame:Tag(name, colorStr.."[name][afkdnd]")
+		elseif mystyle == "nameplate" then
+			frame:Tag(name, "[nplevel][name]")
 		elseif mystyle == "arena" then
 			frame:Tag(name, "[arenaspec] "..colorStr.."[name]")
 		elseif mystyle == "raid" and C.db["UFs"]["SimpleMode"] and C.db["UFs"]["ShowTeamIndex"] and not frame.isPartyPet and not frame.isPartyFrame then
@@ -46,8 +48,6 @@ function UF:SetupNameText()
 end
 
 function UF:OnLogin()
-	UF.db = NDuiPlusDB["UnitFrames"]
-
 	P:Delay(1, function()
 		UF:SetupNameText()
 		UF:SetIconsHook()
