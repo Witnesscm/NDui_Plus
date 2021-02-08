@@ -241,7 +241,7 @@ function S:Ace3_RegisterAsWidget(widget)
 	elseif TYPE == 'WeakAurasDisplayButton' then
 		local button = widget.frame
 
-		P.ReskinExpandOrCollapse(widget.expand)
+		P.ReskinCollapse(widget.expand)
 		widget.expand:SetPushedTexture("")
 		widget.expand.SetPushedTexture = B.Dummy
 		B.ReskinInput(widget.renamebox)
@@ -294,7 +294,7 @@ function S:Ace3_RegisterAsWidget(widget)
 			end
 		end)
 	elseif TYPE == 'WeakAurasLoadedHeaderButton' then
-		P.ReskinExpandOrCollapse(widget.expand)
+		P.ReskinCollapse(widget.expand)
 		widget.expand:SetPushedTexture("")
 		widget.expand.SetPushedTexture = B.Dummy
 	elseif TYPE == 'WeakAurasIconButton' then
@@ -360,7 +360,7 @@ function S:Ace3_RegisterAsContainer(widget)
 					local button = buttons[i - offset]
 					if button and not button.styled then
 						local toggle = button.toggle
-						P.ReskinExpandOrCollapse(toggle)
+						P.ReskinCollapse(toggle)
 						toggle.SetPushedTexture = B.Dummy
 						button.styled = true
 					end

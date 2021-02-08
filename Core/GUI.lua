@@ -205,7 +205,7 @@ G.OptionList = { -- type, key, value, name, horizon, data, callback, tooltip, sc
 		{1, "Chat", "Icon", L["ChatLinkIcon"].."*", true},
 	},
 	[4] = {
-		{1, "TexStyle", "Enable", L["ReplaceTexture"], nil, nil, nil, L["ReplaceTextureTip"]},
+		{1, "TexStyle", "Enable", HeaderTag..L["ReplaceTexture"], nil, nil, nil, L["ReplaceTextureTip"]},
 		{4, "TexStyle", "Index", L["Texture Style"], nil, {}, setupTexStyle},
 		{L["Addon Skin"]},
 		{1, "Skins", "Ace3", "AceGUI-3.0"},
