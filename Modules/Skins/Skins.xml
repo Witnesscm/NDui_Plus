@@ -19,4 +19,5 @@
 	<Script file="WhisperPop.lua"/>
 	<Script file="WorldQuestTab.lua"/>
 	<Script file="WowLua.lua"/>
+	<Script file="ExtVendorUI.lua"/>
 </Ui>
