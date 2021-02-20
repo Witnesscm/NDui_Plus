@@ -106,6 +106,7 @@ do
 		end)
 
 		tinsert(S.ToggleFrames, frame)
+		S:UpdateToggleVisible()
 	end)
 end
 
@@ -129,10 +130,10 @@ function S:UpdateToggleVisible()
 
 		if S.db["HideToggle"] then
 			P:UIFrameFadeOut(close, 0.5, close:GetAlpha(), 0)
-			P:UIFrameFadeOut(open, 0.5, open:GetAlpha(), 0)
+			open:SetAlpha(0)
 		else
 			P:UIFrameFadeIn(close, 0.5, close:GetAlpha(), 1)
-			P:UIFrameFadeIn(open, 0.5, open:GetAlpha(), 1)
+			open:SetAlpha(1)
 		end
 	end
 end

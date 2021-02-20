@@ -52,9 +52,9 @@ P.DefaultSettings = {
 		ClassColor = true,
 		RaidIndex = false,
 		Icon = true,
-		ChatHide = false,
-		AutoShow = true,
-		AutoHide = true,
+		ChatHide = true,
+		AutoShow = false,
+		AutoHide = false,
 		AutoHideTime = 10,
 	},
 	Loot = {
