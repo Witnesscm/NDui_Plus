@@ -154,7 +154,7 @@ end
 
 function CH:ChatHide()
 	if not CH.db["ChatHide"] then return end
-	if not C.db["Chat"]["Lock"] then P:Print("[" .. L["ChatHide"] .. "] " .. L["ChatHideTip"]) return end
+	if not C.db["Chat"]["Lock"] then return end
 
 	-- Chat Background
 	local chatBG = CreateFrame("Frame", "NDui_PlusChatBG", UIParent)
