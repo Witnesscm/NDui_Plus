@@ -103,6 +103,17 @@ function M:DoubleClickSpecSwap()
 	end
 end
 
+-- Credit: HideTalentAlert
+function M:HideTalentAlert()
+	if not M.db["HideTalentAlert"] then return end
+
+	HelpTip:HideAll(UIParent)
+	P:RawHook("MainMenuMicroButton_AreAlertsEnabled", function()
+		return false
+	end)
+end
+
 M:RegisterMisc("DressUp", M.DressUp)
 M:RegisterMisc("PauseToSlash", M.PauseToSlash)
 M:RegisterMisc("DoubleClickSpecSwap", M.DoubleClickSpecSwap)
+M:RegisterMisc("HideTalentAlert", M.HideTalentAlert)
