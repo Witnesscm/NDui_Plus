@@ -2,6 +2,12 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 
 P.Changelog = [[
+v1.3.4
+[聊天] 添加聊天框渐隐
+[美化] 添加Extended Vendor UI美化
+[易用性] 添加选项隐藏未学天赋提醒
+[易用性] 添加商人界面装备等级显示
+
 v1.3.3
 [单位框体] 修复姓名版字体颜色错误
 

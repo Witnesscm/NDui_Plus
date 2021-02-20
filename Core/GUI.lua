@@ -135,6 +135,18 @@ local function updateUFsFader()
 	P:GetModule("UnitFrames"):UpdateUFsFader()
 end
 
+local function updateChatAutoShow()
+	P:GetModule("Chat"):UpdateAutoShow()
+end
+
+local function updateChatAutoHide()
+	P:GetModule("Chat"):UpdateAutoHide()
+end
+
+local function updateToggleVisible()
+	P:GetModule("Skins"):UpdateToggleVisible()
+end
+
 local function AddTextureToOption(parent, index)
 	local tex = parent[index]:CreateTexture()
 	tex:SetInside(nil, 4, 4)
@@ -203,6 +215,11 @@ G.OptionList = { -- type, key, value, name, horizon, data, callback, tooltip, sc
 		{1, "Chat", "ClassColor", L["ChatClassColor"], true, nil, nil, L["ChatClassColorTip"]},
 		{1, "Chat", "RaidIndex", L["ChatRaidIndex"].."*", nil, nil, nil, L["ChatRaidIndexTip"]},
 		{1, "Chat", "Icon", L["ChatLinkIcon"].."*", true},
+		{},
+		{1, "Chat", "ChatHide", HeaderTag..L["ChatHide"], nil, nil, nil, L["ChatHideTip"]},
+		{1, "Chat", "AutoShow", L["AutoShow"].."*", nil, nil, updateChatAutoShow, L["AutoShowTip"]},
+		{1, "Chat", "AutoHide", L["AutoHide"].."*", nil, nil, updateChatAutoHide, L["AutoHideTip"]},
+		{3, "Chat", "AutoHideTime", L["AutoHideTime"].."*", true, {5, 60, 1}},
 	},
 	[4] = {
 		{1, "TexStyle", "Enable", HeaderTag..L["ReplaceTexture"], nil, nil, nil, L["ReplaceTextureTip"]},
@@ -219,6 +236,9 @@ G.OptionList = { -- type, key, value, name, horizon, data, callback, tooltip, sc
 		{1, "Skins", "tdBattlePetScript", "tdBattlePetScript"},
 		{1, "Skins", "RareScanner", "RareScanner", true},
 		{1, "Skins", "WorldQuestTab", "WorldQuestTab"},
+		{1, "Skins", "ExtVendor", "Extended Vendor UI", true},
+		{},
+		{1, "Skins", "HideToggle", L["HideToggle"].."*", nil, nil, updateToggleVisible},
 	},
 	[5] = {
 		{1, "Tooltip", "MountsSource", L["MountsSource"].."*", nil, nil, nil, L["MountsSourceTip"]},
@@ -240,6 +260,8 @@ G.OptionList = { -- type, key, value, name, horizon, data, callback, tooltip, sc
 		{1, "Misc", "DressUp", L["DressUp"], true, nil, nil, L["DressUpTip"]},
 		{1, "Misc", "QuickSpecSwap", L["QuickSpecSwap"], nil, nil, nil, L["QuickSpecSwapTip"]},
 		{1, "Misc", "PauseToSlash", L["PauseToSlash"], true, nil, nil, L["PauseToSlashTip"]},
+		{1, "Misc", "HideTalentAlert", L["HideTalentAlert"], nil, nil, nil, L["HideTalentAlertTip"]},
+		{1, "Misc", "MerchantItemlevel", L["MerchantItemlevel"], true},
 		{},
 		{1, "Misc", "LootSpecManager", HeaderTag..L["LootSpecManagerEnable"], nil, nil, nil, L["LootSpecManagerTip"]},
 		{},
@@ -536,13 +558,8 @@ function P:OpenGUI()
 	credit.title = "Credits"
 	B.AddTooltip(credit, "ANCHOR_RIGHT", "|n"..GetAddOnMetadata(addonName, "X-Credits"), "info")
 
-	local toggle = CreateFrame("Button", nil, gui)
+	local toggle = G.CreateToggleButton(gui)
 	toggle:SetPoint("TOPLEFT", 25, -5)
-	toggle:SetSize(40, 40)
-	toggle.Icon = toggle:CreateTexture(nil, "ARTWORK")
-	toggle.Icon:SetAllPoints()
-	toggle.Icon:SetTexture(P.SwapTex)
-	toggle:SetHighlightTexture(P.SwapTex)
 	B.AddTooltip(toggle, "ANCHOR_RIGHT", "NDui", "info")
 	toggle:SetScript("OnClick", function()
 		_G.GameMenuFrameNDui:Click()
@@ -570,25 +587,31 @@ function P:OpenGUI()
 	SelectTab(1)
 end
 
+function G:CreateToggleButton()
+	local button = CreateFrame("Button", nil, self)
+	button:SetPoint("TOPLEFT", 60, -5)
+	button:SetSize(40, 40)
+	button.Icon = button:CreateTexture(nil, "ARTWORK")
+	button.Icon:SetAllPoints()
+	button.Icon:SetTexture(P.SwapTex)
+	button:SetHighlightTexture(P.SwapTex)
+	
+	return button
+end
+
 function G:SetupToggle()
 	local NDuiGUI = _G.NDuiGUI
-	if not NDuiGUI or NDuiGUI.ToggleButton then return end
+	if not NDuiGUI or G.ToggleButton then return end
 
-	local toggle = CreateFrame("Button", nil, NDuiGUI)
+	local toggle = G.CreateToggleButton(NDuiGUI)
 	toggle:SetPoint("TOPLEFT", 60, -5)
-	toggle:SetSize(40, 40)
-	toggle.Icon = toggle:CreateTexture(nil, "ARTWORK")
-	toggle.Icon:SetAllPoints()
-	toggle.Icon:SetTexture(P.SwapTex)
-	toggle:SetHighlightTexture(P.SwapTex)
 	B.AddTooltip(toggle, "ANCHOR_RIGHT", "NDui_Plus", "info")
 	toggle:SetScript("OnClick", function()
 		P:OpenGUI()
 		PlaySound(SOUNDKIT.IG_MAINMENU_OPTION)
 		NDuiGUI:Hide()
 	end)
-
-	NDuiGUI.ToggleButton = toggle
+	G.ToggleButton = toggle
 end
 
 function G:OnLogin()

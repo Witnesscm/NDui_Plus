@@ -146,4 +146,5 @@ function CH:OnLogin()
 	self:ChatClassColor()
 	self:ChatRaidIndex()
 	self:ChatLinkIcon()
+	self:ChatHide()
 end

@@ -1,6 +1,7 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
 	<Script file="Core.lua"/>
 	<Script file="ChatEmote.lua"/>
+	<Script file="ChatHide.lua"/>
 	<Script file="ChatLink.lua"/>
 	<Script file="ChatRaidIndex.lua"/>
 </Ui>

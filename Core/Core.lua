@@ -52,6 +52,10 @@ P.DefaultSettings = {
 		ClassColor = true,
 		RaidIndex = false,
 		Icon = true,
+		ChatHide = false,
+		AutoShow = true,
+		AutoHide = true,
+		AutoHideTime = 10,
 	},
 	Loot = {
 		Enable = true,
@@ -71,6 +75,8 @@ P.DefaultSettings = {
 		tdBattlePetScript = true,
 		RareScanner = true,
 		WorldQuestTab = true,
+		ExtVendor = true,
+		HideToggle = false,
 	},
 	Tooltip = {
 		Progression = true,
@@ -91,6 +97,8 @@ P.DefaultSettings = {
 		CopyMog = true,
 		ShowHideVisual = true,
 		ShowIllusion = true,
+		HideTalentAlert = true,
+		MerchantItemlevel = true,
 	},
 }
 

@@ -1,6 +1,7 @@
 local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 local S = P:GetModule("Skins")
+local NS = B:GetModule("Skins")
 local TT = B:GetModule("Tooltip")
 
 local _G = getfenv(0)
@@ -21,6 +22,8 @@ function S:PremadeGroupsFilter()
 	dialog.Defeated.Title:SetPoint("LEFT", dialog.Defeated.Act, "RIGHT", 2, 0)
 end
 
+S:RegisterSkin("PremadeGroupsFilter", S.PremadeGroupsFilter)
+
 function S:WorldQuestsList()
 	if not IsAddOnLoaded("WorldQuestsList") then return end
 
@@ -35,6 +38,8 @@ function S:WorldQuestsList()
 		end
 	end
 end
+
+S:RegisterSkin("WorldQuestsList", S.WorldQuestsList)
 
 function S:TomeOfTeleportation()
 	if not IsAddOnLoaded("TomeOfTeleportation") then return end
@@ -82,6 +87,52 @@ function S:TomeOfTeleportation()
 	end)
 end
 
-S:RegisterSkin("PremadeGroupsFilter", S.PremadeGroupsFilter)
-S:RegisterSkin("WorldQuestsList", S.WorldQuestsList)
 S:RegisterSkin("TomeOfTeleportation", S.TomeOfTeleportation)
+
+-- Hide Toggle Button
+S.ToggleFrames = {}
+
+do
+	hooksecurefunc(NS, "CreateToggle", function(self, frame)
+		local close = frame.closeButton
+		local open = frame.openButton
+
+		S:SetupToggle(close)
+		S:SetupToggle(open)
+
+		close:HookScript("OnClick", function() -- fix
+			open:Hide()
+			open:Show()
+		end)
+
+		tinsert(S.ToggleFrames, frame)
+	end)
+end
+
+function S:SetupToggle(bu)
+	bu:HookScript("OnEnter", function(self)
+		if S.db["HideToggle"] then
+			P:UIFrameFadeIn(self, 0.5, self:GetAlpha(), 1)
+		end
+	end)
+	bu:HookScript("OnLeave", function(self)
+		if S.db["HideToggle"] then
+			P:UIFrameFadeOut(self, 0.5, self:GetAlpha(), 0)
+		end
+	end)
+end
+
+function S:UpdateToggleVisible()
+	for _, frame in pairs(S.ToggleFrames) do
+		local close = frame.closeButton
+		local open = frame.openButton
+
+		if S.db["HideToggle"] then
+			P:UIFrameFadeOut(close, 0.5, close:GetAlpha(), 0)
+			P:UIFrameFadeOut(open, 0.5, open:GetAlpha(), 0)
+		else
+			P:UIFrameFadeIn(close, 0.5, close:GetAlpha(), 1)
+			P:UIFrameFadeIn(open, 0.5, open:GetAlpha(), 1)
+		end
+	end
+end
