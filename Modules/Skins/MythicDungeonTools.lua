@@ -50,9 +50,6 @@ function S:MythicDungeonTools()
 		progressBar:SetStatusBarTexture(DB.normTex)
 		B.CreateBDFrame(progressBar, .25)
 
-		TT.ReskinTooltip(MDT.tooltip)
-		TT.ReskinTooltip(MDT.pullTooltip)
-
 		styled = true
 	end)
 end

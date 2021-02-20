@@ -293,17 +293,31 @@ end
 
 -- API
 do
-	function P:RawHook(name, func)
-		assert(type(_G[name])=="function", "Bad arg1, string function name expected")
-		assert(type(func)=="function", "Bad arg2, function expected")
+	function P:RawHook(object, method, func)
+		if type(object) ~= 'table' then
+			object, method, func = nil, object, method
+		end
 
-		self.origins = self.origins or {}
+		assert(type(func) == "function", "Bad arg, function expected")
+		if object then
+			assert(type(object[method]) == "function", "Bad arg, string function name expected")
+		else
+			assert(type(_G[method]) == "function", "Bad arg, string function name expected")
+		end
+
 		self.hooks = self.hooks or {}
 
-		if not self.origins[name] then
-			self.origins[name] = _G[name]
-			_G[name] = function(...) return self.hooks[name](...) end
+		if object then
+			self.hooks[object] = self.hooks[object] or {}
+			self.hooks[object][method] = object[method]
+			object[method] = function(...)
+				func(...)
+			end
+		else
+			self.hooks[method] = _G[method]
+			_G[method] = function(...)
+				func(...)
+			end
 		end
-		self.hooks[name] = func
 	end
 end

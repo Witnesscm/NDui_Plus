@@ -413,11 +413,11 @@ end
 
 local function loadFunc(event, addon)  -- fix
 	if addon == "Blizzard_AchievementUI" then
-		local name = "AchievementFrameComparison_UpdateStatusBars"
-		if _G[name] then
-			P:RawHook(name, function(id)
+		local method = "AchievementFrameComparison_UpdateStatusBars"
+		if _G[method] then
+			P:RawHook(method, function(id)
 				if id and id ~= "summary" then
-					P.origins[name](id)
+					P.hooks[method](id)
                 end
              end)
 		end
