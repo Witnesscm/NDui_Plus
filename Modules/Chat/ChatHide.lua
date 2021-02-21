@@ -114,6 +114,8 @@ function CH.WhisperFlash(event)
 end
 
 function CH:UpdateAutoShow()
+	if not CH.ChatBG then return end
+
 	if CH.db["AutoShow"] then
 		B:RegisterEvent("CHAT_MSG_WHISPER", CH.AutoShow)
 		B:RegisterEvent("CHAT_MSG_BN_WHISPER", CH.AutoShow)
@@ -139,6 +141,8 @@ function CH:AutoHide()
 end
 
 function CH:UpdateAutoHide()
+	if not CH.ChatBG then return end
+
 	if CH.db["AutoHide"] then
 		CH.ChatBG.hideTimer = P:ScheduleRepeatingTimer(CH.AutoHide, 1)
 	else
