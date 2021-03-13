@@ -5,95 +5,31 @@ local G = P:RegisterModule("GUI")
 local cr, cg, cb = DB.r, DB.g, DB.b
 local guiTab, guiPage, gui = {}, {}
 
-local extraGUIs = {}
-local function toggleExtraGUI(guiName)
-	for name, frame in pairs(extraGUIs) do
-		if name == guiName then
-			B:TogglePanel(frame)
-		else
-			frame:Hide()
-		end
-	end
-end
+G.TextureList = {}
 
-local function hideExtraGUIs()
-	for _, frame in pairs(extraGUIs) do
-		frame:Hide()
-	end
-end
+G.Points = {"TOPLEFT", "TOPRIGHT", "BOTTOMLEFT", "BOTTOMRIGHT", "CENTER", "TOP", "BOTTOM", "LEFT", "RIGHT"}
 
-local function createExtraGUI(parent, name, title, scrollFrame)
-	local frame = CreateFrame("Frame", name, parent)
-	frame:SetSize(280, parent:GetHeight())
-	frame:SetPoint("TOPLEFT", parent, "TOPRIGHT", 3, 0)
-	B.SetBD(frame)
-
-	if title then
-		B.CreateFS(frame, 14, title, "system", "TOPLEFT", 20, -25)
-	end
-
-	if scrollFrame then
-		local scroll = CreateFrame("ScrollFrame", nil, frame, "UIPanelScrollFrameTemplate")
-		scroll:SetSize(frame:GetWidth() - 40, frame:GetHeight() - 60)
-		scroll:SetPoint("TOPLEFT", 10, -50)
-		scroll.bg = B.CreateBDFrame(scroll, .3)
-		scroll.bg:SetAllPoints()
-		scroll.child = CreateFrame("Frame", nil, scroll)
-		scroll.child:SetSize(frame:GetWidth() - 40, 1)
-		scroll:SetScrollChild(scroll.child)
-		B.ReskinScroll(scroll.ScrollBar)
-
-		frame.scroll =  scroll
-	end
-
-	if not parent.extraGUIHook then
-		parent:HookScript("OnHide", hideExtraGUIs)
-		parent.extraGUIHook = true
-	end
-	extraGUIs[name] = frame
-
-	return frame
-end
-
-local function setupChangelog()
-	local guiName = "NDuiPlusGUI_Changelog"
-	toggleExtraGUI(guiName)
-	if extraGUIs[guiName] then return end
-
-	local panel = createExtraGUI(NDuiPlusGUI, guiName, L["Changelog"], true)
-	panel.scroll.bg:Hide()
-	local frame = panel.scroll.child
-
-	local fs = frame:CreateFontString(nil, "OVERLAY")
-	fs:SetFont(DB.Font[1], DB.Font[2]+2, DB.Font[3])
-	fs:SetPoint("TOPLEFT", 10, -10)
-	fs:SetPoint("TOPRIGHT", -10, -10)
-	fs:SetJustifyH("LEFT")
-	fs:SetSpacing(10) 
-	fs:SetText(P.Changelog)
-end
-
-local qualityTable = {
+G.Quality = {
 	[1] = ITEM_QUALITY_COLORS[1].hex .. ITEM_QUALITY1_DESC .. "|r",
 	[2] = ITEM_QUALITY_COLORS[2].hex .. ITEM_QUALITY2_DESC .. "|r",
 	[3] = ITEM_QUALITY_COLORS[3].hex .. ITEM_QUALITY3_DESC .. "|r",
 	[4] = ITEM_QUALITY_COLORS[4].hex .. ITEM_QUALITY4_DESC .. "|r",
 }
 
-G.TextureList = {}
-local function initTexStyle()
-	NDuiPlusDB["TexStyle"]["Index"] = 0
-
-	for i, v in ipairs(P.TextureTable) do
-		tinsert(G.TextureList, v.name)
-		if v.name == NDuiPlusDB["TexStyle"]["Texture"] then
-			NDuiPlusDB["TexStyle"]["Index"] = i
-		end
-	end
+local function setupChangelog()
+	G:SetupChangelog(gui)
 end
 
-local function setupTexStyle()
-	NDuiPlusDB["TexStyle"]["Texture"] = G.TextureList[NDuiPlusDB["TexStyle"]["Index"]]
+local function setupABFader()
+	G:SetupABFader(guiPage[1])
+end
+
+local function setupUFsFader()
+	G:SetupUFsFader(guiPage[2])
+end
+
+local function setupUFsRole()
+	G:SetupUFsRole(guiPage[2])
 end
 
 local function updateABFaderAlpha()
@@ -115,7 +51,7 @@ local function updateABFaderState()
 	local AB = P:GetModule("ActionBar")
 	if not AB.fadeParent then return end
 
-	AB:UpdateActionBar()
+	AB:UpdateFaderState()
 	AB.fadeParent:SetAlpha(AB.db["Alpha"])
 end
 
@@ -123,12 +59,12 @@ local function updateUFsNameText()
 	P:GetModule("UnitFrames"):UpdateNameText()
 end
 
-local function updateUFsRoleTex()
-	P:GetModule("UnitFrames"):UpdateRoleTex()
-end
-
 local function updateUFsAurasFilter()
 	P:GetModule("UnitFrames"):UpdateAurasFilter()
+end
+
+local function updateUFsRole()
+	P:GetModule("UnitFrames"):UpdateRoleIcons()
 end
 
 local function updateUFsFader()
@@ -145,6 +81,21 @@ end
 
 local function updateToggleVisible()
 	P:GetModule("Skins"):UpdateToggleVisible()
+end
+
+local function setupTexStyle()
+	NDuiPlusDB["TexStyle"]["Index"] = 0
+
+	for i, v in ipairs(P.TextureTable) do
+		tinsert(G.TextureList, v.name)
+		if v.name == NDuiPlusDB["TexStyle"]["Texture"] then
+			NDuiPlusDB["TexStyle"]["Index"] = i
+		end
+	end
+end
+
+local function toggleTexStyle()
+	NDuiPlusDB["TexStyle"]["Texture"] = G.TextureList[NDuiPlusDB["TexStyle"]["Index"]]
 end
 
 local function AddTextureToOption(parent, index)
@@ -171,16 +122,7 @@ G.OptionList = { -- type, key, value, name, horizon, data, callback, tooltip, sc
 	[1] = {
 		{1, "ActionBar", "ComboGlow", HeaderTag..L["ComboGlow"], nil, nil, nil, L["ComboGlowTip"]},
 		{},
-		{1, "ActionBar", "GlobalFade", HeaderTag..L["GlobalFadeEnable"]},
-		{},
-		{3, "ActionBar", "Alpha", L["Fade Alpha"].."*", false, {0, 1, .1}, updateABFaderAlpha},
-		{3, "ActionBar", "Delay", L["Fade Delay"].."*", true, {0, 3, .1}},
-		{},
-		{1, "ActionBar", "Combat", L["Combat Status"].."*", nil, nil, updateABFaderSettings},
-		{1, "ActionBar", "Target", L["Target Exists"].."*", true, nil, updateABFaderSettings},
-		{1, "ActionBar", "Cast", L["Cast Status"].."*", nil, nil, updateABFaderSettings},
-		{1, "ActionBar", "Health", L["Health Changed"].."*", true, nil, updateABFaderSettings},
-		{},
+		{1, "ActionBar", "GlobalFade", HeaderTag..L["GlobalFadeEnable"], nil, setupABFader},
 		{1, "ActionBar", "Bar1", L["Bar1"].."*", nil, nil, updateABFaderState},
 		{1, "ActionBar", "Bar2", L["Bar2"].."*", true, nil, updateABFaderState},
 		{1, "ActionBar", "Bar3", L["Bar3"].."*", nil, nil, updateABFaderState},
@@ -192,29 +134,18 @@ G.OptionList = { -- type, key, value, name, horizon, data, callback, tooltip, sc
 	},
 	[2] = {
 		{1, "UnitFrames", "NameColor", L["NameColor"].."*", nil, nil, updateUFsNameText, L["NameColorTip"]},
-		{1, "UnitFrames", "RoleTex", L["RoleTex"].."*", true, nil, updateUFsRoleTex},
-		{1, "UnitFrames", "OnlyPlayerDebuff", L["OnlyPlayerDebuff"].."*", nil, nil, updateUFsAurasFilter, L["OnlyPlayerDebuffTip"]},
+		{1, "UnitFrames", "OnlyPlayerDebuff", L["OnlyPlayerDebuff"].."*", true, nil, updateUFsAurasFilter, L["OnlyPlayerDebuffTip"]},
 		{},
-		{1, "UnitFrames", "Fader", HeaderTag..L["UnitFramesFader"].."*", nil, nil, updateUFsFader, L["UnitFramesFaderTip"]},
+		{1, "UnitFrames", "Fader", HeaderTag..L["UnitFramesFader"].."*", nil, setupUFsFader, updateUFsFader, L["UnitFramesFaderTip"]},
 		{},
-		{3, "UnitFrames", "Delay", L["Fade Delay"].."*", false, {0, 3, .1}, updateUFsFader},
-		{3, "UnitFrames", "Smooth", L["Smooth"].."*", true, {0, 1, .1}, updateUFsFader},
-		{3, "UnitFrames", "MinAlpha", L["MinAlpha"].."*", false, {0, 1, .1}, updateUFsFader},
-		{3, "UnitFrames", "MaxAlpha", L["MaxAlpha"].."*", true, {0, 1, .1}, updateUFsFader},
-		{},
-		{1, "UnitFrames", "Hover", L["Hover"].."*", nil, nil, updateUFsFader},
-		{1, "UnitFrames", "Combat", L["Combat"].."*", true, nil, updateUFsFader},
-		{1, "UnitFrames", "Target", L["Target"].."*", nil, nil, updateUFsFader},
-		{1, "UnitFrames", "Focus", L["Focus"].."*", true, nil, updateUFsFader},
-		{1, "UnitFrames", "Health", L["Health"].."*", nil, nil, updateUFsFader},
-		{1, "UnitFrames", "Vehicle", L["Vehicle"].."*", true, nil, updateUFsFader},
-		{1, "UnitFrames", "Casting", L["Casting"].."*", nil, nil, updateUFsFader},
+		{1, "UnitFrames", "RolePos", L["Role Icon"].."*", nil, setupUFsRole, updateUFsRole},
 	},
 	[3] = {
 		{1, "Chat", "Emote", L["ChatEmote"], nil, nil, nil, L["ChatEmoteTip"]},
 		{1, "Chat", "ClassColor", L["ChatClassColor"], true, nil, nil, L["ChatClassColorTip"]},
 		{1, "Chat", "RaidIndex", L["ChatRaidIndex"].."*", nil, nil, nil, L["ChatRaidIndexTip"]},
-		{1, "Chat", "Icon", L["ChatLinkIcon"].."*", true},
+		{1, "Chat", "Role", L["ChatRole"].."*", true, nil, nil, L["ChatRoleTip"]},
+		{1, "Chat", "Icon", L["ChatLinkIcon"].."*"},
 		{},
 		{1, "Chat", "ChatHide", HeaderTag..L["ChatHide"], nil, nil, nil, L["ChatHideTip"]},
 		{1, "Chat", "AutoShow", L["AutoShow"].."*", nil, nil, updateChatAutoShow, L["AutoShowTip"]},
@@ -223,7 +154,10 @@ G.OptionList = { -- type, key, value, name, horizon, data, callback, tooltip, sc
 	},
 	[4] = {
 		{1, "TexStyle", "Enable", HeaderTag..L["ReplaceTexture"], nil, nil, nil, L["ReplaceTextureTip"]},
-		{4, "TexStyle", "Index", L["Texture Style"], nil, {}, setupTexStyle},
+		{4, "TexStyle", "Index", L["Texture Style"], nil, {}, toggleTexStyle},
+		{},
+		{1, "RoleStyle", "Enable", HeaderTag..L["ReplaceRoleTexture"]},
+		{4, "RoleStyle", "Index", L["Role Style"], nil, {}},
 		{L["Addon Skin"]},
 		{1, "Skins", "Ace3", "AceGUI-3.0"},
 		{1, "Skins", "InboxMailBag", "Inbox MailBag", true},
@@ -254,14 +188,12 @@ G.OptionList = { -- type, key, value, name, horizon, data, callback, tooltip, sc
 		{1, "Loot", "Enable", HeaderTag..L["LootEnhancedEnable"], nil, nil, nil, L["LootEnhancedTip"]},
 		{1, "Loot", "Announce", L["LootAnnounceButton"]},
 		{1, "Loot", "AnnounceTitle", L["Announce Target Name"].."*"},
-		{4, "Loot", "AnnounceRarity", L["Rarity Threshold"].."*", true, qualityTable},
+		{4, "Loot", "AnnounceRarity", L["Rarity Threshold"].."*", true, G.Quality},
 		{},
 		{1, "Misc", "QuestHelper", L["QuestHelper"], nil, nil, nil, L["QuestHelperTip"]},
-		{1, "Misc", "DressUp", L["DressUp"], true, nil, nil, L["DressUpTip"]},
-		{1, "Misc", "QuickSpecSwap", L["QuickSpecSwap"], nil, nil, nil, L["QuickSpecSwapTip"]},
-		{1, "Misc", "PauseToSlash", L["PauseToSlash"], true, nil, nil, L["PauseToSlashTip"]},
-		{1, "Misc", "HideTalentAlert", L["HideTalentAlert"], nil, nil, nil, L["HideTalentAlertTip"]},
-		{1, "Misc", "MerchantItemlevel", L["MerchantItemlevel"], true},
+		{1, "Misc", "QuickSpecSwap", L["QuickSpecSwap"], true, nil, nil, L["QuickSpecSwapTip"]},
+		{1, "Misc", "PauseToSlash", L["PauseToSlash"], nil, nil, nil, L["PauseToSlashTip"]},
+		{1, "Misc", "HideTalentAlert", L["HideTalentAlert"], true, nil, nil, L["HideTalentAlertTip"]},
 		{},
 		{1, "Misc", "LootSpecManager", HeaderTag..L["LootSpecManagerEnable"], nil, nil, nil, L["LootSpecManagerTip"]},
 		{},
@@ -341,6 +273,7 @@ local function CreateOption(i)
 		-- Checkboxes
 		if optType == 1 then
 			local cb = B.CreateCheckBox(parent)
+			cb:SetHitRectInsets(0, -80, 0, 0)
 			if horizon then
 				cb:SetPoint("TOPLEFT", 250, -offset + 35)
 			else
@@ -413,8 +346,10 @@ local function CreateOption(i)
 		-- Dropdown
 		elseif optType == 4 then
 			if key == "TexStyle" then
-				initTexStyle()
+				setupTexStyle()
 				data = G.TextureList
+			elseif key == "RoleStyle" then
+				data = P:BuildRoleTable()
 			end
 
 			local dd = B.CreateDropDown(parent, 180, 28, data)
@@ -469,6 +404,16 @@ local function CreateOption(i)
 				offset = offset + 35
 			end
 			swatch.__default = (key == "ACCOUNT" and G.AccountSettings[value]) or G.DefaultSettings[key][value]
+		-- Button
+		elseif optType == 6 then
+			local bu = P.CreateButton(parent, 120, 24, name)
+			if horizon then
+				bu:SetPoint("TOPLEFT", 255, -offset + 35)
+			else
+				bu:SetPoint("TOPLEFT", 25, -offset)
+				offset = offset + 35
+			end
+			bu:SetScript("OnClick", data)
 		-- Blank, no optType
 		else
 			if not key then
@@ -481,7 +426,7 @@ local function CreateOption(i)
 			end
 			offset = offset + 35
 		end
-		if scripts then
+		if scripts and type(scripts) == "table" then
 			for type, handler in pairs(scripts) do
 				parent:HookScript(type, handler)
 			end
@@ -562,8 +507,10 @@ function P:OpenGUI()
 	toggle:SetPoint("TOPLEFT", 25, -5)
 	B.AddTooltip(toggle, "ANCHOR_RIGHT", "NDui", "info")
 	toggle:SetScript("OnClick", function()
-		_G.GameMenuFrameNDui:Click()
-		gui:Hide()
+		if _G.GameMenuFrameNDui then
+			_G.GameMenuFrameNDui:Click()
+			gui:Hide()
+		end
 	end)
 
 	if not NDuiPlusDB["Changelog"].Version or NDuiPlusDB["Changelog"].Version ~= P.Version then

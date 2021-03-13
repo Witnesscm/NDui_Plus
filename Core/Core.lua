@@ -12,6 +12,10 @@ P.DefaultSettings = {
 		Texture = "NDui_Plus",
 		Index = 0,
 	},
+	RoleStyle = {
+		Enable = false,
+		Index = 1,
+	},
 	ActionBar = {
 		ComboGlow = true,
 		GlobalFade = false,
@@ -19,8 +23,9 @@ P.DefaultSettings = {
 		Delay = 0,
 		Combat = true,
 		Target = true,
-		Cast = true,
+		Casting = true,
 		Health = true,
+		Vehicle = true,
 		Bar1 = true,
 		Bar2 = true,
 		Bar3 = true,
@@ -32,7 +37,6 @@ P.DefaultSettings = {
 	},
 	UnitFrames= {
 		NameColor = false,
-		RoleTex = false,
 		OnlyPlayerDebuff = false,
 		Fader = false,
 		Hover = true,
@@ -46,11 +50,17 @@ P.DefaultSettings = {
 		Smooth = .4,
 		MinAlpha = .1,
 		MaxAlpha = 1,
+		RolePos = false,
+		RolePoint = 2,
+		RoleXOffset = 5,
+		RoleYOffset = 5,
+		RoleSize = 12,
 	},
 	Chat = {
 		Emote = false,
 		ClassColor = true,
 		RaidIndex = false,
+		Role = false,
 		Icon = true,
 		ChatHide = true,
 		AutoShow = false,
@@ -90,7 +100,6 @@ P.DefaultSettings = {
 	Misc = {
 		LootSpecManager = false,
 		TalentManager = true,
-		DressUp = true,
 		QuickSpecSwap = true,
 		PauseToSlash = true,
 		QuestHelper = true,
@@ -98,7 +107,6 @@ P.DefaultSettings = {
 		ShowHideVisual = true,
 		ShowIllusion = true,
 		HideTalentAlert = true,
-		MerchantItemlevel = true,
 	},
 }
 

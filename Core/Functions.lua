@@ -28,17 +28,17 @@ do
 	end
 
 	P.WaitTable = {}
-	P.WaitFrame = CreateFrame('Frame', 'NDuiPlus_WaitFrame', _G.UIParent)
-	P.WaitFrame:SetScript('OnUpdate', P.WaitFunc)
+	P.WaitFrame = CreateFrame("Frame", "NDuiPlus_WaitFrame", _G.UIParent)
+	P.WaitFrame:SetScript("OnUpdate", P.WaitFunc)
 
 	function P:Delay(delay, func, ...)
-		if type(delay) ~= 'number' or type(func) ~= 'function' then
+		if type(delay) ~= "number" or type(func) ~= "function" then
 			return false
 		end
 
 		if delay < 0.01 then delay = 0.01 end
 
-		if select('#', ...) <= 0 then
+		if select("#", ...) <= 0 then
 			C_Timer.After(delay, func)
 		else
 			tinsert(P.WaitTable,{delay,func,{...}})
@@ -56,7 +56,7 @@ do
 	function P:SetupBackdrop()
 		Mixin(self, BackdropTemplateMixin)
 		self:OnBackdropLoaded()
-		self:HookScript('OnSizeChanged', self.OnBackdropSizeChanged)
+		self:HookScript("OnSizeChanged", self.OnBackdropSizeChanged)
 	end
 
 	function P:CreateButton(width, height, text, discolor, fontSize)
@@ -180,6 +180,13 @@ do
 		else
 			hooksecurefunc(self, "SetNormalTexture", resetCollapseTexture)
 		end
+
+		hooksecurefunc(self, "Enable", function()
+			self.__texture:SetDesaturated(false)
+		end)
+		hooksecurefunc(self, "Disable", function()
+			self.__texture:SetDesaturated(true)
+		end)
 	end
 
 	function P:ReskinFrame()
@@ -291,10 +298,17 @@ do
 	end
 end
 
+do
+	local t, d = "|T%s%s|t", ""
+	function P:TextureString(texture, data)
+		return format(t, texture, data or d)
+	end
+end
+
 -- API
 do
 	function P:RawHook(object, method, func)
-		if type(object) ~= 'table' then
+		if type(object) ~= "table" then
 			object, method, func = nil, object, method
 		end
 

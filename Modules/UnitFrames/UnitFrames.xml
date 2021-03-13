@@ -2,6 +2,6 @@
 	<Include file="Plugins\Plugins.xml"/>
 	<Script file="Core.lua"/>
 	<Script file="Fader.lua"/>
-	<Script file="RoleTex.lua"/>
+	<Script file="Role.lua"/>
 	<Script file="Auras.lua"/>
 </Ui>

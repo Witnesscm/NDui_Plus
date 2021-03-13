@@ -4,5 +4,6 @@
 	<Script file="Functions.lua"/>
 	<Script file="Animation.lua"/>
 	<Script file="GUI.lua"/>
+	<Script file="ExtraGUI.lua"/>
 	<Script file="Changelog.lua"/>
 </Ui>

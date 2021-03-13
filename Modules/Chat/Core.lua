@@ -7,6 +7,7 @@ local CH = P:RegisterModule("Chat")
 CH.GuidCache = {}
 CH.ClassNames = {}
 CH.GroupNames = {}
+CH.GroupRoles = {}
 
 CH.ChatEvents = {
 	"CHAT_MSG_BATTLEGROUND",
