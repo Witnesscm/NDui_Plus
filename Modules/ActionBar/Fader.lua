@@ -1,6 +1,6 @@
 local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
-local AB = P:RegisterModule("ActionBar")
+local AB = P:GetModule("ActionBar")
 local Bar = B:GetModule("Actionbar")
 -----------------
 -- Credit: ElvUI
@@ -49,9 +49,14 @@ function AB:Button_OnLeave()
 end
 
 function AB:FadeParent_OnEvent(event)
-	if UnitCastingInfo("player") or UnitChannelInfo("player") or UnitExists("target")
-	or UnitAffectingCombat("player") or (UnitHealth("player") ~= UnitHealthMax("player"))
-	or event == "ACTIONBAR_SHOWGRID" then
+	if
+		(event == "ACTIONBAR_SHOWGRID") or
+		(AB.db["Combat"] and UnitAffectingCombat("player")) or
+		(AB.db["Target"] and UnitExists("target")) or
+		(AB.db["Casting"] and (UnitCastingInfo("player") or UnitChannelInfo("player"))) or
+		(AB.db["Health"] and (UnitHealth("player") ~= UnitHealthMax("player"))) or
+		(AB.db["Vehicle"] and UnitHasVehicleUI("player"))
+	then
 		self.mouseLock = true
 		ClearTimers(AB.fadeParent)
 		P:UIFrameFadeIn(self, .2, self:GetAlpha(), 1)
@@ -68,8 +73,9 @@ local options = {
 		enable = function(self)
 			self:RegisterEvent("PLAYER_REGEN_ENABLED")
 			self:RegisterEvent("PLAYER_REGEN_DISABLED")
+			self:RegisterUnitEvent("UNIT_FLAGS", "player")
 		end,
-		events = {"PLAYER_REGEN_ENABLED", "PLAYER_REGEN_DISABLED"}
+		events = {"PLAYER_REGEN_ENABLED", "PLAYER_REGEN_DISABLED", "UNIT_FLAGS"}
 	},
 	Target = {
 		enable = function(self)
@@ -77,20 +83,28 @@ local options = {
 		end,
 		events = {"PLAYER_TARGET_CHANGED"}
 	},
-	Cast = {
+	Casting = {
 		enable = function(self)
 			self:RegisterUnitEvent("UNIT_SPELLCAST_START", "player")
 			self:RegisterUnitEvent("UNIT_SPELLCAST_STOP", "player")
 			self:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_START", "player")
 			self:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_STOP", "player")
 		end,
-		events = {"UNIT_SPELLCAST_START","UNIT_SPELLCAST_STOP","UNIT_SPELLCAST_CHANNEL_START","UNIT_SPELLCAST_CHANNEL_STOP"}
+		events = {"UNIT_SPELLCAST_START", "UNIT_SPELLCAST_STOP", "UNIT_SPELLCAST_CHANNEL_START", "UNIT_SPELLCAST_CHANNEL_STOP"}
 	},
 	Health = {
 		enable = function(self)
 			self:RegisterUnitEvent("UNIT_HEALTH", "player")
 		end,
 		events = {"UNIT_HEALTH"}
+	},
+	Vehicle = {
+		enable = function(self)
+			self:RegisterEvent("UNIT_ENTERED_VEHICLE")
+			self:RegisterEvent("UNIT_EXITED_VEHICLE")
+			self:RegisterEvent("VEHICLE_UPDATE")
+		end,
+		events = {"UNIT_ENTERED_VEHICLE", "UNIT_EXITED_VEHICLE", "VEHICLE_UPDATE"}
 	},
 }
 
@@ -122,11 +136,11 @@ local NDui_ActionBar = {
 }
 
 local function updateAfterCombat(event)
-	AB:UpdateActionBar()
+	AB:UpdateFaderState()
 	B:UnregisterEvent(event, updateAfterCombat)
 end
 
-function AB:UpdateActionBar()
+function AB:UpdateFaderState()
 	if InCombatLockdown() then
 		B:RegisterEvent("PLAYER_REGEN_ENABLED", updateAfterCombat)
 		return
@@ -161,13 +175,8 @@ function AB:GlobalFade()
 	AB:UpdateFaderSettings()
 
 	local function loadFunc(event, addon)
-		AB:UpdateActionBar()
+		AB:UpdateFaderState()
 		B:UnregisterEvent(event, loadFunc)
 	end
 	B:RegisterEvent("PLAYER_ENTERING_WORLD", loadFunc)
-end
-
-function AB:OnLogin()	
-	AB:GlobalFade()
-	AB:ComboGlow()
 end
