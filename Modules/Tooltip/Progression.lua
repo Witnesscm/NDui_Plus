@@ -228,10 +228,11 @@ function T:UpdateProgression(guid, faction)
 
 	if T.db["ProgDungeons"] then
 		cache[guid].info.mythicDungeons = {}
-		cache[guid].info.mythicDungeons.times = GetBossKillTimes(guid, 7399)
+		cache[guid].info.mythicDungeons.total = 0
 
 		for name, achievementID in pairs(dungeonAchievements) do
 			cache[guid].info.mythicDungeons[name] = GetBossKillTimes(guid, achievementID)
+			cache[guid].info.mythicDungeons.total = cache[guid].info.mythicDungeons.total + cache[guid].info.mythicDungeons[name]
 		end
 	end
 end
@@ -333,12 +334,13 @@ function T:SetProgressionInfo(guid)
 
 	if T.db["ProgDungeons"] and cache[guid].info.mythicDungeons then
 		GameTooltip:AddLine(" ")
-		GameTooltip:AddLine(L["MythicDungeons"] .. " [" .. cache[guid].info.mythicDungeons.times .. "]")
+		GameTooltip:AddLine(L["MythicDungeons"])
 		for name, achievementID in pairs(dungeonAchievements) do
 			local left = format("%s:", locales[name].short)
 			local right = cache[guid].info.mythicDungeons[name]
 			GameTooltip:AddDoubleLine(left, right, nil, nil, nil, 1, 1, 1)
 		end
+		GameTooltip:AddDoubleLine(L["Total"]..":", cache[guid].info.mythicDungeons.total, nil, nil, nil, 1, 1, 1)
 	end
 end
 
