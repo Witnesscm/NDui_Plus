@@ -187,7 +187,7 @@ function T:UpdateProgression(guid, faction)
 
 	if T.db["ProgAchievement"] then
 		for name, achievementID in pairs(specialAchievements) do
-			local completed, month, day, year = GetAchievementInfoByID(guid, 14532)
+			local completed, month, day, year = GetAchievementInfoByID(guid, achievementID)
 			local completedString = "|cff888888" .. L["Not Completed"] .. "|r"
 			if completed then
 				completedString = gsub(L["%month%-%day%-%year%"], "%%month%%", month)
@@ -269,10 +269,10 @@ function T:SetProgressionInfo(guid)
 			if T.db["ProgRaids"] then
 				for _, tier in ipairs(tiers) do
 					for _, level in ipairs(levels) do
-						if strfind(leftTipText, locales[tier].short) and strfind(leftTipText, locales[level].full) then
+						if strfind(leftTipText, locales[tier].short) then
 							local rightTip = _G["GameTooltipTextRight" .. i]
-							leftTip:SetText(format("%s %s:", locales[tier].short, GetLevelColoredString(level, false)))
-							rightTip:SetText(cache[guid].info.raids[tier][level])
+							leftTip:SetText(format("%s:", locales[tier].short))
+							rightTip:SetText(GetLevelColoredString(level, true) .. " " .. cache[guid].info.raids[tier][level])
 							updated = true
 							found = true
 							break
@@ -310,23 +310,29 @@ function T:SetProgressionInfo(guid)
 
 	if T.db["ProgAchievement"] then
 		GameTooltip:AddLine(" ")
+		GameTooltip:AddLine(L["Special Achievements"])
 		for name, achievementID in pairs(specialAchievements) do
 			local left = format("%s:", locales[name].short)
 			local right = cache[guid].info.special[name]
-			GameTooltip:AddDoubleLine(left, right, nil, nil, nil, 1, 1, 1)
+			GameTooltip:AddDoubleLine(left, right, .6, .8, 1, 1, 1, 1)
 		end
 	end
 
-	if T.db["ProgRaids"] and cache[guid].info.raids then
-		GameTooltip:AddLine(" ")
-		GameTooltip:AddLine(L["Raids"])
+	if T.db["ProgRaids"] and next(cache[guid].info.raids) then
+		local title = false
 
 		for _, tier in ipairs(tiers) do
 			for _, level in ipairs(levels) do
 				if (cache[guid].info.raids[tier][level]) then
-					local left = format("%s %s:", locales[tier].short, GetLevelColoredString(level, false))
+					if not title then
+						GameTooltip:AddLine(" ")
+						GameTooltip:AddLine(L["Raids"])
+						title = true
+					end
+
+					local left = format("%s:", locales[tier].short)
 					local right = GetLevelColoredString(level, true) .. " " .. cache[guid].info.raids[tier][level]
-					GameTooltip:AddDoubleLine(left, right, nil, nil, nil, 1, 1, 1)
+					GameTooltip:AddDoubleLine(left, right, .6, .8, 1, 1, 1, 1)
 				end
 			end
 		end
@@ -338,9 +344,9 @@ function T:SetProgressionInfo(guid)
 		for name, achievementID in pairs(dungeonAchievements) do
 			local left = format("%s:", locales[name].short)
 			local right = cache[guid].info.mythicDungeons[name]
-			GameTooltip:AddDoubleLine(left, right, nil, nil, nil, 1, 1, 1)
+			GameTooltip:AddDoubleLine(left, right, .6, .8, 1, 1, 1, 1)
 		end
-		GameTooltip:AddDoubleLine(L["Total"]..":", cache[guid].info.mythicDungeons.total, nil, nil, nil, 1, 1, 1)
+		GameTooltip:AddDoubleLine(L["Total"]..":", cache[guid].info.mythicDungeons.total, .6, .8, 1, 1, 1, 1)
 	end
 end
 
