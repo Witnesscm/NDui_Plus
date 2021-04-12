@@ -80,7 +80,7 @@ end
 function LSM:GetRaidSpec(encounter, diffID)
 	local diffName = LSM.DiffNames[diffID]
 
-	return LSM.db["Encounters"][diffName][encounter] or IGNORE
+	return diffName and LSM.db["Encounters"][diffName][encounter] or IGNORE
 end
 
 function LSM:GetSpecSetting(type, id)
