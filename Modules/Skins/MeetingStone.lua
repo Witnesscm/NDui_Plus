@@ -368,33 +368,42 @@ function S:MeetingStone()
 	reskinPageButton(MSEnv.AppFollowQueryPanel.QueryList.ScrollBar)
 	reskinPageButton(MSEnv.AppFollowPanel.FollowList.ScrollBar)
 
-	if not MeetingStone_QuickJoin then return end  -- version check
+	-- MeetingStonePlus
+	if MeetingStone_QuickJoin then
+		B.ReskinCheck(MeetingStone_QuickJoin)
 
-	B.ReskinCheck(MeetingStone_QuickJoin)
+		for i = 1, AdvFilter.Inset:GetNumChildren() do
+			local child = select(i, AdvFilter.Inset:GetChildren())
+			if child.Check and not child.styled then
+				B.ReskinCheck(child.Check)
+			end
+		end
 
-	for i = 1, AdvFilter.Inset:GetNumChildren() do
-		local child = select(i, AdvFilter.Inset:GetChildren())
-		if child.Check and not child.styled then
-			B.ReskinCheck(child.Check)
+		local function reskinALFrame()
+			if ALFrame and not ALFrame.styled then
+				B.StripTextures(ALFrame)
+				B.SetBD(ALFrame)
+				B.Reskin(ALFrameButton)
+				ALFrame.styled = true
+			end
+		end
+
+		local ManagerPanel = MSEnv.ManagerPanel
+		for i = 1, ManagerPanel:GetNumChildren() do
+			local child = select(i, ManagerPanel:GetChildren())
+			if child:IsObjectType("Button") and child.Icon and child.Text and not child.styled then
+				reskinButton(child)
+				child:HookScript("PostClick", reskinALFrame)
+			end
 		end
 	end
 
-	local function reskinALFrame()
-		if ALFrame and not ALFrame.styled then
-			B.StripTextures(ALFrame)
-			B.SetBD(ALFrame)
-			B.Reskin(ALFrameButton)
-			ALFrame.styled = true
-		end
-	end
-
-	local ManagerPanel = MSEnv.ManagerPanel
-	for i = 1, ManagerPanel:GetNumChildren() do
-		local child = select(i, ManagerPanel:GetChildren())
-		if child:IsObjectType("Button") and child.Icon and child.Text and not child.styled then
-			reskinButton(child)
-			child:HookScript("PostClick", reskinALFrame)
-		end
+	-- Handle group roles
+	local MemberDisplay = MSEnv.MemberDisplay
+	local origSetActivity = MemberDisplay.SetActivity
+	MemberDisplay.SetActivity = function(self, activity)
+		self.resultID = activity and activity.GetID and activity:GetID()
+		origSetActivity(self, activity)
 	end
 end
 
