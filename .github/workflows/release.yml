@@ -14,7 +14,7 @@ jobs:
       - name: 拉取分支
         uses: actions/checkout@v1
         with:
-          fetch-depth: 1
+          fetch-depth: 50
 
       - name: 创建包
         uses: BigWigsMods/packager@master
