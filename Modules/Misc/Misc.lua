@@ -41,6 +41,12 @@ function M:HookSpecButton()
 		button:HookScript("OnDoubleClick", function() 
 			if i ~= GetSpecialization() then SetSpecialization(i) end
 		end)
+
+		button:HookScript("OnEnter", function() 
+			GameTooltip:AddLine(" ")
+			GameTooltip:AddLine(DB.LeftButton..L["QuickSpecSwap"], .6, .8, 1)
+			GameTooltip:Show()
+		end)
 	end
 end
 
@@ -52,8 +58,6 @@ function M:TalentUI_Load(addon)
 end
 
 function M:DoubleClickSpecSwap()
-	if not M.db["QuickSpecSwap"] then return end
-
 	if IsAddOnLoaded("Blizzard_TalentUI") then
 		M:HookSpecButton()
 	else

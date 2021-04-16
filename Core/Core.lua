@@ -100,7 +100,6 @@ P.DefaultSettings = {
 	Misc = {
 		LootSpecManager = false,
 		TalentManager = true,
-		QuickSpecSwap = true,
 		PauseToSlash = true,
 		QuestHelper = true,
 		CopyMog = true,
