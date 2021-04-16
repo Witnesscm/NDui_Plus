@@ -163,9 +163,9 @@ function S:WorldQuestTab()
 
 	local ADDT = LibStub("AddonDropDownTemplates-2.0", true)
 	if ADDT then
-		local orgiGetFrame = ADDT.GetFrame
+		local origGetFrame = ADDT.GetFrame
 		ADDT.GetFrame = function(...)
-			local frame = orgiGetFrame(...)
+			local frame = origGetFrame(...)
 			B.StripTextures(frame)
 			P.ReskinTooltip(frame)
 			return frame

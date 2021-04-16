@@ -1,7 +1,9 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
 	<Script file="Skins.lua"/>
 	<Script file="Ace3.lua"/>
+	<Script file="Auctionator.lua"/>
 	<Script file="ButtonForge.lua"/>
+	<Script file="ExtVendorUI.lua"/>
 	<Script file="Immersion.lua"/>
 	<Script file="InboxMailBag.lua"/>
 	<Script file="ls_Toasts.lua"/>
@@ -19,5 +21,4 @@
 	<Script file="WhisperPop.lua"/>
 	<Script file="WorldQuestTab.lua"/>
 	<Script file="WowLua.lua"/>
-	<Script file="ExtVendorUI.lua"/>
 </Ui>
