@@ -94,6 +94,8 @@ P.DefaultSettings = {
 		ProgRaids = true,
 		ProgDungeons = true,
 		ProgAchievement = true,
+		KeystoneMaster = true,
+		AchievementList = "",
 		MountsSource = true,
 		HideCreator = false,
 	},

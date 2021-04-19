@@ -142,9 +142,23 @@ local dungeonAchievements = {
 	["Sanguine Depths"] = 14205
 }
 
-local specialAchievements = {
-	["Shadowlands Keystone Master: Season One"] = 14532
-}
+local specialAchievements = {}
+
+function T:UpdateAchievementList()
+	wipe(cache)
+	wipe(specialAchievements)
+	if T.db["KeystoneMaster"] then
+		tinsert(specialAchievements, {id = 14532, name = "Shadowlands Keystone Master: Season One"})
+	end
+
+	for id in gmatch(T.db["AchievementList"], "%S+") do
+		id = tonumber(id) or 0
+		local _, name = GetAchievementInfo(id)
+		if name then
+			tinsert(specialAchievements, {id = id, name = name})
+		end
+	end
+end
 
 local function GetLevelColoredString(level, short)
 	local color = "ff8000"
@@ -179,23 +193,24 @@ local function GetAchievementInfoByID(guid, achievementID)
 	return completed, month, day, year
 end
 
-
 function T:UpdateProgression(guid, faction)
 	cache[guid] = cache[guid] or {}
 	cache[guid].info = cache[guid].info or {}
 	cache[guid].timer = GetTime()
 
 	if T.db["ProgAchievement"] then
-		for name, achievementID in pairs(specialAchievements) do
-			local completed, month, day, year = GetAchievementInfoByID(guid, achievementID)
+		cache[guid].info.special = {}
+
+		for _, achievement in ipairs(specialAchievements) do
+			local completed, month, day, year = GetAchievementInfoByID(guid, achievement.id)
 			local completedString = "|cff888888" .. L["Not Completed"] .. "|r"
 			if completed then
 				completedString = gsub(L["%month%-%day%-%year%"], "%%month%%", month)
 				completedString = gsub(completedString, "%%day%%", day)
 				completedString = gsub(completedString, "%%year%%", 2000 + year)
 			end
-			cache[guid].info.special = {}
-			cache[guid].info.special[name] = completedString
+
+			cache[guid].info.special[achievement.name] = completedString
 		end
 	end
 
@@ -249,10 +264,12 @@ function T:SetProgressionInfo(guid)
 
 		if leftTipText then
 			if T.db["ProgAchievement"] then
-				for name, achievementID in pairs(specialAchievements) do
-					if strfind(leftTipText, locales[name].short) then
+				for _, achievement in ipairs(specialAchievements) do
+					local name = achievement.name
+					local nameStr = locales[name] and locales[name].short or name
+					if strfind(leftTipText, nameStr) then
 						local rightTip = _G["GameTooltipTextRight" .. i]
-						leftTip:SetText(locales[name].short .. ":")
+						leftTip:SetText(nameStr .. ":")
 						rightTip:SetText(cache[guid].info.special[name])
 						updated = true
 						found = true
@@ -311,8 +328,10 @@ function T:SetProgressionInfo(guid)
 	if T.db["ProgAchievement"] then
 		GameTooltip:AddLine(" ")
 		GameTooltip:AddLine(L["Special Achievements"])
-		for name, achievementID in pairs(specialAchievements) do
-			local left = format("%s:", locales[name].short)
+		for _, achievement in ipairs(specialAchievements) do
+			local name = achievement.name
+			local nameStr = locales[name] and locales[name].short or name
+			local left = format("%s:", nameStr)
 			local right = cache[guid].info.special[name]
 			GameTooltip:AddDoubleLine(left, right, .6, .8, 1, 1, 1, 1)
 		end
@@ -417,6 +436,13 @@ do
 	if NT.OnTooltipSetUnit then
 		hooksecurefunc(NT, "OnTooltipSetUnit", T.AddProgression)
 	end
+end
+
+function T:Progression()
+	T.myGUID = UnitGUID("player")
+	T.myFaction = UnitFactionGroup("player")
+
+	T:UpdateAchievementList()
 end
 
 local function loadFunc(event, addon)  -- fix

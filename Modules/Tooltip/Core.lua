@@ -20,8 +20,6 @@ function T:HideCreatedString()
 end
 
 function T:OnLogin()
-	T.myGUID = UnitGUID("player")
-	T.myFaction = UnitFactionGroup("player")
-
 	T:HideCreatedString()
+	T:Progression()
 end

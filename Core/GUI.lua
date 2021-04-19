@@ -83,6 +83,10 @@ local function updateToggleVisible()
 	P:GetModule("Skins"):UpdateToggleVisible()
 end
 
+local function updateAchievementList()
+	P:GetModule("Tooltip"):UpdateAchievementList()
+end
+
 local function setupTexStyle()
 	NDuiPlusDB["TexStyle"]["Index"] = 0
 
@@ -182,7 +186,9 @@ G.OptionList = { -- type, key, value, name, horizon, data, callback, tooltip, sc
 		{1, "Tooltip", "ShowByShift", L["ShowByShift"].."*", true},
 		{1, "Tooltip", "ProgRaids", L["Raids"]},
 		{1, "Tooltip", "ProgDungeons", L["MythicDungeons"], true},
-		{1, "Tooltip", "ProgAchievement", L["Keystone Master Achievement"]},
+		{1, "Tooltip", "ProgAchievement", L["Special Achievements"]},
+		{1, "Tooltip", "KeystoneMaster", L["Keystone Master Achievement"].."*", nil, nil, updateAchievementList},
+		{2, "Tooltip", "AchievementList", L["AchievementList"].."*", true, nil, updateAchievementList, L["AchievementListTip"]},
 	},
 	[6] = {
 		{1, "Loot", "Enable", HeaderTag..L["LootEnhancedEnable"], nil, nil, nil, L["LootEnhancedTip"]},
@@ -299,7 +305,7 @@ local function CreateOption(i)
 			local eb = B.CreateEditBox(parent, 180, 28)
 			eb:SetMaxLetters(999)
 			if horizon then
-				eb:SetPoint("TOPLEFT", 345, -offset + 45)
+				eb:SetPoint("TOPLEFT", 255, -offset + 45)
 			else
 				eb:SetPoint("TOPLEFT", 25, -offset - 25)
 				offset = offset + 70
