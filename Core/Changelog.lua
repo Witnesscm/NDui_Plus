@@ -2,6 +2,11 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 
 P.Changelog = [[
+v1.3.7
+[美化] 添加Auctionator美化
+[鼠标提示] PvE进度信息支持自定义成就
+[其他] 预组建队伍职责美化支持集合石插件
+
 v1.3.6
 [美化] 移除和新增部分材质
 [美化] 添加其他风格职责图标
