@@ -19,8 +19,9 @@ jobs:
       - name: 创建包
         uses: BigWigsMods/packager@master
         env:
-          CF_API_KEY: ${{ secrets.CF_API_KEY }}
           GITHUB_OAUTH: ${{ secrets.GITHUB_TOKEN }}
+          CF_API_KEY: ${{ secrets.CF_API_KEY }}
+          WAGO_API_TOKEN: ${{ secrets.WAGO_API_TOKEN }}
 
       - name: 上传到 Github Actions
         uses: actions/upload-artifact@v2
