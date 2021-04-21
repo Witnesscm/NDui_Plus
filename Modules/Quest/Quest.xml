@@ -1,6 +1,5 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
 	<Script file="Loh.lua"/>
 	<Script file="Training.lua"/>
-	<Script file="Chores.lua"/>
 	<Script file="Winging.lua"/>
 </Ui>
