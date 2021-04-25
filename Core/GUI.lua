@@ -83,8 +83,12 @@ local function updateToggleVisible()
 	P:GetModule("Skins"):UpdateToggleVisible()
 end
 
+local function updateProgression()
+	P:GetModule("Tooltip"):UpdateProgSettings()
+end
+
 local function updateAchievementList()
-	P:GetModule("Tooltip"):UpdateAchievementList()
+	P:GetModule("Tooltip"):UpdateProgSettings(true)
 end
 
 local function setupTexStyle()
@@ -184,9 +188,9 @@ G.OptionList = { -- type, key, value, name, horizon, data, callback, tooltip, sc
 		{},
 		{1, "Tooltip", "Progression", HeaderTag..L["Progression"].."*", nil, nil, nil, L["ProgressionTip"]},
 		{1, "Tooltip", "ShowByShift", L["ShowByShift"].."*", true},
-		{1, "Tooltip", "ProgRaids", L["Raids"]},
-		{1, "Tooltip", "ProgDungeons", L["MythicDungeons"], true},
-		{1, "Tooltip", "ProgAchievement", L["Special Achievements"]},
+		{1, "Tooltip", "ProgRaids", L["Raids"].."*", nil, nil, updateProgression},
+		{1, "Tooltip", "ProgDungeons", L["MythicDungeons"].."*", true, nil, updateProgression},
+		{1, "Tooltip", "ProgAchievement", L["Special Achievements"].."*", nil, nil, updateProgression},
 		{1, "Tooltip", "KeystoneMaster", L["Keystone Master Achievement"].."*", nil, nil, updateAchievementList},
 		{2, "Tooltip", "AchievementList", L["AchievementList"].."*", true, nil, updateAchievementList, L["AchievementListTip"]},
 	},

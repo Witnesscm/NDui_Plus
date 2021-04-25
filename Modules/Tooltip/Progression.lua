@@ -144,18 +144,21 @@ local dungeonAchievements = {
 
 local specialAchievements = {}
 
-function T:UpdateAchievementList()
+function T:UpdateProgSettings(full)
 	wipe(cache)
-	wipe(specialAchievements)
-	if T.db["KeystoneMaster"] then
-		tinsert(specialAchievements, {id = 14532, name = "Shadowlands Keystone Master: Season One"})
-	end
 
-	for id in gmatch(T.db["AchievementList"], "%S+") do
-		id = tonumber(id) or 0
-		local _, name = GetAchievementInfo(id)
-		if name then
-			tinsert(specialAchievements, {id = id, name = name})
+	if full then
+		wipe(specialAchievements)
+		if T.db["KeystoneMaster"] then
+			tinsert(specialAchievements, {id = 14532, name = "Shadowlands Keystone Master: Season One"})
+		end
+
+		for id in gmatch(T.db["AchievementList"], "%S+") do
+			id = tonumber(id) or 0
+			local _, name = GetAchievementInfo(id)
+			if name then
+				tinsert(specialAchievements, {id = id, name = name})
+			end
 		end
 	end
 end
@@ -325,7 +328,7 @@ function T:SetProgressionInfo(guid)
 
 	if updated then return end
 
-	if T.db["ProgAchievement"] then
+	if T.db["ProgAchievement"] and cache[guid].info.special then
 		GameTooltip:AddLine(" ")
 		GameTooltip:AddLine(L["Special Achievements"])
 		for _, achievement in ipairs(specialAchievements) do
@@ -442,7 +445,7 @@ function T:Progression()
 	T.myGUID = UnitGUID("player")
 	T.myFaction = UnitFactionGroup("player")
 
-	T:UpdateAchievementList()
+	T:UpdateProgSettings(true)
 end
 
 local function loadFunc(event, addon)  -- fix
