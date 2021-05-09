@@ -153,6 +153,20 @@ function S:Immersion()
 	hooksecurefunc(ImmersionFrame, "QUEST_PROGRESS", function(self)
 		reskinItemButton(self.TalkBox.Elements.Progress.Buttons)
 	end)
+
+	hooksecurefunc(ImmersionFrame, "ShowItems", function(self)
+		for tooltip in self.Inspector.tooltipFramePool:EnumerateActive() do
+			if not tooltip.styled then
+				B.StripTextures(tooltip)
+				local bg = B.SetBD(tooltip)
+				bg:SetPoint("TOPLEFT", 0, 0)
+				bg:SetPoint("BOTTOMRIGHT", 6, 0)
+				tooltip.Icon.Border:SetAlpha(0)
+				tooltip.Hilite:SetOutside(bg, 2, 2)
+				tooltip.styled = true
+			end
+		end
+	end)
 end
 
 S:RegisterSkin("Immersion", S.Immersion)
