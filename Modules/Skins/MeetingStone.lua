@@ -437,15 +437,18 @@ function S:MeetingStone()
 	end
 
 	-- QuestItem
-	local origQuestItemCreate = MSEnv.QuestItem.Create
-	MSEnv.QuestItem.Create = function(self, parent, ...)
-		local button = origQuestItemCreate(self, parent, ...)
-		B.StripTextures(button.Item)
-		button.Item.bg = B.ReskinIcon(button.Item.icon)
-		B.ReskinIconBorder(button.Item.IconBorder)
-		B.Reskin(button.Reward)
+	local QuestItem = MSEnv.QuestItem
+	if QuestItem then
+		local origQuestItemCreate = QuestItem.Create
+		QuestItem.Create = function(self, parent, ...)
+			local button = origQuestItemCreate(self, parent, ...)
+			B.StripTextures(button.Item)
+			button.Item.bg = B.ReskinIcon(button.Item.icon)
+			B.ReskinIconBorder(button.Item.IconBorder)
+			B.Reskin(button.Reward)
 
-		return button
+			return button
+		end
 	end
 
 	-- App
