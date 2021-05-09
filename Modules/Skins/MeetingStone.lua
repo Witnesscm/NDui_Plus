@@ -6,9 +6,8 @@ local cr, cg, cb = DB.r, DB.g, DB.b
 
 local _G = getfenv(0)
 local pairs = pairs
-----------------------------
+
 -- Credit: AddOnSkins_MeetingStone by hokohuang
-----------------------------
 local function strToPath(str)
 	local path = {}
 	for v in string.gmatch(str, "([^\.]+)") do 
@@ -40,7 +39,7 @@ local function MS_StripTextures(self)
 	end
 end
 
-local function reskinButton(bu)
+local function reskinStretchButton(bu)
 	bu:SetHeight(28)
 	B.Reskin(bu)
 	bu.styled = true
@@ -52,17 +51,14 @@ local function reskinMSInput(input)
 	input.bg:SetPoint("TOPLEFT", 3, 0)
 end
 
-local function reskinMSButtons(frame)
-	for i = 1, frame:GetNumChildren() do
-		local child = select(i, frame:GetChildren())
-		if child:IsObjectType("Button") and child.Icon and child.Text then
-			B.StripTextures(child, 11)
-			B.ReskinIcon(child.Icon)
-			child.HL = child:CreateTexture(nil, "HIGHLIGHT")
-			child.HL:SetColorTexture(1, 1, 1, .25)
-			child.HL:SetAllPoints(child.Icon)
-		end
-	end
+local function reskinMSButton(bu)
+	if not bu then return end
+
+	B.StripTextures(bu, 11)
+	B.ReskinIcon(bu.Icon)
+	bu.HL = bu:CreateTexture(nil, "HIGHLIGHT")
+	bu.HL:SetColorTexture(1, 1, 1, .25)
+	bu.HL:SetAllPoints(bu.Icon)
 end
 
 local function reskinPageButton(scroll)
@@ -73,7 +69,7 @@ local function reskinPageButton(scroll)
 	left:SetSize(20,20)
 	B.ReskinArrow(right, "right")
 	right:SetSize(20,20)
-	right:SetPoint('LEFT', left, 'RIGHT', 10,0)
+	right:SetPoint("LEFT", left, "RIGHT", 10,0)
 end
 
 local function reskinButtonHL(button)
@@ -92,7 +88,7 @@ function S:MeetingStone()
 	if not IsAddOnLoaded("MeetingStone") and not IsAddOnLoaded("MeetingStonePlus") then return end
 	if not S.db["MeetingStone"] then return end
 
-	local MS = LibStub('AceAddon-3.0'):GetAddon('MeetingStone')
+	local MS = LibStub("AceAddon-3.0"):GetAddon("MeetingStone")
 	local MSEnv = LibStub("NetEaseEnv-1.0")._NSList[MS.baseName]
 	local GUI = LibStub("NetEaseGUI-2.0")
 
@@ -156,7 +152,7 @@ function S:MeetingStone()
 	-- BrowsePanel
 	local BrowsePanel = MSEnv.BrowsePanel
 	local AdvFilter = BrowsePanel.AdvFilterPanel
-	AdvFilter:SetPoint('TOPLEFT', MSEnv.MainPanel, 'TOPRIGHT', 3, -30)
+	AdvFilter:SetPoint("TOPLEFT", MSEnv.MainPanel, "TOPRIGHT", 3, -30)
 
 	for i = 1, AdvFilter:GetNumChildren() do
 		local child = select(i, AdvFilter:GetChildren())
@@ -196,15 +192,19 @@ function S:MeetingStone()
 	select(1, CreatePanel:GetChildren()):Hide()
 	B.ReskinCheck(CreatePanel.PrivateGroup)
 
-	local infoBG = B.CreateBDFrame(CreatePanel.InfoWidget, .25)
-	infoBG:SetPoint("TOPLEFT", C.mult, C.mult)
-	infoBG:SetPoint("BOTTOMRIGHT", -C.mult, -C.mult)
-	CreatePanel.InfoWidget.Background:SetAlpha(0)
+	local InfoWidget = CreatePanel.InfoWidget
+	InfoWidget.bg = B.CreateBDFrame(InfoWidget, .25)
+	InfoWidget.bg:SetPoint("TOPLEFT", C.mult, C.mult)
+	InfoWidget.bg:SetPoint("BOTTOMRIGHT", -C.mult, -C.mult)
+	InfoWidget.Background:SetAlpha(0)
 
-	B.CreateBDFrame(CreatePanel.MemberWidget, .25)
-	CreatePanel.MemberWidget:DisableDrawLayer("BACKGROUND")
-	B.CreateBDFrame(CreatePanel.MiscWidget, .25)
-	CreatePanel.MiscWidget:DisableDrawLayer("BACKGROUND")
+	for _, key in pairs({"MemberWidget", "MiscWidget"}) do
+		local panel = CreatePanel[key]
+		if panel then
+			B.CreateBDFrame(panel, .25)
+			panel:DisableDrawLayer("BACKGROUND")
+		end
+	end
 
 	local CreateWidget = CreatePanel.CreateWidget
 	for i = 1, CreateWidget:GetNumChildren() do
@@ -225,7 +225,7 @@ function S:MeetingStone()
 	for _, v in pairs(StretchButtons) do
 		local button = getValue(v, MSEnv)
 		if button then
-			reskinButton(button)
+			reskinStretchButton(button)
 		end
 	end
 
@@ -250,7 +250,7 @@ function S:MeetingStone()
 	end
 
 	-- DropMenu
-	local DropMenu = GUI:GetClass('DropMenu')
+	local DropMenu = GUI:GetClass("DropMenu")
 	hooksecurefunc(DropMenu, "Open", function(self, level, ...)
 		level = level or 1
 		local menu = self.menuList[level]
@@ -263,14 +263,14 @@ function S:MeetingStone()
 		end
 	end)
 
-	local DropMenuItem = GUI:GetClass('DropMenuItem')
+	local DropMenuItem = GUI:GetClass("DropMenuItem")
 	hooksecurefunc(DropMenuItem, "SetHasArrow", function(self)
 		B.SetupArrow(self.Arrow, "right")
 		self.Arrow:SetSize(14, 14)
 	end)
 
 	-- Tab
-	local TabView = GUI:GetClass('TabView')
+	local TabView = GUI:GetClass("TabView")
 	hooksecurefunc(TabView, "UpdateItems", function(self)
 		for i = 1, self:GetItemCount() do
 			local tab = self:GetButton(i)
@@ -284,7 +284,7 @@ function S:MeetingStone()
 	-- GridView
 	for _, v in pairs(GridViews) do
 		local grid = getValue(v, MSEnv)
-		if grid and not grid.styled then  
+		if grid then  
 			for _, button in pairs(grid.sortButtons) do
 				B.StripTextures(button, 0)
 				button.Arrow:SetAlpha(1)
@@ -293,11 +293,10 @@ function S:MeetingStone()
 				bg:SetPoint("BOTTOMRIGHT", -C.mult, -C.mult)
 			end
 			B.ReskinScroll(grid:GetScrollBar())
-			grid.styled = true
 		end
 	end
 
-	local ListView = GUI:GetClass('ListView')
+	local ListView = GUI:GetClass("ListView")
 	hooksecurefunc(ListView, "UpdateItems", function(self)
 		for i = 1, #self.buttons do
 			local button = self:GetButton(i)
@@ -330,47 +329,160 @@ function S:MeetingStone()
 	end
 
 	-- Tooltip
-	local Tooltip = GUI:GetClass('Tooltip')
+	local Tooltip = GUI:GetClass("Tooltip")
 	P.ReskinTooltip(Tooltip:GetGlobalTooltip())
 	P.ReskinTooltip(MSEnv.MainPanel.GameTooltip)
 
 	-- DataBroker
-	local BrokerPanel = MSEnv.DataBroker.BrokerPanel
-	local BrokerIcon = MSEnv.DataBroker.BrokerIcon
-	BrokerPanel:SetBackdrop(nil)
-	BrokerPanel:SetSize(174, 30)
-	B.SetBD(BrokerPanel, nil, 0, 0, 0, 0)
-	BrokerIcon:SetPoint('LEFT', 8, 0)
+	local DataBroker = MSEnv.DataBroker
+	DataBroker.BrokerPanel:SetBackdrop(nil)
+	DataBroker.BrokerPanel:SetSize(174, 30)
+	B.SetBD(DataBroker.BrokerPanel, nil, 0, 0, 0, 0)
+	DataBroker.BrokerIcon:SetPoint("LEFT", 8, 0)
 
 	-- Misc
 	if MSEnv.ADDON_REGIONSUPPORT then
-		local MallPanel = MS:GetModule('MallPanel')
-		B.Reskin(MallPanel.PurchaseButton)
-		reskinMSButtons(MallPanel)
+		local MallPanel = MS:GetModule("MallPanel", true)
+		if MallPanel then
+			B.Reskin(MallPanel.PurchaseButton)
 
-		local RewardPanel = MS:GetModule('RewardPanel')
-		B.Reskin(RewardPanel.ConfirmButton)
-		RewardPanel.InputBox:DisableDrawLayer("BACKGROUND")
-		B.ReskinInput(RewardPanel.InputBox)
+			for i = 1, MallPanel:GetNumChildren() do
+				local child = select(i, MallPanel:GetChildren())
+				if child:IsObjectType("Button") and child.Icon and child.Text then
+					reskinMSButton(child)
+				end
+			end
+		end
 
-		B.StripTextures(MSEnv.ActivitiesParent)
-		reskinMSButtons(MSEnv.ActivitiesParent)
-		B.ReskinScroll(MSEnv.ActivitiesSummary.Summary.ScrollBar)
+		local RewardPanel = MS:GetModule("RewardPanel", true)
+		if RewardPanel then
+			B.Reskin(RewardPanel.ConfirmButton)
+			RewardPanel.InputBox:DisableDrawLayer("BACKGROUND")
+			B.ReskinInput(RewardPanel.InputBox)
+		end
 
-		local WalkthroughPanel = MS:GetModule('WalkthroughPanel', true)
+		local WalkthroughPanel = MS:GetModule("WalkthroughPanel", true)
 		if WalkthroughPanel then
 			B.ReskinScroll(WalkthroughPanel.SummaryHtml.ScrollBar)
 		end
+
+		local ActivitiesSummary = MSEnv.ActivitiesSummary
+		if ActivitiesSummary then
+			B.StripTextures(ActivitiesSummary)
+			B.CreateBDFrame(ActivitiesSummary.Background, .25)
+			reskinMSButton(ActivitiesSummary.GiftButton)
+			reskinMSButton(ActivitiesSummary.MemberButton)
+			reskinMSButton(ActivitiesSummary.LeaderButton)
+
+			local Summary = ActivitiesSummary.Summary
+			B.ReskinScroll(Summary.ScrollBar)
+			local SummaryWidget = Summary:GetParent()
+			if SummaryWidget then
+				B.CreateBDFrame(SummaryWidget, .25)
+			end
+		end
+
+		local ActivitiesParent = MSEnv.ActivitiesParent
+		if ActivitiesParent then
+			B.StripTextures(MSEnv.ActivitiesParent)
+			reskinMSButton(ActivitiesParent.ScoreButton)
+			reskinMSButton(ActivitiesParent.PlayerInfoButton)
+		end
+
+		for _, key in pairs({"QuestPanel", "QuestPanel2"}) do
+			local QuestPanel = MSEnv[key]
+			if QuestPanel then
+				local Body = QuestPanel.Body
+				if Body then
+					B.StripTextures(Body)
+
+					for _, key in pairs({"Refresh", "Join", "Ranking"}) do
+						local bu = Body[key]
+						if bu then
+							B.Reskin(bu)
+						end
+					end
+				end
+
+				local Summary = QuestPanel.Summary
+				if Summary then
+					B.StripTextures(Summary)
+					B.CreateBDFrame(Summary, .25)
+
+					for i = 1, Summary:GetNumChildren() do
+						local child = select(i, Summary:GetChildren())
+						if child.ScrollBar then
+							B.ReskinScroll(child.ScrollBar)
+							break
+						end
+					end
+				end
+
+				local Quests = QuestPanel.Quests
+				if Quests then
+					Quests:SetItemSpacing(1)
+					Quests:SetItemHeight(50)
+					B.ReskinScroll(Quests:GetScrollBar())
+
+					hooksecurefunc(Quests, "UpdateItemPosition", function(self, i)
+						if i == 1 then
+							local button = self:GetButton(i)
+							button:SetPoint("TOPLEFT", 0, -4)
+							button:SetPoint("TOPRIGHT",  0, -4)
+						end
+					end)
+				end
+			end
+		end
+	end
+
+	-- QuestItem
+	local origQuestItemCreate = MSEnv.QuestItem.Create
+	MSEnv.QuestItem.Create = function(self, parent, ...)
+		local button = origQuestItemCreate(self, parent, ...)
+		B.StripTextures(button.Item)
+		button.Item.bg = B.ReskinIcon(button.Item.icon)
+		B.ReskinIconBorder(button.Item.IconBorder)
+		B.Reskin(button.Reward)
+
+		return button
 	end
 
 	-- App
-	B.StripTextures(MSEnv.AppParent)
-	reskinPageButton(MSEnv.AppFollowQueryPanel.QueryList.ScrollBar)
-	reskinPageButton(MSEnv.AppFollowPanel.FollowList.ScrollBar)
+	if MSEnv.AppParent then
+		B.StripTextures(MSEnv.AppParent)
+		reskinPageButton(MSEnv.AppFollowQueryPanel.QueryList.ScrollBar)
+		reskinPageButton(MSEnv.AppFollowPanel.FollowList.ScrollBar)
+	end
+
+	-- PlayerInfoDialog
+	local PlayerInfoDialog = MSEnv.PlayerInfoDialog
+	if PlayerInfoDialog then
+		for i = 1, PlayerInfoDialog:GetNumChildren() do
+			local child = select(i, PlayerInfoDialog:GetChildren())
+			local objType = child:GetObjectType()
+			if objType == "Frame" then
+				B.StripTextures(child)
+			elseif objType == "Button" and child.Text then
+				B.Reskin(child)
+			end
+		end
+
+		B.StripTextures(PlayerInfoDialog)
+		B.SetBD(PlayerInfoDialog)
+		B.ReskinClose(PlayerInfoDialog.CloseButton)
+
+		for _, input in PlayerInfoDialog:IterateInputBoxes() do
+			input:DisableDrawLayer("BACKGROUND")
+			B.ReskinInput(input)
+		end
+	end
 
 	-- MeetingStonePlus
-	if MeetingStone_QuickJoin then
-		B.ReskinCheck(MeetingStone_QuickJoin)
+	if MS.baseName == "MeetingStonePlus" then
+		if MeetingStone_QuickJoin then
+			B.ReskinCheck(MeetingStone_QuickJoin)
+		end
 
 		for i = 1, AdvFilter.Inset:GetNumChildren() do
 			local child = select(i, AdvFilter.Inset:GetChildren())
@@ -392,7 +504,7 @@ function S:MeetingStone()
 		for i = 1, ManagerPanel:GetNumChildren() do
 			local child = select(i, ManagerPanel:GetChildren())
 			if child:IsObjectType("Button") and child.Icon and child.Text and not child.styled then
-				reskinButton(child)
+				reskinStretchButton(child)
 				child:HookScript("PostClick", reskinALFrame)
 			end
 		end
