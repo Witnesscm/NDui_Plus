@@ -207,7 +207,7 @@ do
 			if framePortrait then framePortrait:SetAlpha(0) end
 		end
 
-		local closeButton = self.CloseButton or (frameName and _G[frameName.."CloseButton"])
+		local closeButton = self.CloseButton or (frameName and _G[frameName.."CloseButton"]) or self.Close
 		if closeButton then B.ReskinClose(closeButton) end
 
 		return bg
