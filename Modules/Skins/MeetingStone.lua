@@ -482,10 +482,8 @@ function S:MeetingStone()
 	end
 
 	-- MeetingStonePlus
-	if MS.baseName == "MeetingStonePlus" then
-		if MeetingStone_QuickJoin then
-			B.ReskinCheck(MeetingStone_QuickJoin)
-		end
+	if MeetingStone_QuickJoin then
+		B.ReskinCheck(MeetingStone_QuickJoin)
 
 		for i = 1, AdvFilter.Inset:GetNumChildren() do
 			local child = select(i, AdvFilter.Inset:GetChildren())
