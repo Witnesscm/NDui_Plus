@@ -118,7 +118,13 @@ function S:tdBattlePetScript()
 
 	local ScriptList = MainPanel.ScriptList
 	B.ReskinScroll(ScriptList.scrollBar)
-	
+	local thumb = ScriptList.scrollBar.thumbTexture
+	thumb:SetWidth(16)
+	thumb.bg = B.CreateBDFrame(thumb, 0, true)
+	thumb.bg:SetPoint("TOPLEFT", thumb, 0, -2)
+	thumb.bg:SetPoint("BOTTOMRIGHT", thumb, 0, 4)
+	ScriptList.scrollBar.thumb = thumb
+
 	local ListView = GUI:GetClass('ListView')
 	hooksecurefunc(ListView, "UpdateItems", reskinView)
 
