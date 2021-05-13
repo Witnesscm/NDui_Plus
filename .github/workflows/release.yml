@@ -3,7 +3,7 @@ name: Package and build release versions
 on:
   push:
     tags:
-      - '[0-9]+.[0-9]+.[0-9]'
+      - '[0-9]+.[0-9]+.[0-9]+'
 
 
 jobs:
