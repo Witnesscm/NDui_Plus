@@ -10,7 +10,7 @@ local pairs = pairs
 -- Credit: AddOnSkins_MeetingStone by hokohuang
 local function strToPath(str)
 	local path = {}
-	for v in string.gmatch(str, "([^\.]+)") do 
+	for v in string.gmatch(str, "([^%.]+)") do 
 		table.insert(path, v)
 	end
 	return path
@@ -260,6 +260,7 @@ function S:MeetingStone()
 			if scrollBar then
 				B.ReskinScroll(scrollBar)
 			end
+			menu.styled = true
 		end
 	end)
 
@@ -357,13 +358,30 @@ function S:MeetingStone()
 		local RewardPanel = MS:GetModule("RewardPanel", true)
 		if RewardPanel then
 			B.Reskin(RewardPanel.ConfirmButton)
-			RewardPanel.InputBox:DisableDrawLayer("BACKGROUND")
-			B.ReskinInput(RewardPanel.InputBox)
+			reskinMSInput(RewardPanel.InputBox)
 		end
 
 		local WalkthroughPanel = MS:GetModule("WalkthroughPanel", true)
 		if WalkthroughPanel then
-			B.ReskinScroll(WalkthroughPanel.SummaryHtml.ScrollBar)
+			for _, key in pairs({"CategoryList", "SummaryHtml"}) do
+				local widget = WalkthroughPanel[key] and WalkthroughPanel[key]:GetParent()
+				if widget then
+					B.StripTextures(widget)
+					B.CreateBDFrame(widget, .25)
+
+					for i = 1, widget:GetNumChildren() do
+						local child = select(i, widget:GetChildren())
+						if child.layoutType and child.layoutType == "InsetFrameTemplate" then
+							B.StripTextures(child)
+						end
+					end
+				end
+
+				local scrollBar = WalkthroughPanel[key] and WalkthroughPanel[key].ScrollBar
+				if scrollBar then
+					B.ReskinScroll(scrollBar)
+				end
+			end
 		end
 
 		local ActivitiesSummary = MSEnv.ActivitiesSummary
@@ -376,10 +394,7 @@ function S:MeetingStone()
 
 			local Summary = ActivitiesSummary.Summary
 			B.ReskinScroll(Summary.ScrollBar)
-			local SummaryWidget = Summary:GetParent()
-			if SummaryWidget then
-				B.CreateBDFrame(SummaryWidget, .25)
-			end
+			B.CreateBDFrame(Summary:GetParent(), .25)
 		end
 
 		local ActivitiesParent = MSEnv.ActivitiesParent
@@ -476,9 +491,44 @@ function S:MeetingStone()
 		B.ReskinClose(PlayerInfoDialog.CloseButton)
 
 		for _, input in PlayerInfoDialog:IterateInputBoxes() do
-			input:DisableDrawLayer("BACKGROUND")
-			B.ReskinInput(input)
+			reskinMSInput(input)
 		end
+	end
+
+	-- Feedback
+	local Feedback = GUI.Feedback
+	if Feedback then
+		Feedback:HookScript("OnShow", function(self)
+			if not self.styled then
+				P.ReskinFrame(self)
+				B.Reskin(self.SendButton)
+				reskinMSInput(self.Text)
+				B.CreateMF(self)
+
+				self.styled = true
+			end
+		end)
+	end
+
+	-- Blocker
+	for _, blocker in ipairs(MSEnv.MainPanel.blockers) do
+		blocker:HookScript("OnShow", function(self)
+			if not self.styled then
+				for i = 1, self:GetNumChildren() do
+					local child = select(i, self:GetChildren())
+					if child:IsObjectType("Button") and child.Text then
+						B.Reskin(child)
+					elseif child.ScrollBar then
+						B.ReskinScroll(child.ScrollBar)
+					elseif child.btnKnow and child.Header then
+						B.Reskin(child.btnKnow)
+						select(2, child:GetRegions()):SetTextColor(1, 1, 1)
+					end
+				end
+
+				self.styled = true
+			end
+		end)
 	end
 
 	-- MeetingStonePlus
