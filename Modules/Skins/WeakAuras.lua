@@ -6,6 +6,8 @@ local _G = getfenv(0)
 local select, pairs, type = select, pairs, type
 
 local function reskinChildButton(frame)
+	if not frame then return end
+
 	for i = 1, frame:GetNumChildren() do
 		local child = select(i, frame:GetChildren())
 		if child:GetObjectType() == 'Button' and child.Text then
@@ -112,14 +114,6 @@ local function ReskinWAOptions()
 	B.SetBD(snippets)
 	reskinChildButton(snippets)
 
-	-- WeakAurasTemplates
-	hooksecurefunc(WeakAuras, "OpenTriggerTemplate", function()
-		if frame.newView and not frame.newView.styled then
-			reskinChildButton(frame.newView.frame)
-			frame.newView.styled = true
-		end
-	end)
-
 	-- MoverSizer
 	local moversizer = frame.moversizer
 	B.CreateBD(moversizer, 0)
@@ -169,10 +163,9 @@ function S:WeakAuras()
 	if not WeakAuras then return end
 
 	-- WeakAurasTooltip
-	local tooltipAnchor = _G.WeakAurasTooltipImportButton:GetParent()
-	reskinChildButton(tooltipAnchor)
-	B.ReskinRadio(WeakAurasTooltipRadioButtonCopy)
-	B.ReskinRadio(WeakAurasTooltipRadioButtonUpdate)
+	reskinChildButton(_G.WeakAurasTooltipImportButton:GetParent())
+	B.ReskinRadio(_G.WeakAurasTooltipRadioButtonCopy)
+	B.ReskinRadio(_G.WeakAurasTooltipRadioButtonUpdate)
 
 	local index = 1
 	local check = _G["WeakAurasTooltipCheckButton"..index]
@@ -210,9 +203,27 @@ function S:WeakAuras()
 	end
 
 	-- WeakAurasOptions
+	local count = 0
 	local function loadFunc(event, addon)
 		if addon == "WeakAurasOptions" then
 			hooksecurefunc(WeakAuras, "ShowOptions", ReskinWAOptions)
+			count = count + 1
+		end
+
+		if addon == "WeakAurasTemplates" then
+			if WeakAuras.CreateTemplateView then
+				local origCreateTemplateView = WeakAuras.CreateTemplateView
+				WeakAuras.CreateTemplateView = function(...)
+					local group = origCreateTemplateView(...)
+					reskinChildButton(group.frame)
+
+					return group
+				end
+			end
+			count = count + 1
+		end
+
+		if count >= 2 then
 			B:UnregisterEvent(event, loadFunc)
 		end
 	end
