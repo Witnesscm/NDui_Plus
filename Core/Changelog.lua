@@ -2,6 +2,9 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 
 P.Changelog = [[
+v1.3.11
+[美化] 修复WeakAurasOptions报错
+
 v1.3.10
 [报错] 修复一个加载错误
 
