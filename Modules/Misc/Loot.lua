@@ -15,9 +15,9 @@ function LT:OnLogin()
 	if not C.db["Skins"]["Loot"] then P:Print("需要启用NDui拾取框美化") return end
 
 	for i = 1, LootFrame:GetNumRegions() do
-    	local region = select(i, LootFrame:GetRegions())
+		local region = select(i, LootFrame:GetRegions())
 		if region.GetText and region:GetText() == ITEMS then
-	    	region:Hide()
+			region:Hide()
 		end
 	end
 
@@ -133,7 +133,7 @@ function LT:OnLogin()
 		end
 		for i = 1, GetNumLootItems() do
 			-- local link
-			-- if(LootSlotHasItem(i)) then     --判断，只发送物品
+			-- if(LootSlotHasItem(i)) then	 --判断，只发送物品
 				-- link = GetLootSlotLink(i)
 			-- else
 				-- _, link = GetLootSlotInfo(i)

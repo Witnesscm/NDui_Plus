@@ -51,24 +51,26 @@ function S:TradeLog()
 		reskinButton(_G["TradeLogRecipientItem"..i.."ItemButton"])
 	end
 
-	local function reskinTBT()
-		B.Reskin(TradeFrameTargetWhisperButton)
-		B.Reskin(TradeFrameTargetEmote1Button)
-		B.Reskin(TradeFrameTargetEmote2Button)
+	local function reskinTBT()	
+		for _, button in ipairs({"TradeFrameTargetWhisperButton", "TradeFrameTargetEmote1Button", "TradeFrameTargetEmote2Button"}) do
+			local bu = _G[button]
+			if bu then
+				B.Reskin(bu)
+			end
+		end
+
+		for i = 1, 3 do
+			local bu = _G["TradeFramePlayerSpell"..i.."Button"]
+			if bu then
+				B.ReskinIcon(bu:GetNormalTexture())
+				bu:GetHighlightTexture():SetColorTexture(1, 1, 1, .25)
+			end
+		end
 
 		for i = 1, TradeFrame:GetNumRegions() do
 			local region = select(i, TradeFrame:GetRegions())
 			if region:GetObjectType() == "FontString" and region:GetName() == nil then
 				region:Hide()
-			end
-		end
-
-		local buttons = {"TradeFramePlayerSpell1Button", "TradeFramePlayerSpell2Button", "TradeFramePlayerSpell3Button"}
-		for _, button in next, buttons do
-			local bu = _G[button]
-			if bu then
-				B.ReskinIcon(bu:GetNormalTexture())
-				bu:GetHighlightTexture():SetColorTexture(1, 1, 1, .25)
 			end
 		end
 	end

@@ -179,10 +179,10 @@ function CH:ChatEmote()
 		end 
 	end)
 
-    local function TextToEmote(text)
-        text = text:gsub("%{.-%}", ReplaceEmote)
-        return text
-    end
+	local function TextToEmote(text)
+		text = text:gsub("%{.-%}", ReplaceEmote)
+		return text
+	end
 
 	local function findChatBubble()
 		for _, chatBubble in pairs(C_ChatBubbles.GetAllChatBubbles()) do

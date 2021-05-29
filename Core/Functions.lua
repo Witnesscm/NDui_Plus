@@ -267,11 +267,6 @@ do
 			self.bg:SetInside(self)
 			self.bg:SetFrameLevel(self:GetFrameLevel())
 
-			local scrollBar = self.ScrollBar or self.scrollBar
-			if scrollBar then
-				B.ReskinScroll(scrollBar)
-			end
-
 			self.tipStyled = true
 		end
 	end
@@ -297,14 +292,38 @@ do
 	end
 end
 
+-- Misc
 do
+	function P:AnchorTooltip()
+		if self:GetRight() >= (GetScreenWidth() / 2) then
+			GameTooltip:SetOwner(self, 'ANCHOR_LEFT')
+		else
+			GameTooltip:SetOwner(self, 'ANCHOR_RIGHT')
+		end
+	end
+
+	function P.NameGenerator(name)
+		local index = 0
+		return function()
+			index = index + 1
+			return name .. index
+		end
+	end
+
+	function P.LeftButtonTip(text)
+		return P.LEFT_MOUSE_BUTTON .. text, 1, 1, 1
+	end
+
+	function P.RightButtonTip(text)
+		return P.RIGHT_MOUSE_BUTTON .. text, 1, 1, 1
+	end
+
 	local t, d = "|T%s%s|t", ""
 	function P:TextureString(texture, data)
 		return format(t, texture, data or d)
 	end
 end
 
--- API
 do
 	function P:RawHook(object, method, func)
 		if type(object) ~= "table" then
