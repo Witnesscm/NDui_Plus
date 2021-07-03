@@ -14,7 +14,7 @@ function S:ButtonForge()
 		if event == "BUTTON_ALLOCATED" then
 			local bu = _G[button]
 			local icon = _G[button.."Icon"]
-			Bar:StyleActionButton(bu, S.BarConfig)
+			Bar:StyleActionButton(bu, P.BarConfig)
 			icon:SetTexCoord(unpack(DB.TexCoord))
 			icon.SetTexCoord = B.Dummy
 		end
@@ -32,7 +32,7 @@ function S:ButtonForge()
 	for _, button in next, buttons do
 		local bu = _G[button]
 		if bu then
-			Bar:StyleActionButton(bu, S.BarConfig)
+			Bar:StyleActionButton(bu, P.BarConfig)
 		end
 	end
 

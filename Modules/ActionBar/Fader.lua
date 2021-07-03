@@ -156,7 +156,7 @@ function AB:UpdateFaderState()
 	if not AB.isHooked then
 		for _, button in ipairs(Bar.buttons) do
 			button:HookScript("OnEnter", AB.Button_OnEnter)
-			button:HookScript("OnLeave", AB.Button_OnLeave)	
+			button:HookScript("OnLeave", AB.Button_OnLeave)
 		end
 		AB.isHooked = true
 	end

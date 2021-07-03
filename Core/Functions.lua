@@ -8,7 +8,7 @@ local select, pairs, type = select, pairs, type
 -- Math
 do
 	-- AceTimer
-	LibStub("AceTimer-3.0"):Embed(P)
+	_G.LibStub("AceTimer-3.0"):Embed(P)
 
 	function P:WaitFunc(elapse)
 		local i = 1
