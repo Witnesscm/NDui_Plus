@@ -1,5 +1,6 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
 	<Script file="Misc.lua"/>
+	<Script file="AFK.lua"/>
 	<Script file="Loot.lua"/>
 	<Script file="CopyMog.lua"/>
 	<Script file="LootSpecManager.lua"/>
