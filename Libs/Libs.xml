@@ -3,4 +3,6 @@
 	<Script file="CallbackHandler-1.0\CallbackHandler-1.0.lua"/>
 	<Script file="LibSharedMedia-3.0\LibSharedMedia-3.0.lua"/>
 	<Script file="AceTimer-3.0\AceTimer-3.0.lua"/>
+	<Script file="LibAnim\LibAnim.lua"/>
+	<Script file="LibShowUIPanel-1.0\LibShowUIPanel-1.0.lua"/>
 </Ui>
