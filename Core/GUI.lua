@@ -32,21 +32,6 @@ local function setupUFsRole()
 	G:SetupUFsRole(guiPage[2])
 end
 
-local function updateABFaderAlpha()
-	local AB = P:GetModule("ActionBar")
-	if not AB.fadeParent then return end
-
-	AB.fadeParent:SetAlpha(AB.db["Alpha"])
-end
-
-local function updateABFaderSettings()
-	local AB = P:GetModule("ActionBar")
-	if not AB.fadeParent then return end
-
-	AB:UpdateFaderSettings()
-	AB.fadeParent:SetAlpha(AB.db["Alpha"])
-end
-
 local function updateABFaderState()
 	local AB = P:GetModule("ActionBar")
 	if not AB.fadeParent then return end
@@ -89,6 +74,10 @@ end
 
 local function updateAchievementList()
 	P:GetModule("Tooltip"):UpdateProgSettings(true)
+end
+
+local function updateAFKMode()
+	P:GetModule("AFK"):Toggle()
 end
 
 local function setupTexStyle()
@@ -189,7 +178,7 @@ G.OptionList = { -- type, key, value, name, horizon, data, callback, tooltip, sc
 		{1, "Tooltip", "Progression", HeaderTag..L["Progression"].."*", nil, nil, nil, L["ProgressionTip"]},
 		{1, "Tooltip", "ShowByShift", L["ShowByShift"].."*", true},
 		{1, "Tooltip", "ProgRaids", L["Raids"].."*", nil, nil, updateProgression},
-		{1, "Tooltip", "ProgDungeons", L["MythicDungeons"].."*", true, nil, updateProgression},
+		{1, "Tooltip", "ProgDungeons", L["MythicDungeons"].."*", true},
 		{1, "Tooltip", "ProgAchievement", L["Special Achievements"].."*", nil, nil, updateProgression},
 		{1, "Tooltip", "KeystoneMaster", L["Keystone Master Achievement"].."*", nil, nil, updateAchievementList},
 		{2, "Tooltip", "AchievementList", L["AchievementList"].."*", true, nil, updateAchievementList, L["AchievementListTip"]},
@@ -201,8 +190,8 @@ G.OptionList = { -- type, key, value, name, horizon, data, callback, tooltip, sc
 		{4, "Loot", "AnnounceRarity", L["Rarity Threshold"].."*", true, G.Quality},
 		{},
 		{1, "Misc", "QuestHelper", L["QuestHelper"], nil, nil, nil, L["QuestHelperTip"]},
-		{1, "Misc", "PauseToSlash", L["PauseToSlash"], true, nil, nil, L["PauseToSlashTip"]},
-		{1, "Misc", "HideTalentAlert", L["HideTalentAlert"], nil, nil, nil, L["HideTalentAlertTip"]},
+		{1, "Misc", "HideTalentAlert", L["HideTalentAlert"], true, nil, nil, L["HideTalentAlertTip"]},
+		{1, "AFK", "Enable", L["AFK Mode"].."*", nil, nil, updateAFKMode},
 		{},
 		{1, "Misc", "LootSpecManager", HeaderTag..L["LootSpecManagerEnable"], nil, nil, nil, L["LootSpecManagerTip"]},
 		{},

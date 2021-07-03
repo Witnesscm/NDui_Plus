@@ -1,4 +1,4 @@
-local _, ns = ...
+local addonName, ns = ...
 local B, C, L, DB, P = unpack(ns)
 
 local pairs, type, pcall= pairs, type, pcall
@@ -73,6 +73,9 @@ P.DefaultSettings = {
 		AnnounceTitle = true,
 		AnnounceRarity = 1,
 	},
+	AFK = {
+		Enable = true,
+	},
 	Skins = {
 		Ace3 = true,
 		InboxMailBag = true,
@@ -102,7 +105,6 @@ P.DefaultSettings = {
 	Misc = {
 		LootSpecManager = false,
 		TalentManager = true,
-		PauseToSlash = true,
 		QuestHelper = true,
 		CopyMog = true,
 		ShowHideVisual = true,
@@ -165,10 +167,10 @@ function P:ThrowError(err, message)
 
 	err = format("NDui_Plus: %s Error\n%s", message, err)
 
-	if BaudErrorFrameHandler then
-		BaudErrorFrameHandler(err)
+	if _G.BaudErrorFrameHandler then
+		_G.BaudErrorFrameHandler(err)
 	else
-		ScriptErrorsFrame:OnError(err, false, false)
+		_G.ScriptErrorsFrame:OnError(err, false, false)
 	end
 end
 
@@ -196,6 +198,22 @@ function P:VersionCheck_Compare(new, old)
 	end
 end
 
+function P:Notifications()
+	local frame = CreateFrame("Frame", nil, UIParent)
+	frame:SetPoint("CENTER")
+	frame:SetSize(300, 150)
+	frame:SetFrameStrata("HIGH")
+	B.CreateMF(frame)
+	B.SetBD(frame)
+
+	local close = B.CreateButton(frame, 16, 16, true, DB.closeTex)
+	close:SetPoint("TOPRIGHT", -10, -10)
+	close:SetScript("OnClick", function() frame:Hide() end)
+
+	B.CreateFS(frame, 18, addonName, true, "TOP", 0, -10)
+	B.CreateFS(frame, 16, format(L["Version Check"], P.SupportVersion), false, "CENTER")
+end
+
 -- Modules
 function P:RegisterModule(name)
 	if modules[name] then P:Print("Module <"..name.."> has been registered.") return end
@@ -217,6 +235,7 @@ B:RegisterEvent("PLAYER_LOGIN", function()
 	local status = P:VersionCheck_Compare(DB.Version, P.SupportVersion)
 	if status == "IsOld" then
 		P:Print(format(L["Version Check"], P.SupportVersion))
+		P:Notifications()
 		return
 	end
 
