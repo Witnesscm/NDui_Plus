@@ -108,19 +108,9 @@ local function GenerateSource(sourceID, sourceType, itemModID, itemQuality)
     return sourceTextColorized
 end
 
-local function GetIllusionSource(sourceID)
-	local _, name = C_TransmogCollection.GetIllusionSourceInfo(sourceID)
-	local sourceText = ""
+local function GetIllusionSource(illusionID)
+	local name, _, sourceText = C_TransmogCollection.GetIllusionStrings(illusionID)
 	name = name and format(TRANSMOGRIFIED_ENCHANT, name)
-
-	local illusionList = C_TransmogCollection.GetIllusions()
-	for i = 1, #illusionList do
-		local info = illusionList[i]
-		if info.sourceID == sourceID and info.sourceText then
-			sourceText = info.sourceText
-			break
-		end
-	end
 
     return name, sourceText
 end
@@ -132,46 +122,68 @@ local function GetSourceInfo(sourceID)
 	return sourceInfo.isHideVisual, sourceInfo.sourceType, sourceInfo.itemModID, sourceInfo.itemID, sourceInfo.name, sourceInfo.quality
 end
 
+local function GetTransmogInfo(slotID, sourceID)
+	local isHideVisual, sourceType, itemModID, itemID, itemName, itemQuality = GetSourceInfo(sourceID)
+	if not isHideVisual or M.db["ShowHideVisual"] then
+		local sourceTextColorized = GenerateSource(sourceID, sourceType, itemModID, itemQuality)
+		return {["SlotID"] = slotID, ["Name"] = itemName, ["Source"] = sourceTextColorized}
+	end
+end
+
 local function getInspectSources()
 	wipe(ItemList)
 
-	local appearanceSources, mainHandEnchant, offHandEnchant = C_TransmogCollection.GetInspectSources()
-	if not appearanceSources then return end
+	local mainHandEnchant, offHandEnchant
+	local transmogList = C_TransmogCollection.GetInspectItemTransmogInfoList()
 
-	for i = 1, #appearanceSources do
-		local sourceID = appearanceSources[i]
-		if sourceID and sourceID ~= NO_TRANSMOG_SOURCE_ID then
-			local isHideVisual, sourceType, itemModID, itemID, itemName, itemQuality = GetSourceInfo(sourceID)
-			if not isHideVisual or M.db["ShowHideVisual"] then
-				local sourceTextColorized = GenerateSource(sourceID, sourceType, itemModID, itemQuality)
-				table.insert(ItemList, {["SlotID"] = i, ["Name"] = itemName, ["Source"] = sourceTextColorized})
+	for slotID, transmogInfo in ipairs(transmogList) do
+		local appearanceID, secondaryAppearanceID, illusionID = transmogInfo.appearanceID, transmogInfo.secondaryAppearanceID, transmogInfo.illusionID
+
+		if appearanceID and appearanceID ~= Constants.Transmog.NoTransmogID then
+			local info = GetTransmogInfo(slotID, appearanceID)
+			if info then
+				table.insert(ItemList, info)
 			end
+		end
+
+		if C_Transmog.CanHaveSecondaryAppearanceForSlotID(slotID) and secondaryAppearanceID > 0 then
+			local info = GetTransmogInfo(slotID, secondaryAppearanceID)
+			if info then
+				table.insert(ItemList, info)
+			end
+		end
+
+		if slotID == 16 then
+			mainHandEnchant = illusionID
+		elseif slotID == 17 then
+			offHandEnchant = illusionID
 		end
 	end
 
 	if not M.db["ShowIllusion"] then return end
 
-	if mainHandEnchant > 0 then
+	if mainHandEnchant and mainHandEnchant > 0 then
 		local illusionName, sourceText = GetIllusionSource(mainHandEnchant)
 		table.insert(ItemList, {["SlotID"] = 16, ["Name"] = illusionName, ["Source"] = sourceText})
 	end
 
-	if offHandEnchant > 0 then
+	if offHandEnchant and offHandEnchant > 0 then
 		local illusionName, sourceText = GetIllusionSource(offHandEnchant)
 		table.insert(ItemList, {["SlotID"] = 17, ["Name"] = illusionName, ["Source"] = sourceText})
 	end
 end
 
-local function GetSlotVisualID(slotId, type)
-	if slotId == 2 or slotId == 18 or (slotId > 10 and slotId < 15) then
+local function GetSlotVisualID(slotID, type, modification)
+	if slotID == 2 or slotID == 18 or (slotID > 10 and slotID < 15) then
 		return -1, -1
 	end
-	local slotName = TransmogUtil.GetSlotName(slotId)
-	local location = TransmogUtil.GetTransmogLocation(slotName, type, Enum.TransmogModification.None)
+	local slotName = TransmogUtil.GetSlotName(slotID)
+	local location = TransmogUtil.GetTransmogLocation(slotName, type, modification)
+
 	local baseSourceID, baseVisualID, appliedSourceID, appliedVisualID, _, _, _, _, _, hideVisual = C_Transmog.GetSlotVisualInfo(location)
 	if ( hideVisual ) then
 		return 0, 0
-	elseif ( appliedSourceID == NO_TRANSMOG_SOURCE_ID ) then
+	elseif ( appliedSourceID == Constants.Transmog.NoTransmogID and modification ~= Enum.TransmogModification.Secondary) then
 		return baseSourceID, baseVisualID
 	else
 		return appliedSourceID, appliedVisualID
@@ -181,26 +193,35 @@ end
 local function getPlayerSources()
 	wipe(ItemList)
 
-	for slotId = 1, 19 do 
-		local appliedSourceID, appliedVisualID = GetSlotVisualID(slotId, Enum.TransmogType.Appearance)
-		if appliedVisualID > 0 and appliedSourceID and appliedSourceID ~= NO_TRANSMOG_SOURCE_ID then
-			local isHideVisual, sourceType, itemModID, itemID, itemName, itemQuality = GetSourceInfo(appliedSourceID)
-			if not isHideVisual or M.db["ShowHideVisual"] then
-				local sourceTextColorized = GenerateSource(appliedSourceID, sourceType, itemModID, itemQuality)
-				table.insert(ItemList, {["SlotID"] = slotId, ["Name"] = itemName, ["Source"] = sourceTextColorized})
+	for slotID = 1, 19 do 
+		local appliedSourceID, appliedVisualID = GetSlotVisualID(slotID, Enum.TransmogType.Appearance, Enum.TransmogModification.Main)
+		if appliedVisualID > 0 and appliedSourceID and appliedSourceID ~= Constants.Transmog.NoTransmogID then
+			local info = GetTransmogInfo(slotID, appliedSourceID)
+			if info then
+				table.insert(ItemList, info)
+			end
+		end
+
+		if C_Transmog.CanHaveSecondaryAppearanceForSlotID(slotID) then
+			local secondarySourceID, secondaryVisualID = GetSlotVisualID(slotID, Enum.TransmogType.Appearance, Enum.TransmogModification.Secondary)
+			if secondaryVisualID > 0 and secondarySourceID and secondarySourceID ~= Constants.Transmog.NoTransmogID and secondarySourceID ~= appliedSourceID then
+				local info = GetTransmogInfo(slotID, secondarySourceID)
+				if info then
+					table.insert(ItemList, info)
+				end
 			end
 		end
 	end
 
 	if not M.db["ShowIllusion"] then return end
 
-	local mainHandEnchant = GetSlotVisualID(16, Enum.TransmogType.Illusion)
+	local mainHandEnchant = GetSlotVisualID(16, Enum.TransmogType.Illusion, Enum.TransmogModification.Main)
 	if mainHandEnchant > 0 then
 		local illusionName, sourceText = GetIllusionSource(mainHandEnchant)
 		table.insert(ItemList, {["SlotID"] = 16, ["Name"] = illusionName, ["Source"] = sourceText})
 	end
 
-	local offHandEnchant = GetSlotVisualID(17, Enum.TransmogType.Illusion)
+	local offHandEnchant = GetSlotVisualID(17, Enum.TransmogType.Illusion, Enum.TransmogModification.Main)
 	if offHandEnchant > 0 then
 		local illusionName, sourceText = GetIllusionSource(offHandEnchant)
 		table.insert(ItemList, {["SlotID"] = 17, ["Name"] = illusionName, ["Source"] = sourceText})
