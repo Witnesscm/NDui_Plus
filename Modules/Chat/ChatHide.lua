@@ -66,11 +66,7 @@ function CH:SetupChat()
 	_G[self:GetName() .. "Tab"]:SetParent(CH.ChatBG)
 end
 
-local isScaling = false
 function CH:UpdateChatSize()
-	if isScaling then return end
-	isScaling = true
-
 	CH.ChatBG:ClearAllPoints()
 	CH.ChatBG:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", chatIn and 0 or -C.db["Chat"]["ChatWidth"] - 28, 30)
 	CH.ChatBG:SetWidth(C.db["Chat"]["ChatWidth"])
@@ -78,8 +74,6 @@ function CH:UpdateChatSize()
 
 	_G.ChatFrame1:ClearAllPoints()
 	_G.ChatFrame1:SetAllPoints(CH.ChatBG)
-
-	isScaling = false
 end
 
 function CH:AutoShow()
@@ -247,7 +241,9 @@ function CH:ChatHide()
 		end
 
 		CH:UpdateChatSize()
-		hooksecurefunc(NCH, "UpdateChatSize", CH.UpdateChatSize)
+		hooksecurefunc("FCF_SavePositionAndDimensions", function()
+			P:Delay(.1, CH.UpdateChatSize)
+		end)
 	end)
 
 	CH:UpdateAutoShow()
