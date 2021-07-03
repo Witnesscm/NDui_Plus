@@ -10,6 +10,7 @@ local compareGUID, loadedComparison
 
 local tiers = {
 	"Castle Nathria",
+	"Sanctum of Domination",
 }
 
 local levels = {
@@ -75,6 +76,14 @@ local locales = {
 	["Shadowlands Keystone Master: Season One"] = {
 		short = L["[ABBR] Shadowlands Keystone Master: Season One"],
 		full = L["Shadowlands Keystone Master: Season One"]
+	},
+	["Shadowlands Keystone Master: Season Two"] = {
+		short = L["[ABBR] Shadowlands Keystone Master: Season Two"],
+		full = L["Shadowlands Keystone Master: Season Two"]
+	},
+	["Sanctum of Domination"] = {
+		short = L["[ABBR] Sanctum of Domination"],
+		full = L["Sanctum of Domination"]
 	}
 }
 
@@ -128,18 +137,68 @@ local raidAchievements = {
 			14454,
 			14458
 		}
+	},
+	["Sanctum of Domination"] = {
+		["Mythic"] = {
+			15139,
+			15143,
+			15147,
+			15155,
+			15151,
+			15159,
+			15163,
+			15167,
+			15172,
+			15176,
+		},
+		["Heroic"] = {
+			15138,
+			15142,
+			15146,
+			15154,
+			15150,
+			15158,
+			15162,
+			15166,
+			15171,
+			15175,
+		},
+		["Normal"] = {
+			15137,
+			15141,
+			15145,
+			15153,
+			15149,
+			15157,
+			15161,
+			15165,
+			15170,
+			15174,
+		},
+		["Raid Finder"] = {
+			15136,
+			15140,
+			15144,
+			15152,
+			15148,
+			15156,
+			15160,
+			15164,
+			15169,
+			15173,
+		}
 	}
 }
 
-local dungeonAchievements = {
-	["The Necrotic Wake"] = 14404,
-	["Plaguefall"] = 14398,
-	["Mists of Tirna Scithe"] = 14395,
-	["Halls of Atonement"] = 14392,
-	["Theater of Pain"] = 14407,
-	["De Other Side"] = 14389,
-	["Spires of Ascension"] = 14401,
-	["Sanguine Depths"] = 14205
+local dungeons = {
+	[375] = "Mists of Tirna Scithe",
+	[376] = "The Necrotic Wake",
+	[377] = "De Other Side",
+	[378] = "Halls of Atonement",
+	[379] = "Plaguefall",
+	[380] = "Sanguine Depths",
+	[381] = "Spires of Ascension",
+	[382] = "Theater of Pain",
 }
 
 local specialAchievements = {}
@@ -151,6 +210,7 @@ function T:UpdateProgSettings(full)
 		wipe(specialAchievements)
 		if T.db["KeystoneMaster"] then
 			tinsert(specialAchievements, {id = 14532, name = "Shadowlands Keystone Master: Season One"})
+			tinsert(specialAchievements, {id = 15078, name = "Shadowlands Keystone Master: Season Two"})
 		end
 
 		for id in gmatch(T.db["AchievementList"], "%S+") do
@@ -243,19 +303,9 @@ function T:UpdateProgression(guid, faction)
 			end
 		end
 	end
-
-	if T.db["ProgDungeons"] then
-		cache[guid].info.mythicDungeons = {}
-		cache[guid].info.mythicDungeons.total = 0
-
-		for name, achievementID in pairs(dungeonAchievements) do
-			cache[guid].info.mythicDungeons[name] = GetBossKillTimes(guid, achievementID)
-			cache[guid].info.mythicDungeons.total = cache[guid].info.mythicDungeons.total + cache[guid].info.mythicDungeons[name]
-		end
-	end
 end
 
-function T:SetProgressionInfo(guid)
+function T:SetProgressionInfo(unit, guid)
 	if not cache[guid] then return end
 
 	local updated = false
@@ -285,7 +335,7 @@ function T:SetProgressionInfo(guid)
 			end
 
 			found = false
-		
+
 			if T.db["ProgRaids"] then
 				for _, tier in ipairs(tiers) do
 					for _, level in ipairs(levels) do
@@ -297,25 +347,6 @@ function T:SetProgressionInfo(guid)
 							found = true
 							break
 						end
-					end
-
-					if found then
-						break
-					end
-				end
-			end
-
-			found = false
-
-			if T.db["ProgDungeons"] then
-				for name, achievementID in pairs(dungeonAchievements) do
-					if strfind(leftTipText, locales[name].short) then
-						local rightTip = _G["GameTooltipTextRight" .. i]
-						leftTip:SetText(locales[name].short .. ":")
-						rightTip:SetText(cache[guid].info.mythicDungeons[name])
-						updated = true
-						found = true
-						break
 					end
 
 					if found then
@@ -360,15 +391,19 @@ function T:SetProgressionInfo(guid)
 		end
 	end
 
-	if T.db["ProgDungeons"] and cache[guid].info.mythicDungeons then
+	local summary = C_PlayerInfo.GetPlayerMythicPlusRatingSummary(unit)
+	local runs = summary and summary.runs
+	if T.db["ProgDungeons"] and runs and next(runs) then
 		GameTooltip:AddLine(" ")
-		GameTooltip:AddLine(L["MythicDungeons"])
-		for name, achievementID in pairs(dungeonAchievements) do
-			local left = format("%s:", locales[name].short)
-			local right = cache[guid].info.mythicDungeons[name]
+		GameTooltip:AddDoubleLine(L["MythicDungeons"], L["Score (Level)"])
+
+		for _, info in ipairs(runs) do
+			local name = dungeons[info.challengeModeID] and locales[dungeons[info.challengeModeID]].short or C_ChallengeMode.GetMapUIInfo(info.challengeModeID)
+			local left = format("%s:", name)
+			local color = C_ChallengeMode.GetSpecificDungeonOverallScoreRarityColor(info.mapScore) or HIGHLIGHT_FONT_COLOR
+			local right = format("%s (%d)", color:WrapTextInColorCode(info.mapScore), info.bestRunLevel)
 			GameTooltip:AddDoubleLine(left, right, .6, .8, 1, 1, 1, 1)
 		end
-		GameTooltip:AddDoubleLine(L["Total"]..":", cache[guid].info.mythicDungeons.total, .6, .8, 1, 1, 1, 1)
 	end
 end
 
@@ -432,7 +467,7 @@ function T:AddProgression()
 		end
 	end
 	
-	T:SetProgressionInfo(guid)
+	T:SetProgressionInfo(unit, guid)
 end
 
 do
