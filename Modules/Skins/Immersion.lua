@@ -162,6 +162,7 @@ function S:Immersion()
 				bg:SetPoint("TOPLEFT", 0, 0)
 				bg:SetPoint("BOTTOMRIGHT", 6, 0)
 				tooltip.Icon.Border:SetAlpha(0)
+				B.ReskinIcon(tooltip.Icon.Texture)
 				tooltip.Hilite:SetOutside(bg, 2, 2)
 				tooltip.styled = true
 			end
