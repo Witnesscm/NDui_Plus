@@ -159,6 +159,6 @@ end
 
 function Handler:Message()
 	for i = 1, 2 do
-		RaidNotice_AddMessage(RaidWarningFrame, MESSAGE, ChatTypeInfo.RAID_WARNING)
+		RaidNotice_AddMessage(RaidWarningFrame, MESSAGE, P.InfoColors)
 	end
 end
