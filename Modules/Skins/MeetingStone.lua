@@ -285,7 +285,7 @@ function S:MeetingStone()
 	-- GridView
 	for _, v in pairs(GridViews) do
 		local grid = getValue(v, MSEnv)
-		if grid then  
+		if grid then
 			for _, button in pairs(grid.sortButtons) do
 				B.StripTextures(button, 0)
 				button.Arrow:SetAlpha(1)

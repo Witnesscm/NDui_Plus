@@ -56,9 +56,9 @@ function M:HideTalentAlert()
 	if not M.db["HideTalentAlert"] then return end
 
 	HelpTip:HideAll(UIParent)
-	P:RawHook("MainMenuMicroButton_AreAlertsEnabled", function()
+	function MainMenuMicroButton_AreAlertsEnabled()
 		return false
-	end)
+	end
 end
 
 M:RegisterMisc("PauseToSlash", M.PauseToSlash)
