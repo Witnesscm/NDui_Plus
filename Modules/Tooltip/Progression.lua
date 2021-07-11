@@ -6,7 +6,7 @@ local NT = B:GetModule("Tooltip")
 -- ElvUI_WindTools, by fang2hou
 ---------------------------------
 local cache = {}
-local compareGUID, loadedComparison
+local compareGUID
 
 local tiers = {
 	"Castle Nathria",
@@ -308,58 +308,7 @@ end
 function T:SetProgressionInfo(unit, guid)
 	if not cache[guid] then return end
 
-	local updated = false
-
-	for i = 2, GameTooltip:NumLines() do
-		local leftTip = _G["GameTooltipTextLeft" .. i]
-		local leftTipText = leftTip:GetText()
-		local found = false
-
-		if leftTipText then
-			if T.db["ProgAchievement"] then
-				for _, achievement in ipairs(specialAchievements) do
-					local name = achievement.name
-					local nameStr = locales[name] and locales[name].short or name
-					if strfind(leftTipText, nameStr) then
-						local rightTip = _G["GameTooltipTextRight" .. i]
-						leftTip:SetText(nameStr .. ":")
-						rightTip:SetText(cache[guid].info.special[name])
-						updated = true
-						found = true
-						break
-					end
-					if found then
-						break
-					end
-				end
-			end
-
-			found = false
-
-			if T.db["ProgRaids"] then
-				for _, tier in ipairs(tiers) do
-					for _, level in ipairs(levels) do
-						if strfind(leftTipText, locales[tier].short) then
-							local rightTip = _G["GameTooltipTextRight" .. i]
-							leftTip:SetText(format("%s:", locales[tier].short))
-							rightTip:SetText(GetLevelColoredString(level, true) .. " " .. cache[guid].info.raids[tier][level])
-							updated = true
-							found = true
-							break
-						end
-					end
-
-					if found then
-						break
-					end
-				end
-			end
-		end
-	end
-
-	if updated then return end
-
-	if T.db["ProgAchievement"] and cache[guid].info.special then
+	if T.db["ProgAchievement"] and cache[guid].info.special and next(cache[guid].info.special) then
 		GameTooltip:AddLine(" ")
 		GameTooltip:AddLine(L["Special Achievements"])
 		for _, achievement in ipairs(specialAchievements) do
@@ -371,7 +320,7 @@ function T:SetProgressionInfo(unit, guid)
 		end
 	end
 
-	if T.db["ProgRaids"] and next(cache[guid].info.raids) then
+	if T.db["ProgRaids"] and cache[guid].info.raids and next(cache[guid].info.raids) then
 		local title = false
 
 		for _, tier in ipairs(tiers) do
@@ -400,8 +349,10 @@ function T:SetProgressionInfo(unit, guid)
 		for _, info in ipairs(runs) do
 			local name = dungeons[info.challengeModeID] and locales[dungeons[info.challengeModeID]].short or C_ChallengeMode.GetMapUIInfo(info.challengeModeID)
 			local left = format("%s:", name)
-			local color = C_ChallengeMode.GetSpecificDungeonOverallScoreRarityColor(info.mapScore) or HIGHLIGHT_FONT_COLOR
-			local right = format("%s (%d)", color:WrapTextInColorCode(info.mapScore), info.bestRunLevel)
+
+			local scoreColor = C_ChallengeMode.GetSpecificDungeonOverallScoreRarityColor(info.mapScore) or HIGHLIGHT_FONT_COLOR
+			local levelColor = info.finishedSuccess and "|cffffffff" or "|cff888888"
+			local right = format("%s (%s)", scoreColor:WrapTextInColorCode(info.mapScore), levelColor..info.bestRunLevel.."|r")
 			GameTooltip:AddDoubleLine(left, right, .6, .8, 1, 1, 1, 1)
 		end
 	end
@@ -429,7 +380,7 @@ end
 function T:AddProgression()
 	if not T.db["Progression"] then return end
 
-	if InCombatLockdown() then return end
+	if T.db["CombatHide"] and InCombatLockdown() then return end
 
 	if T.db["ShowByShift"] and not IsShiftKeyDown() then return end
 
@@ -439,23 +390,12 @@ function T:AddProgression()
 	local level = UnitLevel(unit)
 	if not (level and level == MAX_PLAYER_LEVEL) then return end
 
-	if not IsAddOnLoaded("Blizzard_AchievementUI") then
-		AchievementFrame_LoadUI()
-	end
-
 	local guid = UnitGUID(unit)
 	if not cache[guid] or (GetTime() - cache[guid].timer) > 600 then
 		if guid == T.myGUID then
 			T:UpdateProgression(guid, T.myFaction)
 		else
 			ClearAchievementComparisonUnit()
-
-			if not loadedComparison and select(2, IsAddOnLoaded("Blizzard_AchievementUI")) then
-				_G.AchievementFrame_DisplayComparison(unit)
-				HideUIPanel(_G.AchievementFrame)
-				ClearAchievementComparisonUnit()
-				loadedComparison = true
-			end
 
 			compareGUID = guid
 
@@ -466,7 +406,7 @@ function T:AddProgression()
 			return
 		end
 	end
-	
+
 	T:SetProgressionInfo(unit, guid)
 end
 
@@ -485,13 +425,11 @@ end
 
 local function loadFunc(event, addon)  -- fix
 	if addon == "Blizzard_AchievementUI" then
-		local method = "AchievementFrameComparison_UpdateStatusBars"
-		if _G[method] then
-			P:RawHook(method, function(id)
-				if id and id ~= "summary" then
-					P.hooks[method](id)
-                end
-             end)
+		local origUpdateStatusBars = AchievementFrameComparison_UpdateStatusBars
+		AchievementFrameComparison_UpdateStatusBars = function(id)
+			if id and id ~= "summary" then
+				origUpdateStatusBars(id)
+			end
 		end
 		B:UnregisterEvent(event, loadFunc)
 	end

@@ -176,6 +176,7 @@ G.OptionList = { -- type, key, value, name, horizon, data, callback, tooltip, sc
 		{1, "Tooltip", "HideCreator", L["HideCreator"].."*", true, nil, nil, L["HideCreatorTip"]},
 		{},
 		{1, "Tooltip", "Progression", HeaderTag..L["Progression"].."*", nil, nil, nil, L["ProgressionTip"]},
+		{1, "Tooltip", "CombatHide", L["CombatHide"].."*"},
 		{1, "Tooltip", "ShowByShift", L["ShowByShift"].."*", true},
 		{1, "Tooltip", "ProgRaids", L["Raids"].."*", nil, nil, updateProgression},
 		{1, "Tooltip", "ProgDungeons", L["MythicDungeons"].."*", true},

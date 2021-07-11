@@ -93,6 +93,7 @@ P.DefaultSettings = {
 	},
 	Tooltip = {
 		Progression = true,
+		CombatHide = true,
 		ShowByShift = true,
 		ProgRaids = true,
 		ProgDungeons = true,
