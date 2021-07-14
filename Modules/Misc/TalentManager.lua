@@ -317,7 +317,7 @@ function TM:CreateSaveFrame()
 
 		tinsert(frame.PveButtons, bu)
 	end
-	
+
 	frame.PvpHeader = CreateHeader(frame, "PvP", 160, 22)
 	frame.PvpHeader:SetPoint("TOP", frame.PveButtons[#frame.PveButtons], "BOTTOM", 0, -10)
 
@@ -423,16 +423,33 @@ function TM:CreateSetFrame()
 	end)
 
 	TM.SetFrame = frame
-	TM:UpdateSetButtons()
+	TM:UpdateSetButtons(true)
 end
 
-function TM:UpdateSetButtons()
+function TM:CheckPvpTalentID(pvpTalent)
+	for i = 1, #pvpTalent do
+		local id = pvpTalent[i]
+		if id and id ~= 0 then
+			local _, name = GetPvpTalentInfoByID(id)
+			if not name then
+				pvpTalent[i] = 0
+				P:Debug("删除无效的天赋ID: %d", id)
+			end
+		end
+	end
+end
+
+function TM:UpdateSetButtons(check)
 	if not self.SetFrame or not self.specID then return end
 
 	local db = self.db.sets[self.specID]
 	local numSets = db and #db or 0
 
 	for i = 1, numSets do
+		if check then
+			TM:CheckPvpTalentID(db[i].pvpTalentTable)
+		end
+
 		local button = self.SetFrame.SetButtons[i]
 		button:SetText(db[i].setName)
 		button.setName = db[i].setName
@@ -498,13 +515,13 @@ function TM:OnLogin()
 
 	B:RegisterEvent("PLAYER_ENTERING_WORLD", function()
 		TM:UpdatePlayerInfo()
-		TM:UpdateSetButtons()
+		TM:UpdateSetButtons(true)
 	end)
 
 	B:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED", function(_, unit)
 		if unit and UnitIsUnit("player", unit) then
 			TM:UpdatePlayerInfo()
-			TM:UpdateSetButtons()
+			TM:UpdateSetButtons(true)
 		end
 	end)
 
