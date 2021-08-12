@@ -46,6 +46,9 @@ Handler:SetScript("OnEvent", function(self, event, ...)
 			ClearOverrideBindings(self)
 			SetOverrideBindingClick(self, true, "SPACE", BUTTON:format(12))
 		end
+	elseif event == "PLAYER_REGEN_ENABLED" then
+		ClearOverrideBindings(self)
+		self:UnregisterEvent(event)
 	end
 end)
 
@@ -70,7 +73,11 @@ function Handler:Uncontrol()
 	self:UnregisterEvent("CHAT_MSG_RAID_BOSS_EMOTE")
 	self:UnregisterEvent("UNIT_SPELLCAST_SUCCEEDED")
 
-	ClearOverrideBindings(self)
+	if InCombatLockdown() then
+		self:RegisterEvent("PLAYER_REGEN_ENABLED")
+	else
+		ClearOverrideBindings(self)
+	end
 end
 
 function Handler:Message()

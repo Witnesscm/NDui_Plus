@@ -1,13 +1,15 @@
+local _, ns = ...
+local B, C, L, DB, P = unpack(ns)
 -----------------------
 -- BetterWorldQuests
 -- Author: p3lim
 -----------------------
-local MESSAGE = 'Spam <SpaceBar> to complete!'
-local BUTTON = 'OverrideActionBarButton%d'
+local MESSAGE = "Spam <SpaceBar> to complete!"
+local BUTTON = "OverrideActionBarButton%d"
 
 local locale = GetLocale()
-if locale == 'zhCN' or locale == 'zhTW' then
-	MESSAGE = '狂按 <空格> 完成!'
+if locale == "zhCN" or locale == "zhTW" then
+	MESSAGE = "狂按 <空格> 完成!"
 end
 
 local quests = {
@@ -30,7 +32,7 @@ local quests = {
 		[6] = {1, 2, 3, 2, 2},
 		[7] = {3, 2, 1, 2, 2},
 	},
-	[51635] = { -- Make Loh Go (Vol'dun)
+	[51635] = { -- Make Loh Go (Vol"dun)
 		[0] = {2, 3, 2, 3, 2, 1, 2, 1, 2},
 		[1] = {1, 2, 3, 2},
 		[2] = {1, 2},
@@ -60,14 +62,14 @@ local actionSpells = {
 	[271601] = true, -- 3: Turn Right
 }
 
-local Handler = CreateFrame('Frame')
-Handler:RegisterEvent('QUEST_LOG_UPDATE')
-Handler:RegisterEvent('QUEST_ACCEPTED')
-Handler:SetScript('OnEvent', function(self, event, ...)
+local Handler = CreateFrame("Frame")
+Handler:RegisterEvent("QUEST_LOG_UPDATE")
+Handler:RegisterEvent("QUEST_ACCEPTED")
+Handler:SetScript("OnEvent", function(self, event, ...)
 	if IsAddOnLoaded("BetterWorldQuests") then return end
 	if not NDuiPlusDB["Misc"]["QuestHelper"] then return end
 
-	if(event == 'QUEST_LOG_UPDATE') then
+	if(event == "QUEST_LOG_UPDATE") then
 		for questID in next, quests do
 			if(C_QuestLog.IsOnQuest(questID)) then
 				self:Watch(questID)
@@ -80,26 +82,26 @@ Handler:SetScript('OnEvent', function(self, event, ...)
 		end
 
 		self:UnregisterEvent(event)
-	elseif(event == 'QUEST_ACCEPTED') then
+	elseif(event == "QUEST_ACCEPTED") then
 		local questID = ...
 		if(quests[questID]) then
 			self:Watch(questID)
 		end
-	elseif(event == 'QUEST_REMOVED') then
+	elseif(event == "QUEST_REMOVED") then
 		local questID = ...
 		if(quests[questID]) then
 			self:Unwatch()
 		end
-	elseif(event == 'UNIT_ENTERED_VEHICLE') then
+	elseif(event == "UNIT_ENTERED_VEHICLE") then
 		self:Control()
-	elseif(event == 'UNIT_EXITED_VEHICLE') then
+	elseif(event == "UNIT_EXITED_VEHICLE") then
 		self:Uncontrol()
-	elseif(event == 'UNIT_SPELLCAST_SUCCEEDED') then
+	elseif(event == "UNIT_SPELLCAST_SUCCEEDED") then
 		local _, _, spellID = ...
 		if(actionSpells[spellID]) then
 			self:UpdateAction()
 		end
-	elseif(event == 'UNIT_AURA') then
+	elseif(event == "UNIT_AURA") then
 		self:UpdateCheckpoint()
 	end
 end)
@@ -114,30 +116,30 @@ function Handler:Watch(questID)
 	currentQuestID = questID
 	currentCheckpoint = nil
 
-	self:RegisterEvent('UNIT_ENTERED_VEHICLE')
-	self:RegisterEvent('QUEST_REMOVED')
+	self:RegisterEvent("UNIT_ENTERED_VEHICLE")
+	self:RegisterEvent("QUEST_REMOVED")
 end
 
 function Handler:Unwatch()
 	currentQuestID = nil
-	self:UnregisterEvent('UNIT_ENTERED_VEHICLE')
-	self:UnregisterEvent('QUEST_REMOVED')
+	self:UnregisterEvent("UNIT_ENTERED_VEHICLE")
+	self:UnregisterEvent("QUEST_REMOVED")
 end
 
 function Handler:Control()
 	self:Message()
 
-	self:RegisterEvent('UNIT_EXITED_VEHICLE')
-	self:RegisterUnitEvent('UNIT_AURA', 'vehicle')
-	self:RegisterUnitEvent('UNIT_SPELLCAST_SUCCEEDED', 'vehicle')
+	self:RegisterEvent("UNIT_EXITED_VEHICLE")
+	self:RegisterUnitEvent("UNIT_AURA", "vehicle")
+	self:RegisterUnitEvent("UNIT_SPELLCAST_SUCCEEDED", "vehicle")
 end
 
 function Handler:Uncontrol()
 	currentCheckpoint = nil
 
-	self:UnregisterEvent('UNIT_EXITED_VEHICLE')
-	self:UnregisterEvent('UNIT_SPELLCAST_SUCCEEDED')
-	self:UnregisterEvent('UNIT_AURA')
+	self:UnregisterEvent("UNIT_EXITED_VEHICLE")
+	self:UnregisterEvent("UNIT_SPELLCAST_SUCCEEDED")
+	self:UnregisterEvent("UNIT_AURA")
 
 	ClearOverrideBindings(self)
 end
@@ -152,7 +154,7 @@ function Handler:GetCheckpoint()
 	local checkpoint
 	local index = 1
 	while(true) do
-		local exists, _, num, _, _, _, _, _, _, spellID = UnitAura('vehicle', index, 'HARMFUL')
+		local exists, _, num, _, _, _, _, _, _, spellID = UnitAura("vehicle", index, "HARMFUL")
 		if(not exists) then
 			checkpoint = 0
 			break
@@ -179,5 +181,5 @@ end
 
 function Handler:Next()
 	local nextAction = quests[currentQuestID][currentCheckpoint][nextActionIndex]
-	SetOverrideBindingClick(self, true, 'SPACE', BUTTON:format(nextAction))
+	SetOverrideBindingClick(self, true, "SPACE", BUTTON:format(nextAction))
 end
