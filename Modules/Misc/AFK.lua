@@ -183,10 +183,7 @@ function AFK:LoopAnimations()
 	end
 end
 
-function AFK:OnLogin()
-	AFK.PlayerRace = UnitRace("player")
-	AFK.PlayerClass = UnitClass("player")
-
+function AFK:AFKMode_Init()
 	AFK.AFKMode = CreateFrame("Frame", "NDuiPlus_AFKFrame")
 	AFK.AFKMode:SetFrameLevel(1)
 	AFK.AFKMode:SetScale(_G.UIParent:GetScale())
@@ -294,4 +291,11 @@ function AFK:OnLogin()
 	end)
 
 	AFK:Toggle()
+end
+
+function AFK:OnLogin()
+	AFK.PlayerRace = UnitRace("player")
+	AFK.PlayerClass = UnitClass("player")
+
+	B:RegisterEvent("PLAYER_ENTERING_WORLD", AFK.AFKMode_Init)
 end
