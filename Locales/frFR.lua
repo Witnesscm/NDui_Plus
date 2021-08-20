@@ -1,6 +1,6 @@
 local _, ns = ...
 local _, _, L = unpack(ns)
---if GetLocale() ~= "frFR" then return end
+if GetLocale() ~= "frFR" then return end
 
 L["Version Check"] = "Ne prend en charge que NDui v%s"
 L["Changelog"] = "Journal des modifications"
