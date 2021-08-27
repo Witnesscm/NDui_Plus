@@ -193,6 +193,7 @@ G.OptionList = { -- type, key, value, name, horizon, data, callback, tooltip, sc
 		{1, "Misc", "QuestHelper", L["QuestHelper"], nil, nil, nil, L["QuestHelperTip"]},
 		{1, "Misc", "HideTalentAlert", L["HideTalentAlert"], true, nil, nil, L["HideTalentAlertTip"]},
 		{1, "AFK", "Enable", L["AFK Mode"].."*", nil, nil, updateAFKMode},
+		{1, "Misc", "SearchForIcons", L["SearchForIcons"], true},
 		{},
 		{1, "Misc", "LootSpecManager", HeaderTag..L["LootSpecManagerEnable"], nil, nil, nil, L["LootSpecManagerTip"]},
 		{},
@@ -541,7 +542,7 @@ function G:CreateToggleButton()
 	button.Icon:SetAllPoints()
 	button.Icon:SetTexture(P.SwapTex)
 	button:SetHighlightTexture(P.SwapTex)
-	
+
 	return button
 end
 
