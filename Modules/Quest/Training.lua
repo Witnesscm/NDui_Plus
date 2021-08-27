@@ -99,13 +99,18 @@ Handler:SetScript("OnEvent", function(self, event, ...)
 			self:Unwatch()
 		end
 	elseif event == "UNIT_AURA" then
+		local found = false
+
 		for buff, spellSet in next, spells do
 			if GetPlayerAuraBySpellID(buff) then
 				self:Control(spellSet)
+				found = true
 				return
-			else
-				self:Uncontrol()
 			end
+		end
+
+		if not found then
+			self:Uncontrol()
 		end
 	elseif event == "CHAT_MSG_MONSTER_SAY" then
 		local msg, sender = ...
@@ -147,6 +152,8 @@ function Handler:Unwatch()
 end
 
 function Handler:Control(spellSet)
+	if self.isControlling then return end
+
 	table.wipe(actionMessages)
 	table.wipe(actionResetSpells)
 	for spellID, actionIndex in next, spellSet do
@@ -168,6 +175,8 @@ function Handler:Control(spellSet)
 
 	self:RegisterUnitEvent("UNIT_SPELLCAST_SUCCEEDED", "player")
 	self:RegisterEvent("CHAT_MSG_MONSTER_SAY")
+
+	self.isControlling = true
 end
 
 function Handler:Uncontrol()
@@ -179,6 +188,8 @@ function Handler:Uncontrol()
 	else
 		ClearOverrideBindings(self)
 	end
+
+	self.isControlling = false
 end
 
 function Handler:Message()
