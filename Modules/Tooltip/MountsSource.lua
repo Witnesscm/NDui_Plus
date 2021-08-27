@@ -57,7 +57,7 @@ function T:MountsSource()
 		self:Show()
 	end)
 
-	B:UnregisterEvent(self, T.MountsSource)
+	B:UnregisterEvent("PLAYER_ENTERING_WORLD", T.MountsSource)
 end
 
 B:RegisterEvent("PLAYER_ENTERING_WORLD", T.MountsSource)

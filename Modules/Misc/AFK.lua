@@ -291,6 +291,8 @@ function AFK:AFKMode_Init()
 	end)
 
 	AFK:Toggle()
+
+	B:UnregisterEvent("PLAYER_ENTERING_WORLD", AFK.AFKMode_Init)
 end
 
 function AFK:OnLogin()

@@ -308,6 +308,11 @@ function LSM:MythicPlusStart(id)
 end
 
 function LSM:UpdateData()
+	if LSM.Data.Raid[1] and LSM.Data.Raid[1].encounters and next(LSM.Data.Raid[1].encounters) then
+		B:UnregisterEvent("PLAYER_ENTERING_WORLD", LSM.UpdateData)
+		return
+	end
+
 	wipe(LSM.Data.Raid)
 	wipe(LSM.Data.MythicPlus)
 

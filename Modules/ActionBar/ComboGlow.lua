@@ -78,7 +78,7 @@ function AB.CreateHandler(event)
 		end
 	end
 
-	B:UnregisterEvent(event)
+	B:UnregisterEvent(event, AB.CreateHandler)
 end
 
 function AB:ComboGlow()
