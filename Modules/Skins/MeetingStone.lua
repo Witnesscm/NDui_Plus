@@ -5,7 +5,7 @@ local TT = B:GetModule("Tooltip")
 local cr, cg, cb = DB.r, DB.g, DB.b
 
 local _G = getfenv(0)
-local pairs = pairs
+local select, pairs, ipairs = select, pairs, ipairs
 
 -- Credit: AddOnSkins_MeetingStone by hokohuang
 local function strToPath(str)
@@ -84,6 +84,21 @@ local function reskinButtonHL(button)
 	check:SetInside()
 end
 
+local function reskinGridView(self)
+	for _, button in pairs(self.sortButtons) do
+		B.StripTextures(button, 0)
+		button.Arrow:SetAlpha(1)
+		local bg = B.CreateBDFrame(button, .25)
+		bg:SetPoint("TOPLEFT", C.mult, C.mult)
+		bg:SetPoint("BOTTOMRIGHT", -C.mult, -C.mult)
+	end
+
+	local scrollBar = self.GetScrollBar and self:GetScrollBar()
+	if scrollBar then
+		B.ReskinScroll(scrollBar)
+	end
+end
+
 function S:MeetingStone()
 	if not IsAddOnLoaded("MeetingStone") and not IsAddOnLoaded("MeetingStonePlus") then return end
 	if not S.db["MeetingStone"] then return end
@@ -96,6 +111,7 @@ function S:MeetingStone()
 		"MainPanel",
 		--"ExchangePanel",
 		"BrowsePanel.AdvFilterPanel",
+		"BrowsePanel.ExSearchPanel",
 	}
 
 	local Buttons = {
@@ -126,7 +142,7 @@ function S:MeetingStone()
 	local GridViews = {
 		"ApplicantPanel.ApplicantList",
 		"BrowsePanel.ActivityList",
-		"RecentPanel.MemberList"
+		"RecentPanel.MemberList",
 	}
 
 	local EditBoxes = {
@@ -151,67 +167,103 @@ function S:MeetingStone()
 
 	-- BrowsePanel
 	local BrowsePanel = MSEnv.BrowsePanel
-	local AdvFilter = BrowsePanel.AdvFilterPanel
-	AdvFilter:SetPoint("TOPLEFT", MSEnv.MainPanel, "TOPRIGHT", 3, -30)
-
-	for i = 1, AdvFilter:GetNumChildren() do
-		local child = select(i, AdvFilter:GetChildren())
-		if child:IsObjectType("Button") and not child:GetText() then
-			B.ReskinClose(child)
-			break
-		end
-	end
-
-	for i, box in ipairs(BrowsePanel.filters) do
-		B.ReskinCheck(box.Check)
-		reskinMSInput(box.MaxBox)
-		reskinMSInput(box.MinBox)
-		box.styled = true
-	end
-
-	local AutoCompleteFrame = BrowsePanel.AutoCompleteFrame
-	B.StripTextures(AutoCompleteFrame)
-	B.ReskinScroll(AutoCompleteFrame:GetScrollBar())
-
-	hooksecurefunc(AutoCompleteFrame, "UpdateItems", function(self)
-		for i = 1, #self.buttons do
-			local button = self:GetButton(i)
-			if not button.styled and button:IsShown() then
-				B.StripTextures(button)
-				P.SetupBackdrop(button)
-				B.CreateBD(button, .5)
-				reskinButtonHL(button)
-
-				button.styled = true
+	if BrowsePanel then
+		for _, child in pairs({BrowsePanel:GetChildren()}) do
+			if child:GetObjectType() == "CheckButton" then
+				B.ReskinCheck(child)
 			end
 		end
-	end)
+
+		local AdvFilterPanel = BrowsePanel.AdvFilterPanel
+		if AdvFilterPanel then
+			AdvFilterPanel:SetPoint("TOPLEFT", MSEnv.MainPanel, "TOPRIGHT", 3, -30)
+
+			for i = 1, AdvFilterPanel:GetNumChildren() do
+				local child = select(i, AdvFilterPanel:GetChildren())
+				if child:IsObjectType("Button") and not child:GetText() then
+					B.ReskinClose(child)
+					break
+				end
+			end
+		end
+
+		if BrowsePanel.filters then
+			for _, box in ipairs(BrowsePanel.filters) do
+				B.ReskinCheck(box.Check)
+				reskinMSInput(box.MaxBox)
+				reskinMSInput(box.MinBox)
+				box.styled = true
+			end
+		end
+
+		local AutoCompleteFrame = BrowsePanel.AutoCompleteFrame
+		if AutoCompleteFrame then
+			B.StripTextures(AutoCompleteFrame)
+
+			local scrollBar = AutoCompleteFrame.GetScrollBar and AutoCompleteFrame:GetScrollBar()
+			if scrollBar then
+				B.ReskinScroll(scrollBar)
+			end
+
+			hooksecurefunc(AutoCompleteFrame, "UpdateItems", function(self)
+				for i = 1, #self.buttons do
+					local button = self:GetButton(i)
+					if not button.styled and button:IsShown() then
+						B.StripTextures(button)
+						P.SetupBackdrop(button)
+						B.CreateBD(button, .5)
+						reskinButtonHL(button)
+
+						button.styled = true
+					end
+				end
+			end)
+		end
+	end
 
 	-- CreatePanel
 	local CreatePanel = MSEnv.CreatePanel
-	select(1, CreatePanel:GetChildren()):Hide()
-	B.ReskinCheck(CreatePanel.PrivateGroup)
+	if CreatePanel then
+		select(1, CreatePanel:GetChildren()):Hide()
 
-	local InfoWidget = CreatePanel.InfoWidget
-	InfoWidget.bg = B.CreateBDFrame(InfoWidget, .25)
-	InfoWidget.bg:SetPoint("TOPLEFT", C.mult, C.mult)
-	InfoWidget.bg:SetPoint("BOTTOMRIGHT", -C.mult, -C.mult)
-	InfoWidget.Background:SetAlpha(0)
+		if CreatePanel.PrivateGroup then
+			B.ReskinCheck(CreatePanel.PrivateGroup)
+		end
 
-	for _, key in pairs({"MemberWidget", "MiscWidget"}) do
-		local panel = CreatePanel[key]
-		if panel then
-			B.CreateBDFrame(panel, .25)
-			panel:DisableDrawLayer("BACKGROUND")
+		local InfoWidget = CreatePanel.InfoWidget
+		if InfoWidget then
+			InfoWidget.bg = B.CreateBDFrame(InfoWidget, .25)
+			InfoWidget.bg:SetPoint("TOPLEFT", C.mult, C.mult)
+			InfoWidget.bg:SetPoint("BOTTOMRIGHT", -C.mult, -C.mult)
+			InfoWidget.Background:SetAlpha(0)
+		end
+
+		for _, key in pairs({"MemberWidget", "MiscWidget"}) do
+			local panel = CreatePanel[key]
+			if panel then
+				B.CreateBDFrame(panel, .25)
+				panel:DisableDrawLayer("BACKGROUND")
+			end
+		end
+
+		local CreateWidget = CreatePanel.CreateWidget
+		if CreateWidget then
+			for i = 1, CreateWidget:GetNumChildren() do
+				local child = select(i, CreateWidget:GetChildren())
+				child:DisableDrawLayer("BACKGROUND")
+				local bg = B.CreateBDFrame(child, .25)
+				bg:SetAllPoints()
+			end
 		end
 	end
 
-	local CreateWidget = CreatePanel.CreateWidget
-	for i = 1, CreateWidget:GetNumChildren() do
-		local child = select(i, CreateWidget:GetChildren())
-		child:DisableDrawLayer("BACKGROUND")
-		local bg = B.CreateBDFrame(child, .25)
-		bg:SetAllPoints()
+	-- ApplicantPanel
+	local ApplicantPanel = MSEnv.ApplicantPanel
+	if ApplicantPanel then
+		local AutoInvite = ApplicantPanel.AutoInvite
+		if AutoInvite then
+			B.ReskinCheck(AutoInvite)
+		end
 	end
 
 	-- Button
@@ -277,6 +329,11 @@ function S:MeetingStone()
 			local tab = self:GetButton(i)
 			if not tab.styled then
 				P.ReskinTab(tab, 4)
+
+				if tab.Flash then
+					tab.Flash:SetPoint("BOTTOMRIGHT", -4, -8)
+				end
+
 				tab.styled = true
 			end
 		end
@@ -286,14 +343,7 @@ function S:MeetingStone()
 	for _, v in pairs(GridViews) do
 		local grid = getValue(v, MSEnv)
 		if grid then
-			for _, button in pairs(grid.sortButtons) do
-				B.StripTextures(button, 0)
-				button.Arrow:SetAlpha(1)
-				local bg = B.CreateBDFrame(button, .25)
-				bg:SetPoint("TOPLEFT", C.mult, C.mult)
-				bg:SetPoint("BOTTOMRIGHT", -C.mult, -C.mult)
-			end
-			B.ReskinScroll(grid:GetScrollBar())
+			reskinGridView(grid)
 		end
 	end
 
@@ -314,6 +364,10 @@ function S:MeetingStone()
 
 				if button.Summary then
 					B.Reskin(button.Summary.CancelButton)
+				end
+
+				if button["@"] and button["@"].Check then
+					B.ReskinCheck(button["@"].Check)
 				end
 
 				button.styled = true
@@ -404,17 +458,27 @@ function S:MeetingStone()
 			reskinMSButton(ActivitiesParent.PlayerInfoButton)
 		end
 
-		for _, key in pairs({"QuestPanel", "QuestPanel2"}) do
+		for _, key in pairs({"QuestPanel", "QuestPanel2", "QuestPanel3"}) do
 			local QuestPanel = MSEnv[key]
 			if QuestPanel then
 				local Body = QuestPanel.Body
 				if Body then
 					B.StripTextures(Body)
 
-					for _, key in pairs({"Refresh", "Join", "Ranking"}) do
+					for _, key in pairs({"Refresh", "Join", "Ranking", "RefreshBtn"}) do
 						local bu = Body[key]
 						if bu then
 							B.Reskin(bu)
+						end
+					end
+
+					if key == "QuestPanel3" then
+						B.CreateBDFrame(Body, .25)
+
+						for _, child in pairs {Body:GetChildren()} do
+							if child:GetObjectType() == "Button" and child.Icon and child.Text then
+								reskinMSButton(child)
+							end
 						end
 					end
 				end
@@ -532,31 +596,80 @@ function S:MeetingStone()
 	end
 
 	-- MeetingStonePlus
-	if MeetingStone_QuickJoin then
-		B.ReskinCheck(MeetingStone_QuickJoin)
-
-		for i = 1, AdvFilter.Inset:GetNumChildren() do
-			local child = select(i, AdvFilter.Inset:GetChildren())
-			if child.Check and not child.styled then
-				B.ReskinCheck(child.Check)
+	if _G.MeetingStone_QuickJoin then
+		local AdvFilterPanel = BrowsePanel and BrowsePanel.AdvFilterPanel
+		if AdvFilterPanel then
+			for i = 1, AdvFilterPanel.Inset:GetNumChildren() do
+				local child = select(i, AdvFilterPanel.Inset:GetChildren())
+				if child.Check and not child.styled then
+					B.ReskinCheck(child.Check)
+				end
 			end
 		end
 
 		local function reskinALFrame()
-			if ALFrame and not ALFrame.styled then
-				B.StripTextures(ALFrame)
-				B.SetBD(ALFrame)
-				B.Reskin(ALFrameButton)
-				ALFrame.styled = true
+			if _G.ALFrame and not _G.ALFrame.styled then
+				B.StripTextures(_G.ALFrame)
+				B.SetBD(_G.ALFrame)
+				B.Reskin(_G.ALFrameButton)
+				_G.ALFrame.styled = true
 			end
 		end
 
 		local ManagerPanel = MSEnv.ManagerPanel
-		for i = 1, ManagerPanel:GetNumChildren() do
-			local child = select(i, ManagerPanel:GetChildren())
-			if child:IsObjectType("Button") and child.Icon and child.Text and not child.styled then
-				reskinStretchButton(child)
-				child:HookScript("PostClick", reskinALFrame)
+		if ManagerPanel then
+			for i = 1, ManagerPanel:GetNumChildren() do
+				local child = select(i, ManagerPanel:GetChildren())
+				if child:IsObjectType("Button") and child.Icon and child.Text and not child.styled then
+					reskinStretchButton(child)
+					child:HookScript("PostClick", reskinALFrame)
+				end
+			end
+		end
+	end
+
+	-- MeetingStoneEX
+	if IsAddOnLoaded("MeetingStoneEX") then
+		if BrowsePanel then
+			local ExSearchButton = BrowsePanel.ExSearchButton
+			if ExSearchButton then
+				reskinStretchButton(ExSearchButton)
+			end
+
+			local ExSearchPanel = BrowsePanel.ExSearchPanel
+			if ExSearchPanel then
+				ExSearchPanel:SetPoint("TOPLEFT", MSEnv.MainPanel, "TOPRIGHT", 3, -30)
+
+				for _, child in pairs {ExSearchPanel:GetChildren()} do
+					if child:GetObjectType() == "Button" then
+						if child:GetText() then
+							B.Reskin(child)
+						else
+							B.ReskinClose(child)
+						end
+					end
+				end
+			end
+
+			local dungeons = BrowsePanel.MD
+			if dungeons then
+				for _, box in ipairs(dungeons) do
+					B.ReskinCheck(box.Check)
+				end
+			end
+		end
+
+		local IgnoreListPanel = MS:GetModule("IgnoreListPanel", true)
+		if IgnoreListPanel then
+			local IgnoreList = IgnoreListPanel.IgnoreList
+			if IgnoreList then
+				reskinGridView(IgnoreList)
+			end
+
+			for _, child in pairs {IgnoreListPanel:GetChildren()} do
+				if child:GetObjectType() == "Button" and child.Text then
+					B.Reskin(child)
+				end
 			end
 		end
 	end
