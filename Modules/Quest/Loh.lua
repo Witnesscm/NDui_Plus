@@ -4,13 +4,7 @@ local B, C, L, DB, P = unpack(ns)
 -- BetterWorldQuests
 -- Author: p3lim
 -----------------------
-local MESSAGE = "Spam <SpaceBar> to complete!"
 local BUTTON = "OverrideActionBarButton%d"
-
-local locale = GetLocale()
-if locale == "zhCN" or locale == "zhTW" then
-	MESSAGE = "狂按 <空格> 完成!"
-end
 
 local quests = {
 	[51632] = { -- Make Loh Go (Tiragarde Sound)
@@ -32,7 +26,7 @@ local quests = {
 		[6] = {1, 2, 3, 2, 2},
 		[7] = {3, 2, 1, 2, 2},
 	},
-	[51635] = { -- Make Loh Go (Vol"dun)
+	[51635] = { -- Make Loh Go (Vol'dun)
 		[0] = {2, 3, 2, 3, 2, 1, 2, 1, 2},
 		[1] = {1, 2, 3, 2},
 		[2] = {1, 2},
@@ -103,12 +97,15 @@ Handler:SetScript("OnEvent", function(self, event, ...)
 		end
 	elseif(event == "UNIT_AURA") then
 		self:UpdateCheckpoint()
+	elseif(event == "PLAYER_REGEN_ENABLED") then
+		ClearOverrideBindings(self)
+		self:UnregisterEvent(event)
 	end
 end)
 
 function Handler:Message()
 	for i = 1, 2 do
-		RaidNotice_AddMessage(RaidWarningFrame, MESSAGE, P.InfoColors)
+		RaidNotice_AddMessage(RaidWarningFrame, L["QuestHelp1"], P.InfoColors)
 	end
 end
 
@@ -141,7 +138,11 @@ function Handler:Uncontrol()
 	self:UnregisterEvent("UNIT_SPELLCAST_SUCCEEDED")
 	self:UnregisterEvent("UNIT_AURA")
 
-	ClearOverrideBindings(self)
+	if InCombatLockdown() then
+		self:RegisterEvent("PLAYER_REGEN_ENABLED")
+	else
+		ClearOverrideBindings(self)
+	end
 end
 
 function Handler:UpdateAction(_, _, spellID)

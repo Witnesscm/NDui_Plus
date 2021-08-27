@@ -1,6 +1,8 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
 	<Script file="Loh.lua"/>
+	<Script file="Supplies.lua"/>
 	<Script file="Training.lua"/>
+	<Script file="Unknown.lua"/>
 	<Script file="Wilderling.lua"/>
 	<Script file="Winging.lua"/>
 </Ui>
