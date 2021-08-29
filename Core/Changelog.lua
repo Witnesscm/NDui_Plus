@@ -2,6 +2,10 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 
 P.Changelog = [[
+v1.4.3
+[任务] 移除荒蚺和顽石之重任务助手
+[美化] 添加BtWLoadouts美化
+
 v1.4.2
 [任务] 更新任务助手
 [易用性] 添加宏图标搜索
