@@ -129,7 +129,7 @@ function S:BtWLoadouts()
 
 	local Sidebar = frame.Sidebar
 	if Sidebar then
-	B.ReskinFilterButton(frame.Sidebar.FilterButton)
+		B.ReskinFilterButton(frame.Sidebar.FilterButton)
 		B.ReskinInput(Sidebar.SearchBox)
 		B.ReskinScroll(Sidebar.Scroll.ScrollBar)
 	end
