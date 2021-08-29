@@ -329,12 +329,11 @@ function S:MeetingStone()
 			local tab = self:GetButton(i)
 			if not tab.styled then
 				P.ReskinTab(tab, 4)
-
-				if tab.Flash then
-					tab.Flash:SetPoint("BOTTOMRIGHT", -4, -8)
-				end
-
 				tab.styled = true
+			end
+
+			if tab.Flash then
+				tab.Flash:SetPoint("BOTTOMRIGHT", -4, -8)
 			end
 		end
 	end)
