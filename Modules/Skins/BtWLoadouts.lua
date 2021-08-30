@@ -120,6 +120,7 @@ function S:BtWLoadouts()
 		B.StripTextures(NPE)
 		local bg = B.CreateBDFrame(NPE, .5)
 		bg:SetOutside(nil, 6, 6)
+		B.Reskin(NPE.AddButton)
 	end
 
 	local SidebarInset = frame.SidebarInset
