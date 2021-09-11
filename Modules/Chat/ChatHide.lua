@@ -18,7 +18,7 @@ do
 
 	hooksecurefunc(B, "AddTooltip", function(frame, anchor, text, ...)
 		if copy then return end
-		
+
 		if anchor == "ANCHOR_RIGHT" and text == copyStr then
 			copy = frame
 		end

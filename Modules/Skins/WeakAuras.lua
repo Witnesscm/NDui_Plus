@@ -10,7 +10,7 @@ local function reskinChildButton(frame)
 
 	for i = 1, frame:GetNumChildren() do
 		local child = select(i, frame:GetChildren())
-		if child:GetObjectType() == 'Button' and child.Text then
+		if child:GetObjectType() == "Button" and child.Text then
 			B.Reskin(child)
 		end
 	end
@@ -19,7 +19,7 @@ end
 local function RemoveBorder(frame)
 	for _, region in pairs {frame:GetRegions()} do
 		local texture = region.GetTexture and region:GetTexture()
-		if texture and texture ~= "" and type(texture) == "string" and texture:find("Quickslot2") then
+		if texture and texture ~= "" and (type(texture) == "string" and texture:find("Quickslot2") or (type(texture) == "number" and texture == 130841)) then
 			region:SetTexture("")
 		end
 	end
@@ -45,21 +45,14 @@ local function ReskinWAOptions()
 
 			local button = child:GetChildren()
 			local texturePath = button.GetNormalTexture and button:GetNormalTexture():GetTexture()
-			if texturePath and type(texturePath) == "string" and texturePath:find("CollapseButton") then
-				B.Reskin(button)
-				button.SetNormalTexture = B.Dummy
-				button.SetPushedTexture = B.Dummy
+			if texturePath and (type(texturePath) == "string" and texturePath:find("CollapseButton") or (type(texturePath) == "number" and texturePath == 252125)) then
+				B.ReskinArrow(button, "up")
 				button:SetSize(18, 18)
 				button:ClearAllPoints()
 				button:SetPoint("TOPRIGHT", frame, "TOPRIGHT", -30, -6)
+				button.SetNormalTexture = B.Dummy
+				button.SetPushedTexture = B.Dummy
 
-				local tex = button:CreateTexture(nil, "ARTWORK")
-				tex:SetAllPoints()
-				B.SetupArrow(tex, "up")
-				button.__texture = tex
-
-				button:SetScript("OnEnter", B.Texture_OnEnter)
-				button:SetScript("OnLeave", B.Texture_OnLeave)
 				button:HookScript("OnClick",function(self)
 					if frame.minimized then
 						B.SetupArrow(self.__texture, "down")
@@ -96,7 +89,7 @@ local function ReskinWAOptions()
 	if iconPicker then
 		for i = 1, iconPicker:GetNumChildren() do
 			local child = select(i, iconPicker:GetChildren())
-			if child:GetObjectType() == 'EditBox' then
+			if child:GetObjectType() == "EditBox" then
 				B.ReskinInput(child, 20)
 			end
 		end

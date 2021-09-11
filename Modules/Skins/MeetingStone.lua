@@ -464,8 +464,8 @@ function S:MeetingStone()
 				if Body then
 					B.StripTextures(Body)
 
-					for _, key in pairs({"Refresh", "Join", "Ranking", "RefreshBtn"}) do
-						local bu = Body[key]
+					for _, button in pairs({"Refresh", "Join", "Ranking", "RefreshBtn"}) do
+						local bu = Body[button]
 						if bu then
 							B.Reskin(bu)
 						end

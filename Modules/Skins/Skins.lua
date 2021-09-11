@@ -27,7 +27,7 @@ tinsert(C.defaultThemes, function()
 end)
 
 function S:tdGUI()
-	local GUI = LibStub and LibStub('tdGUI-1.0', true)
+	local GUI = LibStub and LibStub("tdGUI-1.0", true)
 	local DropMenu = GUI and GUI:GetClass("DropMenu")
 
 	if DropMenu then
