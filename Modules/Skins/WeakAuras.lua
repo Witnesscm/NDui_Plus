@@ -18,8 +18,8 @@ end
 
 local function RemoveBorder(frame)
 	for _, region in pairs {frame:GetRegions()} do
-		local texture = region.GetTexture and region:GetTexture()
-		if texture and texture ~= "" and (type(texture) == "string" and texture:find("Quickslot2") or (type(texture) == "number" and texture == 130841)) then
+		local texturePath = region.GetTextureFilePath and region:GetTextureFilePath()
+		if texturePath and texturePath:find("Quickslot2") then
 			region:SetTexture("")
 		end
 	end
@@ -44,8 +44,8 @@ local function ReskinWAOptions()
 			B.StripTextures(child)
 
 			local button = child:GetChildren()
-			local texturePath = button.GetNormalTexture and button:GetNormalTexture():GetTexture()
-			if texturePath and (type(texturePath) == "string" and texturePath:find("CollapseButton") or (type(texturePath) == "number" and texturePath == 252125)) then
+			local texturePath = button.GetNormalTexture and button:GetNormalTexture():GetTextureFilePath()
+			if texturePath and texturePath:find("CollapseButton") then
 				B.ReskinArrow(button, "up")
 				button:SetSize(18, 18)
 				button:ClearAllPoints()
