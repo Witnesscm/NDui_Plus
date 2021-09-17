@@ -21,7 +21,6 @@ function S:PremadeGroupsFilter()
 	dialog.Defeated.Title:ClearAllPoints()
 	dialog.Defeated.Title:SetPoint("LEFT", dialog.Defeated.Act, "RIGHT", 2, 0)
 end
-
 S:RegisterSkin("PremadeGroupsFilter", S.PremadeGroupsFilter)
 
 function S:WorldQuestsList()
@@ -38,7 +37,6 @@ function S:WorldQuestsList()
 		end
 	end
 end
-
 S:RegisterSkin("WorldQuestsList", S.WorldQuestsList)
 
 function S:TomeOfTeleportation()
@@ -86,7 +84,6 @@ function S:TomeOfTeleportation()
 		end
 	end)
 end
-
 S:RegisterSkin("TomeOfTeleportation", S.TomeOfTeleportation)
 
 -- Hide Toggle Button

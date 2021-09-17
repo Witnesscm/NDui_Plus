@@ -242,7 +242,7 @@ function LSM:CreateGUI()
 			LSM.db["Current"] = self.value
 			LSM:RefreshGUI()
 			UIDropDownMenu_SetSelectedValue(current, self.value)
-    	end
+		end
 
 		local function make_button(info, value, text)
 			info.text = text
