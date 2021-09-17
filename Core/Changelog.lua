@@ -2,6 +2,11 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 
 P.Changelog = [[
+v1.4.4
+[鼠标提示] 添加盟约图标
+[美化] 添加ImprovedAddonList美化
+[美化] 更新部分插件美化
+
 v1.4.3
 [任务] 移除荒蚺和顽石之重任务助手
 [美化] 添加BtWLoadouts美化
