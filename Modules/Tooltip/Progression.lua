@@ -417,9 +417,6 @@ do
 end
 
 function T:Progression()
-	T.myGUID = UnitGUID("player")
-	T.myFaction = UnitFactionGroup("player")
-
 	T:UpdateProgSettings(true)
 end
 

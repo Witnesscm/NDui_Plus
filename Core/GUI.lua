@@ -174,6 +174,7 @@ G.OptionList = { -- type, key, value, name, horizon, data, callback, tooltip, sc
 	[5] = {
 		{1, "Tooltip", "MountsSource", L["MountsSource"].."*", nil, nil, nil, L["MountsSourceTip"]},
 		{1, "Tooltip", "HideCreator", L["HideCreator"].."*", true, nil, nil, L["HideCreatorTip"]},
+		{1, "Tooltip", "Covenant", L["ShowCovenant"], nil, nil, nil, L["ShowCovenantTip"]},
 		{},
 		{1, "Tooltip", "Progression", HeaderTag..L["Progression"].."*", nil, nil, nil, L["ProgressionTip"]},
 		{1, "Tooltip", "CombatHide", L["CombatHide"].."*"},
