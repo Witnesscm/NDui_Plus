@@ -197,6 +197,8 @@ function T:HandleCombatLog(...)
 end
 
 function T:AddCovenant()
+	if not T.db["Covenant"] then return end
+
 	local _, unit = GameTooltip:GetUnit()
 	if not unit then return end
 
