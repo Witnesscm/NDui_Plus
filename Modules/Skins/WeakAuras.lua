@@ -4,6 +4,7 @@ local S = P:GetModule("Skins")
 
 local _G = getfenv(0)
 local select, pairs, type = select, pairs, type
+local strfind = string.find
 
 local function reskinChildButton(frame)
 	if not frame then return end
@@ -19,7 +20,7 @@ end
 local function RemoveBorder(frame)
 	for _, region in pairs {frame:GetRegions()} do
 		local texturePath = region.GetTextureFilePath and region:GetTextureFilePath()
-		if texturePath and texturePath:find("Quickslot2") then
+		if texturePath and strfind(texturePath, "Quickslot2") then
 			region:SetTexture("")
 		end
 	end
@@ -45,7 +46,7 @@ local function ReskinWAOptions()
 
 			local button = child:GetChildren()
 			local texturePath = button.GetNormalTexture and button:GetNormalTexture():GetTextureFilePath()
-			if texturePath and texturePath:find("CollapseButton") then
+			if texturePath and strfind(texturePath, "CollapseButton") then
 				B.ReskinArrow(button, "up")
 				button:SetSize(18, 18)
 				button:ClearAllPoints()
