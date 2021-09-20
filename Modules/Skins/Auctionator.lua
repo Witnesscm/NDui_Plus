@@ -9,6 +9,8 @@ local function reskinButtons(self, buttons)
 		local bu = self[key]
 		if bu then
 			B.Reskin(bu)
+		else
+			P:Debug("Unknown: %s", key)
 		end
 	end
 end
@@ -131,6 +133,17 @@ local function reskinBagList(frame)
 	end
 end
 
+local function reskinMoneyInput(self)
+	if self.MoneyInput then
+		for _, key in ipairs({"GoldBox", "SilverBox", "CopperBox"}) do
+			local box = self.MoneyInput[key]
+			if box then
+				reskinInput(box)
+			end
+		end
+	end
+end
+
 function S:Auctionator()
 	if not IsAddOnLoaded("Auctionator") then return end
 
@@ -210,8 +223,8 @@ function S:Auctionator()
 			local itemFrame = SellingFrame.SaleItemFrame
 			reskinBagItem(itemFrame.Icon)
 			reskinInput(itemFrame.Quantity.InputBox)
-			reskinInput(itemFrame.Price.MoneyInput.GoldBox)
-			reskinInput(itemFrame.Price.MoneyInput.SilverBox)
+			reskinMoneyInput(itemFrame.Price)
+			reskinMoneyInput(itemFrame.BidPrice)
 			reskinButtons(itemFrame, {"PostButton", "SkipButton", "MaxButton"})
 
 			for _, bu in ipairs(itemFrame.Duration.radioButtons) do
