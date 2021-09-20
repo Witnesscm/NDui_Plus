@@ -153,7 +153,7 @@ function S:Auctionator()
 		if ShoppingList then
 			reskinListHeader(ShoppingList.ResultsListing)
 			P.ReskinDropDown(ShoppingList.ListDropdown)
-			reskinButtons(ShoppingList, {"CreateList", "DeleteList", "Rename", "Import", "Export", "AddItem", "ManualSearch", "ExportCSV"})
+			reskinButtons(ShoppingList, {"CreateList", "DeleteList", "Rename", "Import", "Export", "AddItem", "ManualSearch", "ExportCSV", "OneItemSearchButton", "SortItems"})
 			reskinItemDialog(ShoppingList.addItemDialog)
 			reskinItemDialog(ShoppingList.editItemDialog)
 
@@ -171,9 +171,32 @@ function S:Auctionator()
 			reskinSimplePanel(ShoppingList.importDialog)
 			B.Reskin(ShoppingList.importDialog.Import)
 
-			B.StripTextures(ShoppingList.ScrollList)
-			B.CreateBDFrame(ShoppingList.ScrollList.ScrollFrame, .25)
-			B.ReskinScroll(ShoppingList.ScrollList.ScrollFrame.scrollBar)
+			for _, key in ipairs({"ScrollList", "ScrollListShoppingList", "ScrollListRecents"}) do
+				local scrollList = ShoppingList[key]
+				if scrollList and scrollList.ScrollFrame then
+					B.StripTextures(scrollList)
+					B.CreateBDFrame(scrollList.ScrollFrame, .25)
+					B.ReskinScroll(scrollList.ScrollFrame.scrollBar)
+				end
+			end
+
+			local OneItemSearchBox = ShoppingList.OneItemSearchBox
+			if OneItemSearchBox then
+				B.ReskinInput(OneItemSearchBox)
+			end
+
+			local TabsContainer = ShoppingList.RecentsTabsContainer
+			if TabsContainer then
+				for _, tab in ipairs(TabsContainer.Tabs) do
+					B.ReskinTab(tab)
+				end
+
+				if ShoppingList.ScrollListShoppingList then
+					TabsContainer:ClearAllPoints()
+					TabsContainer:SetPoint("TOPLEFT", ShoppingList.ScrollListShoppingList, "TOPLEFT", -5, 30)
+					TabsContainer:SetPoint("BOTTOMRIGHT", ShoppingList.ScrollListShoppingList, "TOPRIGHT", 0, 0)
+				end
+			end
 
 			reskinSimplePanel(ShoppingList.exportCSVDialog)
 			B.Reskin(ShoppingList.exportCSVDialog.Close)
