@@ -3,7 +3,7 @@ local B, C, L, DB, P = unpack(ns)
 local T = P:GetModule("Tooltip")
 local NT = B:GetModule("Tooltip")
 
-local strfind, format, strsplit, strmatch = string.find, string.format, string.split, string.match
+local format, strsplit, strmatch = string.format, string.split, string.match
 local pairs, tonumber = pairs, tonumber
 
 T.MemberCovenants = {}
@@ -15,101 +15,78 @@ local covenantMap = {
 	[4] = "Necrolord",
 }
 
--- Credit: Details_Covenants
+-- Credit: OmniCD
 local utilityMap = {
 	[324739] = 1,
+	[323436] = 1,
+	[312202] = 1,
+	[306830] = 1,
+	[326434] = 1,
+	[338142] = 1,
+	[338035] = 1,
+	[338018] = 1,
+	[327022] = 1,
+	[327037] = 1,
+	[327071] = 1,
+	[308491] = 1,
+	[307443] = 1,
+	[310454] = 1,
+	[304971] = 1,
+	[325013] = 1,
+	[323547] = 1,
+	[324386] = 1,
+	[312321] = 1,
+	[307865] = 1,
+
 	[300728] = 2,
+	[311648] = 2,
+	[317009] = 2,
+	[323546] = 2,
+	[324149] = 2,
+	[314793] = 2,
+	[326860] = 2,
+	[316958] = 2,
+	[323673] = 2,
+	[323654] = 2,
+	[320674] = 2,
+	[321792] = 2,
+	[317483] = 2,
+	[317488] = 2,
 	[310143] = 3,
+	[324128] = 3,
+	[323639] = 3,
+	[323764] = 3,
+	[328231] = 3,
+	[314791] = 3,
+	[327104] = 3,
+
+	[328622] = 3,
+	[328282] = 3,
+	[328620] = 3,
+	[328281] = 3,
+	[327661] = 3,
+	[328305] = 3,
+	[328923] = 3,
+	[325640] = 3,
+	[325886] = 3,
+	[319217] = 3,
 	[324631] = 4,
+	[315443] = 4,
+	[329554] = 4,
+	[325727] = 4,
+	[325028] = 4,
+	[324220] = 4,
+	[325216] = 4,
+	[328204] = 4,
+	[324724] = 4,
+	[328547] = 4,
+	[326059] = 4,
+	[325289] = 4,
+	[324143] = 4,
 }
 
-local abilityMap = {
-	["DEATHKNIGHT"] = {
-		[315443] = 4,
-		[312202] = 1,
-		[311648] = 2,
-		[324128] = 3,
-	},
-	["DEMONHUNTER"] = {
-		[306830] = 1,
-		[329554] = 4,
-		[323639] = 3,
-		[317009] = 2,
-	},
-	["DRUID"] = {
-		[338142] = 1,
-		[326462] = 1,
-		[326446] = 1,
-		[338035] = 1,
-		[338018] = 1,
-		[338411] = 1,
-		[326434] = 1,
-		[325727] = 4,
-		[323764] = 3,
-		[323546] = 2,
-	},
-	["HUNTER"] = {
-		[308491] = 1,
-		[325028] = 4,
-		[328231] = 3,
-		[324149] = 2,
-	},
-	["MAGE"] = {
-		[307443] = 1,
-		[324220] = 4,
-		[314791] = 3,
-		[314793] = 2,
-	},
-	["MONK"] = {
-		[310454] = 1,
-		[325216] = 4,
-		[327104] = 3,
-		[326860] = 2,
-	},
-	["PALADIN"] = {
-		[304971] = 1,
-		[328204] = 4,
-		[328282] = 3,
-		[328620] = 3,
-		[328622] = 3,
-		[328281] = 3,
-		[316958] = 2,
-	},
-	["PRIEST"] = {
-		[325013] = 1,
-		[324724] = 4,
-		[327661] = 3,
-		[323673] = 2,
-	},
-	["ROGUE"] = {
-		[323547] = 1,
-		[328547] = 4,
-		[328305] = 3,
-		[323654] = 2,
-	},
-	["SHAMAN"] = {
-		[324519] = 1,
-		[324386] = 1,
-		[326059] = 4,
-		[328923] = 3,
-		[320674] = 2,
-	},
-	["WARLOCK"] = {
-		[312321] = 1,
-		[325289] = 4,
-		[325640] = 3,
-		[321792] = 2,
-	},
-	["WARRIOR"] = {
-		[307865] = 1,
-		[324143] = 4,
-		[325886] = 3,
-		[330334] = 2,
-		[317349] = 2,
-		[317488] = 2,
-		[330325] = 2,
-	},
-}
+local LibRS
+local DCLoaded
 
 local ZT_Prefix = "ZenTracker"
 local DC_Prefix = "DCOribos"
@@ -130,14 +107,44 @@ local function getCovenantIcon(covenantID)
 	return ""
 end
 
-local Cache = {}
-function T:AskCovenant()
-	for i = 1, GetNumGroupMembers() do
-		local name = GetRaidRosterInfo(i)
-		if name and name ~= DB.MyName and not Cache[name] then
-			C_ChatInfo.SendAddonMessage(DC_Prefix, format("ASK:%s", name), "RAID")
-			Cache[name] = true
+local function getFullName(unit)
+	local name, realm = UnitName(unit)
+	if realm and realm ~= "" then
+		name = name.."-"..realm
+	end
+
+	return name
+end
+
+function T:GetCovenantID(unit)
+	local guid = UnitGUID(unit)
+	if not guid then return end
+
+	local covenantID = T.MemberCovenants[guid]
+	if not covenantID then
+		local playerInfo = LibRS and LibRS.playerInfoManager.GetPlayerInfo(getFullName(unit))
+		return playerInfo and playerInfo.covenantId
+	end
+
+	return covenantID
+end
+
+local cache = {}
+function T:UpdateRosterInfo()
+	if not IsInGroup() then return end
+
+	if not DCLoaded then
+		for i = 1, GetNumGroupMembers() do
+			local name = GetRaidRosterInfo(i)
+			if name and name ~= DB.MyName and not cache[name] then
+				C_ChatInfo.SendAddonMessage(DC_Prefix, format("ASK:%s", name), "RAID")
+				cache[name] = true
+			end
 		end
+	end
+
+	if LibRS then
+		LibRS.RequestAllPlayersInfo()
 	end
 end
 
@@ -149,21 +156,21 @@ function T:HandleAddonMessage(...)
 	if prefix == ZT_Prefix then
 		local version, type, guid, _, _, _, _, covenantID = strsplit(":", msg)
 		version = tonumber(version)
-		if (not T.MemberCovenants[guid]) and (version and version > 3) and (type and type == "H") then
+		if (version and version > 3) and (type and type == "H") and (guid and not T.MemberCovenants[guid]) then
 			covenantID = tonumber(covenantID)
-			if covenantID and covenantID ~= 0 then
+			if covenantID then
 				T.MemberCovenants[guid] = covenantID
-				P:Debug("%s 盟约：%s (by ZenTracker)", sender, covenantMap[covenantID])
+				P:Debug("%s 盟约：%s (by ZenTracker)", sender, covenantMap[covenantID] or "None")
 			end
 		end
 	elseif prefix == OmniCD_Prefix then
 		local header, guid, body = strmatch(msg, "(.-),(.-),(.+)")
-		if (not T.MemberCovenants[guid]) and (header == "INF" or header == "REQ" or header == "UPD") then
+		if (header and guid and body) and (header == "INF" or header == "REQ" or header == "UPD") and (not T.MemberCovenants[guid]) then
 			local covenantID = select(15, strsplit(",", body))
 			covenantID = tonumber(covenantID)
-			if covenantID and covenantID ~= 0 then
+			if covenantID then
 				T.MemberCovenants[guid] = covenantID
-				P:Debug("%s 盟约：%s (by OmniCD)", sender, covenantMap[covenantID])
+				P:Debug("%s 盟约：%s (by OmniCD)", sender, covenantMap[covenantID] or "None")
 			end
 		end
 	elseif prefix == DC_Prefix then
@@ -173,25 +180,21 @@ function T:HandleAddonMessage(...)
 		local guid = UnitGUID(sender)
 		if guid and not T.MemberCovenants[guid] then
 			covenantID = tonumber(covenantID)
-			if covenantID and covenantID ~= 0 then
+			if covenantID then
 				T.MemberCovenants[guid] = covenantID
-				P:Debug("%s 盟约：%s (by Details_Covenants)", sender, covenantMap[covenantID])
+				P:Debug("%s 盟约：%s (by Details_Covenants)", sender, covenantMap[covenantID] or "None")
 			end
 		end
 	end
 end
 
-function T:HandleCombatLog(...)
-	local _, subEvent, _, sourceGUID, sourceName, _, _, _, _, _, _, spellID = ...
-	if subEvent == "SPELL_CAST_SUCCESS" and sourceGUID and sourceName and sourceGUID ~= T.myGUID and not T.MemberCovenants[sourceGUID] then
-		local englishClass = select(2, GetPlayerInfoByGUID(sourceGUID))
-		local classAbilityMap = englishClass and abilityMap[englishClass]
-		if classAbilityMap then
-			local covenantID = classAbilityMap[spellID] or utilityMap[spellID]
-			if covenantID then
-				T.MemberCovenants[sourceGUID] = covenantID
-				P:Debug("%s 盟约：%s (by %s)", sourceName, covenantMap[covenantID], GetSpellLink(spellID))
-			end
+function T:HandleSpellCast(unit, _, spellID)
+	local covenantID = utilityMap[spellID]
+	if covenantID then
+		local guid = UnitGUID(unit)
+		if guid and not T.MemberCovenants[guid] then
+			T.MemberCovenants[guid] = covenantID
+			P:Debug("%s 盟约：%s (by %s)", getFullName(unit), covenantMap[covenantID], GetSpellLink(spellID))
 		end
 	end
 end
@@ -200,51 +203,36 @@ function T:AddCovenant()
 	if not T.db["Covenant"] then return end
 
 	local _, unit = GameTooltip:GetUnit()
-	if not unit then return end
+	if not unit or not UnitExists(unit) then return end
 
 	local covenantID
 	if UnitIsUnit(unit, "player") then
 		covenantID = C_Covenants.GetActiveCovenantID()
 	else
-		local guid = UnitGUID(unit)
-		covenantID = guid and T.MemberCovenants[guid]
+		covenantID = T:GetCovenantID(unit)
 	end
 
-	if not covenantID or covenantID == 0 then return end
-
-	local specLine, specText
-	for i = 2, GameTooltip:NumLines() do
-		local line = _G["GameTooltipTextLeft"..i]
-		local text = line and line:GetText()
-		if text and strfind(text, SPECIALIZATION) then
-			specLine = line
-			specText = text
-			break
-		end
-	end
-
-	if specLine then
-		specLine:SetText(format("%s  | %s", specText, getCovenantIcon(covenantID)))
+	if covenantID and covenantID ~= 0 then
+		GameTooltip:AddLine(format(L["Covenant"], getCovenantIcon(covenantID)))
 	end
 end
 
 do
-	if NT.SetupSpecLevel then
-		hooksecurefunc(NT, "SetupSpecLevel", T.AddCovenant)
+	if NT.OnTooltipSetUnit then
+		hooksecurefunc(NT, "OnTooltipSetUnit", T.AddCovenant)
 	end
 end
 
 function T:Covenant()
-	if not T.db["Covenant"] then return end
+	LibRS = _G.LibStub and _G.LibStub("LibRaidStatus-1.0", true)
+	DCLoaded = IsAddOnLoaded("Details_Covenants")
 
 	for prefix in pairs(addonPrefixes) do
 		C_ChatInfo.RegisterAddonMessagePrefix(prefix)
 	end
 
-	if not IsAddOnLoaded("Details_Covenants") then
-		B:RegisterEvent("GROUP_ROSTER_UPDATE", T.AskCovenant)
-	end
-
+	T:UpdateRosterInfo()
+	B:RegisterEvent("GROUP_ROSTER_UPDATE", T.UpdateRosterInfo)
 	B:RegisterEvent("CHAT_MSG_ADDON", T.HandleAddonMessage)
-	B:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED", T.HandleCombatLog)
+	B:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED", T.HandleSpellCast)
 end
