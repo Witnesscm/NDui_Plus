@@ -2,6 +2,10 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 
 P.Changelog = [[
+v1.4.5
+[鼠标提示] 更新盟约图标显示方式
+[美化] 更新部分插件美化
+
 v1.4.4
 [鼠标提示] 添加盟约图标
 [美化] 添加ImprovedAddonList美化
