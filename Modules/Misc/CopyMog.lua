@@ -257,31 +257,8 @@ local function createCopyButton(parent)
 	return button
 end
 
-local function createInspectButton()
-	local button = createCopyButton(_G.InspectPaperDollFrame)
-	button:SetPoint("BOTTOMLEFT", 5, 6)
-	button:SetScript("OnClick", function()
-		createGearFrame()
-		getInspectSources()
-		copyTexts()
-	end)
-end
-
 function M:CopyMog()
 	if not M.db["CopyMog"] then return end
-
-	local function loadFunc(event, addon)
-		if addon == "Blizzard_InspectUI" then
-			createInspectButton()
-			B:UnregisterEvent(event, loadFunc)
-		end
-	end
-
-	if IsAddOnLoaded("Blizzard_InspectUI") then
-		createInspectButton()
-	else
-		B:RegisterEvent("ADDON_LOADED", loadFunc)
-	end
 
 	local button = createCopyButton(_G.PaperDollFrame)
 	button:SetPoint("BOTTOMLEFT", 5, 6)
@@ -290,6 +267,16 @@ function M:CopyMog()
 		getPlayerSources()
 		copyTexts()
 	end)
+
+	P:AddCallbackForAddon("Blizzard_InspectUI", function()
+		local button = createCopyButton(_G.InspectPaperDollFrame)
+		button:SetPoint("BOTTOMLEFT", 5, 6)
+		button:SetScript("OnClick", function()
+			createGearFrame()
+			getInspectSources()
+			copyTexts()
+		end)
+	end, true)
 end
 
 M:RegisterMisc("CopyMog", M.CopyMog)

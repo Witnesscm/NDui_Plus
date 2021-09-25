@@ -486,15 +486,6 @@ function TM:TweakWarmode()
 	PvpTalentFrame.InvisibleWarmodeButton:SetAllPoints(PvpTalentFrame.Swords)
 end
 
-function TM:TalentUI_Load(addon)
-	if addon == "Blizzard_TalentUI" then
-		TM:CreateSetFrame()
-		TM:CreateSaveFrame()
-		TM:TweakWarmode()
-		B:UnregisterEvent(self, TM.TalentUI_Load)
-	end
-end
-
 function TM:SetupCache()
 	TM.db = NDuiPlusCharDB["TalentManager"]
 	TM.db.sets = TM.db.sets or {}
@@ -505,13 +496,11 @@ function TM:OnLogin()
 
 	TM:SetupCache()
 
-	if IsAddOnLoaded("Blizzard_TalentUI") then
+	P:AddCallbackForAddon("Blizzard_TalentUI", function()
 		TM:CreateSetFrame()
 		TM:CreateSaveFrame()
 		TM:TweakWarmode()
-	else
-		B:RegisterEvent("ADDON_LOADED", TM.TalentUI_Load)
-	end
+	end, true)
 
 	B:RegisterEvent("PLAYER_ENTERING_WORLD", function()
 		TM:UpdatePlayerInfo()

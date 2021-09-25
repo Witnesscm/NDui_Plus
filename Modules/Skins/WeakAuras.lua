@@ -199,31 +199,21 @@ function S:WeakAuras()
 	end
 
 	-- WeakAurasOptions
-	local count = 0
-	local function loadFunc(event, addon)
-		if addon == "WeakAurasOptions" then
-			hooksecurefunc(WeakAuras, "ShowOptions", ReskinWAOptions)
-			count = count + 1
-		end
+	P:AddCallbackForAddon("WeakAurasOptions", function()
+		hooksecurefunc(WeakAuras, "ShowOptions", ReskinWAOptions)
+	end)
 
-		if addon == "WeakAurasTemplates" then
-			if WeakAuras.CreateTemplateView then
-				local origCreateTemplateView = WeakAuras.CreateTemplateView
-				WeakAuras.CreateTemplateView = function(...)
-					local group = origCreateTemplateView(...)
-					reskinChildButton(group.frame)
+	P:AddCallbackForAddon("WeakAurasTemplates", function()
+		if WeakAuras.CreateTemplateView then
+			local origCreateTemplateView = WeakAuras.CreateTemplateView
+			WeakAuras.CreateTemplateView = function(...)
+				local group = origCreateTemplateView(...)
+				reskinChildButton(group.frame)
 
-					return group
-				end
+				return group
 			end
-			count = count + 1
 		end
-
-		if count >= 2 then
-			B:UnregisterEvent(event, loadFunc)
-		end
-	end
-	B:RegisterEvent("ADDON_LOADED", loadFunc)
+	end)
 end
 
 S:RegisterSkin("WeakAuras", S.WeakAuras)

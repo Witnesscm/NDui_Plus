@@ -320,23 +320,19 @@ function LSM:UpdateData()
 	LSM:UpdateMythicPlusData()
 end
 
-local function loadFunc(event, addon)
-	if addon == "Blizzard_EncounterJournal" then
-		local filter = _G.EncounterJournalEncounterFrameInfoLootScrollFrameFilterToggle
-		local btn = P.CreateButton(filter, 75, 28, L["Loot Spec"])
-		btn:SetPoint("BOTTOM", filter, "TOP", 0, 5)
-		btn.Text:SetFont(DB.Font[1], 15, DB.Font[3])
-		btn.Text:SetWidth(75)
-		btn:SetScript("OnClick", function()
-			if LSM.GUI then
-				B:TogglePanel(LSM.GUI)
-			else
-				LSM:CreateGUI()
-			end
-		end)
-
-		B:UnregisterEvent(event, loadFunc)
-	end
+function LSM:CreateEJButton()
+	local filter = _G.EncounterJournalEncounterFrameInfoLootScrollFrameFilterToggle
+	local btn = P.CreateButton(filter, 75, 28, L["Loot Spec"])
+	btn:SetPoint("BOTTOM", filter, "TOP", 0, 5)
+	btn.Text:SetFont(DB.Font[1], 15, DB.Font[3])
+	btn.Text:SetWidth(75)
+	btn:SetScript("OnClick", function()
+		if LSM.GUI then
+			B:TogglePanel(LSM.GUI)
+		else
+			LSM:CreateGUI()
+		end
+	end)
 end
 
 function LSM:OnLogin()
@@ -344,7 +340,7 @@ function LSM:OnLogin()
 
 	LSM:SetupCache()
 
-	B:RegisterEvent("ADDON_LOADED", loadFunc)
+	P:AddCallbackForAddon("Blizzard_EncounterJournal", LSM.CreateEJButton, true)
 	B:RegisterEvent("PLAYER_ENTERING_WORLD", LSM.UpdateData)
 	B:RegisterEvent("ENCOUNTER_START", LSM.EncounterStart)
 	B:RegisterEvent("CHALLENGE_MODE_START", LSM.MythicPlusStart)

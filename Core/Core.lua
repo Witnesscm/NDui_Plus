@@ -1,8 +1,11 @@
-local addonName, ns = ...
+local AddOnName, ns = ...
 local B, C, L, DB, P = unpack(ns)
 
-local pairs, type, pcall= pairs, type, pcall
-local modules, initQueue = {}, {}
+local pairs, type, next= pairs, type, next
+local tinsert = table.insert
+local pcall = pcall
+
+local modules, initQueue, addonsToLoad = {}, {}, {}
 
 P.DefaultSettings = {
 	Debug = false,
@@ -113,6 +116,7 @@ P.DefaultSettings = {
 		ShowIllusion = true,
 		HideTalentAlert = true,
 		SearchForIcons = true,
+		AutoCollapse = false,
 	},
 }
 
@@ -213,9 +217,46 @@ function P:Notifications()
 	close:SetPoint("TOPRIGHT", -10, -10)
 	close:SetScript("OnClick", function() frame:Hide() end)
 
-	B.CreateFS(frame, 18, addonName, true, "TOP", 0, -10)
+	B.CreateFS(frame, 18, AddOnName, true, "TOP", 0, -10)
 	B.CreateFS(frame, 16, format(L["Version Check"], P.SupportVersion), false, "CENTER")
 end
+
+function P:CallLoadedAddon(addonName, object)
+	for _, func in next, object do
+		if type(func) == "function" then
+			local _, catch = pcall(func)
+			P:ThrowError(catch, format("%s callback", addonName))
+		end
+	end
+
+	addonsToLoad[addonName] = nil
+end
+
+function P:AddCallbackForAddon(addonName, func, force)
+	if force then
+		local isLoaded, isFinished = IsAddOnLoaded(addonName)
+		if isLoaded and isFinished then
+			local _, catch = pcall(func)
+			P:ThrowError(catch, format("%s callback", addonName))
+			return
+		end
+	end
+
+	local addon = addonsToLoad[addonName]
+	if not addon then
+		addonsToLoad[addonName] = {}
+		addon = addonsToLoad[addonName]
+	end
+
+	tinsert(addon, func)
+end
+
+B:RegisterEvent("ADDON_LOADED", function(_, addonName)
+	local object = addonsToLoad[addonName]
+	if object then
+		P:CallLoadedAddon(addonName, object)
+	end
+end)
 
 -- Modules
 function P:RegisterModule(name)
@@ -248,6 +289,13 @@ B:RegisterEvent("PLAYER_LOGIN", function()
 			P:ThrowError(catch, format("%s Module", module.name))
 		else
 			P:Print("Module <"..module.name.."> does not loaded.")
+		end
+	end
+
+	for addonName, object in pairs(addonsToLoad) do
+		local isLoaded, isFinished = IsAddOnLoaded(addonName)
+		if isLoaded and isFinished then
+			P:CallLoadedAddon(addonName, object)
 		end
 	end
 

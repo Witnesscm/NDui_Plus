@@ -420,15 +420,12 @@ function T:Progression()
 	T:UpdateProgSettings(true)
 end
 
-local function loadFunc(event, addon)  -- fix
-	if addon == "Blizzard_AchievementUI" then
-		local origUpdateStatusBars = AchievementFrameComparison_UpdateStatusBars
-		AchievementFrameComparison_UpdateStatusBars = function(id)
-			if id and id ~= "summary" then
-				origUpdateStatusBars(id)
-			end
+-- fix error
+P:AddCallbackForAddon("Blizzard_AchievementUI", function()
+	local origUpdateStatusBars = _G.AchievementFrameComparison_UpdateStatusBars
+	_G.AchievementFrameComparison_UpdateStatusBars = function(id)
+		if id and id ~= "summary" then
+			origUpdateStatusBars(id)
 		end
-		B:UnregisterEvent(event, loadFunc)
 	end
-end
-B:RegisterEvent("ADDON_LOADED", loadFunc)
+end)

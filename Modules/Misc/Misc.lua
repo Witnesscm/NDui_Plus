@@ -2,6 +2,7 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 local M = P:RegisterModule("Misc")
 
+local _G = getfenv(0)
 local strmatch, format, tonumber, select, tinsert = string.match, string.format, tonumber, select, tinsert
 
 M.MiscList = {}
@@ -21,7 +22,8 @@ function M:OnLogin()
 	end
 end
 
-function M:HookSpecButton()
+-- DoubleClick to swap specialization.
+function M:DoubleClickSpecSwap()
 	for i = 1, GetNumSpecializations() do
 		local button = _G["PlayerTalentFrameSpecializationSpecButton"..i]
 		button:HookScript("OnDoubleClick", function() 
@@ -36,31 +38,16 @@ function M:HookSpecButton()
 	end
 end
 
-function M:TalentUI_Load(addon)
-	if addon == "Blizzard_TalentUI" then
-		M:HookSpecButton()
-		B:UnregisterEvent(self, M.TalentUI_Load)
-	end
-end
+P:AddCallbackForAddon("Blizzard_TalentUI", M.DoubleClickSpecSwap)
 
-function M:DoubleClickSpecSwap()
-	if IsAddOnLoaded("Blizzard_TalentUI") then
-		M:HookSpecButton()
-	else
-		B:RegisterEvent("ADDON_LOADED", M.TalentUI_Load)
-	end
-end
-
--- Credit: HideTalentAlert
+-- Hides the Talent popup notifications. Credit: HideTalentAlert
 function M:HideTalentAlert()
 	if not M.db["HideTalentAlert"] then return end
 
-	HelpTip:HideAll(UIParent)
-	function MainMenuMicroButton_AreAlertsEnabled()
+	_G.HelpTip:HideAll(UIParent)
+	function _G.MainMenuMicroButton_AreAlertsEnabled()
 		return false
 	end
 end
 
-M:RegisterMisc("PauseToSlash", M.PauseToSlash)
-M:RegisterMisc("DoubleClickSpecSwap", M.DoubleClickSpecSwap)
 M:RegisterMisc("HideTalentAlert", M.HideTalentAlert)
