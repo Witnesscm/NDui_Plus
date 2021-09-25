@@ -37,7 +37,6 @@ function M:DoubleClickSpecSwap()
 		end)
 	end
 end
-
 P:AddCallbackForAddon("Blizzard_TalentUI", M.DoubleClickSpecSwap)
 
 -- Hides the Talent popup notifications. Credit: HideTalentAlert
@@ -49,5 +48,42 @@ function M:HideTalentAlert()
 		return false
 	end
 end
-
 M:RegisterMisc("HideTalentAlert", M.HideTalentAlert)
+
+-- Auto collapse trade skill
+local function collapseAllCategories(refresh)
+	local list = _G.TradeSkillFrame.RecipeList
+	if not list or not list:IsShown() then return end
+
+	if not refresh and not M.db["AutoCollapse"] then return end
+
+	list.tradeSkillChanged = nil
+	list.collapsedCategories = {}
+
+	if M.db["AutoCollapse"] then
+		for _, categoryID in ipairs({C_TradeSkillUI.GetCategories()}) do
+			list.collapsedCategories[categoryID] = true
+		end
+	end
+
+	list:Refresh()
+end
+
+function M:AutoCollapseTradeSkill()
+	local cb = CreateFrame("CheckButton", nil, _G.TradeSkillFrame, "OptionsCheckButtonTemplate")
+	cb:SetHitRectInsets(-5, -5, -5, -5)
+	cb:SetPoint("TOPRIGHT", -114, -2)
+	cb:SetSize(24, 24)
+	B.ReskinCheck(cb)
+	cb.text = B.CreateFS(cb, 14, L["AutoCollapse"], false, "LEFT", 25, 0)
+	cb:SetChecked(M.db["AutoCollapse"])
+	cb:SetScript("OnClick", function(self)
+		M.db["AutoCollapse"] = self:GetChecked()
+		collapseAllCategories(true)
+	end)
+
+	hooksecurefunc(_G.TradeSkillFrame.RecipeList, "OnDataSourceChanged", function()
+		collapseAllCategories()
+	end)
+end
+P:AddCallbackForAddon("Blizzard_TradeSkillUI", M.AutoCollapseTradeSkill)
