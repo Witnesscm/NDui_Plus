@@ -172,7 +172,7 @@ end)
 function P:ThrowError(err, message)
 	if not err then return end
 
-	err = format("NDui_Plus: %s Error\n%s", message, err)
+	err = format("NDui_Plus: %s error\n%s", message, err)
 
 	if _G.BaudErrorFrameHandler then
 		_G.BaudErrorFrameHandler(err)
@@ -233,15 +233,6 @@ function P:CallLoadedAddon(addonName, object)
 end
 
 function P:AddCallbackForAddon(addonName, func, force)
-	if force then
-		local isLoaded, isFinished = IsAddOnLoaded(addonName)
-		if isLoaded and isFinished then
-			local _, catch = pcall(func)
-			P:ThrowError(catch, format("%s callback", addonName))
-			return
-		end
-	end
-
 	local addon = addonsToLoad[addonName]
 	if not addon then
 		addonsToLoad[addonName] = {}
@@ -250,13 +241,6 @@ function P:AddCallbackForAddon(addonName, func, force)
 
 	tinsert(addon, func)
 end
-
-B:RegisterEvent("ADDON_LOADED", function(_, addonName)
-	local object = addonsToLoad[addonName]
-	if object then
-		P:CallLoadedAddon(addonName, object)
-	end
-end)
 
 -- Modules
 function P:RegisterModule(name)
@@ -298,6 +282,13 @@ B:RegisterEvent("PLAYER_LOGIN", function()
 			P:CallLoadedAddon(addonName, object)
 		end
 	end
+
+	B:RegisterEvent("ADDON_LOADED", function(_, addonName)
+		local object = addonsToLoad[addonName]
+		if object then
+			P:CallLoadedAddon(addonName, object)
+		end
+	end)
 
 	P.Initialized = true
 	P.Modules = modules

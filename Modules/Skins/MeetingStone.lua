@@ -100,7 +100,6 @@ local function reskinGridView(self)
 end
 
 function S:MeetingStone()
-	if not IsAddOnLoaded("MeetingStone") and not IsAddOnLoaded("MeetingStonePlus") then return end
 	if not S.db["MeetingStone"] then return end
 
 	local MS = LibStub("AceAddon-3.0"):GetAddon("MeetingStone")
@@ -683,3 +682,4 @@ function S:MeetingStone()
 end
 
 S:RegisterSkin("MeetingStone", S.MeetingStone)
+S:RegisterSkin("MeetingStonePlus", S.MeetingStone)

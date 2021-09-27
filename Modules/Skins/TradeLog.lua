@@ -6,8 +6,6 @@ local _G = getfenv(0)
 local select = select
 
 function S:TradeLog()
-	if not IsAddOnLoaded("TradeLog") then return end
-
 	B.ReskinCheck(TBT_AnnounceCB)
 	B.ReskinDropDown(TBT_AnnounceChannelDropDown)
 	UIDropDownMenu_SetWidth(TBT_AnnounceChannelDropDown, 60)

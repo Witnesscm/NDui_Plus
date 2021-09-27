@@ -94,7 +94,6 @@ local function reskinCategory(category)
 end
 
 function S:WorldQuestTab()
-	if not IsAddOnLoaded("WorldQuestTab") then return end
 	if not S.db["WorldQuestTab"] then return end
 
 	WQT_WorldQuestFrame.Background:Hide()

@@ -4,8 +4,7 @@ local S = P:GetModule("Skins")
 
 local _G = getfenv(0)
 
-function S:ExtVendorUI()
-	if not IsAddOnLoaded("ExtVendor") then return end
+function S:ExtVendor()
 	if not S.db["ExtVendor"] then return end
 
 	-- MerchantFrame
@@ -92,4 +91,4 @@ function S:ExtVendorUI()
 	ExtVendor_SellJunkPopup_JunkListItemListScrollBar.trackBG:SetAlpha(0)
 end
 
-S:RegisterSkin("ExtVendorUI", S.ExtVendorUI)
+S:RegisterSkin("ExtVendor", S.ExtVendor)

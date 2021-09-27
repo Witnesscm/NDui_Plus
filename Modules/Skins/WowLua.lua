@@ -6,8 +6,6 @@ local _G = getfenv(0)
 local pairs = pairs
 
 function S:WowLua()
-	if not IsAddOnLoaded("WowLua") then return end
-
 	B.ReskinPortraitFrame(WowLuaFrame)
 	B.ReskinClose(WowLuaButton_Close)
 	WowLuaFrameTitle:SetPoint("TOP", 15, -5)

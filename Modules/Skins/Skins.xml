@@ -10,13 +10,13 @@
 	<Script file="InboxMailBag.lua"/>
 	<Script file="ls_Toasts.lua"/>
 	<Script file="MeetingStone.lua"/>
-	<Script file="MogPartialSets.lua"/>
 	<Script file="Myslot.lua"/>
 	<Script file="MythicDungeonTools.lua"/>
 	<Script file="Others.lua"/>
 	<Script file="RareScanner.lua"/>
 	<Script file="Rematch.lua"/>
 	<Script file="tdBattlePetScript.lua"/>
+	<Script file="tdGUI.lua"/>
 	<Script file="TinyInspect.lua"/>
 	<Script file="TradeLog.lua"/>
 	<Script file="WeakAuras.lua"/>

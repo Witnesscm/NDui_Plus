@@ -88,8 +88,6 @@ local function reskinEssenceList(self)
 end
 
 function S:BtWLoadouts()
-	if not IsAddOnLoaded("BtWLoadouts") then return end
-
 	local frame = _G.BtWLoadoutsFrame
 	if not frame then return end
 

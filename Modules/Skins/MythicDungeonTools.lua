@@ -4,8 +4,6 @@ local S = P:GetModule("Skins")
 local TT = B:GetModule("Tooltip")
 
 function S:MythicDungeonTools()
-	if not IsAddOnLoaded("MythicDungeonTools") and not IsAddOnLoaded("DungeonTools") then return end
-
 	local MDT = _G.MDT or _G.DungeonTools
 	if not MDT then return end
 
@@ -55,3 +53,4 @@ function S:MythicDungeonTools()
 end
 
 S:RegisterSkin("MythicDungeonTools", S.MythicDungeonTools)
+S:RegisterSkin("DungeonTools", S.MythicDungeonTools)

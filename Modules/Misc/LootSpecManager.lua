@@ -120,7 +120,7 @@ local function CreateSpecIcon(parent, icon, x)
 	B.ReskinIcon(texture)
 	frame.icon = texture
 
-    return frame
+	return frame
 end
 
 local function CreateHeader(parent, title, specs, y)
@@ -340,7 +340,7 @@ function LSM:OnLogin()
 
 	LSM:SetupCache()
 
-	P:AddCallbackForAddon("Blizzard_EncounterJournal", LSM.CreateEJButton, true)
+	P:AddCallbackForAddon("Blizzard_EncounterJournal", LSM.CreateEJButton)
 	B:RegisterEvent("PLAYER_ENTERING_WORLD", LSM.UpdateData)
 	B:RegisterEvent("ENCOUNTER_START", LSM.EncounterStart)
 	B:RegisterEvent("CHALLENGE_MODE_START", LSM.MythicPlusStart)

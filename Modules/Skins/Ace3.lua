@@ -31,7 +31,7 @@ function S:Ace3()
 	end
 end
 
-S:RegisterSkin("Ace3", S.Ace3)
+S:RegisterSkin("Ace3")
 
 function S:Ace3_SkinDropdown()
 	if self and self.obj then

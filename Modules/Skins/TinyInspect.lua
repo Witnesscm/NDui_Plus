@@ -5,7 +5,6 @@ local S = P:GetModule("Skins")
 local _G = getfenv(0)
 
 function S:TinyInspect()
-	if not IsAddOnLoaded("TinyInspect") then return end
 	if not S.db["TinyInspect"] then return end
 
 	hooksecurefunc("ShowInspectItemListFrame", function(_, parent)
@@ -14,12 +13,12 @@ function S:TinyInspect()
 		frame:SetPoint("TOPLEFT", parent, "TOPRIGHT", 3, 0)
 
 		if not frame.styled then
-		    B.StripTextures(frame)
+			B.StripTextures(frame)
 			frame:SetBackdrop(nil)
 			frame.SetBackdrop = B.Dummy
-        	frame:SetBackdropColor(0, 0, 0, 0)
+			frame:SetBackdropColor(0, 0, 0, 0)
 			frame.SetBackdropColor = B.Dummy
-        	frame:SetBackdropBorderColor(0, 0, 0, 0)
+			frame:SetBackdropBorderColor(0, 0, 0, 0)
 			frame.SetBackdropBorderColor = B.Dummy
 			B.SetBD(frame)
 			frame.styled = true

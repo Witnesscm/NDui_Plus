@@ -13,25 +13,25 @@ if GetLocale() ~= "zhCN" and GetLocale() ~= "zhTW" then
 end
 
 local SlotIDtoName = {
-    [1] = HEADSLOT,
-    [2] = NECKSLOT,
-    [3] = SHOULDERSLOT,
-    [4] = SHIRTSLOT,
-    [5] = CHESTSLOT,
-    [6] = WAISTSLOT,
-    [7] = LEGSSLOT,
-    [8] = L["Feet"],
-    [9] = WRISTSLOT,
-    [10]= L["Hands"],
-    [11]= FINGER0SLOT_UNIQUE,
-    [12]= FINGER1SLOT_UNIQUE,
-    [13]= TRINKET0SLOT_UNIQUE,
-    [14]= TRINKET1SLOT_UNIQUE,
-    [15]= BACKSLOT,
-    [16]= MAINHANDSLOT,
-    [17]= SECONDARYHANDSLOT,
-    [18]= RANGEDSLOT,
-    [19]= TABARDSLOT,
+	[1] = HEADSLOT,
+	[2] = NECKSLOT,
+	[3] = SHOULDERSLOT,
+	[4] = SHIRTSLOT,
+	[5] = CHESTSLOT,
+	[6] = WAISTSLOT,
+	[7] = LEGSSLOT,
+	[8] = L["Feet"],
+	[9] = WRISTSLOT,
+	[10]= L["Hands"],
+	[11]= FINGER0SLOT_UNIQUE,
+	[12]= FINGER1SLOT_UNIQUE,
+	[13]= TRINKET0SLOT_UNIQUE,
+	[14]= TRINKET1SLOT_UNIQUE,
+	[15]= BACKSLOT,
+	[16]= MAINHANDSLOT,
+	[17]= SECONDARYHANDSLOT,
+	[18]= RANGEDSLOT,
+	[19]= TABARDSLOT,
 }
 
 local function createGearFrame()
@@ -71,48 +71,48 @@ end
 
 local function GenerateSource(sourceID, sourceType, itemModID, itemQuality)
 	local sourceTextColorized = ""
-    if sourceType == 1 then --TRANSMOG_SOURCE_BOSS_DROP
-        local drops = C_TransmogCollection.GetAppearanceSourceDrops(sourceID)
-        if drops and drops[1] then
-            sourceTextColorized = drops[1].encounter.." ".."|cFFFFD100"..drops[1].instance.."|r|CFFf8e694"
-            if itemModID == 0 then 
-                sourceTextColorized = sourceTextColorized.." "..PLAYER_DIFFICULTY1
-            elseif itemModID == 1 then 
-                sourceTextColorized = sourceTextColorized.." "..PLAYER_DIFFICULTY2
-            elseif itemModID == 3 then 
-                sourceTextColorized = sourceTextColorized.." "..PLAYER_DIFFICULTY6
-            elseif itemModID == 4 then
-                sourceTextColorized = sourceTextColorized.." "..PLAYER_DIFFICULTY3
-            end
-        end
-    else
-        if sourceType == 2 then --quest
-            sourceTextColorized = TRANSMOG_SOURCE_2
-        elseif sourceType == 3 then --vendor
-            sourceTextColorized = TRANSMOG_SOURCE_3
-        elseif sourceType == 4 then --world drop
-            sourceTextColorized = TRANSMOG_SOURCE_4
-        elseif sourceType == 5 then --achievement
-            sourceTextColorized = TRANSMOG_SOURCE_5
-        elseif sourceType == 6 then	--profession
-            sourceTextColorized = TRANSMOG_SOURCE_6
-        else
-            if itemQuality == 6 then
-                sourceTextColorized = ITEM_QUALITY6_DESC
-            elseif itemQuality == 5 then
-                sourceTextColorized = ITEM_QUALITY5_DESC
-            end
-        end
-    end
+	if sourceType == 1 then --TRANSMOG_SOURCE_BOSS_DROP
+		local drops = C_TransmogCollection.GetAppearanceSourceDrops(sourceID)
+		if drops and drops[1] then
+			sourceTextColorized = drops[1].encounter.." ".."|cFFFFD100"..drops[1].instance.."|r|CFFf8e694"
+			if itemModID == 0 then 
+				sourceTextColorized = sourceTextColorized.." "..PLAYER_DIFFICULTY1
+			elseif itemModID == 1 then 
+				sourceTextColorized = sourceTextColorized.." "..PLAYER_DIFFICULTY2
+			elseif itemModID == 3 then 
+				sourceTextColorized = sourceTextColorized.." "..PLAYER_DIFFICULTY6
+			elseif itemModID == 4 then
+				sourceTextColorized = sourceTextColorized.." "..PLAYER_DIFFICULTY3
+			end
+		end
+	else
+		if sourceType == 2 then --quest
+			sourceTextColorized = TRANSMOG_SOURCE_2
+		elseif sourceType == 3 then --vendor
+			sourceTextColorized = TRANSMOG_SOURCE_3
+		elseif sourceType == 4 then --world drop
+			sourceTextColorized = TRANSMOG_SOURCE_4
+		elseif sourceType == 5 then --achievement
+			sourceTextColorized = TRANSMOG_SOURCE_5
+		elseif sourceType == 6 then	--profession
+			sourceTextColorized = TRANSMOG_SOURCE_6
+		else
+			if itemQuality == 6 then
+				sourceTextColorized = ITEM_QUALITY6_DESC
+			elseif itemQuality == 5 then
+				sourceTextColorized = ITEM_QUALITY5_DESC
+			end
+		end
+	end
 
-    return sourceTextColorized
+	return sourceTextColorized
 end
 
 local function GetIllusionSource(illusionID)
 	local name, _, sourceText = C_TransmogCollection.GetIllusionStrings(illusionID)
 	name = name and format(TRANSMOGRIFIED_ENCHANT, name)
 
-    return name, sourceText
+	return name, sourceText
 end
 
 local function GetSourceInfo(sourceID)
@@ -276,7 +276,7 @@ function M:CopyMog()
 			getInspectSources()
 			copyTexts()
 		end)
-	end, true)
+	end)
 end
 
 M:RegisterMisc("CopyMog", M.CopyMog)

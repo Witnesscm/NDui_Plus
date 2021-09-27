@@ -8,83 +8,61 @@ local _G = getfenv(0)
 local select, pairs, type, strfind = select, pairs, type, string.find
 
 function S:PremadeGroupsFilter()
-	if not IsAddOnLoaded("PremadeGroupsFilter") then return end
+	local button = _G.UsePFGButton
+	if button then
+		button:SetSize(32, 32)
+		button:ClearAllPoints()
+		button:SetPoint("RIGHT", _G.LFGListFrame.SearchPanel.RefreshButton, "LEFT", -55, 0)
+		button.text:SetText(FILTER)
+		button.text:SetWidth(button.text:GetStringWidth())
+	end
 
-	local rebtn = LFGListFrame.SearchPanel.RefreshButton
-	UsePFGButton:SetSize(32, 32)
-	UsePFGButton:ClearAllPoints()
-	UsePFGButton:SetPoint("RIGHT", rebtn, "LEFT", -55, 0)
-	UsePFGButton.text:SetText(FILTER)
-	UsePFGButton.text:SetWidth(UsePFGButton.text:GetStringWidth())
-
-	local dialog = PremadeGroupsFilterDialog
-	dialog.Defeated.Title:ClearAllPoints()
-	dialog.Defeated.Title:SetPoint("LEFT", dialog.Defeated.Act, "RIGHT", 2, 0)
+	local dialog = _G.PremadeGroupsFilterDialog
+	if dialog then
+		dialog.Defeated.Title:ClearAllPoints()
+		dialog.Defeated.Title:SetPoint("LEFT", dialog.Defeated.Act, "RIGHT", 2, 0)
+	end
 end
-S:RegisterSkin("PremadeGroupsFilter", S.PremadeGroupsFilter)
 
 function S:WorldQuestsList()
-	if not IsAddOnLoaded("WorldQuestsList") then return end
-
 	local frame = _G["WorldQuestsListFrame"]
 	B.StripTextures(frame)
 	local bg = B.CreateBDFrame(frame, .8)
 	B.CreateSD(bg)
-	for i = 1, WorldMapFrame:GetNumChildren() do
-		local child = select(i, WorldMapFrame:GetChildren())
+	for i = 1, _G.WorldMapFrame:GetNumChildren() do
+		local child = select(i, _G.WorldMapFrame:GetChildren())
 		if child:GetObjectType() == "CheckButton" and child.text then
 			B.ReskinCheck(child)
 		end
 	end
 end
-S:RegisterSkin("WorldQuestsList", S.WorldQuestsList)
 
-function S:TomeOfTeleportation()
-	if not IsAddOnLoaded("TomeOfTeleportation") then return end
+function S:MogPartialSets()
+	if _G.MogPartialSetsFilterButton then
+		B.Reskin(_G.MogPartialSetsFilterButton)
+	end
 
-	hooksecurefunc("TeleporterOpenFrame", function()
-		local frame = TeleporterFrame
-		local close = TeleporterCloseButton
-		if frame and not frame.styled then
-			B.StripTextures(frame)
-			frame.SetBackdrop = B.Dummy
-			B.SetBD(frame)
+	local filter = _G.MogPartialSetsFilter
+	if filter then
+		B.StripTextures(filter)
+		B.SetBD(filter)
 
-			local titleBG = TeleporterTitleFrame:GetRegions()
-			titleBG:SetTexture(nil)
-			titleBG.SetTexture = B.Dummy
-
-			B.ReskinClose(close)
-			close:SetText("")
-			close:DisableDrawLayer("BACKGROUND")
-			frame.styled = true
-		end
-
-		close:SetSize(20, 20)
-
-		local index = 0
-		local button = _G["TeleporterFrameTeleporterB"..index]
-		local cooldown = _G["TeleporterFrameTeleporterB"..index.."TeleporterCB0"]
-		while button and cooldown do
-			if not button.styled then
-				B.Reskin(button)
-				button.SetBackdrop = B.Dummy
-				local icbg = B.ReskinIcon(button.TeleporterIcon)
-				icbg:SetFrameLevel(button:GetFrameLevel())
-
-				cooldown:SetBackdrop({bgFile = "Interface/Tooltips/UI-Tooltip-Background",insets = {left = 1, right = 1, top = 1, bottom = 1}})
-				cooldown.SetBackdrop = B.Dummy
-
-				button.styled = true
+		for _, child in pairs {filter:GetChildren()} do
+			local objType = child:GetObjectType()
+			if objType == "CheckButton" then
+				B.ReskinCheck(child)
+			elseif objType == "EditBox" then
+				P.ReskinInput(child)
+			elseif objType == "Button" and child.Text then
+				B.Reskin(child)
 			end
-
-			index = index + 1
-			button = _G["TeleporterFrameTeleporterB"..index]
-			cooldown = _G["TeleporterFrameTeleporterB"..index.."TeleporterCB0"]
 		end
-	end)
+	end
 end
-S:RegisterSkin("TomeOfTeleportation", S.TomeOfTeleportation)
+
+S:RegisterSkin("WorldQuestsList", S.WorldQuestsList)
+S:RegisterSkin("PremadeGroupsFilter", S.PremadeGroupsFilter)
+S:RegisterSkin("MogPartialSets", S.MogPartialSets)
 
 -- Hide Toggle Button
 S.ToggleFrames = {}

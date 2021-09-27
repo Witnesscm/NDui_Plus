@@ -39,8 +39,6 @@ local function reskinSwitchDialog(self)
 end
 
 function S:ImprovedAddonList()
-	if not IsAddOnLoaded("ImprovedAddonList") then return end
-
 	if _G.ImprovedAddonListDropDown then
 		P.ReskinDropDown(_G.ImprovedAddonListDropDown)
 	end

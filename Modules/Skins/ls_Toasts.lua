@@ -5,7 +5,6 @@ local S = P:GetModule("Skins")
 local _G = getfenv(0)
 
 function S:ls_Toasts()
-	if not IsAddOnLoaded("ls_Toasts") then return end
 	if not S.db["ls_Toasts"] then return end
 
 	local LE, LC, LL = unpack(_G.ls_Toasts)

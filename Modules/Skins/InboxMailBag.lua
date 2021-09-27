@@ -5,7 +5,6 @@ local S = P:GetModule("Skins")
 local _G = getfenv(0)
 
 function S:InboxMailBag()
-	if not IsAddOnLoaded("InboxMailBag") then return end
 	if not S.db["InboxMailBag"] then return end
 
 	B.ReskinCheck(InboxMailbagFrameItemGroupStacksCheckBox)

@@ -154,8 +154,6 @@ local function reskinMoneyInput(self)
 end
 
 function S:Auctionator()
-	if not IsAddOnLoaded("Auctionator") then return end
-
 	local Auctionator = _G.Auctionator
 	if not Auctionator or not Auctionator.Events or not Auctionator.Events.OnAuctionHouseShow then return end
 

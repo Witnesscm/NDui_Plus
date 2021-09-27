@@ -13,8 +13,6 @@ function S:RematchTitleButton(close)
 end
 
 function S:Rematch()
-	if not IsAddOnLoaded("Rematch") then return end
-
 	-- RematchFrame
 	--[[
 	local frame = RematchFrame
@@ -32,60 +30,65 @@ function S:Rematch()
 	end
 	--]]
 
-	hooksecurefunc(RematchOptionPanel.funcs, "PanelTabsToRight", function()
-		if not RematchSettings.PanelTabsToRight then
-			RematchFrame.PanelTabs:SetPoint("TOPLEFT", RematchFrame, "BOTTOMLEFT", -6, 1)
+	hooksecurefunc(_G.RematchOptionPanel.funcs, "PanelTabsToRight", function()
+		if not _G.RematchSettings.PanelTabsToRight then
+			_G.RematchFrame.PanelTabs:SetPoint("TOPLEFT", RematchFrame, "BOTTOMLEFT", -6, 1)
 		end
 	end)
 
 	-- RematchLoadedTeamPanel
-	local teamPanel = RematchLoadedTeamPanel
-	S.RematchTitleButton(teamPanel.Footnotes.Close, true)
-	S.RematchTitleButton(teamPanel.Footnotes.Maximize)
-
-	-- RematchMiniQueue
-	B.StripTextures(RematchMiniQueue.Status)
-	B.StripTextures(RematchMiniQueue.Top)
-	NS.RematchFilter(RematchMiniQueue.Top.QueueButton)
-
-	-- RematchMiniPanel
-	local miniPanel = RematchMiniPanel
-	B.StripTextures(miniPanel.Background)
-	B.CreateBDFrame(miniPanel, .25)
-
-	B.StripTextures(miniPanel.Target)
-	B.CreateBDFrame(miniPanel.Target, 0)
-
-	local loadButton = miniPanel.Target.LoadButton
-	loadButton:DisableDrawLayer("BACKGROUND")
-	B.Reskin(loadButton)
-
-	for _, button in ipairs(miniPanel.Target.Pets) do
-		NS.RematchIcon(button)
+	local teamPanel = _G.RematchLoadedTeamPanel
+	if teamPanel then
+		S.RematchTitleButton(teamPanel.Footnotes.Close, true)
+		S.RematchTitleButton(teamPanel.Footnotes.Maximize)
 	end
 
-	hooksecurefunc(miniPanel, "Update", function(self)
-		if not self then return end
+	-- RematchMiniQueue
+	local miniQueue = _G.RematchMiniQueue
+	if miniQueue then
+		B.StripTextures(miniQueue.Status)
+		B.StripTextures(miniQueue.Top)
+		NS.RematchFilter(miniQueue.Top.QueueButton)
+	end
 
-		for _, button in ipairs(miniPanel.Pets) do
-			if not button.styled then
-				--NS.RematchIcon(button)
-				NS.RematchXP(button.HP)
-				NS.RematchXP(button.XP)
-				button.Status:SetAllPoints(button.Icon)
+	-- RematchMiniPanel
+	local miniPanel = _G.RematchMiniPanel
+	if miniPanel then
+		B.StripTextures(miniPanel.Background)
+		B.CreateBDFrame(miniPanel, .25)
+		B.StripTextures(miniPanel.Target)
+		B.CreateBDFrame(miniPanel.Target, 0)
 
-				-- for i = 1, 3 do
-					-- NS.RematchIcon(button.Abilities[i])
-				-- end
+		local loadButton = miniPanel.Target.LoadButton
+		loadButton:DisableDrawLayer("BACKGROUND")
+		B.Reskin(loadButton)
 
-				button.styled = true
-			end
+		for _, button in ipairs(miniPanel.Target.Pets) do
+			NS.RematchIcon(button)
 		end
-	end)
+
+		hooksecurefunc(miniPanel, "Update", function(self)
+			if not self then return end
+
+			for _, button in ipairs(miniPanel.Pets) do
+				if not button.styled then
+					--NS.RematchIcon(button)
+					NS.RematchXP(button.HP)
+					NS.RematchXP(button.XP)
+					button.Status:SetAllPoints(button.Icon)
+
+					-- for i = 1, 3 do
+						-- NS.RematchIcon(button.Abilities[i])
+					-- end
+
+					button.styled = true
+				end
+			end
+		end)
+	end
 
 	-- ALPTCConfigs
 	local function reskinALPTInput(self)
-		self:SetBackdrop(nil)
 		self:DisableDrawLayer("BACKGROUND")
 		P.ReskinInput(self)
 		self.bg:SetInside()
@@ -105,24 +108,26 @@ function S:Rematch()
 		down:SetSize(20,20)
 	end
 
-	local config = RematchDialog.ALPTCConfigs
+	local config = _G.RematchDialog.ALPTCConfigs
 	if config then
 		for i = 1, 3 do
-			B.ReskinCheck(config["Breed"..i])
-			B.ReskinCheck(config["NoAlt"..i])
-			B.ReskinCheck(config["Highest"..i])
-			B.ReskinCheck(config["UseGroup"..i])
+			for _, key in ipairs({"Breed", "NoAlt", "Highest", "Lowest", "UseGroup"}) do
+				local check = config[key..i]
+				if check then
+					B.ReskinCheck(check)
+				end
+			end
 
-			-- reskinALPTInput(config["HP"..i])
-			-- reskinALPTInput(config["MinLvl"..i])
-			-- reskinALPTInput(config["FilterHP"..i.."_1"])
-			-- reskinALPTInput(config["FilterHP"..i.."_2"])
-			-- reskinALPTInput(config["FilterAttack"..i.."_1"])
-			-- reskinALPTInput(config["FilterAttack"..i.."_2"])
-			-- reskinALPTInput(config["FilterSpeed"..i.."_1"])
-			-- reskinALPTInput(config["FilterSpeed"..i.."_2"])
+			for _, key in ipairs({"HP"..i, "MinLvl"..i, "FilterHP"..i.."_1", "FilterHP"..i.."_2", "FilterAttack"..i.."_1", "FilterAttack"..i.."_2", "FilterSpeed"..i.."_1", "FilterSpeed"..i.."_2"}) do
+				local eb = config[key]
+				if eb then
+					reskinALPTInput(eb)
+				end
+			end
 
-			reskinALPTDropDown(config["Groups"..i])
+			if config["Groups"..i] then
+				reskinALPTDropDown(config["Groups"..i])
+			end
 		end
 
 		B.ReskinCheck(config.Disable)
@@ -135,8 +140,8 @@ function S:Rematch()
 		local ALPTBtn = _G.ALPTRematchOptionButton
 		if ALPTBtn and not InCombatLockdown() then
 			ALPTBtn:ClearAllPoints()
-			ALPTBtn:SetParent(RematchJournal)
-			ALPTBtn:SetPoint("TOPRIGHT", RematchJournal, "TOPRIGHT", -230, -28)
+			ALPTBtn:SetParent(_G.RematchJournal)
+			ALPTBtn:SetPoint("TOPRIGHT", _G.RematchJournal, "TOPRIGHT", -230, -28)
 			ALPTBtn:SetSize(28, 28)
 		end
 	end

@@ -2,11 +2,15 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 local S = P:GetModule("Skins")
 
+local _G = getfenv(0)
+
+local cr, cg, cb = DB.r, DB.g, DB.b
+
 function S:Immersion()
-	if not IsAddOnLoaded("Immersion") then return end
 	if not S.db["Immersion"] then return end
 
-	local cr, cg, cb = DB.r, DB.g, DB.b
+	local ImmersionFrame = _G.ImmersionFrame
+	if not ImmersionFrame then return end
 
 	local TalkBox = ImmersionFrame.TalkBox
 	B.StripTextures(TalkBox.PortraitFrame)

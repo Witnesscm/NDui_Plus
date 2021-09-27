@@ -500,7 +500,7 @@ function TM:OnLogin()
 		TM:CreateSetFrame()
 		TM:CreateSaveFrame()
 		TM:TweakWarmode()
-	end, true)
+	end)
 
 	B:RegisterEvent("PLAYER_ENTERING_WORLD", function()
 		TM:UpdatePlayerInfo()

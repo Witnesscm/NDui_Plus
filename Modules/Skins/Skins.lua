@@ -2,36 +2,35 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 local S = P:RegisterModule("Skins")
 
-S.SkinList = {}
+local _G = getfenv(0)
+local pcall, pairs, type = pcall, pairs, type
+local tinsert = table.insert
+
+S.nonAddonsToLoad = {}
 
 function S:RegisterSkin(name, func)
-	if not S.SkinList[name] then
-		S.SkinList[name] = func
+	if not func then
+		func = self[name]
+
+		if func and type(func) == "function" then
+			self.nonAddonsToLoad[name] = func
+		end
+	else
+		P:AddCallbackForAddon(name, func)
 	end
 end
 
 function S:OnLogin()
-	for name, func in next, S.SkinList do
-		if name and type(func) == "function" then
-			local _, catch = pcall(func)
-			P:ThrowError(catch, format("%s Skin", name))
-		end
+	for name, func in pairs(self.nonAddonsToLoad) do
+		local _, catch = pcall(func)
+		P:ThrowError(catch, format("%s Skin", name))
+		self.nonAddonsToLoad[name] = nil
 	end
-
-	self:tdGUI()
 end
 
 -- Reskin Blizzard UIs
 tinsert(C.defaultThemes, function()
-	B.ReskinScroll(InterfaceOptionsFrameAddOnsListScrollBar)
-end)
-
-function S:tdGUI()
-	local GUI = LibStub and LibStub("tdGUI-1.0", true)
-	local DropMenu = GUI and GUI:GetClass("DropMenu")
-
-	if DropMenu then
-		hooksecurefunc(DropMenu, "Constructor", P.ReskinTooltip)
-		hooksecurefunc(DropMenu, "Toggle", P.ReskinTooltip)
+	if _G.InterfaceOptionsFrameAddOnsListScrollBar then
+		B.ReskinScroll(_G.InterfaceOptionsFrameAddOnsListScrollBar)
 	end
-end
+end)

@@ -33,7 +33,6 @@ local function reskinListFont()
 end
 
 function S:WhisperPop()
-	if not IsAddOnLoaded("WhisperPop") then return end
 	if not S.db["WhisperPop"] then return end
 
 	local cr, cg, cb = DB.r, DB.g, DB.b

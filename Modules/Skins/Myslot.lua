@@ -5,8 +5,6 @@ local S = P:GetModule("Skins")
 -- Credit: ElvUI_WindTools
 --------------------------
 function S:Myslot()
-	if not IsAddOnLoaded("Myslot") then return end
-
 	local Myslot = LibStub("Myslot-5.0", true)
 	if not Myslot then return end
 

@@ -5,7 +5,6 @@ local S = P:GetModule("Skins")
 local _G = getfenv(0)
 
 function S:ButtonForge()
-	if not IsAddOnLoaded("ButtonForge") then return end
 	if not S.db["ButtonForge"] then return end
 
 	local Bar = B:GetModule("Actionbar")
@@ -19,7 +18,7 @@ function S:ButtonForge()
 			icon.SetTexCoord = B.Dummy
 		end
 	end
-	ButtonForge_API1.RegisterCallback(callback)
+	_G.ButtonForge_API1.RegisterCallback(callback)
 
 	local buttons = {
 		"BFToolbarCreateBar",
@@ -36,18 +35,29 @@ function S:ButtonForge()
 		end
 	end
 
-	B.StripTextures(BFToolbar)
-	B.SetBD(BFToolbar)
-	B.ReskinClose(BFToolbarToggle)
-	B.StripTextures(BFBindingDialog)
-	B.SetBD(BFBindingDialog)
-	B.Reskin(BFBindingDialogBinding)
-	B.Reskin(BFBindingDialogUnbind)
-	B.ReskinClose(BFBindingDialog.Toggle)
-	B.Reskin(BFConfigPageToolbarToggle)
+	local BFToolbar = _G.BFToolbar
+	if BFToolbar then
+		B.StripTextures(BFToolbar)
+		B.SetBD(BFToolbar)
+		B.ReskinClose(_G.BFToolbarToggle)
+	end
 
-	hooksecurefunc(BFUtil, "NewBar", function()
-		for i = 1, BFConfigureLayer:GetNumChildren() do
+	local BFBindingDialog = _G.BFBindingDialog
+	if BFBindingDialog then
+		B.StripTextures(BFBindingDialog)
+		B.SetBD(BFBindingDialog)
+		B.ReskinClose(BFBindingDialog.Toggle)
+	end
+
+	for _, key in pairs({"BFBindingDialogBinding", "BFBindingDialogUnbind", "BFConfigPageToolbarToggle"}) do
+		local bu = _G[key]
+		if bu then
+			B.Reskin(bu)
+		end
+	end
+
+	hooksecurefunc(_G.BFUtil, "NewBar", function()
+		for i = 1, _G.BFConfigureLayer:GetNumChildren() do
 			local child = select(i, BFConfigureLayer:GetChildren())
 			if child:GetObjectType() == "EditBox" and not child.styled then
 				B.ReskinInput(child)
@@ -62,7 +72,7 @@ function S:ButtonForge()
 		end
 	end)
 
-	hooksecurefunc(BFBar, "Configure", function(self)
+	hooksecurefunc(_G.BFBar, "Configure", function(self)
 		self:SetButtonGap(2)		-- 锁定间隔为2
 	end)
 end
