@@ -60,9 +60,14 @@ function S:MogPartialSets()
 	end
 end
 
+function S:BigWigs_Options()
+	TT.ReskinTooltip(_G.BigWigsOptionsTooltip)
+end
+
 S:RegisterSkin("WorldQuestsList", S.WorldQuestsList)
 S:RegisterSkin("PremadeGroupsFilter", S.PremadeGroupsFilter)
 S:RegisterSkin("MogPartialSets", S.MogPartialSets)
+S:RegisterSkin("BigWigs_Options", S.BigWigs_Options)
 
 -- Hide Toggle Button
 S.ToggleFrames = {}
