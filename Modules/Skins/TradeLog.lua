@@ -49,32 +49,30 @@ function S:TradeLog()
 		reskinButton(_G["TradeLogRecipientItem"..i.."ItemButton"])
 	end
 
-	local function reskinTBT()	
-		for _, button in ipairs({"TradeFrameTargetWhisperButton", "TradeFrameTargetEmote1Button", "TradeFrameTargetEmote2Button"}) do
-			local bu = _G[button]
-			if bu then
-				B.Reskin(bu)
-			end
-		end
-
-		for i = 1, 3 do
-			local bu = _G["TradeFramePlayerSpell"..i.."Button"]
-			if bu then
-				B.ReskinIcon(bu:GetNormalTexture())
-				bu:GetHighlightTexture():SetColorTexture(1, 1, 1, .25)
-			end
-		end
-
-		for i = 1, TradeFrame:GetNumRegions() do
-			local region = select(i, TradeFrame:GetRegions())
-			if region:GetObjectType() == "FontString" and region:GetName() == nil then
-				region:Hide()
-			end
-		end
-	end
-
 	if TBTFrame then		-- version check
-		C_Timer.After(.5, reskinTBT)
+		P:Delay(.5, function()
+			for _, button in ipairs({"TradeFrameTargetWhisperButton", "TradeFrameTargetEmote1Button", "TradeFrameTargetEmote2Button"}) do
+				local bu = _G[button]
+				if bu then
+					B.Reskin(bu)
+				end
+			end
+
+			for i = 1, 3 do
+				local bu = _G["TradeFramePlayerSpell"..i.."Button"]
+				if bu then
+					B.ReskinIcon(bu:GetNormalTexture())
+					bu:GetHighlightTexture():SetColorTexture(1, 1, 1, .25)
+				end
+			end
+
+			for i = 1, TradeFrame:GetNumRegions() do
+				local region = select(i, TradeFrame:GetRegions())
+				if region:GetObjectType() == "FontString" and region:GetName() == nil then
+					region:Hide()
+				end
+			end
+		end)
 	end
 
 	if RecentTradeFrame then		-- version check

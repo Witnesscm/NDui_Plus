@@ -346,7 +346,7 @@ function LSM:OnLogin()
 	B:RegisterEvent("CHALLENGE_MODE_START", LSM.MythicPlusStart)
 end
 
-SlashCmdList['NDUI_PLUS_LSM'] = function()
+SlashCmdList["NDUI_PLUS_LSM"] = function()
 	if not NDuiPlusDB["Misc"]["LootSpecManager"] then return end
 
 	LSM:CreateGUI()

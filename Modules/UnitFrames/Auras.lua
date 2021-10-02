@@ -13,7 +13,7 @@ local filteredStyle = {
 function UF.CustomFilter(element, unit, button, name, _, _, _, _, _, caster, isStealable, _, spellID, _, _, _, nameplateShowAll)
 	if not name then return end 
 
-	button.isFriend = unit and UnitIsFriend('player', unit) and not UnitCanAttack('player', unit)
+	button.isFriend = unit and UnitIsFriend("player", unit) and not UnitCanAttack("player", unit)
 
 	if spellID == 209859 then
 		element.bolster = element.bolster + 1

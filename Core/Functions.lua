@@ -296,9 +296,9 @@ end
 do
 	function P:AnchorTooltip()
 		if self:GetRight() >= (GetScreenWidth() / 2) then
-			GameTooltip:SetOwner(self, 'ANCHOR_LEFT')
+			GameTooltip:SetOwner(self, "ANCHOR_LEFT")
 		else
-			GameTooltip:SetOwner(self, 'ANCHOR_RIGHT')
+			GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
 		end
 	end
 

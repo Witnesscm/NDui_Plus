@@ -44,10 +44,10 @@ function CH:GetPlayerInfoByGUID(guid)
 
 		if not (ok and englishClass) then return end
 
-		if realm == '' then realm = nil end
+		if realm == "" then realm = nil end
 		local nameWithRealm
-		if name and name ~= '' then
-			nameWithRealm = (realm and name..'-'..realm) or name..'-'..DB.MyRealm
+		if name and name ~= "" then
+			nameWithRealm = (realm and name.."-"..realm) or name.."-"..DB.MyRealm
 		end
 
 		data = {
@@ -77,8 +77,8 @@ end
 function CH:ClassFilter(message)
 	local isFirstWord, rebuiltString
 
-	for word in gmatch(message, '%s-%S+%s*') do
-		local tempWord = gsub(word,'^[%s%p]-([^%s%p]+)([%-]?[^%s%p]-)[%s%p]*$','%1%2')
+	for word in gmatch(message, "%s-%S+%s*") do
+		local tempWord = gsub(word,"^[%s%p]-([^%s%p]+)([%-]?[^%s%p]-)[%s%p]*$","%1%2")
 		local lowerCaseWord = strlower(tempWord)
 
 		local classMatch = CH.ClassNames[lowerCaseWord]
@@ -86,14 +86,14 @@ function CH:ClassFilter(message)
 
 		if wordMatch then
 			local r, g, b = B.ClassColor(classMatch)
-			word = gsub(word, gsub(tempWord, '%-','%%-'), format('\124cff%.2x%.2x%.2x%s\124r', r*255, g*255, b*255, tempWord))
+			word = gsub(word, gsub(tempWord, "%-","%%-"), format("\124cff%.2x%.2x%.2x%s\124r", r*255, g*255, b*255, tempWord))
 		end
 
 		if not isFirstWord then
 			rebuiltString = word
 			isFirstWord = true
 		else
-			rebuiltString = format('%s%s', rebuiltString, word)
+			rebuiltString = format("%s%s", rebuiltString, word)
 		end
 	end
 
@@ -118,7 +118,7 @@ function CH:HookBubble(frame, backdrop)
 
 	if not frame.backdrop then
 		frame.backdrop = backdrop
-		frame:HookScript('OnShow', CH.UpdateBubbleColor)
+		frame:HookScript("OnShow", CH.UpdateBubbleColor)
 		CH.UpdateBubbleColor(frame)
 	end
 
