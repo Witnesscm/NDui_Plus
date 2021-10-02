@@ -563,14 +563,12 @@ function G:SetupToggle()
 end
 
 function G:OnLogin()
-	P:Delay(.5, function()
-		local NDuiBtn = _G.GameMenuFrameNDui
-		if not NDuiBtn then return end
-		NDuiBtn:HookScript("PostClick",G.SetupToggle)
-	end)
+	local NDuiBtn = _G.GameMenuFrameNDui
+	if not NDuiBtn then return end
+	NDuiBtn:HookScript("PostClick",G.SetupToggle)
 end
 
-SlashCmdList['NDUI_PLUS'] = function(msg)
+SlashCmdList["NDUI_PLUS"] = function(msg)
 	local status = P:VersionCheck_Compare(DB.Version, P.SupportVersion)
 	if status == "IsOld" then
 		P:Print(format(L["Version Check"], P.SupportVersion))

@@ -173,10 +173,5 @@ function AB:GlobalFade()
 	AB.fadeParent:SetScript("OnEvent", AB.FadeParent_OnEvent)
 
 	AB:UpdateFaderSettings()
-
-	local function loadFunc(event, addon)
-		AB:UpdateFaderState()
-		B:UnregisterEvent(event, loadFunc)
-	end
-	B:RegisterEvent("PLAYER_ENTERING_WORLD", loadFunc)
+	AB:UpdateFaderState()
 end

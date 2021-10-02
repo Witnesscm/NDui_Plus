@@ -46,11 +46,9 @@ function UF:SetupNameText()
 end
 
 function UF:OnLogin()
-	P:Delay(1, function()
-		UF:SetupNameText()
-		UF:SetRoleIconsHook()
-		UF:UpdateRoleIcons()
-		UF:UpdateUFsFader()
-		UF:UpdateAurasFilter()
-	end)
+	UF:SetupNameText()
+	UF:SetRoleIconsHook()
+	UF:UpdateRoleIcons()
+	UF:UpdateUFsFader()
+	UF:UpdateAurasFilter()
 end

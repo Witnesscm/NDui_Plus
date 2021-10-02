@@ -218,32 +218,30 @@ function CH:ChatHide()
 	end)
 
 	-- Modified NDui ChatFrame
-	P:Delay(1, function()
-		for i = 1, NUM_CHAT_WINDOWS do
-			local chatframe = _G["ChatFrame" .. i]
-			CH.SetupChat(chatframe)
-		end
+	for i = 1, NUM_CHAT_WINDOWS do
+		local chatframe = _G["ChatFrame" .. i]
+		CH.SetupChat(chatframe)
+	end
 
-		hooksecurefunc("FCF_OpenTemporaryWindow", function()
-			for _, chatFrameName in ipairs(CHAT_FRAMES) do
-				local frame = _G[chatFrameName]
-				if frame.isTemporary then
-					CH.SetupChat(frame)
-				end
+	hooksecurefunc("FCF_OpenTemporaryWindow", function()
+		for _, chatFrameName in ipairs(CHAT_FRAMES) do
+			local frame = _G[chatFrameName]
+			if frame.isTemporary then
+				CH.SetupChat(frame)
 			end
-		end)
-
-		_G.GeneralDockManager:SetParent(CH.ChatBG)
-		_G.ChatFrameMenuButton:GetParent():SetParent(CH.ChatBG)
-
-		if copy then
-			copy:SetParent(CH.ChatBG)
 		end
+	end)
 
-		CH:UpdateChatSize()
-		hooksecurefunc("FCF_SavePositionAndDimensions", function()
-			P:Delay(.1, CH.UpdateChatSize)
-		end)
+	_G.GeneralDockManager:SetParent(CH.ChatBG)
+	_G.ChatFrameMenuButton:GetParent():SetParent(CH.ChatBG)
+
+	if copy then
+		copy:SetParent(CH.ChatBG)
+	end
+
+	CH:UpdateChatSize()
+	hooksecurefunc("FCF_SavePositionAndDimensions", function()
+		P:Delay(.1, CH.UpdateChatSize)
 	end)
 
 	CH:UpdateAutoShow()

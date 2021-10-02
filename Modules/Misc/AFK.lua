@@ -98,7 +98,7 @@ function AFK:SetAFK(status)
 		AFK.AFKMode.bottom.model:SetAnimation(67)
 		AFK.AFKMode.bottom.model.idleDuration = 40
 
-		AFK.AFKMode.bottom.name:SetFormattedText("%s - %s\n%s %s %s %s", DB.MyName, DB.MyRealm, LEVEL, UnitLevel("player"), AFK.PlayerRace, AFK.PlayerClass)
+		AFK.AFKMode.bottom.name:SetFormattedText("%s - %s\n%s %s %s %s", DB.MyName, DB.MyRealm, LEVEL, UnitLevel("player"), UnitRace("player"), UnitClass("player"))
 		AFK.AFKMode.top.Status:SetValue(0)
 
 		AFK.startTime = GetTime()
@@ -183,7 +183,7 @@ function AFK:LoopAnimations()
 	end
 end
 
-function AFK:AFKMode_Init()
+function AFK:OnLogin()
 	AFK.AFKMode = CreateFrame("Frame", "NDuiPlus_AFKFrame")
 	AFK.AFKMode:SetFrameLevel(1)
 	AFK.AFKMode:SetScale(_G.UIParent:GetScale())
@@ -291,13 +291,4 @@ function AFK:AFKMode_Init()
 	end)
 
 	AFK:Toggle()
-
-	B:UnregisterEvent("PLAYER_ENTERING_WORLD", AFK.AFKMode_Init)
-end
-
-function AFK:OnLogin()
-	AFK.PlayerRace = UnitRace("player")
-	AFK.PlayerClass = UnitClass("player")
-
-	B:RegisterEvent("PLAYER_ENTERING_WORLD", AFK.AFKMode_Init)
 end

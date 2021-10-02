@@ -66,7 +66,7 @@ function AB:ActionBar_Update(event, ...)
 	end
 end
 
-function AB.CreateHandler(event)
+function AB:CreateHandler()
 	local Bar = B:GetModule("Actionbar")
 	for _, button in ipairs(Bar.buttons) do
 		if button.action then
@@ -77,8 +77,6 @@ function AB.CreateHandler(event)
 			button.__handler:SetScript("OnEvent", AB.ActionBar_Update)
 		end
 	end
-
-	B:UnregisterEvent(event, AB.CreateHandler)
 end
 
 function AB:ComboGlow()
@@ -87,7 +85,7 @@ function AB:ComboGlow()
 	AB.GlowSpells = AllGlowSpells[DB.MyClass]
 	if not AB.GlowSpells then return end
 
+	AB:CreateHandler()
 	AB:UpdateMaxCombo()
 	B:RegisterEvent("UNIT_MAXPOWER", AB.UpdateMaxCombo)
-	B:RegisterEvent("PLAYER_ENTERING_WORLD", AB.CreateHandler)
 end

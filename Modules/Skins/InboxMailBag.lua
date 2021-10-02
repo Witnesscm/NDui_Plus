@@ -7,18 +7,23 @@ local _G = getfenv(0)
 function S:InboxMailBag()
 	if not S.db["InboxMailBag"] then return end
 
-	B.ReskinCheck(InboxMailbagFrameItemGroupStacksCheckBox)
-	B.ReskinInput(InboxMailbagFrameItemSearchBox)
-	B.ReskinScroll(InboxMailbagFrameScrollFrameScrollBar)
-	B.StripTextures(InboxMailbagFrame)
+	local styled
+	_G.MailFrame:HookScript("OnShow", function()
+		if styled then return end
 
-	P:Delay(.5, function()
 		local index = 3
 		while _G["MailFrameTab"..index] do
 			B.ReskinTab(_G["MailFrameTab"..index])
 			index = index + 1
 		end
+
+		styled = true
 	end)
+
+	B.ReskinCheck(InboxMailbagFrameItemGroupStacksCheckBox)
+	B.ReskinInput(InboxMailbagFrameItemSearchBox)
+	B.ReskinScroll(InboxMailbagFrameScrollFrameScrollBar)
+	B.StripTextures(InboxMailbagFrame)
 
 	local num = _G.BAGITEMS_ICON_DISPLAYED or 42
 
