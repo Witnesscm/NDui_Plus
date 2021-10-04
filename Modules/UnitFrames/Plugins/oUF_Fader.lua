@@ -1,6 +1,6 @@
 local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
-local oUF = _G.oUF or ns.oUF
+local oUF = ns.oUF
 assert(oUF, "oUF_Fader cannot find an instance of oUF. If your oUF is embedded into a layout, it may not be embedded properly.")
 -------------
 -- Credits --  p3lim, Azilroka, Simpy

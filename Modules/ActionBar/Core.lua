@@ -61,7 +61,7 @@ local Bar = B:GetModule("Actionbar")
 	-- frame.mover:SetSize(frame:GetSize())
 -- end
 
-function AB:OnLogin()	
+function AB:OnLogin()
 	AB:GlobalFade()
 	AB:ComboGlow()
 end

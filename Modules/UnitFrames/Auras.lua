@@ -1,6 +1,6 @@
 local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
-local oUF = _G.oUF or ns.oUF
+local oUF = ns.oUF
 local UF = P:GetModule("UnitFrames")
 local NUF = B:GetModule("UnitFrames")
 
