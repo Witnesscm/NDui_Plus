@@ -1,26 +1,62 @@
 local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 local S = P:GetModule("Skins")
+local Bar = B:GetModule("Actionbar")
 
 local _G = getfenv(0)
+
+local function reskinButton(self)
+	local bu = self.Widget
+	local icon = self.WIcon
+
+	Bar:StyleActionButton(bu, P.BarConfig)
+	icon:SetTexCoord(unpack(DB.TexCoord))
+	icon.SetTexCoord = B.Dummy
+end
+
+local function reskinBar(self)
+	B.StripTextures(self.Background)
+	B.CreateBDFrame(self.Background, .25)
+	B.StripTextures(self.LabelFrame)
+end
 
 function S:ButtonForge()
 	if not S.db["ButtonForge"] then return end
 
-	local Bar = B:GetModule("Actionbar")
+	local BFUtil = _G.BFUtil
+	local BFButton = _G.BFButton
+	local BFBar = _G.BFBar
 
-	local function callback(_, event, button)
-		if event == "BUTTON_ALLOCATED" then
-			local bu = _G[button]
-			local icon = _G[button.."Icon"]
-			Bar:StyleActionButton(bu, P.BarConfig)
-			icon:SetTexCoord(unpack(DB.TexCoord))
-			icon.SetTexCoord = B.Dummy
-		end
+	for _, button in pairs(BFUtil.ActiveButtons) do
+		reskinButton(button)
 	end
-	_G.ButtonForge_API1.RegisterCallback(callback)
 
-	local buttons = {
+	local origNewButton = BFButton.New
+	BFButton.New = function(...)
+		local button = origNewButton(...)
+		reskinButton(button)
+
+		return button
+	end
+
+	for _, bar in pairs(BFUtil.ActiveBars) do
+		reskinBar(bar)
+		bar:SetButtonGap(2)
+	end
+
+	local origNewBar = BFBar.New
+	BFBar.New = function(...)
+		local bar = origNewBar(...)
+		reskinBar(bar)
+
+		return bar
+	end
+
+	hooksecurefunc(BFBar, "Configure", function(self)
+		self:SetButtonGap(2)
+	end)
+
+	local configButtons = {
 		"BFToolbarCreateBar",
 		"BFToolbarCreateBonusBar",
 		"BFToolbarDestroyBar",
@@ -28,8 +64,9 @@ function S:ButtonForge()
 		"BFToolbarConfigureAction",
 		"BFToolbarRightClickSelfCast"
 	}
-	for _, button in next, buttons do
-		local bu = _G[button]
+
+	for _, key in pairs(configButtons) do
+		local bu = _G[key]
 		if bu then
 			Bar:StyleActionButton(bu, P.BarConfig)
 		end
@@ -56,25 +93,10 @@ function S:ButtonForge()
 		end
 	end
 
-	hooksecurefunc(_G.BFUtil, "NewBar", function()
-		for i = 1, _G.BFConfigureLayer:GetNumChildren() do
-			local child = select(i, BFConfigureLayer:GetChildren())
-			if child:GetObjectType() == "EditBox" and not child.styled then
-				B.ReskinInput(child)
-				child.styled = true
-			end
-			if child and child.ParentBar and not child.styled then
-				B.StripTextures(child.ParentBar.Background)
-				B.CreateBDFrame(child.ParentBar.Background, .25)
-				B.StripTextures(child.ParentBar.LabelFrame)
-				child.styled = true
-			end
-		end
-	end)
-
-	hooksecurefunc(_G.BFBar, "Configure", function(self)
-		self:SetButtonGap(2)		-- 锁定间隔为2
-	end)
+	local BFInputLine = _G.BFInputLine
+	if BFInputLine then
+		B.ReskinInput(BFInputLine)
+	end
 end
 
 S:RegisterSkin("ButtonForge", S.ButtonForge)
