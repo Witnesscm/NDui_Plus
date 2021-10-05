@@ -151,24 +151,6 @@ function P:InitialSettings(source, target, fullClean)
 	end
 end
 
-local loader = CreateFrame("Frame")
-loader:RegisterEvent("ADDON_LOADED")
-loader:SetScript("OnEvent", function(self, _, addon)
-	if addon ~= "NDui_Plus" then return end
-
-	P:InitialSettings(P.DefaultSettings, NDuiPlusDB)
-	P:InitialSettings(P.CharacterSettings, NDuiPlusCharDB)
-
-	for _, module in next, initQueue do
-		module.db = NDuiPlusDB[module.name]
-	end
-
-	P:BuildTextureTable()
-	P:ReplaceTexture()
-
-	self:UnregisterAllEvents()
-end)
-
 function P:ThrowError(err, message)
 	if not err then return end
 
@@ -260,8 +242,6 @@ function P:GetModule(name)
 end
 
 function P:Initialize()
-	P:Debug("start")
-
 	local status = P:VersionCheck_Compare(DB.Version, P.SupportVersion)
 	if status == "IsOld" then
 		P:Print(L["Version Check"], P.SupportVersion)
@@ -294,19 +274,25 @@ function P:Initialize()
 
 	P.Initialized = true
 	P.Modules = modules
-
-	P:Debug("loaded")
 end
 
-local WaitFrame = CreateFrame("Frame")
-WaitFrame:Hide()
-WaitFrame:SetScript("OnUpdate", function()
-	if B.Modules then
-		P:Initialize()
-		WaitFrame:Hide()
-	end
-end)
+local loader = CreateFrame("Frame")
+loader:RegisterEvent("ADDON_LOADED")
+loader:RegisterEvent("PLAYER_LOGIN")
+loader:SetScript("OnEvent", function(self, event, addon)
+	if event == "ADDON_LOADED" and addon == "NDui_Plus" then
+		P:InitialSettings(P.DefaultSettings, NDuiPlusDB)
+		P:InitialSettings(P.CharacterSettings, NDuiPlusCharDB)
 
-B:RegisterEvent("PLAYER_LOGIN", function()
-	WaitFrame:Show()
+		for _, module in next, initQueue do
+			module.db = NDuiPlusDB[module.name]
+		end
+
+		P:BuildTextureTable()
+		P:ReplaceTexture()
+
+		self:UnregisterEvent(event)
+	elseif event == "PLAYER_LOGIN" then
+		P:Initialize()
+	end
 end)
