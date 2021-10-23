@@ -9,7 +9,9 @@ local modules, initQueue, addonsToLoad = {}, {}, {}
 
 P.DefaultSettings = {
 	Debug = false,
-	Changelog = {},
+	Changelog = {
+		Version = "",
+	},
 	TexStyle = {
 		Enable = false,
 		Texture = "NDui_Plus",
@@ -281,11 +283,18 @@ loader:RegisterEvent("ADDON_LOADED")
 loader:RegisterEvent("PLAYER_LOGIN")
 loader:SetScript("OnEvent", function(self, event, addon)
 	if event == "ADDON_LOADED" and addon == "NDui_Plus" then
-		P:InitialSettings(P.DefaultSettings, NDuiPlusDB)
+		P:InitialSettings(P.DefaultSettings, NDuiPlusDB, true)
 		P:InitialSettings(P.CharacterSettings, NDuiPlusCharDB)
 
 		for _, module in next, initQueue do
 			module.db = NDuiPlusDB[module.name]
+
+			local charDB = NDuiPlusCharDB[module.name]
+			if module.db and charDB then
+				setmetatable(module.db, {__index=charDB})
+			elseif charDB then
+				module.db = charDB
+			end
 		end
 
 		P:BuildTextureTable()

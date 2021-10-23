@@ -52,22 +52,6 @@ local function createExtraGUI(parent, name, title, scrollFrame)
 	return frame
 end
 
-local function NDUI_VARIABLE(key, value, newValue)
-	if key == "BLANK" then
-		if newValue ~= nil then
-			NDuiPlusDB[value] = newValue
-		else
-			return NDuiPlusDB[value]
-		end
-	else
-		if newValue ~= nil then
-			NDuiPlusDB[key][value] = newValue
-		else
-			return NDuiPlusDB[key][value]
-		end
-	end
-end
-
 local function createOptionTitle(parent, title, offset)
 	B.CreateFS(parent, 14, title, nil, "TOP", 0, offset)
 	local line = B.SetGradient(parent, "H", 1, 1, 1, .25, .25, 200, C.mult)
@@ -77,18 +61,18 @@ end
 local function sliderValueChanged(self, v)
 	local current = tonumber(format("%.1f", v))
 	self.value:SetText(current)
-	NDUI_VARIABLE(self.__key, self.__value, current)
+	G.Variable(self.__key, self.__value, current)
 	if self.__update then self.__update() end
 end
 
 local function createOptionSlider(parent, title, minV, maxV, step, x, y, key, value, func)
 	local slider = B.CreateSlider(parent, title, minV, maxV, step, x, y)
-	slider:SetValue(NDUI_VARIABLE(key, value))
-	slider.value:SetText(NDUI_VARIABLE(key, value))
+	slider:SetValue(G.Variable(key, value))
+	slider.value:SetText(G.Variable(key, value))
 	slider.__key = key
 	slider.__value = value
 	slider.__update = func
-	slider.__default = P.DefaultSettings[key][value]
+	slider.__default = G.GetDefaultSettings(key, value)
 	slider:SetScript("OnValueChanged", sliderValueChanged)
 end
 
@@ -102,13 +86,13 @@ end
 local function createOptionDropDown(parent, offset, text, key, value, data, callback)
 	local dd = B.CreateDropDown(parent, 180, 28, data)
 	dd:SetPoint("TOPLEFT", 30, offset)
-	dd.Text:SetText(data[NDUI_VARIABLE(key, value)])
+	dd.Text:SetText(data[G.Variable(key, value)])
 	B.CreateFS(dd, 14, text, "system", "CENTER", 0, 25)
 
 	local opt = dd.options
 	dd.button:HookScript("OnClick", function()
 		for num = 1, #data do
-			if num == NDUI_VARIABLE(key, value) then
+			if num == G.Variable(key, value) then
 				opt[num]:SetBackdropColor(1, .8, 0, .3)
 				opt[num].selected = true
 			else
@@ -119,7 +103,7 @@ local function createOptionDropDown(parent, offset, text, key, value, data, call
 	end)
 	for i in pairs(data) do
 		opt[i]:HookScript("OnClick", function()
-			NDUI_VARIABLE(key, value, i)
+			G.Variable(key, value, i)
 			if callback then callback() end
 		end)
 	end
@@ -187,9 +171,9 @@ function G:SetupABFader(parent)
 	for _, option in ipairs(options) do
 		local value, text = unpack(option)
 		local box = createOptionCheck(frame, offset, text)
-		box:SetChecked(NDUI_VARIABLE("ActionBar", value))
+		box:SetChecked(G.Variable("ActionBar", value))
 		box:SetScript("OnClick", function()
-			NDUI_VARIABLE("ActionBar", value, box:GetChecked())
+			G.Variable("ActionBar", value, box:GetChecked())
 			updateABFaderSettings()
 		end)
 
@@ -232,9 +216,9 @@ function G:SetupUFsFader(parent)
 	for _, option in ipairs(options) do
 		local value, text = unpack(option)
 		local box = createOptionCheck(frame, offset, text)
-		box:SetChecked(NDUI_VARIABLE("UnitFrames", value))
+		box:SetChecked(G.Variable("UnitFrames", value))
 		box:SetScript("OnClick", function()
-			NDUI_VARIABLE("UnitFrames", value, box:GetChecked())
+			G.Variable("UnitFrames", value, box:GetChecked())
 			updateUFsFader()
 		end)
 
