@@ -2,15 +2,13 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 local S = P:GetModule("Skins")
 
-local _G = getfenv(0)
-
 function S:TinyInspect()
 	if not S.db["TinyInspect"] then return end
 
 	hooksecurefunc("ShowInspectItemListFrame", function(_, parent)
 		local frame = parent.inspectFrame
 		if not frame then return end
-		frame:SetPoint("TOPLEFT", parent, "TOPRIGHT", 3, 0)
+		frame:SetPoint("TOPLEFT", parent, "TOPRIGHT", C.mult*2, 0)
 
 		if not frame.styled then
 			B.StripTextures(frame)
@@ -20,12 +18,14 @@ function S:TinyInspect()
 			frame.SetBackdropColor = B.Dummy
 			frame:SetBackdropBorderColor(0, 0, 0, 0)
 			frame.SetBackdropBorderColor = B.Dummy
-			B.SetBD(frame)
+			B.SetBD(frame, nil, 0, 0, 0, 0)
 			frame.styled = true
 		end
 
-		if frame.specicon then
-			frame.specicon:SetMask("Interface\\CharacterFrame\\TempPortraitAlphaMask") --  fix
+		local icon = frame.specicon
+		if icon and not icon.styled then
+			icon:SetMask("Interface\\CharacterFrame\\TempPortraitAlphaMask") --  fix
+			icon.styled = true
 		end
 	end)
 end
