@@ -38,6 +38,9 @@ function S:Ace3_SkinDropdown()
 		if self.obj.pullout and self.obj.pullout.frame then
 			P.ReskinTooltip(self.obj.pullout.frame)
 			self.obj.pullout.frame.SetBackdrop = B.Dummy
+			if self.obj.pullout.slider then
+				B.ReskinSlider(self.obj.pullout.slider)
+			end
 		elseif self.obj.dropdown then
 			P.ReskinTooltip(self.obj.dropdown)
 			self.obj.dropdown.SetBackdrop = B.Dummy
