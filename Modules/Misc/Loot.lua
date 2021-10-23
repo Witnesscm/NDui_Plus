@@ -74,7 +74,7 @@ function LT:OnLogin()
 		else
 			LootFrame.title:SetText(ITEMS)
 		end
-	
+
 		if ( GetCVar("lootUnderMouse") == "1" ) then
 			local x, y = GetCursorPosition();
 			x = x / self:GetEffectiveScale();
