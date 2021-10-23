@@ -1,10 +1,10 @@
 local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 local M = P:GetModule("Misc")
-local TT = B:GetModule("Tooltip")
 ------------------------------
 -- Credit: ParagonReputation
 ------------------------------
+local ipairs = ipairs
 local format = string.format
 local PET, MOUNT, TOY, BINDING_HEADER_OTHER = PET, MOUNT, TOY, BINDING_HEADER_OTHER
 
@@ -455,10 +455,10 @@ function M:AddParagonRewards()
 
 	for _, data in ipairs(rewards) do
 		local collected
-		local name, link, quality, _, _, _, _, _, _, icon = GetItemInfo(data.itemID)
+		local name, _, quality, _, _, _, _, _, _, icon = GetItemInfo(data.itemID)
 		if data.type == MOUNT then
 			collected = select(11,C_MountJournal.GetMountInfoByID(data.mountID))
-		elseif data.type == PET and link then
+		elseif data.type == PET then
 			collected = PetIsCollected(data.itemID)
 		elseif data.type == TOY then
 			collected = PlayerHasToy(data.itemID)
