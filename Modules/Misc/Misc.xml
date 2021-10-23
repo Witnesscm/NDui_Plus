@@ -6,4 +6,5 @@
 	<Script file="LootSpecManager.lua"/>
 	<Script file="SearchForIcons.lua"/>
 	<Script file="TalentManager.lua"/>
+	<Script file="ParagonRepRewards.lua"/>
 </Ui>

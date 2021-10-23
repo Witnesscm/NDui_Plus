@@ -119,6 +119,7 @@ P.DefaultSettings = {
 		HideTalentAlert = true,
 		SearchForIcons = true,
 		AutoCollapse = false,
+		ParagonRepRewards = true,
 	},
 }
 

@@ -195,6 +195,7 @@ G.OptionList = { -- type, key, value, name, horizon, data, callback, tooltip, sc
 		{1, "Misc", "HideTalentAlert", L["HideTalentAlert"], true, nil, nil, L["HideTalentAlertTip"]},
 		{1, "AFK", "Enable", L["AFK Mode"].."*", nil, nil, updateAFKMode},
 		{1, "Misc", "SearchForIcons", L["SearchForIcons"], true},
+		{1, "Misc", "ParagonRepRewards", L["ParagonRepRewards"]},
 		{},
 		{1, "Misc", "LootSpecManager", HeaderTag..L["LootSpecManagerEnable"], nil, nil, nil, L["LootSpecManagerTip"]},
 		{},
