@@ -126,19 +126,25 @@ local function reskinBagList(frame)
 	frame.titleBG = B.CreateBDFrame(frame.SectionTitle, .25)
 	frame.titleBG:SetAllPoints()
 
-	for _, bu in ipairs(frame.buttons) do
-		reskinBagItem(bu)
-		bu.styled = true
+	local buttons = frame.ItemContainer and frame.ItemContainer.buttons
+	if buttons then
+		for _, bu in ipairs(buttons) do
+			reskinBagItem(bu)
+			bu.styled = true
+		end
 	end
 
-	local origGet = frame.buttonPool.Get
-	frame.buttonPool.Get = function(self)
-		local button = origGet(self)
-		if not button.styled then
-			reskinBagItem(button)
-			button.styled = true
+	local buttonPool = frame.ItemContainer and frame.ItemContainer.buttonPool
+	if buttonPool then
+		local origGet = buttonPool.Get
+		buttonPool.Get = function(self)
+			local button = origGet(self)
+			if not button.styled then
+				reskinBagItem(button)
+				button.styled = true
+			end
+			return button
 		end
-		return button
 	end
 end
 
@@ -175,19 +181,15 @@ function S:Auctionator()
 		local ShoppingList = _G.AuctionatorShoppingListFrame
 		if ShoppingList then
 			reskinListHeader(ShoppingList.ResultsListing)
-			reskinButtons(ShoppingList, {"CreateList", "DeleteList", "Rename", "Import", "Export", "AddItem", "ManualSearch", "ExportCSV", "OneItemSearchButton", "SortItems"})
+			reskinButtons(ShoppingList, {"Import", "Export", "AddItem", "ManualSearch", "ExportCSV", "OneItemSearchButton", "SortItems"})
 
 			if ShoppingList.ListDropdown then
 				P.ReskinDropDown(ShoppingList.ListDropdown)
 			end
 
-			for _, key in ipairs({"addItemDialog", "editItemDialog", "itemDialog"}) do
-				local itemDialog = ShoppingList[key]
-				if itemDialog then
-					reskinItemDialog(itemDialog)
-				else
-					P:Debug("Unknown: ItemDialog")
-				end
+			local itemDialog = ShoppingList.itemDialog
+			if itemDialog then
+				reskinItemDialog(itemDialog)
 			end
 
 			local exportDialog = ShoppingList.exportDialog
@@ -256,7 +258,7 @@ function S:Auctionator()
 			if itemHistoryDialog then
 				reskinSimplePanel(itemHistoryDialog)
 				reskinListHeader(itemHistoryDialog.ResultsListing)
-				B.Reskin(itemHistoryDialog.Close)
+				reskinButtons(itemHistoryDialog, {"Close", "Dock"})
 			end
 		end
 
@@ -288,9 +290,9 @@ function S:Auctionator()
 				B.StripTextures(BagListing.ScrollFrame.Background)
 				B.ReskinScroll(BagListing.ScrollFrame.ScrollBar)
 
-				for _, key in ipairs({"Favourites", "WeaponItems", "ArmorItems", "ContainerItems", "GemItems", "EnhancementItems", "ConsumableItems", "GlyphItems", "TradeGoodItems", "RecipeItems", "BattlePetItems", "QuestItems", "MiscItems"}) do
-					local items = BagListing.ScrollFrame.ItemListingFrame[key]
-					if items then
+				local frameMap = BagListing.frameMap
+				if frameMap then
+					for _, items in pairs(frameMap) do
 						reskinBagList(items)
 					end
 				end
