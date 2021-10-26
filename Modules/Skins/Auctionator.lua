@@ -3,6 +3,7 @@ local B, C, L, DB, P = unpack(ns)
 local S = P:GetModule("Skins")
 
 local _G = getfenv(0)
+local ipairs, pairs= ipairs, pairs
 
 local function reskinButtons(self, buttons)
 	for _, key in ipairs(buttons) do
@@ -32,55 +33,34 @@ local function reskinItemDialog(self)
 	end
 end
 
-local function reskinListIcon(frame)
-	if not frame then P:Debug("Unknown: ListIcon") return end
-	if not frame.tableBuilder then return end
-
-	for i = 1, 22 do
-		local row = frame.tableBuilder.rows[i]
-		if row then
-			for j = 1, 4 do
-				local cell = row.cells and row.cells[j]
-				if cell and cell.Icon then
-					if not cell.styled then
-						cell.Icon.bg = B.ReskinIcon(cell.Icon)
-						if cell.IconBorder then cell.IconBorder:Hide() end
-						cell.styled = true
-					end
-					cell.Icon.bg:SetShown(cell.Icon:IsShown())
-				end
-			end
-		end
-	end
-end
-
 local function reskinListHeader(frame)
-	if not frame then P:Debug("Unknown: ListHeader") return end
+	if not frame or not frame.tableBuilder then P:Debug("Unknown: ListHeader") return end
 
-	local maxHeaders = frame.HeaderContainer:GetNumChildren()
-	for i = 1, maxHeaders do
-		local header = select(i, frame.HeaderContainer:GetChildren())
-		if header and not header.styled then
+	B.CreateBDFrame(frame.ScrollFrame, .25)
+	B.ReskinScroll(frame.ScrollFrame.scrollBar)
+
+	for _, column in ipairs(frame.tableBuilder.columns) do
+		local header = column.headerFrame
+		if header then
 			header:DisableDrawLayer("BACKGROUND")
 			header.bg = B.CreateBDFrame(header)
 			local hl = header:GetHighlightTexture()
 			hl:SetColorTexture(1, 1, 1, .1)
 			hl:SetAllPoints(header.bg)
-
-			header.styled = true
-		end
-
-		if header.bg then
-			header.bg:SetPoint("BOTTOMRIGHT", i < maxHeaders and -5 or 0, -2)
 		end
 	end
 
-	frame.bg = B.CreateBDFrame(frame.ScrollFrame, .25)
-	frame.bg:SetPoint("TOPLEFT", 16, C.mult)
-	frame.ScrollFrame:SetPoint("TOPLEFT", frame.HeaderContainer, "BOTTOMLEFT", 0, -4)
-	B.ReskinScroll(frame.ScrollFrame.scrollBar)
-
-	reskinListIcon(frame)
+	for _, row in ipairs(frame.tableBuilder.rows) do
+		local cells = row.cells
+		if cells then
+			for _, cell in ipairs(cells) do
+				if cell.Icon then
+					cell.Icon.bg = B.ReskinIcon(cell.Icon)
+					if cell.IconBorder then cell.IconBorder:Hide() end
+				end
+			end
+		end
+	end
 end
 
 local function reskinSimplePanel(frame)
