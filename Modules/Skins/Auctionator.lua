@@ -129,12 +129,12 @@ local function reskinBagList(frame)
 end
 
 local function reskinMoneyInput(self)
-	if self.MoneyInput then
-		for _, key in ipairs({"GoldBox", "SilverBox", "CopperBox"}) do
-			local box = self.MoneyInput[key]
-			if box then
-				reskinInput(box)
-			end
+	if not self or not self.MoneyInput then P:Debug("Unknown: MoneyInput") return end
+
+	for _, key in ipairs({"GoldBox", "SilverBox", "CopperBox"}) do
+		local box = self.MoneyInput[key]
+		if box then
+			reskinInput(box)
 		end
 	end
 end
@@ -196,7 +196,7 @@ function S:Auctionator()
 				B.StripTextures(ShoppingList.ShoppingResultsInset)
 			end
 
-			for _, key in ipairs({"ScrollList", "ScrollListShoppingList", "ScrollListRecents"}) do
+			for _, key in ipairs({"ScrollListShoppingList", "ScrollListRecents"}) do
 				local scrollList = ShoppingList[key]
 				if scrollList and scrollList.ScrollFrame then
 					B.StripTextures(scrollList)
