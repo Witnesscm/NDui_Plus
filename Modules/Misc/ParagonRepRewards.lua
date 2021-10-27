@@ -466,7 +466,7 @@ function M:AddParagonRewards()
 			collected = C_QuestLog.IsQuestFlaggedCompleted(data.questID)
 		end
 		if name then
-			GameTooltip:AddLine(format("|T%s:14|t |T%d:0:0:0:0:64:64:5:59:5:59|t %s |cffffd000(|r|cffffffff%s|r|cffffd000)|r", collected and "Interface\\RAIDFRAME\\ReadyCheck-Ready" or "Interface\\RAIDFRAME\\ReadyCheck-NotReady", icon, name, data.type), ITEM_QUALITY_COLORS[quality].r, ITEM_QUALITY_COLORS[quality].g, ITEM_QUALITY_COLORS[quality].b)
+			GameTooltip:AddLine(format("|T%s:14|t |T%d:0:0:0:0:64:64:5:59:5:59|t %s |cffffffff(%s)|r", collected and "Interface\\RAIDFRAME\\ReadyCheck-Ready" or "Interface\\RAIDFRAME\\ReadyCheck-NotReady", icon, name, data.type), ITEM_QUALITY_COLORS[quality].r, ITEM_QUALITY_COLORS[quality].g, ITEM_QUALITY_COLORS[quality].b)
 		else
 			GameTooltip:AddLine(ERR_TRAVEL_PASS_NO_INFO, 1, 0, 0)
 		end
