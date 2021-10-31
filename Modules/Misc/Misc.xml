@@ -7,4 +7,5 @@
 	<Script file="SearchForIcons.lua"/>
 	<Script file="TalentManager.lua"/>
 	<Script file="ParagonRepRewards.lua"/>
+	<Script file="ImprovedStableFrame.lua"/>
 </Ui>

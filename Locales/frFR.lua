@@ -170,3 +170,4 @@ L["ShowCovenantTip"] = "Afficher l'icône de congrégation des joueurs en groupe
 L["Covenant"] = "Congrégation: %s"
 L["AutoCollapse"] = "Réduction automatique"
 L["ParagonRepRewards"] = "Récompense de parangons"
+L["ImprovedStableFrame"] = "Improved Stable Frame"

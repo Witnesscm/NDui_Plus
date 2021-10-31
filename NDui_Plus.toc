@@ -8,7 +8,7 @@
 ## SavedVariablesPerCharacter: NDuiPlusCharDB
 ## X-Curse-Project-ID: 389434
 ## X-Wago-ID: 0mKOvP6x
-## X-Credits: Siweia, Elv, fgprodigal, Cybeloras_, hokohuang, Dencer, fang2hou, HopeAsd, p3lim, gegenschall.
+## X-Credits: Siweia, Elv, fgprodigal, Cybeloras, hokohuang, Dencer, fang2hou, HopeAsd, p3lim, gegenschall.
 
 Init.lua
 Locales\Locales.xml

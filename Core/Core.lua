@@ -120,6 +120,7 @@ P.DefaultSettings = {
 		SearchForIcons = true,
 		AutoCollapse = false,
 		ParagonRepRewards = true,
+		ImprovedStableFrame = true,
 	},
 }
 
