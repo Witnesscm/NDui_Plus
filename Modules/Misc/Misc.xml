@@ -8,4 +8,5 @@
 	<Script file="TalentManager.lua"/>
 	<Script file="ParagonRepRewards.lua"/>
 	<Script file="ImprovedStableFrame.lua"/>
+	<Script file="GarrisonTabs.lua"/>
 </Ui>
