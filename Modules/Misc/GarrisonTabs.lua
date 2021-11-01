@@ -1,7 +1,9 @@
 local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 local M = P:GetModule("Misc")
-
+--------------------------
+-- Credit: Mission Report
+--------------------------
 local tabs = {}
 local datas = {
 	{Enum.GarrisonType.Type_9_0, GARRISON_TYPE_9_0_LANDING_PAGE_TITLE, 3675495},
@@ -10,32 +12,34 @@ local datas = {
 	{Enum.GarrisonType.Type_6_0, GARRISON_LANDING_PAGE_TITLE, 237381},
 }
 
-local function Select_LandingPage(self)
-	HideUIPanel(GarrisonLandingPage)
-	ShowGarrisonLandingPage(self.pageID)
-end
-
-local function GarrisonLandingPage_Update(pageID)
-	for _, tab in pairs(tabs) do
-		local available = not not (C_Garrison.GetGarrisonInfo(tab.pageID))
-		tab:SetEnabled(available)
-		tab:GetNormalTexture():SetDesaturated(not available)
-		tab:SetChecked(tab.pageID == pageID)
+local function ToggleLandingPage(self)
+	if self.pageID ~= self.__owner.garrTypeID then
+		HideUIPanel(self.__owner)
+		ShowGarrisonLandingPage(self.pageID)
+	else
+		self:SetChecked(true)
 	end
 end
 
-function M:GarrisonTabs()
-	if IsAddOnLoaded("MissionReports") then return end
+local function GarrisonLandingPage_UpdateTabs(self)
+	for _, tab in pairs(tabs) do
+		local available = C_Garrison.HasGarrison(tab.pageID)
+		tab:SetEnabled(available)
+		tab:GetNormalTexture():SetDesaturated(not available)
+		tab:SetChecked(tab.pageID == self.garrTypeID)
+	end
+end
 
+function M:GarrisonTabs_Create()
 	for index, data in pairs(datas) do
-		local tab = CreateFrame("CheckButton", nil, GarrisonLandingPage, "SpellBookSkillLineTabTemplate")
+		local tab = CreateFrame("CheckButton", nil, _G.GarrisonLandingPage, "SpellBookSkillLineTabTemplate")
+		tab.__owner = _G.GarrisonLandingPage
 		tab:SetNormalTexture(data[3])
-		tab:SetFrameStrata("LOW")
-		tab:SetScript("OnClick", Select_LandingPage)
+		tab:SetScript("OnClick", ToggleLandingPage)
 		tab:Show()
 
 		if index == 1 then
-			tab:SetPoint("TOPLEFT", GarrisonLandingPage, "TOPRIGHT", 2, -25)
+			tab:SetPoint("TOPLEFT", _G.GarrisonLandingPage, "TOPRIGHT", 2, -25)
 		else
 			tab:SetPoint("TOP", tabs[index-1], "BOTTOM", 0, -25)
 		end
@@ -53,7 +57,68 @@ function M:GarrisonTabs()
 		table.insert(tabs, tab)
 	end
 
-	hooksecurefunc("ShowGarrisonLandingPage", GarrisonLandingPage_Update)
+	hooksecurefunc(_G.GarrisonLandingPage, "UpdateUIToGarrisonType", GarrisonLandingPage_UpdateTabs)
+end
+
+function M:FixOldExpansionPage()
+	hooksecurefunc(_G.GarrisonLandingPage, "UpdateUIToGarrisonType", function(self)
+		self.Report.Sections:SetShown(self.garrTypeID == Enum.GarrisonType.Type_9_0)
+
+		if self.garrTypeID ~= Enum.GarrisonType.Type_6_0 and GarrisonThreatCountersFrame:IsShown() then
+			GarrisonThreatCountersFrame:Hide()
+		end
+	end)
+
+	local done
+	hooksecurefunc(_G.GarrisonLandingPage.FollowerList, "Setup", function(self)
+		if done then return end
+
+		local buttons = self.listScroll and self.listScroll.buttons
+		if buttons then
+			for _, button in ipairs(buttons) do
+				local follower = button.Follower
+				if follower and not follower.DownArrow then
+					local downArrow = follower:CreateTexture(nil, "ARTWORK")
+					downArrow:SetTexture("Interface\\Buttons\\SquareButtonTextures")
+					downArrow:SetSize(13, 13)
+					downArrow:SetPoint("TOPRIGHT", -10, -38)
+					downArrow:SetTexCoord(.45312500, .64062500, .01562500, .20312500)
+					downArrow:SetAlpha(0)
+					follower.DownArrow = downArrow
+				end
+			end
+
+			done = true
+		end
+	end)
+
+	hooksecurefunc(_G.GarrisonLandingPage.FollowerList, "UpdateFollowers", function(self)
+		if not self.followerTab then return end
+
+		if not GarrisonFollowerOptions[self.followerType].showNumFollowers then
+			self.followerTab.NumFollowers:SetText("")
+		end
+	end)
+
+	hooksecurefunc(_G.GarrisonLandingPage.FollowerTab, "ShowFollower", function(self)
+		local isAutoCombatant = self:GetParent():GetFollowerList().followerType == Enum.GarrisonFollowerType.FollowerType_9_0
+		if not isAutoCombatant then
+			if self.CovenantFollowerPortraitFrame then
+				self.CovenantFollowerPortraitFrame:Hide()
+			end
+			self.Class:Show()
+			self.autoCombatStatsPool:ReleaseAll()
+			self.autoSpellPool:ReleaseAll()
+			self.AbilitiesFrame:Layout()
+		end
+	end)
+end
+
+function M:GarrisonTabs()
+	M:GarrisonTabs_Create()
+
+	-- fix error and some incorrect wigdets when toggle old expansion page
+	M:FixOldExpansionPage()
 end
 
 P:AddCallbackForAddon("Blizzard_GarrisonUI", M.GarrisonTabs)
