@@ -91,7 +91,7 @@ P:AddCallbackForAddon("Blizzard_TradeSkillUI", M.AutoCollapseTradeSkill)
 -- Train all skills
 local function TrainAllButton_OnEnter(self)
 	GameTooltip:ClearLines()
-	GameTooltip:AddLine(format(L["Train All Need"], self.Count, GetCoinTextureString(self.Cost)), 1, 1, 1)
+	GameTooltip:AddLine(format(L["Train All Cost"], self.Count, GetCoinTextureString(self.Cost)), 1, 1, 1)
 	GameTooltip:Show()
 end
 
@@ -100,6 +100,8 @@ function M:TrainAllSkills()
 	button:SetSize(80, 22)
 	button:SetPoint("RIGHT", ClassTrainerTrainButton, "LEFT", -2, 0)
 	button:SetText(L["Train All"])
+	button.Count = 0
+	button.Cost = 0
 	ClassTrainerFrame.TrainAllButton = button
 
 	button:SetScript("OnClick", function()
