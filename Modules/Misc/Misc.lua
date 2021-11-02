@@ -39,17 +39,6 @@ function M:DoubleClickSpecSwap()
 end
 P:AddCallbackForAddon("Blizzard_TalentUI", M.DoubleClickSpecSwap)
 
--- Hides the Talent popup notifications. Credit: HideTalentAlert
-function M:HideTalentAlert()
-	if not M.db["HideTalentAlert"] then return end
-
-	_G.HelpTip:HideAll(UIParent)
-	function _G.MainMenuMicroButton_AreAlertsEnabled()
-		return false
-	end
-end
-M:RegisterMisc("HideTalentAlert", M.HideTalentAlert)
-
 -- Auto collapse trade skill
 local function collapseAllCategories(refresh)
 	local list = _G.TradeSkillFrame.RecipeList

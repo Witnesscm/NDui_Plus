@@ -116,7 +116,6 @@ P.DefaultSettings = {
 		CopyMog = true,
 		ShowHideVisual = true,
 		ShowIllusion = true,
-		HideTalentAlert = true,
 		SearchForIcons = true,
 		AutoCollapse = false,
 		ParagonRepRewards = true,
