@@ -122,6 +122,7 @@ P.DefaultSettings = {
 		ParagonRepRewards = true,
 		ImprovedStableFrame = true,
 		GarrisonTabs = true,
+		AuctionEnhanced = true,
 	},
 }
 

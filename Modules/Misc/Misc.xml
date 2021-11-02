@@ -9,4 +9,5 @@
 	<Script file="ParagonRepRewards.lua"/>
 	<Script file="ImprovedStableFrame.lua"/>
 	<Script file="GarrisonTabs.lua"/>
+	<Script file="AuctionEnhanced.lua"/>
 </Ui>
