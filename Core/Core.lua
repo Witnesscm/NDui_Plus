@@ -121,6 +121,7 @@ P.DefaultSettings = {
 		AutoCollapse = false,
 		ParagonRepRewards = true,
 		ImprovedStableFrame = true,
+		GarrisonTabs = true,
 	},
 }
 

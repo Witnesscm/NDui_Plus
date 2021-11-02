@@ -60,6 +60,7 @@ function M:GarrisonTabs_Create()
 	hooksecurefunc(_G.GarrisonLandingPage, "UpdateUIToGarrisonType", GarrisonLandingPage_UpdateTabs)
 end
 
+-- fix error and some incorrect wigdets when toggle old expansion page
 function M:FixOldExpansionPage()
 	hooksecurefunc(_G.GarrisonLandingPage, "UpdateUIToGarrisonType", function(self)
 		self.Report.Sections:SetShown(self.garrTypeID == Enum.GarrisonType.Type_9_0)
@@ -115,9 +116,9 @@ function M:FixOldExpansionPage()
 end
 
 function M:GarrisonTabs()
-	M:GarrisonTabs_Create()
+	if not M.db["GarrisonTabs"] then return end
 
-	-- fix error and some incorrect wigdets when toggle old expansion page
+	M:GarrisonTabs_Create()
 	M:FixOldExpansionPage()
 end
 
