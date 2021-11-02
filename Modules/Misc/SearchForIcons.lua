@@ -80,8 +80,8 @@ end
 
 function module:PopupFrame_Update()
 	if _G.GuildBankPopupFrame and _G.GuildBankPopupFrame:IsShown() then
-		_G.GuildBankPopupFrame_Update(GetCurrentGuildBankTab())
-		_G.GuildBankPopupScrollFrame:SetVerticalScroll(0)
+		_G.GuildBankPopupFrame:Update()
+		_G.GuildBankPopupFrame.ScrollFrame:SetVerticalScroll(0)
 	elseif _G.MacroFrame and _G.MacroFrame:IsShown() then
 		_G.MacroPopupFrame_Update()
 		_G.MacroPopupScrollFrame:SetVerticalScroll(0)
