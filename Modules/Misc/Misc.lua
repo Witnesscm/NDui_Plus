@@ -3,7 +3,7 @@ local B, C, L, DB, P = unpack(ns)
 local M = P:RegisterModule("Misc")
 
 local _G = getfenv(0)
-local strmatch, format, tonumber, select, tinsert = string.match, string.format, tonumber, select, tinsert
+local format, select = string.format, select
 
 M.MiscList = {}
 
@@ -88,7 +88,7 @@ function M:AutoCollapseTradeSkill()
 end
 P:AddCallbackForAddon("Blizzard_TradeSkillUI", M.AutoCollapseTradeSkill)
 
--- Train all skills
+-- Learn all available skills. Credit: TrainAll
 local function TrainAllButton_OnEnter(self)
 	GameTooltip:ClearLines()
 	GameTooltip:AddLine(format(L["Train All Cost"], self.Count, GetCoinTextureString(self.Cost)), 1, 1, 1)
@@ -97,7 +97,6 @@ end
 
 function M:TrainAllSkills()
 	local button = CreateFrame("Button", nil, ClassTrainerFrame, "MagicButtonTemplate")
-	button:SetSize(80, 22)
 	button:SetPoint("RIGHT", ClassTrainerTrainButton, "LEFT", -2, 0)
 	button:SetText(L["Train All"])
 	button.Count = 0
