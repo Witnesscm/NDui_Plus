@@ -24,9 +24,11 @@ local function GetStatsString(link)
 	if not itemCache[link] then
 		local text = ""
 		local stats = GetItemStats(link)
-		for stat in pairs(stats) do
-			if statWatchList[stat] then
-				text = text..format("%s ", _G[stat])
+		if stats then
+			for stat in pairs(stats) do
+				if statWatchList[stat] then
+					text = text..format("%s ", _G[stat])
+				end
 			end
 		end
 
