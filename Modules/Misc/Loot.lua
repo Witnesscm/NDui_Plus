@@ -12,7 +12,7 @@ local GetNumLootItems, LootSlotHasItem, GetLootSlotLink, GetLootSlotInfo = GetNu
 
 function LT:OnLogin()
 	if not LT.db["Enable"] then return end
-	if not C.db["Skins"]["Loot"] then P:Print("需要启用NDui拾取框美化") return end
+	if not C.db["Skins"]["Loot"] then P:Print(L["LootEnhancedTip"]) return end
 
 	for i = 1, LootFrame:GetNumRegions() do
 		local region = select(i, LootFrame:GetRegions())
@@ -35,7 +35,7 @@ function LT:OnLogin()
 
 	hooksecurefunc("LootFrame_Show", function(self, ...)
 		local maxButtons = floor(UIParent:GetHeight() / LootButton1:GetHeight() * 0.7)
-	
+
 		local num = GetNumLootItems()
 
 		if self.AutoLootTable then
@@ -126,9 +126,9 @@ function LT:OnLogin()
 		if(nums == 0) then return end
 		if LT.db["AnnounceTitle"] then
 			if UnitIsPlayer("target") or not UnitExists("target") then -- Chests are hard to identify!
-				SendChatMessage(format("*** %s ***", "箱子中的战利品"), chn)
+				SendChatMessage(format("*** %s ***", L["Loots in chest"]), chn)
 			else
-				SendChatMessage(format("*** %s%s ***", UnitName("target"), "的战利品"), chn)
+				SendChatMessage(format("*** %s%s ***", UnitName("target"), L["Loots"]), chn)
 			end
 		end
 		for i = 1, GetNumLootItems() do
@@ -159,7 +159,7 @@ function LT:OnLogin()
 		LootFrame.announce[i]:SetScript("OnEnter", function(self)
 			GameTooltip:SetOwner(self, "ANCHOR_TOP", 0, 5)
 			GameTooltip:ClearLines()
-			GameTooltip:AddLine("将战利品通报至".._G[chn[i]:upper()])
+			GameTooltip:AddLine(L["Announce Loots to"].._G[chn[i]:upper()])
 			GameTooltip:Show()
 		end)
 		LootFrame.announce[i]:SetScript("OnLeave", GameTooltip_Hide)
