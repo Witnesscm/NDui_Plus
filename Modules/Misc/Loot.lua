@@ -2,26 +2,24 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 local LT = P:RegisterModule("Loot")
 ----------------------------
--- Improved Loot Frame, by Cybeloras_
+-- Improved Loot Frame, by Cybeloras
 -- RayUI Loot, by fgprodigal
 ----------------------------
 local _G = getfenv(0)
 local select, format = select, format
-local min, max, abs, floor, upper = math.min, math.max, math.abs, math.floor, string.upper
-local GetNumLootItems, LootSlotHasItem, GetLootSlotLink, GetLootSlotInfo = GetNumLootItems, LootSlotHasItem, GetLootSlotLink, GetLootSlotInfo
+local min, max, floor, upper = math.min, math.max, math.floor, string.upper
+local GetNumLootItems, GetLootSlotLink, GetLootSlotInfo = GetNumLootItems, GetLootSlotLink, GetLootSlotInfo
 
 function LT:OnLogin()
 	if not LT.db["Enable"] then return end
 	if not C.db["Skins"]["Loot"] then P:Print(L["LootEnhancedTip"]) return end
 
-	for i = 1, LootFrame:GetNumRegions() do
-		local region = select(i, LootFrame:GetRegions())
-		if region.GetText and region:GetText() == ITEMS then
-			region:Hide()
-		end
-	end
+	local width = 200
+	local spacing = 4
+	local buttonHeight = LootButton1:GetHeight() + spacing
+	local baseHeight = LootFrame:GetHeight() - (buttonHeight * LOOTFRAME_NUMBUTTONS) - 41
 
-	LootFrame:SetWidth(200)
+	LootFrame:SetWidth(width)
 	LootFrame.title = LootFrame:CreateFontString(nil, "OVERLAY")
 	LootFrame.title:SetFont(DB.Font[1], DB.Font[2]+2, DB.Font[3])
 	LootFrame.title:SetPoint("TOPLEFT", 3, -4)
@@ -29,11 +27,15 @@ function LT:OnLogin()
 	LootFrame.title:SetHeight(16)
 	LootFrame.title:SetJustifyH("LEFT")
 
-	local p, r, x, y = "TOP", "BOTTOM", 0, -4
-	local buttonHeight = LootButton1:GetHeight() + abs(y)
-	local baseHeight = LootFrame:GetHeight() - (buttonHeight * LOOTFRAME_NUMBUTTONS) - 41
+	-- hide blizz loot frame title
+	for i = 1, LootFrame:GetNumRegions() do
+		local region = select(i, LootFrame:GetRegions())
+		if region.GetText and region:GetText() == ITEMS then
+			region:Hide()
+		end
+	end
 
-	hooksecurefunc("LootFrame_Show", function(self, ...)
+	hooksecurefunc("LootFrame_Show", function(self)
 		local maxButtons = floor(UIParent:GetHeight() / LootButton1:GetHeight() * 0.7)
 
 		local num = GetNumLootItems()
@@ -46,7 +48,7 @@ function LT:OnLogin()
 
 		num = min(num, maxButtons)
 
-		LootFrame:SetHeight(baseHeight + (max(num, 1) * buttonHeight))
+		self:SetHeight(baseHeight + (max(num, 1) * buttonHeight))
 
 		for i = 1, num do
 			local button = _G["LootButton"..i]
@@ -56,13 +58,13 @@ function LT:OnLogin()
 			end
 			if i > LOOTFRAME_NUMBUTTONS then
 				if not button then
-					button = CreateFrame("ItemButton", "LootButton"..i, LootFrame, "LootButtonTemplate", i)
+					button = CreateFrame("ItemButton", "LootButton"..i, self, "LootButtonTemplate", i)
 				end
 				LOOTFRAME_NUMBUTTONS = i
 			end
 			if i > 1 then
 				button:ClearAllPoints()
-				button:SetPoint(p, "LootButton"..(i-1), r, x, y)
+				button:SetPoint("TOP", "LootButton"..(i-1), "BOTTOM", 0, -spacing)
 			end
 
 			local text = _G["LootButton"..i.."Text"]
@@ -75,7 +77,7 @@ function LT:OnLogin()
 			LootFrame.title:SetText(ITEMS)
 		end
 
-		if ( GetCVar("lootUnderMouse") == "1" ) then
+		if GetCVar("lootUnderMouse") == "1" then
 			local x, y = GetCursorPosition();
 			x = x / self:GetEffectiveScale();
 			y = y / self:GetEffectiveScale();
@@ -95,7 +97,7 @@ function LT:OnLogin()
 		LootFrame_Update();
 	end)
 
-	-- LootButtonBG
+	-- resize NDui loot button background
 	hooksecurefunc("LootFrame_UpdateButton", function(index)
 		local bu = _G["LootButton"..index]
 		if bu and not bu.styled then
@@ -125,31 +127,24 @@ function LT:OnLogin()
 		local nums = GetNumLootItems()
 		if(nums == 0) then return end
 		if LT.db["AnnounceTitle"] then
-			if UnitIsPlayer("target") or not UnitExists("target") then -- Chests are hard to identify!
+			if UnitIsPlayer("target") or not UnitExists("target") then
 				SendChatMessage(format("*** %s ***", L["Loots in chest"]), chn)
 			else
 				SendChatMessage(format("*** %s%s ***", UnitName("target"), L["Loots"]), chn)
 			end
 		end
 		for i = 1, GetNumLootItems() do
-			-- local link
-			-- if(LootSlotHasItem(i)) then	 --判断，只发送物品
-				-- link = GetLootSlotLink(i)
-			-- else
-				-- _, link = GetLootSlotInfo(i)
-			-- end
 			local link = GetLootSlotLink(i)
 			local quality = select(5, GetLootSlotInfo(i))
 			if link and quality and quality >= LT.db["AnnounceRarity"] then
-				local messlink = "- %s"
-				SendChatMessage(format(messlink, link), chn)
+				SendChatMessage(format("- %s", link), chn)
 			end
 		end
 	end
 
 	LootFrame.announce = {}
 	for i = 1, #chn do
-		LootFrame.announce[i] = CreateFrame("Button", "ItemLootAnnounceButton"..i, LootFrame)
+		LootFrame.announce[i] = CreateFrame("Button", nil, LootFrame)
 		LootFrame.announce[i]:SetSize(17, 17)
 		B.PixelIcon(LootFrame.announce[i], DB.normTex, true)
 		B.CreateSD(LootFrame.announce[i])
@@ -159,9 +154,9 @@ function LT:OnLogin()
 		LootFrame.announce[i]:SetScript("OnEnter", function(self)
 			GameTooltip:SetOwner(self, "ANCHOR_TOP", 0, 5)
 			GameTooltip:ClearLines()
-			GameTooltip:AddLine(L["Announce Loots to"].._G[chn[i]:upper()])
+			GameTooltip:AddLine(L["Announce Loots to"].._G[upper(chn[i])])
 			GameTooltip:Show()
 		end)
-		LootFrame.announce[i]:SetScript("OnLeave", GameTooltip_Hide)
+		LootFrame.announce[i]:SetScript("OnLeave", B.HideTooltip)
 	end
 end

@@ -52,6 +52,7 @@ local utilityMap = {
 	[321792] = 2,
 	[317483] = 2,
 	[317488] = 2,
+
 	[310143] = 3,
 	[324128] = 3,
 	[323639] = 3,
@@ -59,7 +60,6 @@ local utilityMap = {
 	[328231] = 3,
 	[314791] = 3,
 	[327104] = 3,
-
 	[328622] = 3,
 	[328282] = 3,
 	[328620] = 3,
@@ -70,6 +70,7 @@ local utilityMap = {
 	[325640] = 3,
 	[325886] = 3,
 	[319217] = 3,
+
 	[324631] = 4,
 	[315443] = 4,
 	[329554] = 4,
@@ -107,22 +108,13 @@ local function getCovenantIcon(covenantID)
 	return ""
 end
 
-local function getFullName(unit)
-	local name, realm = UnitName(unit)
-	if realm and realm ~= "" then
-		name = name.."-"..realm
-	end
-
-	return name
-end
-
 function T:GetCovenantID(unit)
 	local guid = UnitGUID(unit)
 	if not guid then return end
 
 	local covenantID = T.MemberCovenants[guid]
 	if not covenantID then
-		local playerInfo = LibRS and LibRS.playerInfoManager.GetPlayerInfo(getFullName(unit))
+		local playerInfo = LibRS and LibRS.playerInfoManager.GetPlayerInfo(GetUnitName(unit, true))
 		return playerInfo and playerInfo.covenantId
 	end
 
@@ -194,7 +186,7 @@ function T:HandleSpellCast(unit, _, spellID)
 		local guid = UnitGUID(unit)
 		if guid and (not T.MemberCovenants[guid] or T.MemberCovenants[guid] ~= covenantID) then
 			T.MemberCovenants[guid] = covenantID
-			P:Debug("%s 盟约：%s (by %s)", getFullName(unit), covenantMap[covenantID], GetSpellLink(spellID))
+			P:Debug("%s 盟约：%s (by %s)", GetUnitName(unit, true), covenantMap[covenantID], GetSpellLink(spellID))
 		end
 	end
 end
