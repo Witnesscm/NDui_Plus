@@ -156,19 +156,19 @@ function T:HandleAddonMessage(...)
 	if prefix == ZT_Prefix then
 		local version, type, guid, _, _, _, _, covenantID = strsplit(":", msg)
 		version = tonumber(version)
-		if (version and version > 3) and (type and type == "H") and (guid and not T.MemberCovenants[guid]) then
+		if (version and version > 3) and (type and type == "H") and guid then
 			covenantID = tonumber(covenantID)
-			if covenantID then
+			if covenantID and (not T.MemberCovenants[guid] or T.MemberCovenants[guid] ~= covenantID) then
 				T.MemberCovenants[guid] = covenantID
 				P:Debug("%s 盟约：%s (by ZenTracker)", sender, covenantMap[covenantID] or "None")
 			end
 		end
 	elseif prefix == OmniCD_Prefix then
 		local header, guid, body = strmatch(msg, "(.-),(.-),(.+)")
-		if (header and guid and body) and (header == "INF" or header == "REQ" or header == "UPD") and (not T.MemberCovenants[guid]) then
+		if (header and guid and body) and (header == "INF" or header == "REQ" or header == "UPD") then
 			local covenantID = select(15, strsplit(",", body))
 			covenantID = tonumber(covenantID)
-			if covenantID then
+			if covenantID and (not T.MemberCovenants[guid] or T.MemberCovenants[guid] ~= covenantID) then
 				T.MemberCovenants[guid] = covenantID
 				P:Debug("%s 盟约：%s (by OmniCD)", sender, covenantMap[covenantID] or "None")
 			end
@@ -178,9 +178,9 @@ function T:HandleAddonMessage(...)
 		if playerName == "ASK" then return end
 
 		local guid = UnitGUID(sender)
-		if guid and not T.MemberCovenants[guid] then
+		if guid  then
 			covenantID = tonumber(covenantID)
-			if covenantID then
+			if covenantID and (not T.MemberCovenants[guid] or T.MemberCovenants[guid] ~= covenantID) then
 				T.MemberCovenants[guid] = covenantID
 				P:Debug("%s 盟约：%s (by Details_Covenants)", sender, covenantMap[covenantID] or "None")
 			end
@@ -192,7 +192,7 @@ function T:HandleSpellCast(unit, _, spellID)
 	local covenantID = utilityMap[spellID]
 	if covenantID then
 		local guid = UnitGUID(unit)
-		if guid and not T.MemberCovenants[guid] then
+		if guid and (not T.MemberCovenants[guid] or T.MemberCovenants[guid] ~= covenantID) then
 			T.MemberCovenants[guid] = covenantID
 			P:Debug("%s 盟约：%s (by %s)", getFullName(unit), covenantMap[covenantID], GetSpellLink(spellID))
 		end
