@@ -5,7 +5,7 @@ local G = P:GetModule("GUI")
 local UF = P:GetModule("UnitFrames")
 local NUF = B:GetModule("UnitFrames")
 
-function UF:UpdateRoleIcon(event)
+function UF:UpdateRoleIcon()
 	local element = self.GroupRoleIndicator
 
 	local role = UnitGroupRolesAssigned(self.unit)
@@ -36,14 +36,15 @@ function UF:Configure_RoleIcon(frame)
 	end
 end
 
-
 function UF:UpdateRoleIcons()
 	for _, frame in pairs(oUF.objects) do
 		UF:Configure_RoleIcon(frame)
 	end
 end
 
-function UF:SetRoleIconsHook()
+function UF:SetupRoleIcons()
+	UF:UpdateRoleIcons()
+
 	hooksecurefunc(NUF, "CreateIcons", function(self, frame)
 		UF:Configure_RoleIcon(frame)
 	end)

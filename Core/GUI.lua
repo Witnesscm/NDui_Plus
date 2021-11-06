@@ -410,11 +410,10 @@ local function CreateOption(i)
 		-- Colorswatch
 		elseif optType == 5 then
 			local swatch = B.CreateColorSwatch(parent, name, G.Variable(key, value))
-			local width = 25 + (horizon or 0)*155
 			if horizon then
-				swatch:SetPoint("TOPLEFT", width, -offset + 30)
+				swatch:SetPoint("TOPLEFT", 254, -offset + 30)
 			else
-				swatch:SetPoint("TOPLEFT", width, -offset - 5)
+				swatch:SetPoint("TOPLEFT", 24, -offset - 5)
 				offset = offset + 35
 			end
 			swatch.__default = G.GetDefaultSettings(key, value)

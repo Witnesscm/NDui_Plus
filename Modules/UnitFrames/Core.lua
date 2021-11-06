@@ -32,14 +32,11 @@ function UF:UpdateNameText()
 	end
 end
 
-function UF:SetNameTextHook()
-	hooksecurefunc(NUF, "CreateHealthText", function(self, frame)
+function UF:SetupNameText()
+	hooksecurefunc(NUF, "CreateHealthText", function(_, frame)
 		UF:SetTag(frame)
 	end)
-end
 
-function UF:SetupNameText()
-	UF:SetNameTextHook()
 	UF:UpdateNameText()
 	hooksecurefunc(NUF, "UpdateTextScale", UF.UpdateNameText)
 	hooksecurefunc(NUF, "UpdateRaidTextScale", UF.UpdateNameText)
@@ -47,8 +44,7 @@ end
 
 function UF:OnLogin()
 	UF:SetupNameText()
-	UF:SetRoleIconsHook()
-	UF:UpdateRoleIcons()
+	UF:SetupRoleIcons()
 	UF:UpdateUFsFader()
 	UF:UpdateAurasFilter()
 end
