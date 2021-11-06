@@ -6,7 +6,7 @@ local S = P:GetModule("Skins")
 ----------------------------
 local _G = getfenv(0)
 local select, pairs, type = select, pairs, type
-local r, g, b = DB.r, DB.g, DB.b
+local cr, cg, cb = DB.r, DB.g, DB.b
 local TT = B:GetModule("Tooltip")
 
 -- versions of AceGUI and AceConfigDialog.
@@ -33,19 +33,56 @@ end
 
 S:RegisterSkin("Ace3")
 
+local function Scroll_OnEnter(self)
+	local thumb = self.thumb
+	if not thumb then return end
+	thumb.bg:SetBackdropColor(cr, cg, cb, .25)
+	thumb.bg:SetBackdropBorderColor(cr, cg, cb)
+end
+
+local function Scroll_OnLeave(self)
+	local thumb = self.thumb
+	if not thumb then return end
+	thumb.bg:SetBackdropColor(0, 0, 0, 0)
+	B.SetBorderColor(thumb.bg)
+end
+
+function S:Ace3_SkinSlider()
+	self:SetBackdrop(nil)
+	self:SetWidth(16)
+
+	local thumb = self.GetThumbTexture and self:GetThumbTexture()
+	if thumb then
+		thumb:SetAlpha(0)
+		thumb:SetWidth(16)
+		self.thumb = thumb
+
+		local bg = B.CreateBDFrame(self, 0, true)
+		bg:SetPoint("TOPLEFT", thumb, 0, -2)
+		bg:SetPoint("BOTTOMRIGHT", thumb, 0, 4)
+		thumb.bg = bg
+	end
+
+	self:HookScript("OnEnter", Scroll_OnEnter)
+	self:HookScript("OnLeave", Scroll_OnLeave)
+end
+
 function S:Ace3_SkinDropdown()
 	if self and self.obj then
-		if self.obj.pullout and self.obj.pullout.frame then
-			P.ReskinTooltip(self.obj.pullout.frame)
-			self.obj.pullout.frame.SetBackdrop = B.Dummy
-			if self.obj.pullout.slider then
-				B.ReskinSlider(self.obj.pullout.slider)
-			end
-		elseif self.obj.dropdown then
-			P.ReskinTooltip(self.obj.dropdown)
-			self.obj.dropdown.SetBackdrop = B.Dummy
-			if self.obj.dropdown.slider then
-				B.ReskinSlider(self.obj.dropdown.slider)
+		local pullout = self.obj.dropdown
+		if pullout then
+			P.ReskinTooltip(pullout)
+			if pullout.SetBackdrop then pullout:SetBackdrop(nil) end
+
+			local slider = pullout.slider
+			if slider and not slider.styled then
+				S.Ace3_SkinSlider(slider)
+				slider:ClearAllPoints()
+				slider:SetPoint("TOPRIGHT", pullout, "TOPRIGHT", -8, -10)
+				slider:SetPoint("BOTTOMRIGHT", pullout, "BOTTOMRIGHT", -8, 10)
+				slider:SetWidth(16)
+
+				slider.styled = true
 			end
 		end
 	end
@@ -62,7 +99,7 @@ function S:Ace3_SkinTab(tab)
 	tab:HookScript("OnLeave", B.Texture_OnLeave)
 	hooksecurefunc(tab, "SetSelected", function(self, selected)
 		if selected then
-			self.bg:SetBackdropColor(r, g, b, .25)
+			self.bg:SetBackdropColor(cr, cg, cb, .25)
 		else
 			self.bg:SetBackdropColor(0, 0, 0, .25)
 		end
@@ -121,13 +158,13 @@ function S:Ace3_RegisterAsWidget(widget)
 		highlight:SetTexture(DB.bdTex)
 		highlight:SetPoint("TOPLEFT", checkbg, "TOPLEFT", 5, -5)
 		highlight:SetPoint("BOTTOMRIGHT", checkbg, "BOTTOMRIGHT", -5, 5)
-		highlight:SetVertexColor(r, g, b, .25)
+		highlight:SetVertexColor(cr, cg, cb, .25)
 		highlight.SetTexture = B.Dummy
 
 		check:SetTexture("Interface\\Buttons\\UI-CheckBox-Check")
 		check:SetTexCoord(0, 1, 0, 1)
 		check:SetDesaturated(true)
-		check:SetVertexColor(r, g, b)
+		check:SetVertexColor(cr, cg, cb)
 		check.SetDesaturated = B.Dummy
 
 		hooksecurefunc(widget, "SetDisabled", function(self, disabled)
@@ -135,7 +172,7 @@ function S:Ace3_RegisterAsWidget(widget)
 			if disabled then
 				check:SetVertexColor(.8, .8, .8)
 			else
-				check:SetVertexColor(r, g, b)
+				check:SetVertexColor(cr, cg, cb)
 			end
 		end)
 
@@ -150,7 +187,6 @@ function S:Ace3_RegisterAsWidget(widget)
 	elseif TYPE == "Dropdown" or TYPE == "LQDropdown" then
 		local frame = widget.dropdown
 		local button = widget.button
-		local button_cover = widget.button_cover
 		local text = widget.text
 
 		B.StripTextures(frame)
@@ -170,9 +206,6 @@ function S:Ace3_RegisterAsWidget(widget)
 		text:ClearAllPoints()
 		text:SetJustifyH("RIGHT")
 		text:SetPoint("RIGHT", button, "LEFT", -3, 0)
-
-		button:HookScript("OnClick", S.Ace3_SkinDropdown)
-		button_cover:HookScript("OnClick", S.Ace3_SkinDropdown)
 	elseif TYPE == "LSM30_Font" or TYPE == "LSM30_Sound" or TYPE == "LSM30_Border" or TYPE == "LSM30_Background" or TYPE == "LSM30_Statusbar" then
 		local frame = widget.frame
 		local button = frame.dropButton
@@ -192,8 +225,8 @@ function S:Ace3_RegisterAsWidget(widget)
 		button:ClearAllPoints()
 		button:SetPoint("RIGHT", bg)
 
-		frame.text:ClearAllPoints()
-		frame.text:SetPoint("RIGHT", button, "LEFT", -2, 0)
+		text:ClearAllPoints()
+		text:SetPoint("RIGHT", button, "LEFT", -2, 0)
 
 		if TYPE == "LSM30_Sound" then
 			widget.soundbutton:SetParent(bg)
@@ -238,8 +271,43 @@ function S:Ace3_RegisterAsWidget(widget)
 		B.SetBD(msgframe)
 		msgframe.msg:ClearAllPoints()
 		msgframe.msg:SetPoint("CENTER")
+	elseif TYPE == "ColorPicker" then
+		local frame = widget.frame
+		local colorSwatch = widget.colorSwatch
+		local text = widget.text
+
+		local bg = B.CreateBDFrame(frame)
+		bg:SetSize(18, 18)
+		bg:ClearAllPoints()
+		bg:SetPoint("LEFT", frame, "LEFT", 4, 0)
+
+		colorSwatch:SetTexture(DB.bdTex)
+		colorSwatch:ClearAllPoints()
+		colorSwatch:SetParent(bg)
+		colorSwatch:SetInside(bg)
+
+		if colorSwatch.background then
+			colorSwatch.background:SetColorTexture(0, 0, 0, 0)
+		end
+
+		if colorSwatch.checkers then
+			colorSwatch.checkers:ClearAllPoints()
+			colorSwatch.checkers:SetParent(bg)
+			colorSwatch.checkers:SetInside(bg)
+		end
+
+		text:ClearAllPoints()
+		text:SetPoint("LEFT", colorSwatch, "RIGHT", 4, 0)
 	elseif TYPE == "Icon" then
 		B.StripTextures(widget.frame)
+	elseif TYPE == "Dropdown-Pullout" then
+		local frame = widget.frame
+		P.ReskinTooltip(frame)
+		frame.bg.SetFrameLevel = B.Dummy
+
+		if widget.slider then
+			S.Ace3_SkinSlider(widget.slider)
+		end
 	elseif TYPE == "WeakAurasDisplayButton" then
 		local button = widget.frame
 
@@ -255,7 +323,7 @@ function S:Ace3_RegisterAsWidget(widget)
 		button.iconBG:SetAllPoints(widget.icon)
 
 		button.highlight:SetTexture(DB.bdTex)
-		button.highlight:SetVertexColor(DB.r, DB.g, DB.b, .25)
+		button.highlight:SetVertexColor(cr, cg, cb, .25)
 		button.highlight:SetInside()
 
 		hooksecurefunc(widget, "SetIcon", S.WeakAuras_SkinIcon)
@@ -270,7 +338,7 @@ function S:Ace3_RegisterAsWidget(widget)
 		button.iconBG:SetAllPoints(widget.icon)
 
 		button.highlight:SetTexture(DB.bdTex)
-		button.highlight:SetVertexColor(DB.r, DB.g, DB.b, .25)
+		button.highlight:SetVertexColor(cr, cg, cb, .25)
 		button.highlight:SetInside()
 	elseif TYPE == "WeakAurasPendingUpdateButton" then
 		local button = widget.frame
@@ -319,7 +387,7 @@ function S:Ace3_RegisterAsWidget(widget)
 		B.CreateBD(button, .25)
 		button:SetHighlightTexture(DB.bdTex)
 		local hl = button:GetHighlightTexture()
-		hl:SetVertexColor(DB.r, DB.g, DB.b, .25)
+		hl:SetVertexColor(cr, cg, cb, .25)
 		hl:SetInside()
 	end
 end
