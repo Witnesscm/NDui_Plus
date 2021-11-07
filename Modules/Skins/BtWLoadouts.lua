@@ -53,10 +53,7 @@ end
 
 local function reskinPvPTalent(self)
 	for grid in self.GridPool:EnumerateActive() do
-		if not grid.styled then
-			reskinTalentRow(grid)
-			grid.styled = true
-		end
+		reskinTalentRow(grid)
 	end
 end
 
@@ -106,7 +103,7 @@ function S:BtWLoadouts()
 		end
 	end
 
-	for _, v in ipairs({"AddButton", "RefreshButton", "ActivateButton", "DeleteButton"}) do
+	for _, v in ipairs({"AddButton", "RefreshButton", "ActivateButton", "DeleteButton", "ExportButton"}) do
 		local bu = frame[v]
 		if bu then
 			B.Reskin(bu)
@@ -123,7 +120,8 @@ function S:BtWLoadouts()
 
 	local SidebarInset = frame.SidebarInset
 	if SidebarInset then
-		reskinInset(SidebarInset)
+		--reskinInset(SidebarInset)
+		B.StripTextures(SidebarInset)
 	end
 
 	local Sidebar = frame.Sidebar
@@ -239,6 +237,23 @@ function S:BtWLoadouts()
 			B.StripTextures(AffixesList)
 			B.SetBD(AffixesList)
 		end
+	end
+
+	for _, v in ipairs({"Export", "Import"}) do
+		local shareFrame = frame[v]
+		if shareFrame then
+			B.StripTextures(shareFrame.Inset)
+			B.CreateBDFrame(shareFrame.Inset, .25)
+			B.ReskinScroll(shareFrame.Scroll.ScrollBar)
+		end
+	end
+
+	local importFrame = _G.BtWLoadoutsImportFrame
+	if importFrame then
+		B.StripTextures(importFrame)
+		B.SetBD(importFrame)
+		B.ReskinClose(importFrame.CloseButton)
+		B.Reskin(importFrame.ImportButton)
 	end
 
 	local logFrame = _G.BtWLoadoutsLogFrame
