@@ -121,6 +121,10 @@ function T:GetCovenantID(unit)
 	return covenantID
 end
 
+local function msgChannel()
+	return IsPartyLFG() and "INSTANCE_CHAT" or IsInRaid() and "RAID" or "PARTY"
+end
+
 local cache = {}
 function T:UpdateRosterInfo()
 	if not IsInGroup() then return end
@@ -129,7 +133,7 @@ function T:UpdateRosterInfo()
 		for i = 1, GetNumGroupMembers() do
 			local name = GetRaidRosterInfo(i)
 			if name and name ~= DB.MyName and not cache[name] then
-				C_ChatInfo.SendAddonMessage(DC_Prefix, format("ASK:%s", name), "RAID")
+				C_ChatInfo.SendAddonMessage(DC_Prefix, format("ASK:%s", name), msgChannel())
 				cache[name] = true
 			end
 		end
