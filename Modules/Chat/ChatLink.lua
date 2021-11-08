@@ -72,7 +72,7 @@ function CH:ChatLinkIcon()
 	hooksecurefunc("ChatEdit_OnTextChanged", function(self, userInput)
 		local text = self:GetText()
 		if userInput and CH.db["Icon"] then
-			local newText, count = gsub(text, "|T.+|t", "")
+			local newText, count = gsub(text, "(|T[:%d]+|t)(|H.+|h.+|h)", "%2")
 			if count > 0 then
 				self:SetText(newText)
 			end
