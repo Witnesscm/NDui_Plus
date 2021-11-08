@@ -161,7 +161,7 @@ function S:Immersion()
 	hooksecurefunc(ImmersionFrame, "ShowItems", function(self)
 		for tooltip in self.Inspector.tooltipFramePool:EnumerateActive() do
 			if not tooltip.styled then
-				B.StripTextures(tooltip)
+				tooltip:HideBackdrop()
 				local bg = B.SetBD(tooltip)
 				bg:SetPoint("TOPLEFT", 0, 0)
 				bg:SetPoint("BOTTOMRIGHT", 6, 0)
