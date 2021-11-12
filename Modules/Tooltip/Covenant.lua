@@ -231,7 +231,7 @@ do
 end
 
 function T:Covenant()
-	LibRS = _G.LibStub and _G.LibStub("LibRaidStatus-1.0", true)
+	LibRS = _G.LibStub and _G.LibStub("LibOpenRaid-1.0", true)
 	DCLoaded = IsAddOnLoaded("Details_Covenants")
 
 	for prefix in pairs(addonPrefixes) do
