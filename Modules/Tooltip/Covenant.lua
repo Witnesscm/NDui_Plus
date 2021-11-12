@@ -3,7 +3,7 @@ local B, C, L, DB, P = unpack(ns)
 local T = P:GetModule("Tooltip")
 local NT = B:GetModule("Tooltip")
 
-local format, strsplit, strmatch = string.format, string.split, string.match
+local format, strsplit, strmatch, strsub = string.format, string.split, string.match, string.sub
 local pairs, tonumber = pairs, tonumber
 
 T.MemberCovenants = {}
@@ -92,11 +92,13 @@ local DCLoaded
 local ZT_Prefix = "ZenTracker"
 local DC_Prefix = "DCOribos"
 local OmniCD_Prefix = "OmniCD"
+local MRT_Prefix = "EXRTADD"
 
 local addonPrefixes = {
 	[ZT_Prefix] = true,
 	[DC_Prefix] = true,
 	[OmniCD_Prefix] = true,
+	[MRT_Prefix] = true,
 }
 
 function T:GetCovenantIcon(covenantID, size)
@@ -140,13 +142,15 @@ local cache = {}
 function T:UpdateRosterInfo()
 	if not IsInGroup() then return end
 
-	if not DCLoaded then
-		for i = 1, GetNumGroupMembers() do
-			local name = GetRaidRosterInfo(i)
-			if name and name ~= DB.MyName and not cache[name] then
+	for i = 1, GetNumGroupMembers() do
+		local name = GetRaidRosterInfo(i)
+		if name and name ~= DB.MyName and not cache[name] then
+			if not DCLoaded then
 				C_ChatInfo.SendAddonMessage(DC_Prefix, format("ASK:%s", name), msgChannel())
-				cache[name] = true
 			end
+			C_ChatInfo.SendAddonMessage(MRT_Prefix, format("inspect\tREQ\tS\t%s", name), msgChannel())
+
+			cache[name] = true
 		end
 	end
 
@@ -185,11 +189,20 @@ function T:HandleAddonMessage(...)
 		if playerName == "ASK" then return end
 
 		local guid = UnitGUID(sender)
-		if guid  then
+		covenantID = tonumber(covenantID)
+		if covenantID and guid and (not T.MemberCovenants[guid] or T.MemberCovenants[guid] ~= covenantID) then
+			T.MemberCovenants[guid] = covenantID
+			P:Debug("%s 盟约：%s (by Details_Covenants)", sender, covenantMap[covenantID] or "None")
+		end
+	elseif prefix == MRT_Prefix then
+		local modPrefix, subPrefix, soulbinds = strsplit("\t", msg)
+		if (modPrefix and modPrefix == "inspect") and (subPrefix and subPrefix == "R") and (soulbinds and strsub(soulbinds, 1, 1) == "S") then
+			local guid = UnitGUID(sender)
+			local covenantID = select(2, strsplit(":", soulbinds))
 			covenantID = tonumber(covenantID)
-			if covenantID and (not T.MemberCovenants[guid] or T.MemberCovenants[guid] ~= covenantID) then
+			if covenantID and guid and (not T.MemberCovenants[guid] or T.MemberCovenants[guid] ~= covenantID) then
 				T.MemberCovenants[guid] = covenantID
-				P:Debug("%s 盟约：%s (by Details_Covenants)", sender, covenantMap[covenantID] or "None")
+				P:Debug("%s 盟约：%s (by MRT)", sender, covenantMap[covenantID] or "None")
 			end
 		end
 	end
