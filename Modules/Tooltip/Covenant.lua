@@ -99,13 +99,24 @@ local addonPrefixes = {
 	[OmniCD_Prefix] = true,
 }
 
-local function getCovenantIcon(covenantID)
+function T:GetCovenantIcon(covenantID, size)
 	local covenant = covenantMap[covenantID]
 	if covenant then
-		return format("|TInterface\\Addons\\"..addonName.."\\Media\\Texture\\Covenants\\%s:14:14|t", covenant)
+		return format("|TInterface\\Addons\\"..addonName.."\\Media\\Texture\\Covenants\\%s:%d|t", covenant, size)
 	end
 
 	return ""
+end
+
+local covenantIDToName = {}
+function T:GetCovenantName(covenantID)
+	if not covenantIDToName[covenantID] then
+		local covenantData = C_Covenants.GetCovenantData(covenantID)
+
+		covenantIDToName[covenantID] = covenantData and covenantData.name
+	end
+
+	return covenantIDToName[covenantID] or covenantMap[covenantID]
 end
 
 function T:GetCovenantID(unit)
@@ -209,7 +220,7 @@ function T:AddCovenant()
 	end
 
 	if covenantID and covenantID ~= 0 then
-		GameTooltip:AddLine(format(L["Covenant"], getCovenantIcon(covenantID)))
+		GameTooltip:AddLine(format(L["Covenant"], T:GetCovenantIcon(covenantID, 14)))
 	end
 end
 

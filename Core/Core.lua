@@ -128,6 +128,7 @@ P.DefaultSettings = {
 P.CharacterSettings = {
 	LootSpecManager = {},
 	TalentManager = {},
+	RenownLevels = {0, 0, 0, 0},
 }
 
 function P:InitialSettings(source, target, fullClean)
@@ -176,6 +177,10 @@ end
 
 function P:Print(...)
 	_G.DEFAULT_CHAT_FRAME:AddMessage("|cFF70B8FFNDui_Plus:|r " .. format(...))
+end
+
+function P:Error(...)
+	_G.UIErrorsFrame:AddMessage("|cFF70B8FF"..format(...).."|r ")
 end
 
 function P:VersionCheck_Compare(new, old)

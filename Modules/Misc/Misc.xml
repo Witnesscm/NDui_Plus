@@ -10,4 +10,5 @@
 	<Script file="ImprovedStableFrame.lua"/>
 	<Script file="GarrisonTabs.lua"/>
 	<Script file="AuctionEnhanced.lua"/>
+	<Script file="RenownTracker.lua"/>
 </Ui>
