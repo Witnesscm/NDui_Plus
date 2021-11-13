@@ -106,6 +106,15 @@ function S:Ace3_SkinTab(tab)
 	end)
 end
 
+function S:Ace3_SkinIcon(icon, ...)
+	if not icon or not self.image or not self.image:GetTexture() then return end
+
+	local n = select("#", ...)
+	if n ~= 4 and n ~= 8 then
+		self.image:SetTexCoord(unpack(DB.TexCoord))
+	end
+end
+
 local WeakAuras_RegionType = {
 	["icon"] = true,
 	["group"] = true,
@@ -299,7 +308,18 @@ function S:Ace3_RegisterAsWidget(widget)
 		text:ClearAllPoints()
 		text:SetPoint("LEFT", colorSwatch, "RIGHT", 4, 0)
 	elseif TYPE == "Icon" then
-		B.StripTextures(widget.frame)
+		local button = widget.frame
+		local image = widget.image
+
+		image:SetTexCoord(unpack(DB.TexCoord))
+		local bg = B.CreateBDFrame(image, 0)
+
+		B.StripTextures(button)
+		button:SetHighlightTexture(DB.bdTex)
+		button:GetHighlightTexture():SetVertexColor(1, 1, 1, .25)
+		button:GetHighlightTexture():SetInside(bg)
+
+		hooksecurefunc(widget, "SetImage", S.Ace3_SkinIcon)
 	elseif TYPE == "Dropdown-Pullout" then
 		local frame = widget.frame
 		P.ReskinTooltip(frame)
