@@ -261,7 +261,7 @@ do
 		if self:IsForbidden() then return end
 
 		if not self.tipStyled then
-			if self.SetBackdrop then self:SetBackdrop(nil) end
+			self:HideBackdrop()
 			self:DisableDrawLayer("BACKGROUND")
 			self.bg = B.SetBD(self, a or .7)
 			self.bg:SetInside(self)
