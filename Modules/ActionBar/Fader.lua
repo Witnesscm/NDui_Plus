@@ -130,7 +130,7 @@ local NDui_ActionBar = {
 	["Bar3"] = "NDui_ActionBar3",
 	["Bar4"] = "NDui_ActionBar4",
 	["Bar5"] = "NDui_ActionBar5",
-	["CustomBar"] = "NDui_CustomBar",
+	["CustomBar"] = "NDui_ActionBarX",
 	["PetBar"] = "NDui_ActionBarPet",
 	["StanceBar"] = "NDui_ActionBarStance",
 }
