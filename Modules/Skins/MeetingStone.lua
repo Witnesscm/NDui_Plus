@@ -75,12 +75,12 @@ end
 local function reskinButtonHL(button)
 	button:SetHighlightTexture(DB.bdTex)
 	local hl = button:GetHighlightTexture()
-	hl:SetVertexColor(DB.r, DB.g, DB.b, .25)
+	hl:SetVertexColor(cr, cg, cb, .25)
 	hl:SetInside()
 
 	button:SetCheckedTexture(DB.bdTex)
 	local check = button:GetCheckedTexture()
-	check:SetVertexColor(DB.r, DB.g, DB.b, .25)
+	check:SetVertexColor(cr, cg, cb, .25)
 	check:SetInside()
 end
 

@@ -16,7 +16,7 @@ local covenantMap = {
 }
 
 -- Credit: OmniCD
-local utilityMap = {
+local covenantAbilities = {
 	[324739] = 1,
 	[323436] = 1,
 	[312202] = 1,
@@ -209,7 +209,7 @@ function T:HandleAddonMessage(...)
 end
 
 function T:HandleSpellCast(unit, _, spellID)
-	local covenantID = utilityMap[spellID]
+	local covenantID = covenantAbilities[spellID]
 	if covenantID then
 		local guid = UnitGUID(unit)
 		if guid and (not T.MemberCovenants[guid] or T.MemberCovenants[guid] ~= covenantID) then
