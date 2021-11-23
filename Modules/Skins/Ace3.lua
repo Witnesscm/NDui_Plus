@@ -107,11 +107,13 @@ function S:Ace3_SkinTab(tab)
 end
 
 function S:Ace3_SkinIcon(icon, ...)
-	if not icon or not self.image or not self.image:GetTexture() then return end
+	if not icon or not self.image or not self.image:GetTexture() or not self.image.bg then return end
 
-	local n = select("#", ...)
-	if n ~= 4 and n ~= 8 then
+	if type(icon) == "number" then
 		self.image:SetTexCoord(unpack(DB.TexCoord))
+		self.image.bg:Show()
+	else
+		self.image.bg:Hide()
 	end
 end
 
@@ -312,12 +314,12 @@ function S:Ace3_RegisterAsWidget(widget)
 		local image = widget.image
 
 		image:SetTexCoord(unpack(DB.TexCoord))
-		local bg = B.CreateBDFrame(image, 0)
+		image.bg = B.CreateBDFrame(image, 0)
 
 		B.StripTextures(button)
 		button:SetHighlightTexture(DB.bdTex)
 		button:GetHighlightTexture():SetVertexColor(1, 1, 1, .25)
-		button:GetHighlightTexture():SetInside(bg)
+		button:GetHighlightTexture():SetInside(image.bg)
 
 		hooksecurefunc(widget, "SetImage", S.Ace3_SkinIcon)
 	elseif TYPE == "Dropdown-Pullout" then
