@@ -101,10 +101,8 @@ function LT:OnLogin()
 	hooksecurefunc("LootFrame_UpdateButton", function(index)
 		local bu = _G["LootButton"..index]
 		if bu and not bu.styled then
-			for i = 1, bu:GetNumChildren() do
-				local child = select(i, bu:GetChildren())
-				local xOfs = select(4, child:GetPoint(2))
-				if xOfs and xOfs == 114 then
+			for _, child in pairs {bu:GetChildren()} do
+				if (child.backdropInfo and child.backdropInfo.bgFile == DB.bdTex) and (not bu.bg or bu.bg ~= child) then
 					child:SetPoint("BOTTOMRIGHT", LootFrame:GetWidth() - 55, 0)
 					bu.styled = true
 					break
