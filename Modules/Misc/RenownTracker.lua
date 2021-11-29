@@ -3,7 +3,6 @@ local B, C, L, DB, P = unpack(ns)
 local M = P:GetModule("Misc")
 local T = P:GetModule("Tooltip")
 
-local ipairs = ipairs
 local format = string.format
 
 function M:AddRenownLevels()
@@ -12,8 +11,9 @@ function M:AddRenownLevels()
 	GameTooltip:AddLine(LANDING_PAGE_RENOWN_LABEL)
 	GameTooltip:AddLine(" ")
 
-	for id, level in ipairs(NDuiPlusCharDB["RenownLevels"]) do
-		GameTooltip:AddDoubleLine(format("%s %s", T:GetCovenantIcon(id, 16), T:GetCovenantName(id)), level == 0 and "" or level, .6, .8, 1, 1, 1, 1)
+	for index = 1, 4 do
+		local level = NDuiPlusCharDB["RenownLevels"][index] or 0
+		GameTooltip:AddDoubleLine(format("%s %s", T:GetCovenantIcon(index, 16), T:GetCovenantName(index)), level == 0 and "" or level, .6, .8, 1, 1, 1, 1)
 	end
 
 	GameTooltip:Show()

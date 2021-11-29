@@ -128,7 +128,7 @@ P.DefaultSettings = {
 P.CharacterSettings = {
 	LootSpecManager = {},
 	TalentManager = {},
-	RenownLevels = {0, 0, 0, 0},
+	RenownLevels = {},
 }
 
 function P:InitialSettings(source, target, fullClean)
