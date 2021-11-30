@@ -41,10 +41,14 @@ function UF:SetTag(frame)
 	end
 end
 
-function UF:SetupNameText()
+function UF:UpdateNameText()
 	for _, frame in pairs(oUF.objects) do
 		UF:SetTag(frame)
 	end
+end
+
+function UF:SetupNameText()
+	UF:UpdateNameText()
 
 	hooksecurefunc(NUF, "CreateHealthText", function(_, frame)
 		UF:SetTag(frame)
