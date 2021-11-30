@@ -44,10 +44,6 @@ local function updateUFsNameText()
 	P:GetModule("UnitFrames"):UpdateNameText()
 end
 
-local function updateUFsAurasFilter()
-	P:GetModule("UnitFrames"):UpdateAurasFilter()
-end
-
 local function updateUFsRole()
 	P:GetModule("UnitFrames"):UpdateRoleIcons()
 end
@@ -131,7 +127,6 @@ G.OptionList = { -- type, key, value, name, horizon, data, callback, tooltip, sc
 	},
 	[2] = {
 		{1, "UnitFrames", "NameColor", L["NameColor"].."*", nil, nil, updateUFsNameText, L["NameColorTip"]},
-		{1, "UnitFrames", "OnlyPlayerDebuff", L["OnlyPlayerDebuff"].."*", true, nil, updateUFsAurasFilter, L["OnlyPlayerDebuffTip"]},
 		{},
 		{1, "UnitFrames", "Fader", HeaderTag..L["UnitFramesFader"].."*", nil, setupUFsFader, updateUFsFader, L["UnitFramesFaderTip"]},
 		{},

@@ -46,5 +46,4 @@ function UF:OnLogin()
 	UF:SetupNameText()
 	UF:SetupRoleIcons()
 	UF:UpdateUFsFader()
-	UF:UpdateAurasFilter()
 end
