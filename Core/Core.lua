@@ -41,7 +41,6 @@ P.DefaultSettings = {
 		StanceBar = true
 	},
 	UnitFrames= {
-		NameColor = false,
 		Fader = false,
 		Hover = true,
 		Combat = true,
