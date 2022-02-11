@@ -265,7 +265,6 @@ do
 			self:DisableDrawLayer("BACKGROUND")
 			self.bg = B.SetBD(self, a or .7)
 			self.bg:SetInside(self)
-			self.bg:SetFrameLevel(self:GetFrameLevel())
 
 			self.tipStyled = true
 		end
@@ -311,11 +310,11 @@ do
 	end
 
 	function P.LeftButtonTip(text)
-		return P.LEFT_MOUSE_BUTTON .. text, 1, 1, 1
+		return P.LEFT_MOUSE_BUTTON .. text
 	end
 
 	function P.RightButtonTip(text)
-		return P.RIGHT_MOUSE_BUTTON .. text, 1, 1, 1
+		return P.RIGHT_MOUSE_BUTTON .. text
 	end
 
 	local t, d = "|T%s%s|t", ""

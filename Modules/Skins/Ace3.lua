@@ -7,7 +7,6 @@ local S = P:GetModule("Skins")
 local _G = getfenv(0)
 local select, pairs, type = select, pairs, type
 local cr, cg, cb = DB.r, DB.g, DB.b
-local TT = B:GetModule("Tooltip")
 
 -- versions of AceGUI and AceConfigDialog.
 local minorGUI, minorConfigDialog = 36, 76
@@ -33,22 +32,8 @@ end
 
 S:RegisterSkin("Ace3")
 
-local function Scroll_OnEnter(self)
-	local thumb = self.thumb
-	if not thumb then return end
-	thumb.bg:SetBackdropColor(cr, cg, cb, .25)
-	thumb.bg:SetBackdropBorderColor(cr, cg, cb)
-end
-
-local function Scroll_OnLeave(self)
-	local thumb = self.thumb
-	if not thumb then return end
-	thumb.bg:SetBackdropColor(0, 0, 0, 0)
-	B.SetBorderColor(thumb.bg)
-end
-
 function S:Ace3_SkinSlider()
-	self:SetBackdrop(nil)
+	self:HideBackdrop()
 	self:SetWidth(16)
 
 	local thumb = self.GetThumbTexture and self:GetThumbTexture()
@@ -60,11 +45,8 @@ function S:Ace3_SkinSlider()
 		local bg = B.CreateBDFrame(self, 0, true)
 		bg:SetPoint("TOPLEFT", thumb, 0, -2)
 		bg:SetPoint("BOTTOMRIGHT", thumb, 0, 4)
-		thumb.bg = bg
+		bg:SetBackdropColor(cr, cg, cb, .75)
 	end
-
-	self:HookScript("OnEnter", Scroll_OnEnter)
-	self:HookScript("OnLeave", Scroll_OnLeave)
 end
 
 function S:Ace3_SkinDropdown()
@@ -72,7 +54,6 @@ function S:Ace3_SkinDropdown()
 		local pullout = self.obj.dropdown
 		if pullout then
 			P.ReskinTooltip(pullout)
-			if pullout.SetBackdrop then pullout:SetBackdrop(nil) end
 
 			local slider = pullout.slider
 			if slider and not slider.styled then
@@ -270,7 +251,7 @@ function S:Ace3_RegisterAsWidget(widget)
 		B.Reskin(widget.frame)
 	elseif TYPE == "Slider" then
 		B.ReskinSlider(widget.slider)
-		widget.editbox:SetBackdrop(nil)
+		widget.editbox:HideBackdrop()
 		B.ReskinInput(widget.editbox)
 		widget.editbox:SetPoint("TOP", widget.slider, "BOTTOM", 0, -1)
 	elseif TYPE == "Keybinding" then
@@ -502,7 +483,7 @@ end
 function S:Ace3_MetaIndex(k, v)
 	if k == "tooltip" then
 		rawset(self, k, v)
-		TT.ReskinTooltip(v)
+		P.ReskinTooltip(v)
 	elseif k == "popup" then
 		rawset(self, k, v)
 		v:HookScript("OnShow", S.Ace3_StylePopup)
@@ -555,7 +536,7 @@ function S:Ace3_SkinTooltip(lib, minor) -- lib: AceConfigDialog or AceGUI
 	if not lib.tooltip then
 		S:Ace3_MetaTable(lib)
 	else
-		TT.ReskinTooltip(lib.tooltip)
+		P.ReskinTooltip(lib.tooltip)
 
 		if lib.popup and not lib.popup.IsHooked then -- StaticPopup
 			lib.popup:HookScript("OnShow", S.Ace3_StylePopup)

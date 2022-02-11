@@ -26,7 +26,6 @@ function S:ExtVendor()
 		B.CreateBDFrame(item, .25)
 
 		B.StripTextures(button)
-		button.IconBorder:SetAlpha(0)
 		button:ClearAllPoints()
 		button:SetPoint("LEFT", item, 4, 0)
 		local hl = button:GetHighlightTexture()

@@ -17,8 +17,10 @@ function S:TradeLog()
 	B.ReskinCheck(TradeListOnlyCompleteCB)
 	B.ReskinSlider(TradeLogFrameScaleSlider)
 	B.ReskinScroll(TradeListScrollFrameScrollBar)
-	TradeListScrollFrameScrollBar:SetBackdrop(nil)
-	TradeListScrollFrameScrollBar.SetBackdrop = B.Dummy
+
+	if TradeListScrollFrameScrollBar.SetBackdrop then
+		TradeListScrollFrameScrollBar.SetBackdrop = B.Dummy
+	end
 
 	for i = 1, 6 do
 		local header = _G["TradeListFrameColumnHeader"..i]
