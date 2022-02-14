@@ -120,6 +120,7 @@ P.DefaultSettings = {
 		ImprovedStableFrame = true,
 		GarrisonTabs = true,
 		AuctionEnhanced = true,
+		GuildBankItemLevel = true,
 	},
 }
 

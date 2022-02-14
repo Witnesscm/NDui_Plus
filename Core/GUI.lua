@@ -187,6 +187,7 @@ G.OptionList = { -- type, key, value, name, horizon, data, callback, tooltip, sc
 		{1, "Misc", "ParagonRepRewards", L["ParagonRepRewards"], nil, nil, nil, L["ParagonRepRewardsTip"]},
 		{1, "Misc", "ImprovedStableFrame", L["ImprovedStableFrame"], true},
 		{1, "Misc", "GarrisonTabs", L["GarrisonTabs"], nil, nil, nil, L["GarrisonTabsTip"]},
+		{1, "Misc", "GuildBankItemLevel", L["GuildBankItemLevel"], true},
 		{},
 		{1, "Misc", "TalentManager", HeaderTag..L["TalentManagerEnable"], nil, nil, nil, L["TalentManagerTip"]},
 		{1, "Misc", "LootSpecManager", HeaderTag..L["LootSpecManagerEnable"], true, nil, nil, L["LootSpecManagerTip"]},
