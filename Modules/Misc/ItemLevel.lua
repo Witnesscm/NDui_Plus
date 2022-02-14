@@ -5,17 +5,36 @@ local M = P:GetModule("Misc")
 local MAX_GUILDBANK_SLOTS_PER_TAB = 98
 local NUM_SLOTS_PER_GUILDBANK_GROUP = 14
 
-function M:ItemLevel_Update(link)
+function M:ItemLevel_UpdateGuildBank(tab, index)
 	if not self.iLvl then
 		self.iLvl = B.CreateFS(self, DB.Font[2]+1, "", false, "BOTTOMLEFT", 1, 1)
 	end
 
-	local quality = link and select(3, GetItemInfo(link))
-	if quality then
-		local level = B.GetItemLevel(link)
+	local level, quality
+	local link = GetGuildBankItemLink(tab, index)
+	local itemID = link and strmatch(link, "Hitem:(%d+):")
+	itemID = tonumber(itemID)
+
+	if itemID then
+		if itemID == 82800 then
+			local speciesID, petLevel, breedQuality = B.ScanTip:SetGuildBankItem(tab, index)
+			if speciesID and speciesID > 0 then
+				level, quality = petLevel, breedQuality
+			end
+		else
+			level = B.GetItemLevel(link)
+			quality = select(3, GetItemInfo(link))
+		end
+	end
+
+	if level and quality then
 		local color = DB.QualityColors[quality]
 		self.iLvl:SetText(level)
 		self.iLvl:SetTextColor(color.r, color.g, color.b)
+
+		if self.bg and itemID == 82800 then
+			self.bg:SetBackdropBorderColor(color.r, color.g, color.b)
+		end
 	else
 		self.iLvl:SetText("")
 	end
@@ -36,7 +55,7 @@ function M:ItemLevel_GuildBank()
 				column = ceil((i-0.5)/NUM_SLOTS_PER_GUILDBANK_GROUP)
 				button = self.Columns[column].Buttons[index]
 
-				M.ItemLevel_Update(button, GetGuildBankItemLink(tab, i))
+				M.ItemLevel_UpdateGuildBank(button, tab, i)
 			end
 		end
 	end)
