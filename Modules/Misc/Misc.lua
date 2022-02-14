@@ -130,3 +130,14 @@ function M:TrainAllSkills()
 	end)
 end
 P:AddCallbackForAddon("Blizzard_TrainerUI", M.TrainAllSkills)
+
+-- Autofill the Threads of Fate confirmation string
+function M:ThreadsOfFateString()
+	local fateDialog = StaticPopupDialogs["CONFIRM_PLAYER_CHOICE_WITH_CONFIRMATION_STRING"]
+	if fateDialog and fateDialog.OnShow then
+		hooksecurefunc(fateDialog, "OnShow", function(self)
+			self.editBox:SetText(SHADOWLANDS_EXPERIENCE_THREADS_OF_FATE_CONFIRMATION_STRING)
+		end)
+	end
+end
+P:AddCallbackForAddon("Blizzard_PlayerChoice", M.ThreadsOfFateString)
