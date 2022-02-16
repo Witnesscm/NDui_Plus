@@ -79,11 +79,68 @@ function S:xCT()
 	end)
 end
 
+function S:LibQTip()
+	local LibQTip = _G.LibStub and _G.LibStub("LibQTip-1.0", true)
+	if not LibQTip then return end
+
+	local origAcquire = LibQTip.Acquire
+	LibQTip.Acquire = function(...)
+		local tooltip = origAcquire(...)
+		P.ReskinTooltip(tooltip)
+
+		return tooltip
+	end
+end
+
+function S:BagSync()
+	local BagSync = _G.BagSync
+	if not BagSync then return end
+
+	local Tooltip = BagSync:GetModule("Tooltip")
+	if Tooltip then
+		hooksecurefunc(Tooltip, "TallyUnits", function(_, objTooltip)
+			if not objTooltip.qTip then return end
+
+			local BPBIDTooltip
+			if objTooltip == _G.FloatingBattlePetTooltip then
+				BPBIDTooltip = _G["BPBID_BreedTooltip2"]
+			else
+				BPBIDTooltip = _G["BPBID_BreedTooltip"]
+			end
+
+			objTooltip.qTip:ClearAllPoints()
+			objTooltip.qTip:SetPoint("TOPRIGHT", BPBIDTooltip and BPBIDTooltip:IsVisible() and BPBIDTooltip or objTooltip, "BOTTOMRIGHT", 0, 2*C.mult)
+		end)
+	end
+end
+
+function S:SavedInstances()
+	local SI = _G.SavedInstances and _G.SavedInstances[1]
+	if not SI then return end
+
+	if SI.ShowDetached then
+		hooksecurefunc(SI, "ShowDetached", function(self)
+			local frame = self.detachframe
+			if frame and not frame.styled then
+				B.StripTextures(frame)
+				B.SetBD(frame)
+				B.ReskinClose(frame.CloseButton, nil, -2, -2)
+				frame.CloseButton:SetAlpha(1)
+
+				frame.styled = true
+			end
+		end)
+	end
+end
+
 S:RegisterSkin("WorldQuestsList", S.WorldQuestsList)
 S:RegisterSkin("PremadeGroupsFilter", S.PremadeGroupsFilter)
 S:RegisterSkin("MogPartialSets", S.MogPartialSets)
 S:RegisterSkin("BigWigs_Options", S.BigWigs_Options)
 S:RegisterSkin("xCT+", S.xCT)
+S:RegisterSkin("LibQTip")
+S:RegisterSkin("BagSync", S.BagSync)
+S:RegisterSkin("SavedInstances", S.SavedInstances)
 
 -- Hide Toggle Button
 S.ToggleFrames = {}
