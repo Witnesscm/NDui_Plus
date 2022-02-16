@@ -1,7 +1,6 @@
 local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 local S = P:GetModule("Skins")
-local TT = B:GetModule("Tooltip")
 
 function S:MythicDungeonTools()
 	local MDT = _G.MDT or _G.DungeonTools

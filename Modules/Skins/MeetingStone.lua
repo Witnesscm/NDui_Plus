@@ -1,7 +1,6 @@
 local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 local S = P:GetModule("Skins")
-local TT = B:GetModule("Tooltip")
 local cr, cg, cb = DB.r, DB.g, DB.b
 
 local _G = getfenv(0)

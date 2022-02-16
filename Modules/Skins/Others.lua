@@ -2,7 +2,6 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 local S = P:GetModule("Skins")
 local NS = B:GetModule("Skins")
-local TT = B:GetModule("Tooltip")
 
 local _G = getfenv(0)
 local select, pairs, type, strfind = select, pairs, type, string.find
@@ -61,7 +60,7 @@ function S:MogPartialSets()
 end
 
 function S:BigWigs_Options()
-	TT.ReskinTooltip(_G.BigWigsOptionsTooltip)
+	P.ReskinTooltip(_G.BigWigsOptionsTooltip)
 end
 
 function S:xCT()
@@ -80,27 +79,11 @@ function S:xCT()
 	end)
 end
 
-function S:ColorPickerPlus()
-	local styled
-	ColorPickerFrame:HookScript("OnShow", function()
-		if styled then return end
-
-		B.StripTextures(_G.ColorPPHeaderTitle)
-		B.Reskin(_G.ColorPPSwitcher)
-		_G.ColorPPSwitcher:SetScale(1)
-		B.Reskin(_G.ColorPPCopy)
-		B.Reskin(_G.ColorPPPaste)
-
-		styled = true
-	end)
-end
-
 S:RegisterSkin("WorldQuestsList", S.WorldQuestsList)
 S:RegisterSkin("PremadeGroupsFilter", S.PremadeGroupsFilter)
 S:RegisterSkin("MogPartialSets", S.MogPartialSets)
 S:RegisterSkin("BigWigs_Options", S.BigWigs_Options)
 S:RegisterSkin("xCT+", S.xCT)
-S:RegisterSkin("ColorPickerPlus", S.ColorPickerPlus)
 
 -- Hide Toggle Button
 S.ToggleFrames = {}

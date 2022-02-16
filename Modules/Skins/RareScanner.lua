@@ -1,7 +1,6 @@
 local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 local S = P:GetModule("Skins")
-local TT = B:GetModule("Tooltip")
 
 local _G = getfenv(0)
 
@@ -24,8 +23,8 @@ function S:RareScanner()
 	B.ReskinArrow(button.FilterDisabledButton, "up")
 	B.ReskinArrow(button.FilterEnabledButton, "down")
 
-	TT.ReskinTooltip(button.LootBar.LootBarToolTipComp1)
-	TT.ReskinTooltip(button.LootBar.LootBarToolTipComp2)
+	P.ReskinTooltip(button.LootBar.LootBarToolTipComp1)
+	P.ReskinTooltip(button.LootBar.LootBarToolTipComp2)
 
 	-- RSLoot
 	local itemFramesPool = button.LootBar and button.LootBar.itemFramesPool
