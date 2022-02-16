@@ -2,6 +2,13 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 
 P.Changelog = [[
+v1.5.5
+[控制台] 添加更多控制台鼠标提示
+[聊天] 修复未启用NDui全局阴影边框时聊天隐藏按钮报错
+[易用性] 公会银行显示装备等级、宠物等级
+[易用性] 自动填写命运丝线确认字符串
+[美化] 添加LibQTip, BagSync, SavedInstances鼠标提示美化；启用BattlePetBreedID时调整BagSync宠物鼠标提示框体位置
+
 v1.5.4
 [单位框体] 移除单位框体名字改色（NDui已添加）
 [聊天] 修复某些情况小队编号显示异常的问题
