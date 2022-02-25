@@ -6,7 +6,7 @@ local M = P:GetModule("Misc")
 ------------------------------
 local ipairs = ipairs
 local format = string.format
-local PET, MOUNT, TOY, BINDING_HEADER_OTHER = PET, MOUNT, TOY, BINDING_HEADER_OTHER
+local PET, MOUNT, TOY, ITEM_COSMETIC, BINDING_HEADER_OTHER = PET, MOUNT, TOY, ITEM_COSMETIC, BINDING_HEADER_OTHER
 
 if GetLocale() == "zhCN" then
 	MOUNT = MOUNTS
@@ -385,6 +385,36 @@ local PARAGON_DATA = {
 				},
 			},
 		},
+		[64867] = { --The Enlightened
+			factionID = 2478,
+			cache = 187780,
+			rewards = {
+				{ -- Sphere of Enlightened Cogitation
+					type = TOY,
+					itemID = 190177,
+				},
+				{ -- Walking Staff of the Enlightened Journey
+					type = ITEM_COSMETIC,
+					itemID = 190939,
+				},
+				{ -- Schematic: Russet Bufonoid
+					type = BINDING_HEADER_OTHER,
+					itemID = 189471,
+					questID = 65394,
+				},
+				{ -- Enlightened Portal Research
+					type = BINDING_HEADER_OTHER,
+					itemID = 190234,
+					questID = 65617,
+				},
+				{ -- Ray Soul
+					type = BINDING_HEADER_OTHER,
+					covenant = "|A:sanctumupgrades-nightfae-32x32:14:14:0:-1|a",
+					itemID = 189973,
+					questID = 65506,
+				},
+			},
+		},
 		[61095] = { --The Undying Army
 			factionID = 2410,
 			cache = 180646,
@@ -416,6 +446,18 @@ local PARAGON_DATA = {
 				{ -- Hungry Burrower
 					type = PET,
 					itemID = 180635,
+				},
+				{ -- Mammoth Soul
+					type = BINDING_HEADER_OTHER,
+					covenant = "|A:sanctumupgrades-nightfae-32x32:14:14:0:-1|a",
+					itemID = 185054,
+					questID = 63610,
+				},
+				{ -- Porcupine Soul
+					type = BINDING_HEADER_OTHER,
+					covenant = "|A:sanctumupgrades-nightfae-32x32:14:14:0:-1|a",
+					itemID = 187870,
+					questID = 64989,
 				},
 			},
 		},
@@ -462,11 +504,13 @@ function M:AddParagonRewards()
 			collected = PetIsCollected(data.itemID)
 		elseif data.type == TOY then
 			collected = PlayerHasToy(data.itemID)
+		elseif data.type == ITEM_COSMETIC then
+			collected = C_TransmogCollection.PlayerHasTransmogByItemInfo(data.itemID)
 		elseif data.type == BINDING_HEADER_OTHER then
 			collected = C_QuestLog.IsQuestFlaggedCompleted(data.questID)
 		end
 		if name then
-			GameTooltip:AddLine(format("|T%s:14|t |T%d:0:0:0:0:64:64:5:59:5:59|t %s |cffffffff(%s)|r", collected and "Interface\\RAIDFRAME\\ReadyCheck-Ready" or "Interface\\RAIDFRAME\\ReadyCheck-NotReady", icon, name, data.type), ITEM_QUALITY_COLORS[quality].r, ITEM_QUALITY_COLORS[quality].g, ITEM_QUALITY_COLORS[quality].b)
+			GameTooltip:AddLine(format("|T%s:14|t |T%d:0:0:0:0:64:64:5:59:5:59|t %s |cffffffff(%s)|r", collected and "Interface\\RAIDFRAME\\ReadyCheck-Ready" or "Interface\\RAIDFRAME\\ReadyCheck-NotReady", icon, name, data.covenant or data.type), ITEM_QUALITY_COLORS[quality].r, ITEM_QUALITY_COLORS[quality].g, ITEM_QUALITY_COLORS[quality].b)
 		else
 			GameTooltip:AddLine(ERR_TRAVEL_PASS_NO_INFO, 1, 0, 0)
 		end
