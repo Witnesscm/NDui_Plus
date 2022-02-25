@@ -11,6 +11,7 @@ local compareGUID
 local tiers = {
 	"Castle Nathria",
 	"Sanctum of Domination",
+	"Sepulcher of the First Ones",
 }
 
 local levels = {
@@ -84,6 +85,26 @@ local locales = {
 	["Sanctum of Domination"] = {
 		short = L["[ABBR] Sanctum of Domination"],
 		full = L["Sanctum of Domination"]
+	},
+	["Tazavesh: Streets of Wonder"] = {
+		short = L["[ABBR] Tazavesh: Streets of Wonder"],
+		full = L["Tazavesh: Streets of Wonder"]
+	},
+	["Tazavesh: So'leah's Gambit"] = {
+		short = L["[ABBR] Tazavesh: So'leah's Gambit"],
+		full = L["Tazavesh: So'leah's Gambit"]
+	},
+	["Shadowlands Keystone Master: Season Three"] = {
+		short = L["[ABBR] Shadowlands Keystone Master: Season Three"],
+		full = L["Shadowlands Keystone Master: Season Three"]
+	},
+	["Shadowlands Keystone Hero: Season Three"] = {
+		short = L["[ABBR] Shadowlands Keystone Hero: Season Three"],
+		full = L["Shadowlands Keystone Hero: Season Three"]
+	},
+	["Sepulcher of the First Ones"] = {
+		short = L["[ABBR] Sepulcher of the First Ones"],
+		full = L["Sepulcher of the First Ones"]
 	}
 }
 
@@ -187,6 +208,60 @@ local raidAchievements = {
 			15169,
 			15173,
 		}
+	},
+	["Sepulcher of the First Ones"] = {
+		["Mythic"] = {
+			15427,
+			15431,
+			15435,
+			15439,
+			15443,
+			15447,
+			15451,
+			15455,
+			15459,
+			15463,
+			15467,
+		},
+		["Heroic"] = {
+			15426,
+			15430,
+			15434,
+			15438,
+			15442,
+			15446,
+			15450,
+			15454,
+			15458,
+			15462,
+			15466,
+		},
+		["Normal"] = {
+			15425,
+			15429,
+			15433,
+			15437,
+			15441,
+			15445,
+			15449,
+			15453,
+			15457,
+			15461,
+			15465,
+		},
+		["Raid Finder"] = {
+			15424,
+			15428,
+			15432,
+			15436,
+			15440,
+			15444,
+			15448,
+			15452,
+			15456,
+			15460,
+			15464,
+		}
 	}
 }
 
@@ -199,6 +274,15 @@ local dungeons = {
 	[380] = "Sanguine Depths",
 	[381] = "Spires of Ascension",
 	[382] = "Theater of Pain",
+	[391] = "Tazavesh: Streets of Wonder",
+	[392] = "Tazavesh: So'leah's Gambit",
+}
+
+local keystoneAchievements ={
+	{id = 14532, name = "Shadowlands Keystone Master: Season One"},
+	{id = 15078, name = "Shadowlands Keystone Master: Season Two"},
+	{id = 15499, name = "Shadowlands Keystone Master: Season Three"},
+	{id = 15506, name = "Shadowlands Keystone Hero: Season Three"},
 }
 
 local specialAchievements = {}
@@ -209,8 +293,9 @@ function T:UpdateProgSettings(full)
 	if full then
 		wipe(specialAchievements)
 		if T.db["KeystoneMaster"] then
-			tinsert(specialAchievements, {id = 14532, name = "Shadowlands Keystone Master: Season One"})
-			tinsert(specialAchievements, {id = 15078, name = "Shadowlands Keystone Master: Season Two"})
+			for _, info in ipairs(keystoneAchievements) do
+				tinsert(specialAchievements, info)
+			end
 		end
 
 		for id in gmatch(T.db["AchievementList"], "%S+") do
