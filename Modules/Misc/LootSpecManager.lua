@@ -15,10 +15,10 @@ LSM.CheckBoxes = {
 }
 
 LSM.DiffNames = {
-  [14] = "Normal",
-  [15] = "Heroic",
-  [16] = "Mythic",
-  [17] = "LFR",
+	[14] = "Normal",
+	[15] = "Heroic",
+	[16] = "Mythic",
+	[17] = "LFR",
 }
 
 local SPACING = 24
@@ -53,15 +53,12 @@ function LSM:UpdateRaidData()
 end
 
 function LSM:UpdateMythicPlusData()
-	local index = 1
-	local dungeonInstID, name = EJ_GetInstanceByIndex(index, false)
-	while dungeonInstID do
-		EJ_SelectInstance(dungeonInstID)
-		local instanceID = select(8, EJ_GetEncounterInfoByIndex(1, dungeonInstID))
-		tinsert(LSM.Data.MythicPlus, {id = instanceID, name = name})
-
-		index = index + 1
-		dungeonInstID, name = EJ_GetInstanceByIndex(index, false)
+	local mapIDs = C_ChallengeMode.GetMapTable()
+	for _, mapID in ipairs(mapIDs) do
+		local name = C_ChallengeMode.GetMapUIInfo(mapID)
+		if name then
+			tinsert(LSM.Data.MythicPlus, {id = mapID, name = name})
+		end
 	end
 end
 
@@ -300,16 +297,19 @@ function LSM:EncounterStart(id, _, diffID)
 	end
 end
 
-function LSM:MythicPlusStart(id)
-	local spec = LSM.db["MythicPlus"][id] or IGNORE
+function LSM:MythicPlusStart()
+	local mapID = C_ChallengeMode.GetActiveChallengeMapID()
+	if not mapID then return end
+
+	local spec = LSM.db["MythicPlus"][mapID] or IGNORE
 	if LSM:SetLootSpec(spec) then
 		P:Print(L["LootSpecManagerM+Start"])
 	end
 end
 
 function LSM:UpdateData()
-	if LSM.Data.Raid[1] and LSM.Data.Raid[1].encounters and next(LSM.Data.Raid[1].encounters) then
-		B:UnregisterEvent("PLAYER_ENTERING_WORLD", LSM.UpdateData)
+	if LSM.Data.Raid[1] and LSM.Data.Raid[1].encounters and next(LSM.Data.Raid[1].encounters) and next(LSM.Data.MythicPlus) then
+		B:UnregisterEvent("UPDATE_INSTANCE_INFO", LSM.UpdateData)
 		return
 	end
 
@@ -340,10 +340,11 @@ function LSM:OnLogin()
 
 	LSM:SetupCache()
 
-	P:AddCallbackForAddon("Blizzard_EncounterJournal", LSM.CreateEJButton)
-	B:RegisterEvent("PLAYER_ENTERING_WORLD", LSM.UpdateData)
+	RequestRaidInfo()
+	B:RegisterEvent("UPDATE_INSTANCE_INFO", LSM.UpdateData)
 	B:RegisterEvent("ENCOUNTER_START", LSM.EncounterStart)
 	B:RegisterEvent("CHALLENGE_MODE_START", LSM.MythicPlusStart)
+	P:AddCallbackForAddon("Blizzard_EncounterJournal", LSM.CreateEJButton)
 end
 
 SlashCmdList["NDUI_PLUS_LSM"] = function()
