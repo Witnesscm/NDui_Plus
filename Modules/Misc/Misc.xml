@@ -13,4 +13,5 @@
 	<Script file="AuctionEnhanced.lua"/>
 	<Script file="RenownTracker.lua"/>
 	<Script file="ExtVendorUI.lua"/>
+	<Script file="CypherConsole.lua"/>
 </Ui>
