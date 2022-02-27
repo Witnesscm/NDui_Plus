@@ -4,18 +4,10 @@ local S = P:GetModule("Skins")
 
 local _G = getfenv(0)
 
-function S:ExtVendor()
-	if not S.db["ExtVendor"] then return end
+function S:ExtVendor_SkinButtons()
+	if not C.db["Skins"]["BlizzardSkins"] then return end
 
-	-- MerchantFrame
-	B.Reskin(MerchantFrameFilterButton)
-	B.ReskinInput(MerchantFrameSearchBox)
-
-	MerchantFrameSellJunkButton:GetHighlightTexture():SetColorTexture(1, 1, 1, .25)
-	MerchantFrameSellJunkButton:SetPushedTexture("")
-	B.ReskinIcon(MerchantFrameSellJunkButtonIcon)
-
-	for i = 13, 20 do
+	for i = 13, _G.MERCHANT_ITEMS_PER_PAGE do
 		local item = _G["MerchantItem"..i]
 		local name = item.Name
 		local button = item.ItemButton
@@ -49,6 +41,19 @@ function S:ExtVendor()
 			B.ReskinIcon(texture)
 		end
 	end
+end
+
+function S:ExtVendor()
+	if not S.db["ExtVendor"] then return end
+
+	-- MerchantFrame
+	B.Reskin(MerchantFrameFilterButton)
+	B.ReskinInput(MerchantFrameSearchBox)
+
+	MerchantFrameSellJunkButton:GetHighlightTexture():SetColorTexture(1, 1, 1, .25)
+	MerchantFrameSellJunkButton:SetPushedTexture("")
+	B.ReskinIcon(MerchantFrameSellJunkButtonIcon)
+	S:ExtVendor_SkinButtons()
 
 	-- ExtVendor_QVConfigFrame
 	P.ReskinFrame(ExtVendor_QVConfigFrame)

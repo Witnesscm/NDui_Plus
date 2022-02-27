@@ -188,3 +188,4 @@ L["Shadowlands Keystone Hero: Season Three"] = "暗影国度钥石英雄: 第三
 L["[ABBR] Shadowlands Keystone Hero: Season Three"] = "S3 钥石英雄"
 L["Sepulcher of the First Ones"] = "初诞者圣墓"
 L["[ABBR] Sepulcher of the First Ones"] = "初诞者圣墓"
+L["ExtVendorUI"] = "商人面板扩展"

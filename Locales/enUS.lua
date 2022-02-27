@@ -188,3 +188,4 @@ L["Shadowlands Keystone Hero: Season Three"] = "Shadowlands Keystone Hero: Seaso
 L["[ABBR] Shadowlands Keystone Hero: Season Three"] = "Keystone Hero S3"
 L["Sepulcher of the First Ones"] = "Sepulcher of the First Ones"
 L["[ABBR] Sepulcher of the First Ones"] = "SFO"
+L["ExtVendorUI"] = "Extended Vendor UI"

@@ -121,6 +121,7 @@ P.DefaultSettings = {
 		GarrisonTabs = true,
 		AuctionEnhanced = true,
 		GuildBankItemLevel = true,
+		ExtVendorUI = false,
 	},
 }
 
