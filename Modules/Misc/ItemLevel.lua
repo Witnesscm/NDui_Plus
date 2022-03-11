@@ -4,6 +4,13 @@ local M = P:GetModule("Misc")
 
 local MAX_GUILDBANK_SLOTS_PER_TAB = 98
 local NUM_SLOTS_PER_GUILDBANK_GROUP = 14
+local PET_CAGE = 82800
+
+local qualityColors = {}
+for index, value in pairs(DB.QualityColors) do
+	qualityColors[index] = {r = value.r, g = value.g, b = value.b}
+end
+qualityColors[LE_ITEM_QUALITY_COMMON] = {r = 1, g = 1, b = 1}
 
 function M:ItemLevel_UpdateGuildBank(tab, index)
 	if not self.iLvl then
@@ -16,7 +23,7 @@ function M:ItemLevel_UpdateGuildBank(tab, index)
 	itemID = tonumber(itemID)
 
 	if itemID then
-		if itemID == 82800 then
+		if itemID == PET_CAGE then
 			local speciesID, petLevel, breedQuality = B.ScanTip:SetGuildBankItem(tab, index)
 			if speciesID and speciesID > 0 then
 				level, quality = petLevel, breedQuality
@@ -28,11 +35,11 @@ function M:ItemLevel_UpdateGuildBank(tab, index)
 	end
 
 	if level and quality then
-		local color = DB.QualityColors[quality]
+		local color = qualityColors[quality]
 		self.iLvl:SetText(level)
 		self.iLvl:SetTextColor(color.r, color.g, color.b)
 
-		if self.bg and itemID == 82800 then
+		if self.bg and itemID == PET_CAGE then
 			self.bg:SetBackdropBorderColor(color.r, color.g, color.b)
 		end
 	else
