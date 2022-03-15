@@ -3,4 +3,5 @@
 	<Script file="Covenant.lua"/>
 	<Script file="MountsSource.lua"/>
 	<Script file="Progression.lua"/>
+	<Script file="AlreadyUsed.lua"/>
 </Ui>

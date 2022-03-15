@@ -26,4 +26,5 @@ function T:OnLogin()
 	T:HideCreatedString()
 	T:Progression()
 	T:Covenant()
+	T:AlreadyUsed()
 end
