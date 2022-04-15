@@ -5,7 +5,8 @@ local M = P:GetModule("Misc")
 -- Credit: Mission Report
 --------------------------
 local tabs = {}
-local datas = {
+
+local garrisonData = {
 	{Enum.GarrisonType.Type_9_0, GARRISON_TYPE_9_0_LANDING_PAGE_TITLE, 3675495},
 	{Enum.GarrisonType.Type_8_0, GARRISON_TYPE_8_0_LANDING_PAGE_TITLE, 1044517},
 	{Enum.GarrisonType.Type_7_0, ORDER_HALL_LANDING_PAGE_TITLE, 1411833},
@@ -31,7 +32,7 @@ local function GarrisonLandingPage_UpdateTabs(self)
 end
 
 function M:GarrisonTabs_Create()
-	for index, data in pairs(datas) do
+	for index, data in pairs(garrisonData) do
 		local tab = CreateFrame("CheckButton", nil, _G.GarrisonLandingPage, "SpellBookSkillLineTabTemplate")
 		tab.__owner = _G.GarrisonLandingPage
 		tab:SetNormalTexture(data[3])

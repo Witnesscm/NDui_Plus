@@ -5,6 +5,8 @@ local module = P:RegisterModule("SearchForIcons")
 -- Credit: SearchForIcons, by BlackmassJay
 -------------------------------------------
 function module:MacroIcons_Search(str, isIcon)
+	if InCombatLockdown() then return end
+
 	table.wipe(module.icons)
 	module.icons[1] = "INV_MISC_QUESTIONMARK"
 
@@ -28,6 +30,8 @@ function module:MacroIcons_Search(str, isIcon)
 end
 
 function module:MacroIcons_Recovery()
+	if InCombatLockdown() then return end
+
 	table.wipe(module.icons)
 
 	for index, icon in pairs(module.backup) do
@@ -117,13 +121,6 @@ function module:MacroIcons_Update()
 	module.editbox.searched = nil
 	module.editbox:SetText("")
 
-	for i = GetNumSpecializations(), 1, -1 do
-		local specIcon = select(4, GetSpecializationInfo(i))
-		if specIcon then
-			tinsert(module.icons, 2, specIcon)
-		end
-	end
-
 	if module.backup then
 		table.wipe(module.backup)
 	else
@@ -132,6 +129,15 @@ function module:MacroIcons_Update()
 
 	for index, icon in pairs(module.icons) do
 		module.backup[index] = icon
+	end
+
+	if not InCombatLockdown() then
+		for i = GetNumSpecializations(), 1, -1 do
+			local specIcon = select(4, GetSpecializationInfo(i))
+			if specIcon then
+				tinsert(module.icons, 2, specIcon)
+			end
+		end
 	end
 end
 
