@@ -78,6 +78,7 @@ local function ReskinWAOptions()
 		"importexport",
 		"texteditor",
 		"codereview",
+		"update",
 	}
 
 	for _, key in pairs(childGroups) do
@@ -85,6 +86,20 @@ local function ReskinWAOptions()
 		if group then
 			reskinChildButton(group.frame)
 		end
+	end
+
+	-- CodeReview
+	local codereview = frame.codereview
+	if codereview then
+		hooksecurefunc(codereview, "Open", function(self)
+			local codebox = self.codebox
+			local codeTree = self.codeTree
+			if codebox and codeTree then
+				codebox.frame:ClearAllPoints()
+				codebox.frame:SetPoint("TOPLEFT", codeTree.content, 5, 0)
+				codebox.frame:SetPoint("BOTTOMRIGHT", codeTree.content, -5, 0)
+			end
+		end)
 	end
 
 	-- IconPicker
@@ -99,7 +114,7 @@ local function ReskinWAOptions()
 	end
 
 	-- Right Side Container
-	local container = frame.container.content:GetParent()
+	local container = frame.container and frame.container.content:GetParent()
 	if container and container.bg then
 		container.bg:Hide()
 	end
@@ -157,16 +172,18 @@ function S:WeakAuras()
 	if not WeakAuras then return end
 
 	-- WeakAurasTooltip
-	reskinChildButton(_G.WeakAurasTooltipImportButton:GetParent())
-	B.ReskinRadio(_G.WeakAurasTooltipRadioButtonCopy)
-	B.ReskinRadio(_G.WeakAurasTooltipRadioButtonUpdate)
+	if _G.WeakAurasTooltipAnchor then
+		reskinChildButton(_G.WeakAurasTooltipAnchor)
+		B.ReskinRadio(_G.WeakAurasTooltipRadioButtonCopy)
+		B.ReskinRadio(_G.WeakAurasTooltipRadioButtonUpdate)
 
-	local index = 1
-	local check = _G["WeakAurasTooltipCheckButton"..index]
-	while check do
-		B.ReskinCheck(check)
-		index = index + 1
-		check = _G["WeakAurasTooltipCheckButton"..index]
+		local index = 1
+		local check = _G["WeakAurasTooltipCheckButton"..index]
+		while check do
+			B.ReskinCheck(check)
+			index = index + 1
+			check = _G["WeakAurasTooltipCheckButton"..index]
+		end
 	end
 
 	-- Remove Aura Border (Credit: ElvUI_WindTools)

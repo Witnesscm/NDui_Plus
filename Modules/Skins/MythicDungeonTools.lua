@@ -49,6 +49,31 @@ function S:MythicDungeonTools()
 
 		styled = true
 	end)
+
+	local enemyStyled
+	hooksecurefunc(MDT, "ShowEnemyInfoFrame", function()
+		if enemyStyled then return end
+
+		local frame = MDT.EnemyInfoFrame
+
+		local modelDummyIcon = frame.modelDummyIcon
+		if modelDummyIcon and modelDummyIcon.image and modelDummyIcon.image.bg then
+			modelDummyIcon.image.bg:Hide()
+		end
+
+		for _, key in ipairs({"midContainer", "rightContainer"}) do
+			local container = frame[key]
+			if container and container.children then
+				for _, child in ipairs(container.children) do
+					if child.type == "Icon" and child.image and child.image.bg then
+						child.image.bg:Hide()
+					end
+				end
+			end
+		end
+
+		enemyStyled = true
+	end)
 end
 
 S:RegisterSkin("MythicDungeonTools", S.MythicDungeonTools)

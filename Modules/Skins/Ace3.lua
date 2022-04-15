@@ -140,16 +140,14 @@ function S:Ace3_RegisterAsWidget(widget)
 		local highlight = widget.highlight
 
 		local bg = B.CreateBDFrame(checkbg, 0)
-		bg:SetPoint("TOPLEFT", checkbg, "TOPLEFT", 4, -4)
-		bg:SetPoint("BOTTOMRIGHT", checkbg, "BOTTOMRIGHT", -4, 4)
+		bg:SetInside(checkbg, 4, 4)
 		B.CreateGradient(bg)
 		bg:SetFrameLevel(bg:GetFrameLevel() + 1)
 		checkbg:SetTexture(nil)
 		checkbg.SetTexture = B.Dummy
 
 		highlight:SetTexture(DB.bdTex)
-		highlight:SetPoint("TOPLEFT", checkbg, "TOPLEFT", 5, -5)
-		highlight:SetPoint("BOTTOMRIGHT", checkbg, "BOTTOMRIGHT", -5, 5)
+		highlight:SetInside(bg)
 		highlight:SetVertexColor(cr, cg, cb, .25)
 		highlight.SetTexture = B.Dummy
 
@@ -170,9 +168,12 @@ function S:Ace3_RegisterAsWidget(widget)
 
 		hooksecurefunc(widget, "SetType", function(self, type)
 			if type == "radio" then
+				bg:SetInside(checkbg, 3, 3)
 				self.check:SetTexture(DB.bdTex)
-				self.check:SetInside(self.checkbg, 4, 4)
+				self.check:SetInside(bg)
 			else
+				bg:SetInside(checkbg, 4, 4)
+				self.check:SetTexture("Interface\\Buttons\\UI-CheckBox-Check")
 				self.check:SetAllPoints(self.checkbg)
 			end
 		end)
