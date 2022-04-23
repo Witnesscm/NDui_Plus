@@ -2,6 +2,9 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 
 P.Changelog = [[
+v1.5.9
+[鼠标提示] 修复LibOpenRaid报错
+
 v1.5.8
 [鼠标提示] 更新部分M+副本缩写
 [易用性] 显示临时密文分析工具使用情况
