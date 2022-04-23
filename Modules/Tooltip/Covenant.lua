@@ -6,6 +6,8 @@ local NT = B:GetModule("Tooltip")
 local format, strsplit, strmatch, strsub = string.format, string.split, string.match, string.sub
 local pairs, tonumber = pairs, tonumber
 
+local LibOR = LibStub("LibOpenRaid-1.0")
+
 T.MemberCovenants = {}
 
 local covenantMap = {
@@ -86,7 +88,6 @@ local covenantAbilities = {
 	[324143] = 4,
 }
 
-local LibRS
 local DCLoaded
 
 local ZT_Prefix = "ZenTracker"
@@ -127,7 +128,7 @@ function T:GetCovenantID(unit)
 
 	local covenantID = T.MemberCovenants[guid]
 	if not covenantID then
-		local playerInfo = LibRS and LibRS.playerInfoManager.GetPlayerInfo(GetUnitName(unit, true))
+		local playerInfo = LibOR.GetUnitInfo(unit)
 		return playerInfo and playerInfo.covenantId
 	end
 
@@ -135,7 +136,13 @@ function T:GetCovenantID(unit)
 end
 
 local function msgChannel()
-	return IsPartyLFG() and "INSTANCE_CHAT" or IsInRaid() and "RAID" or "PARTY"
+	if IsInGroup(LE_PARTY_CATEGORY_INSTANCE) or IsInRaid(LE_PARTY_CATEGORY_INSTANCE) then
+		return "INSTANCE_CHAT"
+	elseif IsInRaid(LE_PARTY_CATEGORY_HOME) then
+		return "RAID"
+	elseif IsInGroup(LE_PARTY_CATEGORY_HOME) then
+		return "PARTY"
+	end
 end
 
 local cache = {}
@@ -154,9 +161,7 @@ function T:UpdateRosterInfo()
 		end
 	end
 
-	if LibRS then
-		LibRS.RequestAllPlayersInfo()
-	end
+	LibOR.RequestAllData()
 end
 
 function T:HandleAddonMessage(...)
@@ -223,7 +228,7 @@ function T:AddCovenant()
 	if not T.db["Covenant"] then return end
 
 	local _, unit = GameTooltip:GetUnit()
-	if not unit or not UnitExists(unit) then return end
+	if not unit or not UnitIsPlayer(unit) then return end
 
 	local covenantID
 	if UnitIsUnit(unit, "player") then
@@ -244,7 +249,6 @@ do
 end
 
 function T:Covenant()
-	LibRS = _G.LibStub and _G.LibStub("LibOpenRaid-1.0", true)
 	DCLoaded = IsAddOnLoaded("Details_Covenants")
 
 	for prefix in pairs(addonPrefixes) do
