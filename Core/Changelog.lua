@@ -2,8 +2,11 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 
 P.Changelog = [[
+v1.5.10
+[鼠标提示] 队友盟约信息支持LibOpenRaid新版本
+
 v1.5.9
-[鼠标提示] 修复LibOpenRaid报错
+[易用性] 添加更多开悟者巅峰声望奖励
 
 v1.5.8
 [鼠标提示] 更新部分M+副本缩写
