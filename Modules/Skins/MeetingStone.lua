@@ -98,6 +98,13 @@ local function reskinGridView(self)
 	end
 end
 
+local function reskinItemButton(self)
+	self:SetSize(34, 34)
+	B.StripTextures(self)
+	self.bg = B.ReskinIcon(self.icon)
+	B.ReskinIconBorder(self.IconBorder)
+end
+
 function S:MeetingStone()
 	if not S.db["MeetingStone"] then return end
 
@@ -146,13 +153,14 @@ function S:MeetingStone()
 	local EditBoxes = {
 		"CreatePanel.HonorLevel",
 		"CreatePanel.ItemLevel",
+		"CreatePanel.Score",
 		"RecentPanel.SearchInput",
 	}
 
 	-- Panel
 	for _, v in pairs(Panels) do
 		local frame = getValue(v, MSEnv)
-		if frame then 
+		if frame then
 			if frame.Inset then MS_StripTextures(frame.Inset) end
 			if frame.Inset2 then MS_StripTextures(frame.Inset2) end
 			if frame.PortraitFrame then frame.PortraitFrame:SetAlpha(0) end
@@ -176,8 +184,7 @@ function S:MeetingStone()
 		if AdvFilterPanel then
 			AdvFilterPanel:SetPoint("TOPLEFT", MSEnv.MainPanel, "TOPRIGHT", 3, -30)
 
-			for i = 1, AdvFilterPanel:GetNumChildren() do
-				local child = select(i, AdvFilterPanel:GetChildren())
+			for _, child in pairs {AdvFilterPanel:GetChildren()} do
 				if child:IsObjectType("Button") and not child:GetText() then
 					B.ReskinClose(child)
 					break
@@ -222,10 +229,15 @@ function S:MeetingStone()
 	-- CreatePanel
 	local CreatePanel = MSEnv.CreatePanel
 	if CreatePanel then
-		select(1, CreatePanel:GetChildren()):Hide()
-
-		if CreatePanel.PrivateGroup then
-			B.ReskinCheck(CreatePanel.PrivateGroup)
+		for _, child in pairs {CreatePanel:GetChildren()} do
+			local numRegions = child:GetNumRegions()
+			local numChildren = child:GetNumChildren()
+			local objType = child:GetObjectType()
+			if objType == "Frame" and numRegions == 3 and numChildren == 0 then
+				B.StripTextures(child)
+			elseif objType == "CheckButton" then
+				B.ReskinCheck(child)
+			end
 		end
 
 		local InfoWidget = CreatePanel.InfoWidget
@@ -246,11 +258,17 @@ function S:MeetingStone()
 
 		local CreateWidget = CreatePanel.CreateWidget
 		if CreateWidget then
-			for i = 1, CreateWidget:GetNumChildren() do
-				local child = select(i, CreateWidget:GetChildren())
+			for _, child in pairs {CreateWidget:GetChildren()} do
 				child:DisableDrawLayer("BACKGROUND")
 				local bg = B.CreateBDFrame(child, .25)
 				bg:SetAllPoints()
+			end
+		end
+
+		for _, key in pairs({"PrivateGroup", "CrossFactionGroup"}) do
+			local check = CreatePanel[key]
+			if check then
+				B.ReskinCheck(check)
 			end
 		end
 	end
@@ -398,8 +416,7 @@ function S:MeetingStone()
 		if MallPanel then
 			B.Reskin(MallPanel.PurchaseButton)
 
-			for i = 1, MallPanel:GetNumChildren() do
-				local child = select(i, MallPanel:GetChildren())
+			for _, child in pairs {MallPanel:GetChildren()} do
 				if child:IsObjectType("Button") and child.Icon and child.Text then
 					reskinMSButton(child)
 				end
@@ -420,8 +437,7 @@ function S:MeetingStone()
 					B.StripTextures(widget)
 					B.CreateBDFrame(widget, .25)
 
-					for i = 1, widget:GetNumChildren() do
-						local child = select(i, widget:GetChildren())
+					for _, child in pairs {widget:GetChildren()} do
 						if child.layoutType and child.layoutType == "InsetFrameTemplate" then
 							B.StripTextures(child)
 						end
@@ -485,8 +501,7 @@ function S:MeetingStone()
 					B.StripTextures(Summary)
 					B.CreateBDFrame(Summary, .25)
 
-					for i = 1, Summary:GetNumChildren() do
-						local child = select(i, Summary:GetChildren())
+					for _, child in pairs {Summary:GetChildren()} do
 						if child.ScrollBar then
 							B.ReskinScroll(child.ScrollBar)
 							break
@@ -518,10 +533,18 @@ function S:MeetingStone()
 		local origQuestItemCreate = QuestItem.Create
 		QuestItem.Create = function(self, parent, ...)
 			local button = origQuestItemCreate(self, parent, ...)
-			B.StripTextures(button.Item)
-			button.Item.bg = B.ReskinIcon(button.Item.icon)
-			B.ReskinIconBorder(button.Item.IconBorder)
-			B.Reskin(button.Reward)
+			if button.Reward then B.Reskin(button.Reward) end
+			if button.Item then reskinItemButton(button.Item) end
+			if button.Items then
+				for index, item in ipairs(button.Items) do
+					reskinItemButton(item)
+
+					if index > 1 then
+						item:ClearAllPoints()
+						item:SetPoint("LEFT", button.Items[index-1], "RIGHT", 4, 0)
+					end
+				end
+			end
 
 			return button
 		end
@@ -537,8 +560,7 @@ function S:MeetingStone()
 	-- PlayerInfoDialog
 	local PlayerInfoDialog = MSEnv.PlayerInfoDialog
 	if PlayerInfoDialog then
-		for i = 1, PlayerInfoDialog:GetNumChildren() do
-			local child = select(i, PlayerInfoDialog:GetChildren())
+		for _, child in pairs {PlayerInfoDialog:GetChildren()} do
 			local objType = child:GetObjectType()
 			if objType == "Frame" then
 				B.StripTextures(child)
@@ -575,8 +597,7 @@ function S:MeetingStone()
 	for _, blocker in ipairs(MSEnv.MainPanel.blockers) do
 		blocker:HookScript("OnShow", function(self)
 			if not self.styled then
-				for i = 1, self:GetNumChildren() do
-					local child = select(i, self:GetChildren())
+				for _, child in pairs {self:GetChildren()} do
 					if child:IsObjectType("Button") and child.Text then
 						B.Reskin(child)
 					elseif child.ScrollBar then
@@ -590,39 +611,6 @@ function S:MeetingStone()
 				self.styled = true
 			end
 		end)
-	end
-
-	-- MeetingStonePlus
-	if _G.MeetingStone_QuickJoin then
-		local AdvFilterPanel = BrowsePanel and BrowsePanel.AdvFilterPanel
-		if AdvFilterPanel then
-			for i = 1, AdvFilterPanel.Inset:GetNumChildren() do
-				local child = select(i, AdvFilterPanel.Inset:GetChildren())
-				if child.Check and not child.styled then
-					B.ReskinCheck(child.Check)
-				end
-			end
-		end
-
-		local function reskinALFrame()
-			if _G.ALFrame and not _G.ALFrame.styled then
-				B.StripTextures(_G.ALFrame)
-				B.SetBD(_G.ALFrame)
-				B.Reskin(_G.ALFrameButton)
-				_G.ALFrame.styled = true
-			end
-		end
-
-		local ManagerPanel = MSEnv.ManagerPanel
-		if ManagerPanel then
-			for i = 1, ManagerPanel:GetNumChildren() do
-				local child = select(i, ManagerPanel:GetChildren())
-				if child:IsObjectType("Button") and child.Icon and child.Text and not child.styled then
-					reskinStretchButton(child)
-					child:HookScript("PostClick", reskinALFrame)
-				end
-			end
-		end
 	end
 
 	-- MeetingStoneEX
@@ -681,4 +669,3 @@ function S:MeetingStone()
 end
 
 S:RegisterSkin("MeetingStone", S.MeetingStone)
-S:RegisterSkin("MeetingStonePlus", S.MeetingStone)

@@ -6,18 +6,17 @@ local _G = getfenv(0)
 local select, pairs, type = select, pairs, type
 local strfind = string.find
 
-local function reskinChildButton(frame)
+local function reskinChildButtons(frame)
 	if not frame then return end
 
-	for i = 1, frame:GetNumChildren() do
-		local child = select(i, frame:GetChildren())
+	for _, child in pairs {frame:GetChildren()} do
 		if child:GetObjectType() == "Button" and child.Text then
 			B.Reskin(child)
 		end
 	end
 end
 
-local function RemoveBorder(frame)
+local function removeBorder(frame)
 	for _, region in pairs {frame:GetRegions()} do
 		if region:GetObjectType() == "Texture" then
 			local texturePath = region.GetTextureFilePath and region:GetTextureFilePath()
@@ -28,7 +27,78 @@ local function RemoveBorder(frame)
 	end
 end
 
-local function ReskinWAOptions()
+local function SkinProfilingWindow(frame)
+	B.StripTextures(frame)
+	B.SetBD(frame)
+
+	local statsFrame = frame.statsFrame
+	if statsFrame then
+		reskinChildButtons(statsFrame)
+	end
+
+	local titleFrame = frame.titleFrame
+	if titleFrame then
+		for _, child in pairs {titleFrame:GetChildren()} do
+			if child:GetObjectType() == "Button" then
+				local texturePath = child.GetNormalTexture and child:GetNormalTexture():GetTextureFilePath()
+				if texturePath and type(texturePath) == "string" then
+					if strfind(texturePath, "CollapseButton") then
+						B.ReskinArrow(child, "up")
+						child:SetSize(16, 16)
+						child:ClearAllPoints()
+						child:SetPoint("TOPRIGHT", titleFrame, "TOPRIGHT", -20, -2)
+						child.SetNormalTexture = B.Dummy
+						child.SetPushedTexture = B.Dummy
+						child:HookScript("OnClick",function(self)
+							if frame.minimized then
+								B.SetupArrow(self.__texture, "down")
+							else
+								B.SetupArrow(self.__texture, "up")
+							end
+						end)
+					elseif strfind(texturePath, "MinimizeButton") then
+						B.ReskinClose(child, titleFrame, -2, -2)
+					end
+				end
+			end
+		end
+	end
+end
+
+local function SkinPrintProfile()
+	local popupFrame = _G.WADebugEditBox
+	if not popupFrame or popupFrame.styled then return end
+
+	local background = popupFrame.Background
+	local scrollFrame = popupFrame.ScrollFrame
+	if background and scrollFrame then
+		B.StripTextures(background)
+		B.SetBD(background)
+		background:SetPoint("TOPLEFT", scrollFrame, -20, 30)
+		background:SetPoint("BOTTOMRIGHT", scrollFrame, 28, -25)
+
+		for _, child in pairs {background:GetChildren()} do
+			local numRegions = child:GetNumRegions()
+			local numChildren = child:GetNumChildren()
+			if numRegions == 3 and numChildren == 1 and child.PixelSnapDisabled then
+				B.StripTextures(child)
+				local close = child:GetChildren()
+				B.ReskinClose(close)
+				close:ClearAllPoints()
+				close:SetPoint("TOPRIGHT", background, "TOPRIGHT", -6, -6)
+			end
+		end
+
+		local scrollBar = scrollFrame.ScrollBar
+		if scrollBar then
+			B.ReskinScroll(scrollBar)
+		end
+	end
+
+	popupFrame.styled = true
+end
+
+local function SkinWeakAurasOptions()
 	local frame = _G.WeakAurasOptions
 	if not frame or frame.styled then return end
 
@@ -37,9 +107,8 @@ local function ReskinWAOptions()
 	B.ReskinInput(frame.filterInput, 18)
 	B.Reskin(_G.WASettingsButton)
 
-	-- Minimize, Close Button
-	for i = 1, frame:GetNumChildren() do
-		local child = select(i, frame:GetChildren())
+	-- Minimize, Close Button (Credit: ElvUI_WindTools)
+	for _, child in pairs {frame:GetChildren()} do
 		local numRegions = child:GetNumRegions()
 		local numChildren = child:GetNumChildren()
 
@@ -84,7 +153,7 @@ local function ReskinWAOptions()
 	for _, key in pairs(childGroups) do
 		local group = frame[key]
 		if group then
-			reskinChildButton(group.frame)
+			reskinChildButtons(group.frame)
 		end
 	end
 
@@ -103,10 +172,9 @@ local function ReskinWAOptions()
 	end
 
 	-- IconPicker
-	local iconPicker = frame.iconPicker.frame
+	local iconPicker = frame.iconPicker and frame.iconPicker.frame
 	if iconPicker then
-		for i = 1, iconPicker:GetNumChildren() do
-			local child = select(i, iconPicker:GetChildren())
+		for _, child in pairs {iconPicker:GetChildren()} do
 			if child:GetObjectType() == "EditBox" then
 				B.ReskinInput(child, 20)
 			end
@@ -114,48 +182,48 @@ local function ReskinWAOptions()
 	end
 
 	-- Right Side Container
-	local container = frame.container and frame.container.content:GetParent()
+	local container = frame.container and frame.container.content and frame.container.content:GetParent()
 	if container and container.bg then
 		container.bg:Hide()
 	end
 
 	-- WeakAurasSnippets
 	local snippets = _G.WeakAurasSnippets
-	B.StripTextures(snippets)
-	B.SetBD(snippets)
-	reskinChildButton(snippets)
+	if snippets then
+		B.StripTextures(snippets)
+		B.SetBD(snippets)
+		reskinChildButtons(snippets)
+	end
 
 	-- MoverSizer
 	local moversizer = frame.moversizer
-	B.CreateBD(moversizer, 0)
+	if moversizer then
+		B.CreateBD(moversizer, 0)
 
-	local index = 1
-	for i = 1, moversizer:GetNumChildren() do
-		local child = select(i, moversizer:GetChildren())
-		local numChildren = child:GetNumChildren()
-
-		if numChildren == 2 and child:IsClampedToScreen() then
-			local button1, button2 = child:GetChildren()
-			if index == 1 then
-				B.ReskinArrow(button1, "up")
-				B.ReskinArrow(button2, "down")
-			else
-				B.ReskinArrow(button1, "left")
-				B.ReskinArrow(button2, "right")
+		local index = 1
+		for _, child in pairs {moversizer:GetChildren()} do
+			local numChildren = child:GetNumChildren()
+			if numChildren == 2 and child:IsClampedToScreen() then
+				local button1, button2 = child:GetChildren()
+				if index == 1 then
+					B.ReskinArrow(button1, "up")
+					B.ReskinArrow(button2, "down")
+				else
+					B.ReskinArrow(button1, "left")
+					B.ReskinArrow(button2, "right")
+				end
+				index = index + 1
 			end
-			index = index + 1
 		end
 	end
 
 	-- TipPopup
-	for i = 1, frame:GetNumChildren() do
-		local child = select(i, frame:GetChildren())
+	for _, child in pairs {frame:GetChildren()} do
 		if child:GetFrameStrata() == "FULLSCREEN" and child.PixelSnapDisabled and child.backdropInfo then
 			B.StripTextures(child)
 			B.SetBD(child)
 
-			for j = 1, child:GetNumChildren() do
-				local child2 = select(j, child:GetChildren())
+			for _, child2 in pairs {child:GetChildren()} do
 				if child2:GetObjectType() == "EditBox" then
 					B.ReskinInput(child2, 18)
 				end
@@ -171,21 +239,6 @@ function S:WeakAuras()
 	local WeakAuras = _G.WeakAuras
 	if not WeakAuras then return end
 
-	-- WeakAurasTooltip
-	if _G.WeakAurasTooltipAnchor then
-		reskinChildButton(_G.WeakAurasTooltipAnchor)
-		B.ReskinRadio(_G.WeakAurasTooltipRadioButtonCopy)
-		B.ReskinRadio(_G.WeakAurasTooltipRadioButtonUpdate)
-
-		local index = 1
-		local check = _G["WeakAurasTooltipCheckButton"..index]
-		while check do
-			B.ReskinCheck(check)
-			index = index + 1
-			check = _G["WeakAurasTooltipCheckButton"..index]
-		end
-	end
-
 	-- Remove Aura Border (Credit: ElvUI_WindTools)
 	if WeakAuras.RegisterRegionOptions then
 		local origRegisterRegionOptions = WeakAuras.RegisterRegionOptions
@@ -195,7 +248,7 @@ function S:WeakAuras()
 				local OldIcon = icon
 				icon = function()
 					local f = OldIcon()
-					RemoveBorder(f)
+					removeBorder(f)
 					return f
 				end
 			end
@@ -204,7 +257,7 @@ function S:WeakAuras()
 				local OldCreateThumbnail = createThumbnail
 				createThumbnail = function()
 					local f = OldCreateThumbnail()
-					RemoveBorder(f)
+					removeBorder(f)
 					return f
 				end
 			end
@@ -212,13 +265,22 @@ function S:WeakAuras()
 			return origRegisterRegionOptions(name, createFunction, icon, displayName, createThumbnail, ...)
 		end
 	end
+
+	local profilingWindow = WeakAuras.RealTimeProfilingWindow
+	if profilingWindow then
+		hooksecurefunc(profilingWindow, "Init", SkinProfilingWindow)
+	end
+
+	if WeakAuras.PrintProfile then
+		hooksecurefunc(WeakAuras, "PrintProfile", SkinPrintProfile)
+	end
 end
 
 function S:WeakAurasOptions()
 	local WeakAuras = _G.WeakAuras
 	if not WeakAuras or not WeakAuras.ShowOptions then return end
 
-	hooksecurefunc(WeakAuras, "ShowOptions", ReskinWAOptions)
+	hooksecurefunc(WeakAuras, "ShowOptions", SkinWeakAurasOptions)
 end
 
 function S:WeakAurasTemplates()
@@ -228,7 +290,7 @@ function S:WeakAurasTemplates()
 	local origCreateTemplateView = WeakAuras.CreateTemplateView
 	WeakAuras.CreateTemplateView = function(...)
 		local group = origCreateTemplateView(...)
-		reskinChildButton(group.frame)
+		reskinChildButtons(group.frame)
 
 		return group
 	end

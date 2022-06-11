@@ -50,22 +50,21 @@ function S:Ace3_SkinSlider()
 end
 
 function S:Ace3_SkinDropdown()
-	if self and self.obj then
-		local pullout = self.obj.dropdown
-		if pullout then
-			P.ReskinTooltip(pullout)
+	local pullout = self and self.obj and self.obj.dropdown
+	if pullout and not pullout.styled then
+		P.ReskinTooltip(pullout)
+		if pullout.SetBackdrop then pullout.SetBackdrop = B.Dummy end
 
-			local slider = pullout.slider
-			if slider and not slider.styled then
-				S.Ace3_SkinSlider(slider)
-				slider:ClearAllPoints()
-				slider:SetPoint("TOPRIGHT", pullout, "TOPRIGHT", -8, -10)
-				slider:SetPoint("BOTTOMRIGHT", pullout, "BOTTOMRIGHT", -8, 10)
-				slider:SetWidth(16)
-
-				slider.styled = true
-			end
+		local slider = pullout.slider
+		if slider then
+			S.Ace3_SkinSlider(slider)
+			slider:ClearAllPoints()
+			slider:SetPoint("TOPRIGHT", pullout, "TOPRIGHT", -8, -10)
+			slider:SetPoint("BOTTOMRIGHT", pullout, "BOTTOMRIGHT", -8, 10)
+			slider:SetWidth(16)
 		end
+
+		pullout.styled = true
 	end
 end
 

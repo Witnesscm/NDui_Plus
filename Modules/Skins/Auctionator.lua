@@ -141,10 +141,10 @@ end
 
 function S:Auctionator()
 	local Auctionator = _G.Auctionator
-	if not Auctionator or not Auctionator.Events or not Auctionator.Events.OnAuctionHouseShow then return end
+	if not Auctionator or not _G.AuctionatorInitalizeMainlineFrame or not _G.AuctionatorInitalizeMainlineFrame.AuctionHouseShown then return end
 
 	local styled
-	hooksecurefunc(Auctionator.Events, "OnAuctionHouseShow", function()
+	hooksecurefunc(_G.AuctionatorInitalizeMainlineFrame, "AuctionHouseShown", function()
 		if styled then return end
 
 		local SplashScreen = _G.AuctionatorSplashScreen
