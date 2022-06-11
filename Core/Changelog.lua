@@ -2,6 +2,11 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 
 P.Changelog = [[
+v1.6.0
+[主要] 更新 9.2.5 版本
+[鼠标提示] 更新LibOpenRaid
+[美化] 更新部分插件美化
+
 v1.5.10
 [鼠标提示] 队友盟约信息支持LibOpenRaid新版本
 
