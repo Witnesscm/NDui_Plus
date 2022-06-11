@@ -2,9 +2,11 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 local oUF = ns.oUF
 assert(oUF, "oUF_Fader cannot find an instance of oUF. If your oUF is embedded into a layout, it may not be embedded properly.")
+
 -------------
 -- Credits --  p3lim, Azilroka, Simpy
 -------------
+
 local _G = _G
 local pairs, ipairs, type = pairs, ipairs, type
 local next, tinsert, tremove = next, tinsert, tremove
@@ -81,10 +83,10 @@ local function Update(self, _, unit)
 		(element.Combat and UnitAffectingCombat(unit)) or
 		(element.PlayerTarget and UnitExists('target')) or
 		(element.UnitTarget and UnitExists(unit..'target')) or
-		(element.Focus and UnitExists('focus')) or
+		(element.Focus and not P.IsClassic() and UnitExists('focus')) or
 		(element.Health and UnitHealth(unit) < UnitHealthMax(unit)) or
 		(element.Power and (PowerTypesFull[powerType] and UnitPower(unit) < UnitPowerMax(unit))) or
-		(element.Vehicle and UnitHasVehicleUI(unit)) or
+		(element.Vehicle and P.IsRetail() and UnitHasVehicleUI(unit)) or
 		(element.Hover and GetMouseFocus() == (self.__faderobject or self))
 	then
 		ToggleAlpha(self, element, element.MaxAlpha)
@@ -212,18 +214,17 @@ local options = {
 			end
 		end
 	},
-	Focus = {
-		enable = function(self)
-			self:RegisterEvent('PLAYER_FOCUS_CHANGED', Update, true)
-		end,
-		events = {'PLAYER_FOCUS_CHANGED'}
-	},
 	Health = {
 		enable = function(self)
-			self:RegisterEvent('UNIT_HEALTH', Update)
+			if P.IsRetail() then
+				self:RegisterEvent('UNIT_HEALTH', Update)
+			else
+				self:RegisterEvent('UNIT_HEALTH_FREQUENT', Update)
+			end
+
 			self:RegisterEvent('UNIT_MAXHEALTH', Update)
 		end,
-		events = {'UNIT_HEALTH','UNIT_MAXHEALTH'}
+		events = P.IsRetail() and {'UNIT_HEALTH','UNIT_MAXHEALTH'} or {'UNIT_HEALTH_FREQUENT','UNIT_MAXHEALTH'}
 	},
 	Power = {
 		enable = function(self)
@@ -231,13 +232,6 @@ local options = {
 			self:RegisterEvent('UNIT_MAXPOWER', Update)
 		end,
 		events = {'UNIT_POWER_UPDATE','UNIT_MAXPOWER'}
-	},
-	Vehicle = {
-		enable = function(self)
-			self:RegisterEvent('UNIT_ENTERED_VEHICLE', Update, true)
-			self:RegisterEvent('UNIT_EXITED_VEHICLE', Update, true)
-		end,
-		events = {'UNIT_ENTERED_VEHICLE','UNIT_EXITED_VEHICLE'}
 	},
 	Casting = {
 		enable = function(self)
@@ -266,6 +260,25 @@ local options = {
 	DelayAlpha = {countIgnored = true},
 	Delay = {countIgnored = true},
 }
+
+if not P.IsClassic() then
+	options.Focus = {
+		enable = function(self)
+			self:RegisterEvent('PLAYER_FOCUS_CHANGED', Update, true)
+		end,
+		events = {'PLAYER_FOCUS_CHANGED'}
+	}
+end
+
+if P.IsRetail() then
+	options.Vehicle = {
+		enable = function(self)
+			self:RegisterEvent('UNIT_ENTERED_VEHICLE', Update, true)
+			self:RegisterEvent('UNIT_EXITED_VEHICLE', Update, true)
+		end,
+		events = {'UNIT_ENTERED_VEHICLE','UNIT_EXITED_VEHICLE'}
+	}
+end
 
 local function CountOption(element, state, oldState)
 	if state and not oldState then
