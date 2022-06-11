@@ -6,8 +6,7 @@ local NT = B:GetModule("Tooltip")
 local format, strsplit, strmatch, strsub = string.format, string.split, string.match, string.sub
 local pairs, tonumber = pairs, tonumber
 
---local LibOR = LibStub("LibOpenRaid-1.0")
-local LibOR
+local LibOR = LibStub("LibOpenRaid-1.0")
 
 T.MemberCovenants = {}
 
@@ -128,17 +127,8 @@ function T:GetCovenantID(unit)
 	if not guid then return end
 
 	local covenantID = T.MemberCovenants[guid]
-	-- if not covenantID then
-	-- 	local playerInfo = LibOR.GetUnitInfo(unit)
-	-- 	return playerInfo and playerInfo.covenantId
-	-- end
-	if not covenantID and LibOR then
-		local playerInfo
-		if LibOR.GetUnitInfo then
-			playerInfo = LibOR.GetUnitInfo(unit)
-		elseif LibOR.playerInfoManager and LibOR.playerInfoManager then
-			playerInfo = LibOR.playerInfoManager.GetPlayerInfo(GetUnitName(unit, true))
-		end
+	if not covenantID then
+		local playerInfo = LibOR.GetUnitInfo(unit)
 		return playerInfo and playerInfo.covenantId
 	end
 
@@ -171,14 +161,7 @@ function T:UpdateRosterInfo()
 		end
 	end
 
-	-- LibOR.RequestAllData()
-	if LibOR then
-		if LibOR.RequestAllData then
-			LibOR.RequestAllData()
-		elseif LibOR.RequestAllPlayersInfo then
-			LibOR.RequestAllPlayersInfo()
-		end
-	end
+	LibOR.RequestAllData()
 end
 
 function T:HandleAddonMessage(...)
@@ -266,7 +249,6 @@ do
 end
 
 function T:Covenant()
-	LibOR = _G.LibStub and _G.LibStub("LibOpenRaid-1.0", true)
 	DCLoaded = IsAddOnLoaded("Details_Covenants")
 
 	for prefix in pairs(addonPrefixes) do
