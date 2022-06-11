@@ -8,7 +8,7 @@ local S = P:GetModule("Skins")
 local OLD_MERCHANT_ITEMS_PER_PAGE = 10
 
 function M:ExtVendor_UpdateMerchantPositions()
-	for i = 1, MERCHANT_ITEMS_PER_PAGE do
+	for i = 1, _G.MERCHANT_ITEMS_PER_PAGE do
 		local button = _G["MerchantItem"..i]
 		button:Show()
 		button:ClearAllPoints()
@@ -30,7 +30,7 @@ function M:ExtVendor_UpdateMerchantPositions()
 end
 
 function M:ExtVendor_UpdateBuybackPositions()
-	for i = 1, MERCHANT_ITEMS_PER_PAGE do
+	for i = 1, _G.MERCHANT_ITEMS_PER_PAGE do
 		local button = _G["MerchantItem"..i]
 		button:ClearAllPoints()
 
@@ -40,7 +40,7 @@ function M:ExtVendor_UpdateBuybackPositions()
 			if i == 1 then
 				button:SetPoint("TOPLEFT", _G.MerchantFrame, "TOPLEFT", 64, -105)
 			else
-				if ((i % 3) == 1) then
+				if (i % 3) == 1 then
 					button:SetPoint("TOPLEFT", _G["MerchantItem" .. (i - 3)], "BOTTOMLEFT", 0, -30)
 				else
 					button:SetPoint("TOPLEFT", _G["MerchantItem" .. (i - 1)], "TOPRIGHT", 50, 0)
@@ -58,7 +58,7 @@ function M:ExtVendorUI()
 	_G.MerchantFrame:SetWidth(690)
 
 	for i = 1, _G.MERCHANT_ITEMS_PER_PAGE do
-		if (not _G["MerchantItem" .. i]) then
+		if not _G["MerchantItem" .. i] then
 			CreateFrame("Frame", "MerchantItem" .. i, _G.MerchantFrame, "MerchantItemTemplate")
 		end
 	end
