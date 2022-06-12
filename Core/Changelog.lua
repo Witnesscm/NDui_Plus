@@ -2,6 +2,9 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 
 P.Changelog = [[
+v1.6.1
+添加缺失的库文件
+
 v1.6.0
 [主要] 更新 9.2.5 版本
 [鼠标提示] 更新LibOpenRaid
