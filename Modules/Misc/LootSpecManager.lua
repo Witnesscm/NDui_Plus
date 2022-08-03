@@ -54,6 +54,7 @@ end
 
 function LSM:UpdateMythicPlusData()
 	local mapIDs = C_ChallengeMode.GetMapTable()
+	table.sort(mapIDs)
 	for _, mapID in ipairs(mapIDs) do
 		local name = C_ChallengeMode.GetMapUIInfo(mapID)
 		if name then

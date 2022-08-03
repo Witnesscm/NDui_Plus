@@ -144,14 +144,13 @@ P:AddCallbackForAddon("Blizzard_PlayerChoice", M.ThreadsOfFateString)
 
 -- Fix duplicate LFG applications after patch 9.1.5
 do
-	hooksecurefunc("LFGListSearchPanel_UpdateResultList", function(self)
+	hooksecurefunc("LFGListUtil_SortSearchResults", function()
+		local self = _G.LFGListFrame.SearchPanel
 		if next(self.results) and next(self.applications) then
 			for _, value in ipairs(self.applications) do
 				tDeleteItem(self.results, value)
 			end
 			self.totalResults = #self.results
-
-			LFGListSearchPanel_UpdateResults(self)
 		end
 	end)
 end
