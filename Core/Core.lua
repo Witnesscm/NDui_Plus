@@ -122,6 +122,7 @@ P.DefaultSettings = {
 		AuctionEnhanced = true,
 		GuildBankItemLevel = true,
 		ExtVendorUI = false,
+		WormholeHelper = true,
 	},
 }
 

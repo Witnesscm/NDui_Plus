@@ -189,6 +189,7 @@ G.OptionList = { -- type, key, value, name, horizon, data, callback, tooltip, sc
 		{1, "Misc", "ExtVendorUI", L["ExtVendorUI"]},
 		{1, "Misc", "ImprovedStableFrame", L["ImprovedStableFrame"], true},
 		{1, "Misc", "GuildBankItemLevel", L["GuildBankItemLevel"]},
+		{1, "Misc", "WormholeHelper", L["Wormhole Centrifuge Helper"], true},
 		{},
 		{1, "Misc", "TalentManager", HeaderTag..L["TalentManagerEnable"], nil, nil, nil, L["TalentManagerTip"]},
 		{1, "Misc", "LootSpecManager", HeaderTag..L["LootSpecManagerEnable"], true, nil, nil, L["LootSpecManagerTip"]},
