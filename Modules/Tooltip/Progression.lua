@@ -46,6 +46,10 @@ local locales = {
 		short = L["[ABBR] The Necrotic Wake"],
 		full = L["The Necrotic Wake"]
 	},
+	["Sepulcher of the First Ones"] = {
+		short = L["[ABBR] Sepulcher of the First Ones"],
+		full = L["Sepulcher of the First Ones"]
+	},
 	["Plaguefall"] = {
 		short = L["[ABBR] Plaguefall"],
 		full = L["Plaguefall"]
@@ -74,14 +78,6 @@ local locales = {
 		short = L["[ABBR] Sanguine Depths"],
 		full = L["Sanguine Depths"]
 	},
-	["Shadowlands Keystone Master: Season One"] = {
-		short = L["[ABBR] Shadowlands Keystone Master: Season One"],
-		full = L["Shadowlands Keystone Master: Season One"]
-	},
-	["Shadowlands Keystone Master: Season Two"] = {
-		short = L["[ABBR] Shadowlands Keystone Master: Season Two"],
-		full = L["Shadowlands Keystone Master: Season Two"]
-	},
 	["Sanctum of Domination"] = {
 		short = L["[ABBR] Sanctum of Domination"],
 		full = L["Sanctum of Domination"]
@@ -94,6 +90,38 @@ local locales = {
 		short = L["[ABBR] Tazavesh: So'leah's Gambit"],
 		full = L["Tazavesh: So'leah's Gambit"]
 	},
+	["Grimrail Depot"] = {
+		short = L["[ABBR] Grimrail Depot"],
+		full = L["Grimrail Depot"]
+	},
+	["Iron Docks"] = {
+		short = L["[ABBR] Iron Docks"],
+		full = L["Iron Docks"]
+	},
+	["Return to Karazhan: Lower"] = {
+		short = L["[ABBR] Return to Karazhan: Lower"],
+		full = L["Return to Karazhan: Lower"]
+	},
+	["Return to Karazhan: Upper"] = {
+		short = L["[ABBR] Return to Karazhan: Upper"],
+		full = L["Return to Karazhan: Upper"]
+	},
+	["Operation: Mechagon - Junkyard"] = {
+		short = L["[ABBR] Operation: Mechagon - Junkyard"],
+		full = L["Operation: Mechagon - Junkyard"]
+	},
+	["Operation: Mechagon - Workshop"] = {
+		short = L["[ABBR] Operation: Mechagon - Workshop"],
+		full = L["Operation: Mechagon - Workshop"]
+	},
+	["Shadowlands Keystone Master: Season One"] = {
+		short = L["[ABBR] Shadowlands Keystone Master: Season One"],
+		full = L["Shadowlands Keystone Master: Season One"]
+	},
+	["Shadowlands Keystone Master: Season Two"] = {
+		short = L["[ABBR] Shadowlands Keystone Master: Season Two"],
+		full = L["Shadowlands Keystone Master: Season Two"]
+	},
 	["Shadowlands Keystone Master: Season Three"] = {
 		short = L["[ABBR] Shadowlands Keystone Master: Season Three"],
 		full = L["Shadowlands Keystone Master: Season Three"]
@@ -102,9 +130,9 @@ local locales = {
 		short = L["[ABBR] Shadowlands Keystone Hero: Season Three"],
 		full = L["Shadowlands Keystone Hero: Season Three"]
 	},
-	["Sepulcher of the First Ones"] = {
-		short = L["[ABBR] Sepulcher of the First Ones"],
-		full = L["Sepulcher of the First Ones"]
+	["Shadowlands Keystone Master: Season Four"] = {
+		short = L["[ABBR] Shadowlands Keystone Master: Season Four"],
+		full = L["Shadowlands Keystone Master: Season Four"]
 	}
 }
 
@@ -265,15 +293,13 @@ local raidAchievements = {
 	}
 }
 
-local dungeons = {
-	[375] = "Mists of Tirna Scithe",
-	[376] = "The Necrotic Wake",
-	[377] = "De Other Side",
-	[378] = "Halls of Atonement",
-	[379] = "Plaguefall",
-	[380] = "Sanguine Depths",
-	[381] = "Spires of Ascension",
-	[382] = "Theater of Pain",
+local mythicKeystoneDungeons = { -- C_ChallengeMode.GetMapTable()
+	[166] = "Grimrail Depot",
+	[169] = "Iron Docks",
+	[227] = "Return to Karazhan: Lower",
+	[234] = "Return to Karazhan: Upper",
+	[369] = "Operation: Mechagon - Junkyard",
+	[370] = "Operation: Mechagon - Workshop",
 	[391] = "Tazavesh: Streets of Wonder",
 	[392] = "Tazavesh: So'leah's Gambit",
 }
@@ -283,6 +309,7 @@ local keystoneAchievements ={
 	{id = 15078, name = "Shadowlands Keystone Master: Season Two"},
 	{id = 15499, name = "Shadowlands Keystone Master: Season Three"},
 	{id = 15506, name = "Shadowlands Keystone Hero: Season Three"},
+	{id = 15690, name = "Shadowlands Keystone Master: Season Four"},
 }
 
 local specialAchievements = {}
@@ -432,7 +459,7 @@ function T:SetProgressionInfo(unit, guid)
 		GameTooltip:AddDoubleLine(L["MythicDungeons"], L["Score (Level)"])
 
 		for _, info in ipairs(runs) do
-			local name = dungeons[info.challengeModeID] and locales[dungeons[info.challengeModeID]].short or C_ChallengeMode.GetMapUIInfo(info.challengeModeID)
+			local name = mythicKeystoneDungeons[info.challengeModeID] and locales[mythicKeystoneDungeons[info.challengeModeID]].short or C_ChallengeMode.GetMapUIInfo(info.challengeModeID)
 			local left = format("%s:", name)
 
 			local scoreColor = C_ChallengeMode.GetSpecificDungeonOverallScoreRarityColor(info.mapScore) or HIGHLIGHT_FONT_COLOR
