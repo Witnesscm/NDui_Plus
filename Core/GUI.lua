@@ -518,7 +518,7 @@ function P:OpenGUI()
 	end)
 
 	if not NDuiPlusDB["Changelog"].Version or NDuiPlusDB["Changelog"].Version ~= P.Version then
-		setupChangelog()
+		if DB.Client == "zhCN" then setupChangelog() end
 		NDuiPlusDB["Changelog"].Version = P.Version
 	end
 
