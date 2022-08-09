@@ -2,6 +2,9 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 
 P.Changelog = [[
+v1.6.3
+[美化] 修复某些情况下WeakAurasOptions美化报错
+
 v1.6.2
 [鼠标提示] PvE进度信息添加S4数据
 [易用性] 添加虫洞离心机助手
