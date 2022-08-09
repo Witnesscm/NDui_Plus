@@ -198,7 +198,10 @@ local function SkinWeakAurasOptions()
 	-- MoverSizer
 	local moversizer = frame.moversizer
 	if moversizer then
-		B.CreateBD(moversizer, 0)
+		moversizer:HideBackdrop()
+		moversizer.__bg = B.CreateBDFrame(moversizer, 0)
+		moversizer.__bg:SetScript("OnSizeChanged", nil)
+		B.CreateSD(moversizer.__bg)
 
 		local index = 1
 		for _, child in pairs {moversizer:GetChildren()} do
