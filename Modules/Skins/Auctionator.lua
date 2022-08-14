@@ -44,6 +44,7 @@ local function reskinListHeader(frame)
 		if header then
 			header:DisableDrawLayer("BACKGROUND")
 			header.bg = B.CreateBDFrame(header)
+			header.bg:SetPoint("BOTTOMRIGHT", -2, -C.mult)
 			local hl = header:GetHighlightTexture()
 			hl:SetColorTexture(1, 1, 1, .1)
 			hl:SetAllPoints(header.bg)
@@ -285,13 +286,14 @@ function S:Auctionator()
 				end
 			end
 
-			reskinListHeader(SellingFrame.CurrentItemListing)
+			reskinListHeader(SellingFrame.CurrentItemListing) -- renamed to CurrentPricesListing
+			reskinListHeader(SellingFrame.CurrentPricesListing)
 			reskinListHeader(SellingFrame.HistoricalPriceListing)
 			reskinListHeader(SellingFrame.PostingHistoryListing)
 
-			local HistoryTabsContainer = SellingFrame.HistoryTabsContainer
-			if HistoryTabsContainer then
-				for _, tab in ipairs(HistoryTabsContainer.Tabs) do
+			local PricesTabsContainer = SellingFrame.PricesTabsContainer or SellingFrame.HistoryTabsContainer -- renamed to PricesTabsContainer
+			if PricesTabsContainer then
+				for _, tab in ipairs(PricesTabsContainer.Tabs) do
 					B.ReskinTab(tab)
 				end
 			end
