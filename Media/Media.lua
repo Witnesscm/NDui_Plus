@@ -69,9 +69,9 @@ function P:BuildRoleTable()
 	local roleTable = {}
 	for _, icons in ipairs(P.RoleList) do
 		local str = ""
-		str = str .. P:TextureString(icons.TANK, ":16:16") .. " "
-		str = str .. P:TextureString(icons.HEALER, ":16:16") .. " "
-		str = str .. P:TextureString(icons.DAMAGER, ":16:16") .. " "
+		str = str .. P.TextureString(icons.TANK, ":16:16") .. " "
+		str = str .. P.TextureString(icons.HEALER, ":16:16") .. " "
+		str = str .. P.TextureString(icons.DAMAGER, ":16:16") .. " "
 		tinsert(roleTable, str)
 	end
 

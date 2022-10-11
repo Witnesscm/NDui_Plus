@@ -201,7 +201,7 @@ G.OptionList = { -- type, key, value, name, horizon, data, callback, tooltip, sc
 }
 
 function G.Variable(key, value, newValue)
-	local header, charKey= strsplit(":", key)
+	local header, charKey = strsplit(":", key)
 	if header == "C" then
 		if newValue ~= nil then
 			NDuiPlusCharDB[charKey][value] = newValue
@@ -218,7 +218,7 @@ function G.Variable(key, value, newValue)
 end
 
 function G.GetDefaultSettings(key, value)
-	local header, charKey= strsplit(":", key)
+	local header, charKey = strsplit(":", key)
 	if header == "C" then
 		return P.CharacterSettings[charKey][value]
 	else
@@ -448,7 +448,7 @@ local function scrollBarHook(self, delta)
 end
 
 function P:OpenGUI()
-	if InCombatLockdown() then UIErrorsFrame:AddMessage(DB.InfoColor..ERR_NOT_IN_COMBAT) return end
+	if InCombatLockdown() then P:Error(ERR_NOT_IN_COMBAT) return end
 	if gui then gui:Show() return end
 
 	-- Main Frame

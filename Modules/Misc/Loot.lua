@@ -78,23 +78,24 @@ function LT:OnLogin()
 		end
 
 		if GetCVar("lootUnderMouse") == "1" then
-			local x, y = GetCursorPosition();
-			x = x / self:GetEffectiveScale();
-			y = y / self:GetEffectiveScale();
-			local posX = x - 175;
-			local posY = y + 25;
-			if (num > 0) then
-				posX = x - 40;
-				posY = y + 55;
-				posY = posY + 40;
+			local x, y = GetCursorPosition()
+			x = x / self:GetEffectiveScale()
+			y = y / self:GetEffectiveScale()
+			local posX = x - 175
+			local posY = y + 25
+			if num > 0 then
+				posX = x - 40
+				posY = y + 55
+				posY = posY + 40
 			end
-			if( posY < 350 ) then
-				posY = 350;
+			if posY < 350 then
+				posY = 350
 			end
-			self:SetPoint("TOPLEFT", nil, "BOTTOMLEFT", posX, posY - 38);
+			self:ClearAllPoints()
+			self:SetPoint("TOPLEFT", UIParent, "BOTTOMLEFT", posX, posY - 38)
 		end
 
-		LootFrame_Update();
+		LootFrame_Update()
 	end)
 
 	-- resize NDui loot button background

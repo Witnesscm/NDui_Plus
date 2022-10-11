@@ -1,7 +1,7 @@
 ## Interface: 90207
 ## Title: |cff0080ffNDui|r Plus
 ## Author: Witness
-## Notes: NDui Mod
+## Notes: NDui Plugin
 ## RequiredDeps: NDui
 ## Version: @project-version@
 ## SavedVariables: NDuiPlusDB

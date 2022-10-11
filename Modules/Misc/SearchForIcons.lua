@@ -89,7 +89,7 @@ function module:PopupFrame_Update()
 	elseif _G.MacroFrame and _G.MacroFrame:IsShown() then
 		_G.MacroPopupFrame_Update()
 		_G.MacroPopupScrollFrame:SetVerticalScroll(0)
-	else
+	elseif _G.GearManagerDialogPopup and _G.GearManagerDialogPopup:IsShown() then
 		_G.GearManagerDialogPopup_Update()
 		_G.GearManagerDialogPopupScrollFrame:SetVerticalScroll(0)
 	end
@@ -105,7 +105,7 @@ function module:MacroIcons_Update()
 		parent = _G.GuildBankPopupFrame
 	elseif _G.MacroPopupFrame and _G.MacroPopupFrame:IsShown() then
 		parent = _G.MacroPopupFrame
-	else
+	elseif _G.GearManagerDialogPopup and _G.GearManagerDialogPopup:IsShown() then
 		parent = _G.GearManagerDialogPopup
 	end
 

@@ -50,7 +50,7 @@ do
 end
 
 -- UI widgets
-do 
+do
 	P.EasyMenu = CreateFrame("Frame", "NDuiPlus_EasyMenu", UIParent, "UIDropDownMenuTemplate")
 
 	function P:SetupBackdrop()
@@ -73,6 +73,16 @@ do
 		if text then
 			bu:SetText(text)
 		end
+		bu:SetScript("OnEnable", function()
+			if discolor and type(discolor) == "boolean" then
+				bu.Text:SetTextColor(1, 1, 1)
+			else
+				bu.Text:SetTextColor(DB.r, DB.g, DB.b)
+			end
+		end)
+		bu:SetScript("OnDisable", function()
+			bu.Text:SetTextColor(.5, .5, .5)
+		end)
 		B.Reskin(bu)
 
 		return bu
@@ -293,6 +303,37 @@ end
 
 -- Misc
 do
+	local function Tooltip_OnEnter(self)
+		GameTooltip:SetOwner(self, self.anchor)
+		GameTooltip:ClearLines()
+		if self.title then
+			GameTooltip:AddLine(self.title)
+		end
+		if tonumber(self.text) then
+			GameTooltip:SetSpellByID(self.text)
+		elseif self.text then
+			local r, g, b = 1, 1, 1
+			if self.color == "class" then
+				r, g, b = cr, cg, cb
+			elseif self.color == "system" then
+				r, g, b = 1, .8, 0
+			elseif self.color == "info" then
+				r, g, b = .6, .8, 1
+			end
+			GameTooltip:AddLine(self.text, r, g, b, 1)
+		end
+		GameTooltip:Show()
+	end
+
+	function P:AddTooltip(anchor, text, color, showTips)
+		self.anchor = anchor
+		self.text = text
+		self.color = color
+		if showTips then self.title = L["Tips"] end
+		self:HookScript("OnEnter", Tooltip_OnEnter)
+		self:HookScript("OnLeave", B.HideTooltip)
+	end
+
 	function P:AnchorTooltip()
 		if self:GetRight() >= (GetScreenWidth() / 2) then
 			GameTooltip:SetOwner(self, "ANCHOR_LEFT")
@@ -318,7 +359,7 @@ do
 	end
 
 	local t, d = "|T%s%s|t", ""
-	function P:TextureString(texture, data)
+	function P.TextureString(texture, data)
 		return format(t, texture, data or d)
 	end
 end
