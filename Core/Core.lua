@@ -23,7 +23,7 @@ P.DefaultSettings = {
 	},
 	ActionBar = {
 		ComboGlow = true,
-		GlobalFade = false,
+		GlobalFade = true,
 		Alpha = .1,
 		Delay = 0,
 		Combat = true,
@@ -31,14 +31,14 @@ P.DefaultSettings = {
 		Casting = true,
 		Health = true,
 		Vehicle = true,
-		Bar1 = true,
-		Bar2 = true,
-		Bar3 = true,
-		Bar4 = true,
-		Bar5 = true,
-		CustomBar = true,
-		PetBar = true,
-		StanceBar = true
+		Bar1 = false,
+		Bar2 = false,
+		Bar3 = false,
+		Bar4 = false,
+		Bar5 = false,
+		CustomBar = false,
+		PetBar = false,
+		StanceBar = false
 	},
 	UnitFrames= {
 		Fader = false,
@@ -162,6 +162,10 @@ function P.IsRetail()
 	return _G.WOW_PROJECT_ID == _G.WOW_PROJECT_MAINLINE
 end
 
+function P.IsWrath()
+	return _G.WOW_PROJECT_ID == _G.WOW_PROJECT_WRATH_CLASSIC
+end
+
 function P.IsBCC()
 	return _G.WOW_PROJECT_ID == _G.WOW_PROJECT_BURNING_CRUSADE_CLASSIC
 end
@@ -193,7 +197,7 @@ function P:Print(...)
 end
 
 function P:Error(...)
-	_G.UIErrorsFrame:AddMessage("|cFF70B8FF"..format(...).."|r ")
+	_G.UIErrorsFrame:AddMessage(DB.InfoColor..format(...).."|r")
 end
 
 function P:VersionCheck_Compare(new, old)
@@ -296,12 +300,14 @@ function P:Initialize()
 	end)
 
 	P.Initialized = true
-	P.Modules = modules
+end
+
+function B:InitCallback()
+	P:Initialize()
 end
 
 local loader = CreateFrame("Frame")
 loader:RegisterEvent("ADDON_LOADED")
-loader:RegisterEvent("PLAYER_LOGIN")
 loader:SetScript("OnEvent", function(self, event, addon)
 	if event == "ADDON_LOADED" and addon == "NDui_Plus" then
 		P:InitialSettings(P.DefaultSettings, NDuiPlusDB, true)
@@ -322,7 +328,5 @@ loader:SetScript("OnEvent", function(self, event, addon)
 		P:ReplaceTexture()
 
 		self:UnregisterEvent(event)
-	elseif event == "PLAYER_LOGIN" then
-		P:Initialize()
 	end
 end)
