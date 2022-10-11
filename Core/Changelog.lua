@@ -2,6 +2,14 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 
 P.Changelog = [[
+v1.6.4
+[|cffFF1414重要|r] 需要NDui v6.28.0 以上版本
+[聊天框] 修复某些情况链接图标显示错位
+[美化] 重构AceGUI美化
+[美化] 添加LibUIDropDownMenu美化
+[美化] 更新Auctionator美化
+[美化] 更新ls_Toasts美化
+
 v1.6.3
 [美化] 修复某些情况下WeakAurasOptions美化报错
 
