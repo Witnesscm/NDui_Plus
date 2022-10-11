@@ -159,7 +159,7 @@ function S:Auctionator()
 			B.ReskinTab(tab)
 		end
 
-		local ShoppingList = _G.AuctionatorShoppingListFrame
+		local ShoppingList = _G.AuctionatorShoppingFrame
 		if ShoppingList then
 			reskinListHeader(ShoppingList.ResultsListing)
 			reskinButtons(ShoppingList, {"Import", "Export", "AddItem", "ManualSearch", "ExportCSV", "OneItemSearchButton", "SortItems"})
@@ -286,12 +286,11 @@ function S:Auctionator()
 				end
 			end
 
-			reskinListHeader(SellingFrame.CurrentItemListing) -- renamed to CurrentPricesListing
 			reskinListHeader(SellingFrame.CurrentPricesListing)
 			reskinListHeader(SellingFrame.HistoricalPriceListing)
 			reskinListHeader(SellingFrame.PostingHistoryListing)
 
-			local PricesTabsContainer = SellingFrame.PricesTabsContainer or SellingFrame.HistoryTabsContainer -- renamed to PricesTabsContainer
+			local PricesTabsContainer = SellingFrame.PricesTabsContainer
 			if PricesTabsContainer then
 				for _, tab in ipairs(PricesTabsContainer.Tabs) do
 					B.ReskinTab(tab)
