@@ -5,6 +5,7 @@ local S = P:GetModule("Skins")
 local _G = getfenv(0)
 local select, pairs, type = select, pairs, type
 local strfind = string.find
+local r, g, b = DB.r, DB.g, DB.b
 
 local function reskinChildButtons(frame)
 	if not frame then return end
@@ -181,6 +182,12 @@ local function SkinWeakAurasOptions()
 		end
 	end
 
+	-- ModelPicker
+	local modelPicker = frame.modelPicker and frame.modelPicker.frame
+	if modelPicker and modelPicker.filterInput then
+		B.ReskinInput(modelPicker.filterInput, 18)
+	end
+
 	-- Right Side Container
 	local container = frame.container and frame.container.content and frame.container.content:GetParent()
 	if container and container.bg then
@@ -299,6 +306,135 @@ function S:WeakAurasTemplates()
 	end
 end
 
+local WeakAuras_RegionType = {
+	["icon"] = true,
+	["group"] = true,
+	["dynamicgroup"] = true,
+}
+
+function S:WeakAuras_SkinIcon(icon)
+	if type(icon) ~= "table" or not icon.icon then return end
+
+	if WeakAuras_RegionType[self.data.regionType] then
+		icon.icon:SetTexCoord(unpack(DB.TexCoord))
+	end
+end
+
+function S:WeakAuras_UpdateIcon()
+	if not self.thumbnail or not self.thumbnail.icon then return end
+
+	if WeakAuras_RegionType[self.data.regionType] then
+		self.thumbnail.icon:SetTexCoord(unpack(DB.TexCoord))
+	end
+end
+
+function S:WeakAurasDisplayButton(widget)
+	local button = widget.frame
+
+	P.ReskinCollapse(widget.expand)
+	widget.expand:SetPushedTexture("")
+	widget.expand.SetPushedTexture = B.Dummy
+	B.ReskinInput(widget.renamebox)
+	button.group.texture:SetTexture(P.RotationRightTex)
+
+	widget.icon:ClearAllPoints()
+	widget.icon:SetPoint("LEFT", widget.frame, "LEFT", 1, 0)
+	button.iconBG = B.CreateBDFrame(widget.icon, 0)
+	button.iconBG:SetAllPoints(widget.icon)
+
+	button.highlight:SetTexture(DB.bdTex)
+	button.highlight:SetVertexColor(r, g, b, .25)
+	button.highlight:SetInside()
+
+	hooksecurefunc(widget, "SetIcon", S.WeakAuras_SkinIcon)
+	hooksecurefunc(widget, "UpdateThumbnail", S.WeakAuras_UpdateIcon)
+end
+
+function S:WeakAurasNewButton(widget)
+	local button = widget.frame
+
+	widget.icon:SetTexCoord(unpack(DB.TexCoord))
+	widget.icon:ClearAllPoints()
+	widget.icon:SetPoint("LEFT", button, "LEFT", 1, 0)
+	button.iconBG = B.CreateBDFrame(widget.icon, 0)
+	button.iconBG:SetAllPoints(widget.icon)
+
+	button.highlight:SetTexture(DB.bdTex)
+	button.highlight:SetVertexColor(r, g, b, .25)
+	button.highlight:SetInside()
+end
+
+function S:WeakAurasPendingUpdateButton(widget)
+	local button = widget.frame
+
+	widget.icon:SetTexCoord(unpack(DB.TexCoord))
+	widget.icon:ClearAllPoints()
+	widget.icon:SetPoint("LEFT", button, "LEFT", 1, 0)
+	button.iconBG = B.CreateBDFrame(widget.icon, 0)
+	button.iconBG:SetAllPoints(widget.icon)
+end
+
+function S:WeakAurasMultiLineEditBox(widget)
+	B.StripTextures(widget.scrollBG)
+	local bg = B.CreateBDFrame(widget.scrollBG, .8)
+	bg:SetPoint("TOPLEFT", 0, -2)
+	bg:SetPoint("BOTTOMRIGHT", -2, 1)
+	B.Reskin(widget.button)
+	B.ReskinScroll(widget.scrollBar)
+
+	widget.scrollBar:SetPoint("RIGHT", widget.frame, "RIGHT", 0 -4)
+	widget.scrollBG:SetPoint("TOPRIGHT", widget.scrollBar, "TOPLEFT", -2, 19)
+	widget.scrollBG:SetPoint("BOTTOMLEFT", widget.button, "TOPLEFT")
+	widget.scrollFrame:SetPoint("BOTTOMRIGHT", widget.scrollBG, "BOTTOMRIGHT", -4, 8)
+
+	widget.frame:HookScript("OnShow", function()
+		if widget.extraButtons then
+			for _, button in next, widget.extraButtons do
+				if not button.styled then
+					B.Reskin(button)
+					button.styled = true
+				end
+			end
+		end
+	end)
+end
+
+function S:WeakAurasLoadedHeaderButton(widget)
+	P.ReskinCollapse(widget.expand)
+	widget.expand:SetPushedTexture("")
+	widget.expand.SetPushedTexture = B.Dummy
+end
+
+function S:WeakAurasIconButton(widget)
+	local bg = B.ReskinIcon(widget.texture)
+	bg:SetBackdropColor(0, 0, 0, 0)
+	local hl = widget.frame:GetHighlightTexture()
+	hl:SetColorTexture(1, 1, 1, .25)
+	hl:SetAllPoints()
+end
+
+function S:WeakAurasTextureButton(widget)
+	local button = widget.frame
+	B.CreateBD(button, .25)
+	button:SetHighlightTexture(DB.bdTex)
+	local hl = button:GetHighlightTexture()
+	hl:SetVertexColor(r, g, b, .25)
+	hl:SetInside()
+end
+
+function S:WeakAurasTreeGroup(widget)
+	S:Ace3_Frame(widget)
+	widget.treeframe:GetChildren():HideBackdrop()
+end
+
 S:RegisterSkin("WeakAuras", S.WeakAuras)
 S:RegisterSkin("WeakAurasOptions", S.WeakAurasOptions)
 S:RegisterSkin("WeakAurasTemplates", S.WeakAurasTemplates)
+S:RegisterAceGUIWidget("WeakAurasDisplayButton")
+S:RegisterAceGUIWidget("WeakAurasNewButton")
+S:RegisterAceGUIWidget("WeakAurasPendingUpdateButton")
+S:RegisterAceGUIWidget("WeakAurasMultiLineEditBox")
+S:RegisterAceGUIWidget("WeakAurasLoadedHeaderButton")
+S:RegisterAceGUIWidget("WeakAurasIconButton")
+S:RegisterAceGUIWidget("WeakAurasTextureButton")
+S:RegisterAceGUIContainer("WeakAurasTreeGroup")

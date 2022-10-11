@@ -7,6 +7,8 @@ local pcall, pairs, type = pcall, pairs, type
 local tinsert = table.insert
 
 S.nonAddonsToLoad = {}
+S.aceWidgets = {}
+S.aceContainers = {}
 
 function S:RegisterSkin(name, func)
 	if not func then
@@ -18,6 +20,14 @@ function S:RegisterSkin(name, func)
 	else
 		P:AddCallbackForAddon(name, func)
 	end
+end
+
+function S:RegisterAceGUIWidget(name, func)
+	self.aceWidgets[name] = func or self[name]
+end
+
+function S:RegisterAceGUIContainer(name, func)
+	self.aceContainers[name] = func or self[name]
 end
 
 function S:OnLogin()

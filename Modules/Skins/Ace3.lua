@@ -2,7 +2,7 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 local S = P:GetModule("Skins")
 ----------------------------
--- Credit: ElvUI
+-- Credit: ElvUI, ElvUI_WindTools
 ----------------------------
 local _G = getfenv(0)
 local select, pairs, type = select, pairs, type
@@ -29,8 +29,6 @@ function S:Ace3()
 		S:Ace3_SkinTooltip(_G.LibStub(n, true))
 	end
 end
-
-S:RegisterSkin("Ace3")
 
 function S:Ace3_SkinSlider()
 	self:HideBackdrop()
@@ -86,389 +84,318 @@ function S:Ace3_SkinTab(tab)
 	end)
 end
 
-function S:Ace3_SkinIcon(icon, ...)
-	if not icon or not self.image or not self.image:GetTexture() or not self.image.bg then return end
-
-	if type(icon) == "number" then
-		self.image:SetTexCoord(unpack(DB.TexCoord))
-		self.image.bg:Show()
-	else
-		self.image.bg:Hide()
-	end
-end
-
-local WeakAuras_RegionType = {
-	["icon"] = true,
-	["group"] = true,
-	["dynamicgroup"] = true,
-}
-
-function S:WeakAuras_SkinIcon(icon)
-	if type(icon) ~= "table" or not icon.icon then return end
-
-	if WeakAuras_RegionType[self.data.regionType] then
-		icon.icon:SetTexCoord(unpack(DB.TexCoord))
-	end
-end
-
-function S:WeakAuras_UpdateIcon()
-	if not self.thumbnail or not self.thumbnail.icon then return end
-
-	if WeakAuras_RegionType[self.data.regionType] then
-		self.thumbnail.icon:SetTexCoord(unpack(DB.TexCoord))
-	end
-end
-
 function S:Ace3_RegisterAsWidget(widget)
-	local TYPE = widget.type
-	if TYPE == "MultiLineEditBox" then
-		B.StripTextures(widget.scrollBG)
-		local bg = B.CreateBDFrame(widget.scrollBG, .8)
-		bg:SetPoint("TOPLEFT", 0, -2)
-		bg:SetPoint("BOTTOMRIGHT", -2, 1)
-		B.Reskin(widget.button)
-		B.ReskinScroll(widget.scrollBar)
-
-		widget.scrollBar:SetPoint("RIGHT", widget.frame, "RIGHT", 0 -4)
-		widget.scrollBG:SetPoint("TOPRIGHT", widget.scrollBar, "TOPLEFT", -2, 19)
-		widget.scrollBG:SetPoint("BOTTOMLEFT", widget.button, "TOPLEFT")
-		widget.scrollFrame:SetPoint("BOTTOMRIGHT", widget.scrollBG, "BOTTOMRIGHT", -4, 8)
-	elseif TYPE == "CheckBox" then
-		local check = widget.check
-		local checkbg = widget.checkbg
-		local highlight = widget.highlight
-
-		local bg = B.CreateBDFrame(checkbg, 0)
-		bg:SetInside(checkbg, 4, 4)
-		B.CreateGradient(bg)
-		bg:SetFrameLevel(bg:GetFrameLevel() + 1)
-		checkbg:SetTexture(nil)
-		checkbg.SetTexture = B.Dummy
-
-		highlight:SetTexture(DB.bdTex)
-		highlight:SetInside(bg)
-		highlight:SetVertexColor(cr, cg, cb, .25)
-		highlight.SetTexture = B.Dummy
-
-		check:SetTexture("Interface\\Buttons\\UI-CheckBox-Check")
-		check:SetTexCoord(0, 1, 0, 1)
-		check:SetDesaturated(true)
-		check:SetVertexColor(cr, cg, cb)
-		check.SetDesaturated = B.Dummy
-
-		hooksecurefunc(widget, "SetDisabled", function(self, disabled)
-			local check = self.check
-			if disabled then
-				check:SetVertexColor(.8, .8, .8)
-			else
-				check:SetVertexColor(cr, cg, cb)
-			end
-		end)
-
-		hooksecurefunc(widget, "SetType", function(self, type)
-			if type == "radio" then
-				bg:SetInside(checkbg, 3, 3)
-				self.check:SetTexture(DB.bdTex)
-				self.check:SetInside(bg)
-			else
-				bg:SetInside(checkbg, 4, 4)
-				self.check:SetTexture("Interface\\Buttons\\UI-CheckBox-Check")
-				self.check:SetAllPoints(self.checkbg)
-			end
-		end)
-	elseif TYPE == "Dropdown" or TYPE == "LQDropdown" then
-		local frame = widget.dropdown
-		local button = widget.button
-		local text = widget.text
-
-		B.StripTextures(frame)
-		local bg = B.CreateBDFrame(frame, 0)
-		bg:SetPoint("TOPLEFT", 18, -3)
-		bg:SetPoint("BOTTOMRIGHT", -18, 3)
-		B.CreateGradient(bg)
-
-		widget.label:ClearAllPoints()
-		widget.label:SetPoint("BOTTOMLEFT", bg, "TOPLEFT", 2, 0)
-
-		B.ReskinArrow(button, "down")
-		button:SetSize(20, 20)
-		button:ClearAllPoints()
-		button:SetPoint("RIGHT", bg)
-
-		text:ClearAllPoints()
-		text:SetJustifyH("RIGHT")
-		text:SetPoint("RIGHT", button, "LEFT", -3, 0)
-	elseif TYPE == "LSM30_Font" or TYPE == "LSM30_Sound" or TYPE == "LSM30_Border" or TYPE == "LSM30_Background" or TYPE == "LSM30_Statusbar" then
-		local frame = widget.frame
-		local button = frame.dropButton
-		local text = frame.text
-
-		B.StripTextures(frame)
-		local bg = B.CreateBDFrame(frame, 0)
-		bg:SetPoint("TOPLEFT", 3, -22)
-		bg:SetPoint("BOTTOMRIGHT", -1, 2)
-		B.CreateGradient(bg)
-
-		frame.label:ClearAllPoints()
-		frame.label:SetPoint("BOTTOMLEFT", bg, "TOPLEFT", 2, 0)
-
-		B.ReskinArrow(button, "down")
-		button:SetSize(20, 20)
-		button:ClearAllPoints()
-		button:SetPoint("RIGHT", bg)
-
-		text:ClearAllPoints()
-		text:SetPoint("RIGHT", button, "LEFT", -2, 0)
-
-		if TYPE == "LSM30_Sound" then
-			widget.soundbutton:SetParent(bg)
-			widget.soundbutton:ClearAllPoints()
-			widget.soundbutton:SetPoint("LEFT", bg, "LEFT", 2, 0)
-		elseif TYPE == "LSM30_Statusbar" then
-			widget.bar:SetParent(bg)
-			widget.bar:ClearAllPoints()
-			widget.bar:SetPoint("TOPLEFT", bg, "TOPLEFT", 2, -2)
-			widget.bar:SetPoint("BOTTOMRIGHT", button, "BOTTOMLEFT", -1, 0)
-		elseif TYPE == "LSM30_Border" or TYPE == "LSM30_Background" then
-			bg:SetPoint("TOPLEFT", 45, -22)
-		end
-
-		button:SetParent(bg)
-		text:SetParent(bg)
-		button:HookScript("OnClick", S.Ace3_SkinDropdown)
-	elseif TYPE == "EditBox" then
-		B.Reskin(widget.button)
-		P.ReskinInput(widget.editbox)
-		widget.editbox.bg:SetPoint("TOPLEFT", 0, -2)
-		widget.editbox.bg:SetPoint("BOTTOMRIGHT", 0, 2)
-
-		hooksecurefunc(widget.editbox, "SetPoint", function(self, a, b, c, d, e)
-			if d == 7 then
-				self:SetPoint(a, b, c, 0, e)
-			end
-		end)
-	elseif TYPE == "Button" or TYPE == "MacroButton" then
-		B.Reskin(widget.frame)
-	elseif TYPE == "Slider" then
-		B.ReskinSlider(widget.slider)
-		widget.editbox:HideBackdrop()
-		B.ReskinInput(widget.editbox)
-		widget.editbox:SetPoint("TOP", widget.slider, "BOTTOM", 0, -1)
-	elseif TYPE == "Keybinding" then
-		local button = widget.button
-		local msgframe = widget.msgframe
-
-		B.Reskin(button)
-		B.StripTextures(msgframe)
-		B.SetBD(msgframe)
-		msgframe.msg:ClearAllPoints()
-		msgframe.msg:SetPoint("CENTER")
-	elseif TYPE == "ColorPicker" then
-		local frame = widget.frame
-		local colorSwatch = widget.colorSwatch
-		local text = widget.text
-
-		local bg = B.CreateBDFrame(frame)
-		bg:SetSize(18, 18)
-		bg:ClearAllPoints()
-		bg:SetPoint("LEFT", frame, "LEFT", 4, 0)
-
-		colorSwatch:SetTexture(DB.bdTex)
-		colorSwatch:ClearAllPoints()
-		colorSwatch:SetParent(bg)
-		colorSwatch:SetInside(bg)
-
-		if colorSwatch.background then
-			colorSwatch.background:SetColorTexture(0, 0, 0, 0)
-		end
-
-		if colorSwatch.checkers then
-			colorSwatch.checkers:ClearAllPoints()
-			colorSwatch.checkers:SetParent(bg)
-			colorSwatch.checkers:SetInside(bg)
-		end
-
-		text:ClearAllPoints()
-		text:SetPoint("LEFT", colorSwatch, "RIGHT", 4, 0)
-	elseif TYPE == "Icon" then
-		local button = widget.frame
-		local image = widget.image
-
-		image:SetTexCoord(unpack(DB.TexCoord))
-		image.bg = B.CreateBDFrame(image, 0)
-
-		B.StripTextures(button)
-		button:SetHighlightTexture(DB.bdTex)
-		button:GetHighlightTexture():SetVertexColor(1, 1, 1, .25)
-		button:GetHighlightTexture():SetInside(image.bg)
-
-		hooksecurefunc(widget, "SetImage", S.Ace3_SkinIcon)
-	elseif TYPE == "Dropdown-Pullout" then
-		local frame = widget.frame
-		P.ReskinTooltip(frame)
-		frame.bg.SetFrameLevel = B.Dummy
-
-		if widget.slider then
-			S.Ace3_SkinSlider(widget.slider)
-		end
-	elseif TYPE == "WeakAurasDisplayButton" then
-		local button = widget.frame
-
-		P.ReskinCollapse(widget.expand)
-		widget.expand:SetPushedTexture("")
-		widget.expand.SetPushedTexture = B.Dummy
-		B.ReskinInput(widget.renamebox)
-		button.group.texture:SetTexture(P.RotationRightTex)
-
-		widget.icon:ClearAllPoints()
-		widget.icon:SetPoint("LEFT", widget.frame, "LEFT", 1, 0)
-		button.iconBG = B.CreateBDFrame(widget.icon, 0)
-		button.iconBG:SetAllPoints(widget.icon)
-
-		button.highlight:SetTexture(DB.bdTex)
-		button.highlight:SetVertexColor(cr, cg, cb, .25)
-		button.highlight:SetInside()
-
-		hooksecurefunc(widget, "SetIcon", S.WeakAuras_SkinIcon)
-		hooksecurefunc(widget, "UpdateThumbnail", S.WeakAuras_UpdateIcon)
-	elseif TYPE == "WeakAurasNewButton" then
-		local button = widget.frame
-
-		widget.icon:SetTexCoord(unpack(DB.TexCoord))
-		widget.icon:ClearAllPoints()
-		widget.icon:SetPoint("LEFT", button, "LEFT", 1, 0)
-		button.iconBG = B.CreateBDFrame(widget.icon, 0)
-		button.iconBG:SetAllPoints(widget.icon)
-
-		button.highlight:SetTexture(DB.bdTex)
-		button.highlight:SetVertexColor(cr, cg, cb, .25)
-		button.highlight:SetInside()
-	elseif TYPE == "WeakAurasPendingUpdateButton" then
-		local button = widget.frame
-
-		widget.icon:SetTexCoord(unpack(DB.TexCoord))
-		widget.icon:ClearAllPoints()
-		widget.icon:SetPoint("LEFT", button, "LEFT", 1, 0)
-		button.iconBG = B.CreateBDFrame(widget.icon, 0)
-		button.iconBG:SetAllPoints(widget.icon)
-	elseif TYPE == "WeakAurasMultiLineEditBox" then
-		B.StripTextures(widget.scrollBG)
-		local bg = B.CreateBDFrame(widget.scrollBG, .8)
-		bg:SetPoint("TOPLEFT", 0, -2)
-		bg:SetPoint("BOTTOMRIGHT", -2, 1)
-		B.Reskin(widget.button)
-		B.ReskinScroll(widget.scrollBar)
-
-		widget.scrollBar:SetPoint("RIGHT", widget.frame, "RIGHT", 0 -4)
-		widget.scrollBG:SetPoint("TOPRIGHT", widget.scrollBar, "TOPLEFT", -2, 19)
-		widget.scrollBG:SetPoint("BOTTOMLEFT", widget.button, "TOPLEFT")
-		widget.scrollFrame:SetPoint("BOTTOMRIGHT", widget.scrollBG, "BOTTOMRIGHT", -4, 8)
-
-		widget.frame:HookScript("OnShow", function()
-			if widget.extraButtons then
-				for _, button in next, widget.extraButtons do
-					if not button.styled then
-						B.Reskin(button)
-						button.styled = true
-					end
-				end
-			end
-		end)
-	elseif TYPE == "WeakAurasLoadedHeaderButton" then
-		P.ReskinCollapse(widget.expand)
-		widget.expand:SetPushedTexture("")
-		widget.expand.SetPushedTexture = B.Dummy
-	elseif TYPE == "WeakAurasIconButton" then
-		local bg = B.ReskinIcon(widget.texture)
-		bg:SetBackdropColor(0, 0, 0, 0)
-		local hl = widget.frame:GetHighlightTexture()
-		hl:SetColorTexture(1, 1, 1, .25)
-		hl:SetAllPoints()
-	elseif TYPE == "WeakAurasTextureButton" then
-		local button = widget.frame
-
-		B.CreateBD(button, .25)
-		button:SetHighlightTexture(DB.bdTex)
-		local hl = button:GetHighlightTexture()
-		hl:SetVertexColor(cr, cg, cb, .25)
-		hl:SetInside()
+	if self.aceWidgets[widget.type] then
+		self.aceWidgets[widget.type](self, widget)
 	end
 end
 
 function S:Ace3_RegisterAsContainer(widget)
-	local TYPE = widget.type
-	if TYPE == "ScrollFrame" then
-		B.ReskinScroll(widget.scrollbar)
-		widget.scrollbar:DisableDrawLayer("BACKGROUND")
-	elseif TYPE == "InlineGroup" or TYPE == "TreeGroup" or TYPE == "TabGroup" or TYPE == "Frame" or TYPE == "DropdownGroup" or TYPE == "Window" or TYPE == "WeakAurasTreeGroup" then
-		local frame = widget.content:GetParent()
-		B.StripTextures(frame)
-		if TYPE == "Frame" then
-			for i = 1, frame:GetNumChildren() do
-				local child = select(i, frame:GetChildren())
-				if child:GetObjectType() == "Button" and child:GetText() then
-					B.Reskin(child)
-				else
-					B.StripTextures(child)
-				end
-			end
-			B.SetBD(frame)
+	if self.aceContainers[widget.type] then
+		self.aceContainers[widget.type](self, widget)
+	end
+end
+
+function S:Ace3_Button(widget)
+	B.Reskin(widget.frame)
+end
+
+function S:Ace3_CheckBox(widget)
+	local check = widget.check
+	local checkbg = widget.checkbg
+	local highlight = widget.highlight
+
+	local bg = B.CreateBDFrame(checkbg, 0)
+	bg:SetInside(checkbg, 4, 4)
+	B.CreateGradient(bg)
+	bg:SetFrameLevel(bg:GetFrameLevel() + 1)
+	checkbg:SetTexture(nil)
+	checkbg.SetTexture = B.Dummy
+
+	highlight:SetTexture(DB.bdTex)
+	highlight:SetInside(bg)
+	highlight:SetVertexColor(cr, cg, cb, .25)
+	highlight.SetTexture = B.Dummy
+
+	check:SetTexture("Interface\\Buttons\\UI-CheckBox-Check")
+	check:SetTexCoord(0, 1, 0, 1)
+	check:SetDesaturated(true)
+	check:SetVertexColor(cr, cg, cb)
+	check.SetDesaturated = B.Dummy
+
+	hooksecurefunc(widget, "SetDisabled", function(self, disabled)
+		local check = self.check
+		if disabled then
+			check:SetVertexColor(.8, .8, .8)
 		else
-			frame.bg = B.CreateBDFrame(frame, .25)
-			frame.bg:SetPoint("TOPLEFT", 2, -2)
-			frame.bg:SetPoint("BOTTOMRIGHT", -2, 2)
+			check:SetVertexColor(cr, cg, cb)
 		end
+	end)
 
-		if TYPE == "Window" then
-			B.ReskinClose(frame.obj.closebutton)
+	hooksecurefunc(widget, "SetType", function(self, type)
+		if type == "radio" then
+			bg:SetInside(checkbg, 3, 3)
+			self.check:SetTexture(DB.bdTex)
+			self.check:SetInside(bg)
+		else
+			bg:SetInside(checkbg, 4, 4)
+			self.check:SetTexture("Interface\\Buttons\\UI-CheckBox-Check")
+			self.check:SetAllPoints(self.checkbg)
 		end
+	end)
+end
 
-		if widget.treeframe then
-			local bg = B.CreateBDFrame(widget.treeframe, .25)
-			bg:SetPoint("TOPLEFT", 2, -2)
-			bg:SetPoint("BOTTOMRIGHT", -2, 2)
+function S:Ace3_Dropdown(widget)
+	local frame = widget.dropdown
+	local button = widget.button
+	local text = widget.text
 
-			local oldRefreshTree = widget.RefreshTree
-			widget.RefreshTree = function(self, scrollToSelection)
-				oldRefreshTree(self, scrollToSelection)
-				if not self.tree then return end
-				local status = self.status or self.localstatus
-				local lines = self.lines
-				local buttons = self.buttons
-				local offset = status.scrollvalue
+	B.StripTextures(frame)
+	local bg = B.CreateBDFrame(frame, 0)
+	bg:SetPoint("TOPLEFT", 18, -3)
+	bg:SetPoint("BOTTOMRIGHT", -18, 3)
+	B.CreateGradient(bg)
 
-				for i = offset + 1, #lines do
-					local button = buttons[i - offset]
-					if button and not button.styled then
-						local toggle = button.toggle
-						P.ReskinCollapse(toggle)
-						toggle.SetPushedTexture = B.Dummy
-						button.styled = true
-					end
-				end
-			end
+	widget.label:ClearAllPoints()
+	widget.label:SetPoint("BOTTOMLEFT", bg, "TOPLEFT", 2, 0)
+
+	B.ReskinArrow(button, "down")
+	button:SetSize(20, 20)
+	button:ClearAllPoints()
+	button:SetPoint("RIGHT", bg)
+
+	text:ClearAllPoints()
+	text:SetJustifyH("RIGHT")
+	text:SetPoint("RIGHT", button, "LEFT", -3, 0)
+end
+
+function S:Ace3_EditBox(widget)
+	B.Reskin(widget.button)
+	P.ReskinInput(widget.editbox)
+	widget.editbox.bg:SetPoint("TOPLEFT", 0, -2)
+	widget.editbox.bg:SetPoint("BOTTOMRIGHT", 0, 2)
+
+	hooksecurefunc(widget.editbox, "SetPoint", function(self, a, b, c, d, e)
+		if d == 7 then
+			self:SetPoint(a, b, c, 0, e)
 		end
+	end)
+end
 
-		if TYPE == "TabGroup" then
-			local oldCreateTab = widget.CreateTab
-			widget.CreateTab = function(self, id)
-				local tab = oldCreateTab(self, id)
-				S:Ace3_SkinTab(tab)
-				return tab
-			end
-		end
+function S:Ace3_MultiLineEditBox(widget)
+	B.StripTextures(widget.scrollBG)
+	local bg = B.CreateBDFrame(widget.scrollBG, .8)
+	bg:SetPoint("TOPLEFT", 0, -2)
+	bg:SetPoint("BOTTOMRIGHT", -2, 1)
+	B.Reskin(widget.button)
+	B.ReskinScroll(widget.scrollBar)
 
-		if widget.scrollbar then
-			B.ReskinScroll(widget.scrollbar)
-			widget.scrollbar:DisableDrawLayer("BACKGROUND")
-		end
+	widget.scrollBar:SetPoint("RIGHT", widget.frame, "RIGHT", 0 -4)
+	widget.scrollBG:SetPoint("TOPRIGHT", widget.scrollBar, "TOPLEFT", -2, 19)
+	widget.scrollBG:SetPoint("BOTTOMLEFT", widget.button, "TOPLEFT")
+	widget.scrollFrame:SetPoint("BOTTOMRIGHT", widget.scrollBG, "BOTTOMRIGHT", -4, 8)
+end
 
-		if TYPE == "WeakAurasTreeGroup" then
-			local treeframe = widget.treeframe
-			local treeframeBG = treeframe:GetChildren()
-			treeframeBG:SetAlpha(0)
+function S:Ace3_Slider(widget)
+	B.ReskinSlider(widget.slider)
+	widget.editbox:HideBackdrop()
+	B.ReskinInput(widget.editbox)
+	widget.editbox:SetPoint("TOP", widget.slider, "BOTTOM", 0, -1)
+end
+
+function S:Ace3_Keybinding(widget)
+	local button = widget.button
+	local msgframe = widget.msgframe
+
+	B.Reskin(button)
+	B.StripTextures(msgframe)
+	B.SetBD(msgframe)
+	msgframe.msg:ClearAllPoints()
+	msgframe.msg:SetPoint("CENTER")
+end
+
+function S:Ace3_ColorPicker(widget)
+	local frame = widget.frame
+	local colorSwatch = widget.colorSwatch
+	local text = widget.text
+
+	local bg = B.CreateBDFrame(frame)
+	bg:SetSize(18, 18)
+	bg:ClearAllPoints()
+	bg:SetPoint("LEFT", frame, "LEFT", 4, 0)
+
+	colorSwatch:SetTexture(DB.bdTex)
+	colorSwatch:ClearAllPoints()
+	colorSwatch:SetParent(bg)
+	colorSwatch:SetInside(bg)
+
+	if colorSwatch.background then
+		colorSwatch.background:SetColorTexture(0, 0, 0, 0)
+	end
+
+	if colorSwatch.checkers then
+		colorSwatch.checkers:ClearAllPoints()
+		colorSwatch.checkers:SetParent(bg)
+		colorSwatch.checkers:SetInside(bg)
+	end
+
+	text:ClearAllPoints()
+	text:SetPoint("LEFT", colorSwatch, "RIGHT", 4, 0)
+end
+
+function S:Ace3_SetImage(path, ...)
+	local image = self.image
+	image:SetTexture(path)
+	image.bg:Hide()
+
+	if image:GetTexture() then
+		local n = select("#", ...)
+		if n == 4 or n == 8 then
+			image:SetTexCoord(...)
+		elseif tonumber(path) then
+			image:SetTexCoord(unpack(DB.TexCoord))
+			image.bg:Show()
+		else
+			image:SetTexCoord(0, 1, 0, 1)
 		end
 	end
+end
+
+function S:Ace3_Icon(widget)
+	local button = widget.frame
+	local image = widget.image
+
+	image:SetTexCoord(unpack(DB.TexCoord))
+	image.bg = B.CreateBDFrame(image, 0)
+
+	B.StripTextures(button)
+	button:SetHighlightTexture(DB.bdTex)
+	button:GetHighlightTexture():SetVertexColor(1, 1, 1, .25)
+	button:GetHighlightTexture():SetInside(image.bg)
+
+	widget.SetImage = S.Ace3_SetImage
+end
+
+function S:Ace3_DropdownPullout(widget)
+	local frame = widget.frame
+	P.ReskinTooltip(frame)
+	frame.bg.SetFrameLevel = B.Dummy
+
+	if widget.slider then
+		S.Ace3_SkinSlider(widget.slider)
+	end
+end
+
+function S:Ace3_LibSharedMedia(widget)
+	local frame = widget.frame
+	local button = frame.dropButton
+	local text = frame.text
+
+	B.StripTextures(frame)
+	local bg = B.CreateBDFrame(frame, 0)
+	bg:SetPoint("TOPLEFT", 3, -22)
+	bg:SetPoint("BOTTOMRIGHT", -1, 2)
+	B.CreateGradient(bg)
+
+	frame.label:ClearAllPoints()
+	frame.label:SetPoint("BOTTOMLEFT", bg, "TOPLEFT", 2, 0)
+
+	B.ReskinArrow(button, "down")
+	button:SetSize(20, 20)
+	button:ClearAllPoints()
+	button:SetPoint("RIGHT", bg)
+
+	text:ClearAllPoints()
+	text:SetPoint("RIGHT", button, "LEFT", -2, 0)
+
+	if widget.type == "LSM30_Sound" then
+		widget.soundbutton:SetParent(bg)
+		widget.soundbutton:ClearAllPoints()
+		widget.soundbutton:SetPoint("LEFT", bg, "LEFT", 2, 0)
+	elseif widget.type == "LSM30_Statusbar" then
+		widget.bar:SetParent(bg)
+		widget.bar:ClearAllPoints()
+		widget.bar:SetPoint("TOPLEFT", bg, "TOPLEFT", 2, -2)
+		widget.bar:SetPoint("BOTTOMRIGHT", button, "BOTTOMLEFT", -1, 0)
+	elseif widget.type == "LSM30_Border" or widget.type == "LSM30_Background" then
+		bg:SetPoint("TOPLEFT", 45, -22)
+	end
+
+	button:SetParent(bg)
+	text:SetParent(bg)
+	button:HookScript("OnClick", S.Ace3_SkinDropdown)
+end
+
+function S:Ace3_Frame(widget)
+	local frame = widget.content:GetParent()
+	B.StripTextures(frame)
+	if widget.type == "Frame" then
+		for i = 1, frame:GetNumChildren() do
+			local child = select(i, frame:GetChildren())
+			if child:GetObjectType() == "Button" and child:GetText() then
+				B.Reskin(child)
+			else
+				B.StripTextures(child)
+			end
+		end
+		B.SetBD(frame)
+	else
+		frame.bg = B.CreateBDFrame(frame, .25)
+		frame.bg:SetPoint("TOPLEFT", 2, -2)
+		frame.bg:SetPoint("BOTTOMRIGHT", -2, 2)
+	end
+
+	if widget.treeframe then
+		local bg = B.CreateBDFrame(widget.treeframe, .25)
+		bg:SetPoint("TOPLEFT", 2, -2)
+		bg:SetPoint("BOTTOMRIGHT", -2, 2)
+
+		local oldRefreshTree = widget.RefreshTree
+		widget.RefreshTree = function(self, scrollToSelection)
+			oldRefreshTree(self, scrollToSelection)
+			if not self.tree then return end
+			local status = self.status or self.localstatus
+			local lines = self.lines
+			local buttons = self.buttons
+			local offset = status.scrollvalue
+
+			for i = offset + 1, #lines do
+				local button = buttons[i - offset]
+				if button and not button.styled then
+					local toggle = button.toggle
+					P.ReskinCollapse(toggle)
+					toggle.SetPushedTexture = B.Dummy
+					button.styled = true
+				end
+			end
+		end
+	end
+
+	if widget.scrollbar then
+		B.ReskinScroll(widget.scrollbar)
+		widget.scrollbar:DisableDrawLayer("BACKGROUND")
+	end
+end
+
+function S:Ace3_Window(widget)
+	S:Ace3_Frame(widget)
+	B.ReskinClose(widget.closebutton)
+end
+
+function S:Ace3_TabGroup(widget)
+	S:Ace3_Frame(widget)
+
+	local oldCreateTab = widget.CreateTab
+	widget.CreateTab = function(...)
+		local tab = oldCreateTab(...)
+		S:Ace3_SkinTab(tab)
+		return tab
+	end
+end
+
+function S:Ace3_ScrollFrame(widget)
+	B.ReskinScroll(widget.scrollbar)
+	widget.scrollbar:DisableDrawLayer("BACKGROUND")
 end
 
 function S:Ace3_MetaTable(lib)
@@ -491,16 +418,16 @@ function S:Ace3_MetaIndex(k, v)
 	elseif k == "RegisterAsContainer" then
 		rawset(self, k, function(s, w, ...)
 			if S.db["Ace3"] then
-				S.Ace3_RegisterAsContainer(s, w, ...)
+				S:Ace3_RegisterAsContainer(w, ...)
 			end
 			return v(s, w, ...)
 		end)
 	elseif k == "RegisterAsWidget" then
-		rawset(self, k, function(...)
+		rawset(self, k, function(s, w, ...)
 			if S.db["Ace3"] then
-				S.Ace3_RegisterAsWidget(...)
+				S:Ace3_RegisterAsWidget(w, ...)
 			end
-			return v(...)
+			return v(s, w, ...)
 		end)
 	else
 		rawset(self, k, v)
@@ -633,3 +560,29 @@ do -- Early Skin Loading
 
 	hooksecurefunc(LibStub, "NewLibrary", S.LibStub_NewLib)
 end
+
+S:RegisterSkin("Ace3")
+S:RegisterAceGUIWidget("Button", S.Ace3_Button)
+S:RegisterAceGUIWidget("MacroButton", S.Ace3_Button)
+S:RegisterAceGUIWidget("CheckBox", S.Ace3_CheckBox)
+S:RegisterAceGUIWidget("Dropdown", S.Ace3_Dropdown)
+S:RegisterAceGUIWidget("LQDropdown", S.Ace3_Dropdown)
+S:RegisterAceGUIWidget("EditBox", S.Ace3_EditBox)
+S:RegisterAceGUIWidget("MultiLineEditBox", S.Ace3_MultiLineEditBox)
+S:RegisterAceGUIWidget("Slider", S.Ace3_Slider)
+S:RegisterAceGUIWidget("Keybinding", S.Ace3_Keybinding)
+S:RegisterAceGUIWidget("ColorPicker", S.Ace3_ColorPicker)
+S:RegisterAceGUIWidget("Icon", S.Ace3_Icon)
+S:RegisterAceGUIWidget("Dropdown-Pullout", S.Ace3_DropdownPullout)
+S:RegisterAceGUIWidget("LSM30_Font", S.Ace3_LibSharedMedia)
+S:RegisterAceGUIWidget("LSM30_Sound", S.Ace3_LibSharedMedia)
+S:RegisterAceGUIWidget("LSM30_Border", S.Ace3_LibSharedMedia)
+S:RegisterAceGUIWidget("LSM30_Background", S.Ace3_LibSharedMedia)
+S:RegisterAceGUIWidget("LSM30_Statusbar", S.Ace3_LibSharedMedia)
+S:RegisterAceGUIContainer("Frame", S.Ace3_Frame)
+S:RegisterAceGUIContainer("InlineGroup", S.Ace3_Frame)
+S:RegisterAceGUIContainer("TreeGroup", S.Ace3_Frame)
+S:RegisterAceGUIContainer("DropdownGroup", S.Ace3_Frame)
+S:RegisterAceGUIContainer("Window", S.Ace3_Window)
+S:RegisterAceGUIContainer("TabGroup", S.Ace3_TabGroup)
+S:RegisterAceGUIContainer("ScrollFrame", S.Ace3_ScrollFrame)
