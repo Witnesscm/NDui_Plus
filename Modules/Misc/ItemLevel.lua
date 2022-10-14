@@ -10,7 +10,7 @@ local qualityColors = {}
 for index, value in pairs(DB.QualityColors) do
 	qualityColors[index] = {r = value.r, g = value.g, b = value.b}
 end
-qualityColors[LE_ITEM_QUALITY_COMMON] = {r = 1, g = 1, b = 1}
+qualityColors[Enum.ItemQuality.Common] = {r = 1, g = 1, b = 1}
 
 function M:ItemLevel_UpdateGuildBank(tab, index)
 	if not self.iLvl then
