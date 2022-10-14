@@ -2,6 +2,9 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 
 P.Changelog = [[
+v1.6.5
+[其他] 修复枚举报错
+
 v1.6.4
 [|cffFF1414重要|r] 需要NDui v6.28.0 以上版本
 [聊天框] 修复某些情况链接图标显示错位
