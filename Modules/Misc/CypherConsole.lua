@@ -19,7 +19,7 @@ end
 P:AddCallbackForAddon("Blizzard_OrderHallUI", M.CypherConsole_OnLoad)
 
 function M:CypherConsole()
-	GarrisonLandingPageMinimapButton:HookScript("OnMouseDown", function(_, btn)
+	ExpansionLandingPageMinimapButton:HookScript("OnMouseDown", function(_, btn)
 		if btn == "MiddleButton" then
 			if not OrderHallTalentFrame then
 				OrderHall_LoadUI()
@@ -34,7 +34,7 @@ function M:CypherConsole()
 		end
 	end)
 
-	GarrisonLandingPageMinimapButton:HookScript("OnEnter", function()
+	ExpansionLandingPageMinimapButton:HookScript("OnEnter", function()
 		GameTooltip:AddLine(DB.ScrollButton..L["CypherResearchConsole"], nil, nil, nil, true)
 		GameTooltip:Show()
 	end)

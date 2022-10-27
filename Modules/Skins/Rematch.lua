@@ -148,4 +148,4 @@ function S:Rematch()
 	C_Timer.After(.5, delayFunc)
 end
 
-S:RegisterSkin("Rematch", S.Rematch)
+--S:RegisterSkin("Rematch", S.Rematch)

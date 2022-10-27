@@ -144,5 +144,5 @@ end
 function module:OnLogin()
 	if not NDuiPlusDB["Misc"]["SearchForIcons"] then return end
 
-	hooksecurefunc("GetMacroIcons", module.MacroIcons_Update)
+	--hooksecurefunc("GetMacroIcons", module.MacroIcons_Update)
 end

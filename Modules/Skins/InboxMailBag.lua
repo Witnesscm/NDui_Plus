@@ -30,11 +30,11 @@ function S:InboxMailBag()
 	for i = 1, num do
 		local bu = _G["InboxMailbagFrameItem"..i]
 
-		bu:SetNormalTexture("")
+		bu.NormalTexture:SetAlpha(0)
 		bu:SetPushedTexture("")
 		bu:GetHighlightTexture():SetColorTexture(1, 1, 1, .25)
 		bu.SetHighlightTexture = B.Dummy
-		bu.icon:SetTexCoord(.08, .92, .08, .92)
+		bu.icon:SetTexCoord(unpack(DB.TexCoord))
 		bu.bg = B.CreateBDFrame(bu, .25)
 		bu.qualityOverlay:SetAlpha(0)
 	end

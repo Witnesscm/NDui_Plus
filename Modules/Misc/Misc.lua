@@ -39,7 +39,7 @@ do
 		end
 	end
 
-	P:AddCallbackForAddon("Blizzard_TalentUI", M.DoubleClickSpecSwap)
+	--P:AddCallbackForAddon("Blizzard_TalentUI", M.DoubleClickSpecSwap)
 end
 
 -- Auto collapse trade skill
@@ -80,7 +80,7 @@ do
 		end)
 	end
 
-	P:AddCallbackForAddon("Blizzard_TradeSkillUI", M.AutoCollapseTradeSkill)
+	--P:AddCallbackForAddon("Blizzard_TradeSkillUI", M.AutoCollapseTradeSkill)
 end
 
 -- Learn all available skills. Credit: TrainAll
@@ -168,7 +168,7 @@ do
 end
 
 do
-	local titleString = "Frame Attributes %- (.+)"
+	local titleString = "%a+ Attributes %- (.+)"
 
 	local function hookTitleButton(frame)
 		if frame.hooked then return end

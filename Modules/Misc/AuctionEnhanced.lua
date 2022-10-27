@@ -38,18 +38,15 @@ local function GetStatsString(link)
 	return itemCache[link]
 end
 
-local function ItemBuyFrame_UpdateRows(self, _, count)
-	for rowIndex = 1, count do
-		local row = self:GetRowByIndex(rowIndex)
-		if row and row.rowData and row.cells and row.cells[4] then
-			if not row.stats then
-				row.stats = CreateStatsText(row)
-				row.stats:SetPoint("LEFT", row.cells[4], "RIGHT")
-			end
-
-			local itemLink = row.rowData.itemLink
-			row.stats:SetText(itemLink and GetStatsString(itemLink) or "")
+local function ItemBuyFrame_UpdateRows(_, row)
+	if row and row.rowData and row.cells and row.cells[4] then
+		if not row.stats then
+			row.stats = CreateStatsText(row)
+			row.stats:SetPoint("LEFT", row.cells[4], "RIGHT")
 		end
+
+		local itemLink = row.rowData.itemLink
+		row.stats:SetText(itemLink and GetStatsString(itemLink) or "")
 	end
 end
 
@@ -59,7 +56,7 @@ function M:Auction_ItemStats()
 		if done then return end
 
 		if self.tableBuilder then
-			hooksecurefunc(self.tableBuilder, "Populate", ItemBuyFrame_UpdateRows)
+			hooksecurefunc(self.tableBuilder, "AddRow", ItemBuyFrame_UpdateRows)
 		end
 
 		done = true
