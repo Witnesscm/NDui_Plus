@@ -2,6 +2,9 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 
 P.Changelog = [[
+v1.7.0
+[主要] 初步更新支持10.0
+
 v1.6.5
 [其他] 修复枚举报错
 
