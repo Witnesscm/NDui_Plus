@@ -22,67 +22,6 @@ function M:OnLogin()
 	end
 end
 
--- DoubleClick to swap specialization
-do
-	function M:DoubleClickSpecSwap()
-		for i = 1, GetNumSpecializations() do
-			local button = _G["PlayerTalentFrameSpecializationSpecButton"..i]
-			button:HookScript("OnDoubleClick", function() 
-				if i ~= GetSpecialization() then SetSpecialization(i) end
-			end)
-
-			button:HookScript("OnEnter", function() 
-				GameTooltip:AddLine(" ")
-				GameTooltip:AddLine(DB.LeftButton..L["QuickSpecSwap"], .6, .8, 1)
-				GameTooltip:Show()
-			end)
-		end
-	end
-
-	--P:AddCallbackForAddon("Blizzard_TalentUI", M.DoubleClickSpecSwap)
-end
-
--- Auto collapse trade skill
-do
-	local function collapseAllCategories(refresh)
-		local list = _G.TradeSkillFrame.RecipeList
-		if not list or not list:IsShown() then return end
-
-		if not refresh and not M.db["AutoCollapse"] then return end
-
-		list.tradeSkillChanged = nil
-		list.collapsedCategories = {}
-
-		if M.db["AutoCollapse"] then
-			for _, categoryID in ipairs({C_TradeSkillUI.GetCategories()}) do
-				list.collapsedCategories[categoryID] = true
-			end
-		end
-
-		list:Refresh()
-	end
-
-	function M:AutoCollapseTradeSkill()
-		local cb = CreateFrame("CheckButton", nil, _G.TradeSkillFrame, "OptionsCheckButtonTemplate")
-		cb:SetHitRectInsets(-5, -5, -5, -5)
-		cb:SetPoint("TOPRIGHT", -114, -2)
-		cb:SetSize(24, 24)
-		B.ReskinCheck(cb)
-		cb.text = B.CreateFS(cb, 14, L["AutoCollapse"], false, "LEFT", 25, 0)
-		cb:SetChecked(M.db["AutoCollapse"])
-		cb:SetScript("OnClick", function(self)
-			M.db["AutoCollapse"] = self:GetChecked()
-			collapseAllCategories(true)
-		end)
-
-		hooksecurefunc(_G.TradeSkillFrame.RecipeList, "OnDataSourceChanged", function()
-			collapseAllCategories()
-		end)
-	end
-
-	--P:AddCallbackForAddon("Blizzard_TradeSkillUI", M.AutoCollapseTradeSkill)
-end
-
 -- Learn all available skills. Credit: TrainAll
 do
 	local function TrainAllButton_OnEnter(self)
@@ -152,19 +91,6 @@ do
 	end
 
 	P:AddCallbackForAddon("Blizzard_PlayerChoice", M.ThreadsOfFateString)
-end
-
--- Fix duplicate LFG applications after patch 9.1.5
-do
-	hooksecurefunc("LFGListUtil_SortSearchResults", function()
-		local self = _G.LFGListFrame.SearchPanel
-		if next(self.results) and next(self.applications) then
-			for _, value in ipairs(self.applications) do
-				tDeleteItem(self.results, value)
-			end
-			self.totalResults = #self.results
-		end
-	end)
 end
 
 do
