@@ -76,6 +76,13 @@ P.DefaultSettings = {
 		AnnounceTitle = true,
 		AnnounceRarity = 1,
 	},
+	LootRoll = {
+		Enable = true,
+		Width = 328,
+		Height = 28,
+		Style = 2,
+		Direction = 2,
+	},
 	AFK = {
 		Enable = true,
 	},

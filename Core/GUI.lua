@@ -68,6 +68,14 @@ local function updateAchievementList()
 	P:GetModule("Tooltip"):UpdateProgSettings(true)
 end
 
+local function hideLootRoll()
+	if _G.NDuiPlus_LootRoll then _G.NDuiPlus_LootRoll:Hide() end
+end
+
+local function updateLootRoll()
+	P:GetModule("LootRoll"):UpdateLootRollTest()
+end
+
 local function updateAFKMode()
 	P:GetModule("AFK"):Toggle()
 end
@@ -179,6 +187,12 @@ G.OptionList = { -- type, key, value, name, horizon, data, callback, tooltip, sc
 		{1, "Loot", "Announce", L["LootAnnounceButton"]},
 		{1, "Loot", "AnnounceTitle", L["Announce Target Name"].."*"},
 		{4, "Loot", "AnnounceRarity", L["Rarity Threshold"].."*", true, G.Quality},
+		{},
+		{1, "LootRoll", "Enable", HeaderTag..L["LootRoll"], nil, nil, nil, L["LootRollTip"], {OnHide = hideLootRoll}},
+		{4, "LootRoll", "Style", L["Style"], false, {L["Style 1"], L["Style 2"]}, updateLootRoll},
+		{4, "LootRoll", "Direction", L["Growth Direction"], true, {L["Up"], L["Down"]}},
+		{3, "LootRoll", "Width", L["Frame Width"], false, {200, 500, 1}, updateLootRoll},
+		{3, "LootRoll", "Height", L["Frame Height"], true, {20, 50, 1}, updateLootRoll},
 		{},
 		{1, "Misc", "QuestHelper", L["QuestHelper"], nil, nil, nil, L["QuestHelperTip"]},
 		{1, "Misc", "AuctionEnhanced", L["AuctionEnhanced"], true, nil, nil, L["AuctionEnhancedTip"]},

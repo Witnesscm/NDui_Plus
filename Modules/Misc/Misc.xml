@@ -4,6 +4,7 @@
 	<Script file="AFK.lua"/>
 	<Script file="CopyMog.lua"/>
 	<Script file="Loot.lua"/>
+	<Script file="LootRoll.lua"/>
 	<Script file="LootSpecManager.lua"/>
 	<Script file="SearchForIcons.lua"/>
 	<!-- <Script file="TalentManager.lua"/> -->
