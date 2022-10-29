@@ -57,14 +57,14 @@ function S:WhisperPop()
 	end
 
 	local config = _G.WhisperPopFrameConfig
-	config:SetNormalTexture("")
-	config:SetPushedTexture("")
+	config:SetNormalTexture(0)
+	config:SetPushedTexture(0)
 	config:GetHighlightTexture():SetColorTexture(1, 1, 1, .25)
 	B.ReskinIcon(config.icon)
 
 	local notify = _G.WhisperPopNotifyButton
 	B.Reskin(notify)
-	notify:SetCheckedTexture("")
+	notify:SetCheckedTexture(0)
 	notify.icon:SetDesaturated(false)
 	notify.icon.SetDesaturated = B.Dummy
 	notify.icon:SetSize(13, 13)

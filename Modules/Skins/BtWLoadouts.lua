@@ -33,7 +33,7 @@ local function reskinTalentRow(self)
 
 	for _, bu in ipairs(self.Buttons) do
 		if not bu.styled then
-			bu:SetHighlightTexture("")
+			bu:SetHighlightTexture(0)
 			bu.Cover:SetAlpha(0)
 			bu.Slot:SetAlpha(0)
 			bu.KnownSelection:SetAlpha(0)
