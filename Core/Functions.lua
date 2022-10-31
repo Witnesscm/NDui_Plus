@@ -153,7 +153,7 @@ do
 	local function resetCollapseTexture(self, texture)
 		if self.settingTexture then return end
 		self.settingTexture = true
-		self:SetNormalTexture(0)
+		self:SetNormalTexture(P.ClearTexture)
 
 		if texture and texture ~= "" then
 			if strfind(texture, "Plus") or strfind(texture, "Closed") or texture == 130838 then
@@ -169,9 +169,9 @@ do
 	end
 
 	function P:ReskinCollapse(isAtlas)
-		self:SetNormalTexture(0)
-		self:SetHighlightTexture(0)
-		self:SetPushedTexture(0)
+		self:SetNormalTexture(P.ClearTexture)
+		self:SetHighlightTexture(P.ClearTexture)
+		self:SetPushedTexture(P.ClearTexture)
 
 		local bg = B.CreateBDFrame(self, .25, true)
 		bg:ClearAllPoints()
@@ -267,14 +267,14 @@ do
 		hl:SetVertexColor(cr, cg, cb, .25)
 	end
 
-	function P:ReskinTooltip(a)
+	function P:ReskinTooltip()
 		if not self then P:Debug("Unknown tooltip spotted.") return end
 		if self:IsForbidden() then return end
 
 		if not self.tipStyled then
 			self:HideBackdrop()
 			self:DisableDrawLayer("BACKGROUND")
-			self.bg = B.SetBD(self, a or .7)
+			self.bg = B.SetBD(self, .7)
 			self.bg:SetInside(self)
 
 			self.tipStyled = true
