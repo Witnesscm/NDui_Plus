@@ -13,6 +13,7 @@
 	<Script file="AuctionEnhanced.lua"/>
 	<Script file="RenownTracker.lua"/>
 	<Script file="ExtVendorUI.lua"/>
+	<Script file="ExtMacroUI.lua"/>
 	<Script file="CypherConsole.lua"/>
 	<Script file="WormholeHelper.lua"/>
 </Ui>
