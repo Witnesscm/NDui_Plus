@@ -32,6 +32,11 @@ function S:tdBattlePetScript()
 			B.SetBD(ScriptFrame)
 			B.ReskinClose(ScriptFrame.CloseButton)
 		end
+
+		hooksecurefunc(PetBattle, "PetBattleFrame_UpdatePassButtonAndTimer", function(self)
+			self.SkipButton:ClearAllPoints()
+			self.SkipButton:SetPoint("LEFT", PetBattleFrame.BottomFrame.ForfeitButton, "RIGHT", 3, 0)
+		end)
 	end
 
 	-- MainPanel
@@ -98,12 +103,6 @@ function S:tdBattlePetScript()
 
 		local ScriptList = MainPanel.ScriptList
 		B.ReskinScroll(ScriptList.scrollBar)
-		local thumb = ScriptList.scrollBar.thumbTexture
-		thumb:SetWidth(16)
-		thumb.bg = B.CreateBDFrame(thumb, 0, true)
-		thumb.bg:SetPoint("TOPLEFT", thumb, 0, -2)
-		thumb.bg:SetPoint("BOTTOMRIGHT", thumb, 0, 4)
-		ScriptList.scrollBar.thumb = thumb
 	end
 
 	-- Import

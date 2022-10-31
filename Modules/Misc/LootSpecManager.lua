@@ -345,7 +345,7 @@ function LSM:OnLogin()
 	B:RegisterEvent("UPDATE_INSTANCE_INFO", LSM.UpdateData)
 	B:RegisterEvent("ENCOUNTER_START", LSM.EncounterStart)
 	B:RegisterEvent("CHALLENGE_MODE_START", LSM.MythicPlusStart)
-	P:AddCallbackForAddon("Blizzard_EncounterJournal", LSM.CreateEJButton)
+	--P:AddCallbackForAddon("Blizzard_EncounterJournal", LSM.CreateEJButton)
 end
 
 SlashCmdList["NDUI_PLUS_LSM"] = function()

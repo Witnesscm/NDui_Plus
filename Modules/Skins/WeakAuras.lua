@@ -146,6 +146,7 @@ local function SkinWeakAurasOptions()
 		"texteditor",
 		"codereview",
 		"update",
+		"debugLog",
 	}
 
 	for _, key in pairs(childGroups) do

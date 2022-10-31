@@ -99,4 +99,4 @@ function S:ButtonForge()
 	end
 end
 
-S:RegisterSkin("ButtonForge", S.ButtonForge)
+--S:RegisterSkin("ButtonForge", S.ButtonForge)
