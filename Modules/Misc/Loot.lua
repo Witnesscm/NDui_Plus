@@ -10,8 +10,16 @@ local select, format = select, format
 local upper = string.upper
 local GetNumLootItems, GetLootSlotLink, GetLootSlotInfo = GetNumLootItems, GetLootSlotLink, GetLootSlotInfo
 
+local ScrollBoxElementHeight = 46
+local ScrollBoxSpacing = 4
+
 function LT:OnLogin()
 	if not LT.db["Enable"] then return end
+
+	local LootFrame = _G.LootFrame
+	LootFrame.panelMaxHeight = 1000
+	LootFrame.ScrollBox:SetPoint("BOTTOMRIGHT", -4, 4)
+	LootFrame.ScrollBox:GetPadding():SetSpacing(ScrollBoxSpacing)
 
 	local title = LootFrame:CreateFontString(nil, "OVERLAY")
 	title:SetFont(DB.Font[1], DB.Font[2]+2, DB.Font[3])
@@ -20,13 +28,27 @@ function LT:OnLogin()
 	title:SetHeight(16)
 	title:SetJustifyH("LEFT")
 	LootFrame.title = title
-	LootFrameTitleText:SetText("")
+	LootFrame:SetTitle("")
+
+	function LootFrame:CalculateElementsHeight()
+		return ScrollUtil.CalculateScrollBoxElementExtent(self.ScrollBox:GetDataProviderSize(), ScrollBoxElementHeight, ScrollBoxSpacing) - 8
+	end
 
 	hooksecurefunc(LootFrame, "Open", function(self)
 		if UnitExists("target") and UnitIsDead("target") then
 			self.title:SetText(UnitName("target"))
 		else
 			self.title:SetText(ITEMS)
+		end
+
+		for _, button in self.ScrollBox:EnumerateFrames() do
+			if not button.__styled then
+				if button.NameFrame then button.NameFrame:Hide() end
+				if button.QualityStripe then button.QualityStripe:Hide() end
+				if button.QualityText then button.QualityText:Hide() end
+
+				button.__styled = true
+			end
 		end
 	end)
 
