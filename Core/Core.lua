@@ -69,6 +69,9 @@ P.DefaultSettings = {
 		AutoShow = false,
 		AutoHide = false,
 		AutoHideTime = 10,
+		ASWhisper = true,
+		ASGroup = false,
+		ASGuild = false,
 	},
 	Loot = {
 		Enable = true,

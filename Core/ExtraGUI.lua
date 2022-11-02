@@ -248,3 +248,36 @@ function G:SetupUFsRole(parent)
 	createOptionSlider(frame, L["Y Offset"], -100, 100, 1, 20, -offset-200, "UnitFrames", "RoleYOffset", updateUFsRole)
 	createOptionSlider(frame, L["Icon Size"], 8, 50, 1, 20, -offset-270, "UnitFrames", "RoleSize", updateUFsRole)
 end
+
+local function updateChatAutoShow()
+	P:GetModule("Chat"):UpdateAutoShow()
+end
+
+function G:SetupChatAutoShow(parent)
+	local guiName = "NDuiPlusGUI_ChatAutoShow"
+	toggleExtraGUI(guiName)
+	if extraGUIs[guiName] then return end
+
+	local panel = createExtraGUI(parent, guiName, L["Message Type"].."*", true)
+	local frame = panel.scroll.child
+
+	local offset = 20
+
+	local options = {
+		[1] = {"ASWhisper", L["Whisper"]},
+		[2] = {"ASGroup", L["Group"]},
+		[3] = {"ASGuild", L["Guild"]},
+	}
+
+	for _, option in ipairs(options) do
+		local value, text = unpack(option)
+		local box = createOptionCheck(frame, offset, text)
+		box:SetChecked(G.Variable("Chat", value))
+		box:SetScript("OnClick", function()
+			G.Variable("Chat", value, box:GetChecked())
+			updateChatAutoShow()
+		end)
+
+		offset = offset + 35
+	end
+end

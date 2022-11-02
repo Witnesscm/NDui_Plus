@@ -66,16 +66,6 @@ function CH:SetupChat()
 	_G[self:GetName() .. "Tab"]:SetParent(CH.ChatBG)
 end
 
-function CH:UpdateChatSize()
-	CH.ChatBG:ClearAllPoints()
-	CH.ChatBG:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", chatIn and 0 or -C.db["Chat"]["ChatWidth"] - 28, 30)
-	CH.ChatBG:SetWidth(C.db["Chat"]["ChatWidth"])
-	CH.ChatBG:SetHeight(C.db["Chat"]["ChatHeight"])
-
-	_G.ChatFrame1:ClearAllPoints()
-	_G.ChatFrame1:SetAllPoints(CH.ChatBG)
-end
-
 function CH:AutoShow()
 	timeout = 0
 	if not chatIn then
@@ -107,21 +97,37 @@ function CH.WhisperFlash(event)
 	P:Flash(CH.ChatToggle.bg.__shadow, 1, true)
 end
 
+local ChatEvents = {
+	["ASWhisper"] = {"CHAT_MSG_WHISPER", "CHAT_MSG_BN_WHISPER"},
+	["ASGroup"] = {"CHAT_MSG_PARTY", "CHAT_MSG_RAID", "CHAT_MSG_INSTANCE_CHAT"},
+	["ASGuild"] = {"CHAT_MSG_GUILD"},
+}
+
 function CH:UpdateAutoShow()
 	if not CH.ChatBG then return end
 
+	for key, events in pairs(ChatEvents) do
+		for _, event in ipairs(events) do
+			if CH.db["AutoShow"] and CH.db[key]  then
+				B:RegisterEvent(event, CH.AutoShow)
+			else
+				B:UnregisterEvent(event, CH.AutoShow)
+			end
+		end
+	end
+
 	if CH.db["AutoShow"] then
-		B:RegisterEvent("CHAT_MSG_WHISPER", CH.AutoShow)
-		B:RegisterEvent("CHAT_MSG_BN_WHISPER", CH.AutoShow)
 		B:RegisterEvent("PLAYER_REGEN_DISABLED", CH.AutoShow)
+	else
+		B:UnregisterEvent("PLAYER_REGEN_DISABLED", CH.AutoShow)
+	end
+
+	if CH.db["AutoShow"] and CH.db["ASWhisper"]  then
 		B:UnregisterEvent("CHAT_MSG_WHISPER", CH.WhisperFlash)
 		B:UnregisterEvent("CHAT_MSG_BN_WHISPER", CH.WhisperFlash)
 	else
 		B:RegisterEvent("CHAT_MSG_WHISPER", CH.WhisperFlash)
 		B:RegisterEvent("CHAT_MSG_BN_WHISPER", CH.WhisperFlash)
-		B:UnregisterEvent("CHAT_MSG_WHISPER", CH.AutoShow)
-		B:UnregisterEvent("CHAT_MSG_BN_WHISPER", CH.AutoShow)
-		B:UnregisterEvent("PLAYER_REGEN_DISABLED", CH.AutoShow)
 	end
 end
 
@@ -148,6 +154,18 @@ end
 
 local function finishFunc()
 	CH.ChatToggle.text:SetText(chatIn and "<" or ">")
+end
+
+local function resetChatAnchor(self, _, parent)
+	if not parent or parent == UIParent then
+		CH.ChatBG:ClearAllPoints()
+		CH.ChatBG:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", chatIn and 0 or -C.db["Chat"]["ChatWidth"] - 28, 30)
+		CH.ChatBG:SetWidth(C.db["Chat"]["ChatWidth"])
+		CH.ChatBG:SetHeight(C.db["Chat"]["ChatHeight"])
+
+		self:ClearAllPoints()
+		self:SetAllPoints(CH.ChatBG)
+	end
 end
 
 function CH:ChatHide()
@@ -233,17 +251,13 @@ function CH:ChatHide()
 		end
 	end)
 
+	-- Misc
 	_G.GeneralDockManager:SetParent(CH.ChatBG)
 	_G.ChatFrameMenuButton:GetParent():SetParent(CH.ChatBG)
+	if copy then copy:SetParent(CH.ChatBG) end
 
-	if copy then
-		copy:SetParent(CH.ChatBG)
-	end
-
-	CH:UpdateChatSize()
-	hooksecurefunc("FCF_SavePositionAndDimensions", function()
-		P:Delay(.1, CH.UpdateChatSize)
-	end)
+	hooksecurefunc(_G.ChatFrame1, "SetPoint", resetChatAnchor)
+	resetChatAnchor(_G.ChatFrame1)
 
 	CH:UpdateAutoShow()
 	CH:UpdateAutoHide()
