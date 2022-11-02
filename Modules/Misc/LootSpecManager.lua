@@ -322,7 +322,7 @@ function LSM:UpdateData()
 end
 
 function LSM:CreateEJButton()
-	local filter = _G.EncounterJournalEncounterFrameInfoLootScrollFrameFilterToggle
+	local filter = _G.EncounterJournalEncounterFrameInfoFilterToggle
 	local btn = P.CreateButton(filter, 75, 28, L["Loot Spec"])
 	btn:SetPoint("BOTTOM", filter, "TOP", 0, 5)
 	btn.Text:SetFont(DB.Font[1], 15, DB.Font[3])
@@ -345,7 +345,7 @@ function LSM:OnLogin()
 	B:RegisterEvent("UPDATE_INSTANCE_INFO", LSM.UpdateData)
 	B:RegisterEvent("ENCOUNTER_START", LSM.EncounterStart)
 	B:RegisterEvent("CHALLENGE_MODE_START", LSM.MythicPlusStart)
-	--P:AddCallbackForAddon("Blizzard_EncounterJournal", LSM.CreateEJButton)
+	P:AddCallbackForAddon("Blizzard_EncounterJournal", LSM.CreateEJButton)
 end
 
 SlashCmdList["NDUI_PLUS_LSM"] = function()
