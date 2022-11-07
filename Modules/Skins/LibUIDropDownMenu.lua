@@ -96,7 +96,8 @@ local function reskinDropDown(self)
 	if self.Backdrop and not self.styled then
 		self.Backdrop:SetBackdrop(nil)
 		self.Backdrop.SetBackdrop = B.Dummy
-		self.__bg = B.SetBD(self.Backdrop, .7)
+		self.__bg = B.SetBD(self, .7)
+		self.__bg:SetFrameLevel(self:GetFrameLevel() + 1)
 		self.__bg:SetInside(self.Backdrop)
 
 		self.styled = true

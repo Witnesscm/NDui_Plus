@@ -286,9 +286,8 @@ function S:Auctionator()
 			end
 
 			local BagListing = SellingFrame.BagListing
-			if BagListing and BagListing.ScrollFrame then
-				B.StripTextures(BagListing.ScrollFrame.Background)
-				B.ReskinScroll(BagListing.ScrollFrame.ScrollBar)
+			if BagListing and BagListing.ScrollBox then
+				B.ReskinTrimScroll(BagListing.ScrollBar)
 
 				local frameMap = BagListing.frameMap
 				if frameMap then

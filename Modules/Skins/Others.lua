@@ -135,7 +135,7 @@ end
 
 S:RegisterSkin("WorldQuestsList", S.WorldQuestsList)
 S:RegisterSkin("PremadeGroupsFilter", S.PremadeGroupsFilter)
-S:RegisterSkin("MogPartialSets", S.MogPartialSets)
+--S:RegisterSkin("MogPartialSets", S.MogPartialSets)
 S:RegisterSkin("BigWigs_Options", S.BigWigs_Options)
 --S:RegisterSkin("xCT+", S.xCT)
 S:RegisterSkin("LibQTip")
