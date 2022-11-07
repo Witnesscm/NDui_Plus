@@ -133,6 +133,7 @@ P.DefaultSettings = {
 		ExtVendorUI = true,
 		ExtMacroUI =  false,
 		WormholeHelper = true,
+		TrainAll = true,
 	},
 }
 

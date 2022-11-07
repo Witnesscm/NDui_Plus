@@ -26,14 +26,16 @@ end
 do
 	local function TrainAllButton_OnEnter(self)
 		GameTooltip:ClearLines()
-		GameTooltip:AddLine(format(L["Train All Cost"], self.Count, GetCoinTextureString(self.Cost)), 1, 1, 1)
+		GameTooltip:AddLine(format(L["TrainAllCost"], self.Count, GetCoinTextureString(self.Cost)), 1, 1, 1)
 		GameTooltip:Show()
 	end
 
 	function M:TrainAllSkills()
+		if not M.db["TrainAll"] then return end
+
 		local button = CreateFrame("Button", nil, ClassTrainerFrame, "MagicButtonTemplate")
 		button:SetPoint("RIGHT", ClassTrainerTrainButton, "LEFT", -2, 0)
-		button:SetText(L["Train All"])
+		button:SetText(L["TrainAll"])
 		button.Count = 0
 		button.Cost = 0
 		ClassTrainerFrame.TrainAllButton = button
@@ -62,7 +64,7 @@ do
 		end
 
 		hooksecurefunc("ClassTrainerFrame_Update",function()
-			local sum, total = 0, 0;
+			local sum, total = 0, 0
 			for i = 1, GetNumTrainerServices() do
 				if select(2, GetTrainerServiceInfo(i)) == "available" then
 					sum = sum + 1
