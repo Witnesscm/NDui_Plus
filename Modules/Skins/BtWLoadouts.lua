@@ -84,6 +84,27 @@ local function reskinEssenceList(self)
 	end
 end
 
+local function reskinConduitList(self)
+	local header = self.CategoryButton.Container
+	if header and not header.styled then
+		header:DisableDrawLayer("BACKGROUND")
+		local bg = B.CreateBDFrame(header, .25)
+		bg:SetPoint("TOPLEFT", 2, 0)
+		bg:SetPoint("BOTTOMRIGHT", 15, 0)
+
+		header.styled = true
+	end
+
+	for button in self.pool:EnumerateActive() do
+		if button and not button.styled then
+			button.Spec.IconOverlay:Hide()
+			B.ReskinIcon(button.Spec.Icon):SetFrameLevel(8)
+
+			button.styled = true
+		end
+	end
+end
+
 function S:BtWLoadouts()
 	local frame = _G.BtWLoadoutsFrame
 	if not frame then return end
@@ -151,6 +172,14 @@ function S:BtWLoadouts()
 		end
 	end
 
+	local DFTalents = frame.DFTalents
+	if DFTalents then
+		B.StripTextures(DFTalents.Inset)
+		P.ReskinDropDown(DFTalents.SpecDropDown)
+		B.ReskinInput(DFTalents.Name)
+		B.ReskinScroll(DFTalents.Scroll.ScrollBar)
+	end
+
 	local PvPTalents = frame.PvPTalents
 	if PvPTalents then
 		B.StripTextures(PvPTalents.Inset)
@@ -176,6 +205,16 @@ function S:BtWLoadouts()
 		P.ReskinDropDown(Soulbinds.SoulbindDropDown)
 		B.ReskinInput(Soulbinds.Name)
 		B.ReskinScroll(Soulbinds.Scroll.ScrollBar)
+		P.ReskinDropDown(Soulbinds.ClassDropDown)
+
+		local ConduitList = Soulbinds.ConduitList
+		if ConduitList then
+			hooksecurefunc(ConduitList.ScrollBox, "Update", function(self)
+				for _, button in self:EnumerateFrames() do
+					reskinConduitList(button)
+				end
+			end)
+		end
 	end
 
 	local Equipment = frame.Equipment
@@ -201,8 +240,9 @@ function S:BtWLoadouts()
 	if ActionBars then
 		B.StripTextures(ActionBars.Inset)
 		B.ReskinInput(ActionBars.Name)
+		B.ReskinScroll(ActionBars.Scroll.ScrollBar)
 
-		for _, slot in ipairs(ActionBars.Slots) do
+		for _, slot in ipairs(ActionBars.Scroll:GetScrollChild().Slots) do
 			B.StripTextures(slot)
 			slot.Icon:SetTexCoord(unpack(DB.TexCoord))
 			slot.Icon:SetInside()
@@ -230,6 +270,11 @@ function S:BtWLoadouts()
 			if dropDown then
 				P.ReskinDropDown(dropDown)
 			end
+		end
+
+		local ZoneEditBox = Conditions.ZoneEditBox
+		if ZoneEditBox then
+			B.ReskinInput(ZoneEditBox, 20)
 		end
 
 		local AffixesList = _G.BtWLoadoutsConditionsAffixesDropDownList
