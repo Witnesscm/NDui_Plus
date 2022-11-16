@@ -6,7 +6,7 @@
 	<Script file="Loot.lua"/>
 	<Script file="LootRoll.lua"/>
 	<Script file="LootSpecManager.lua"/>
-	<Script file="SearchForIcons.lua"/>
+	<Script file="IconSearch.lua"/>
 	<Script file="ParagonRepRewards.lua"/>
 	<Script file="ImprovedStableFrame.lua"/>
 	<Script file="GarrisonTabs.lua"/>
