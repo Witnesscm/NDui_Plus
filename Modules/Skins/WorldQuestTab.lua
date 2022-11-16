@@ -188,4 +188,4 @@ function S:WorldQuestTab()
 	B:RegisterEvent("PLAYER_ENTERING_WORLD", reskinSettings)
 end
 
---S:RegisterSkin("WorldQuestTab", S.WorldQuestTab)
+S:RegisterSkin("WorldQuestTab", S.WorldQuestTab)

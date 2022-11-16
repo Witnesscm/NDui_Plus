@@ -13,6 +13,11 @@ local questItems = {
 }
 
 function T:AlreadyUsed_CheckStatus()
+	if not self.GetItem then return end
+
+	local name = self:GetName()
+	if not T.ItemTooltips[name] then return end
+
 	local _, link = self:GetItem()
 	if not link then return end
 
