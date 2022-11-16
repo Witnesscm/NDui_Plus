@@ -5,7 +5,7 @@ local T = P:RegisterModule("Tooltip")
 function T:HideCreatedString()
 	local createdString = gsub(ITEM_CREATED_BY, "%%s", ".+")
 
-	GameTooltip:HookScript("OnTooltipSetItem", function(self)
+	TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Item, function(self)
 		if not T.db["HideCreator"] then return end
 
 		for i = 2, self:NumLines() do

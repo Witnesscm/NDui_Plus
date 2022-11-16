@@ -30,8 +30,5 @@ function T:AlreadyUsed_CheckStatus()
 end
 
 function T:AlreadyUsed()
-	GameTooltip:HookScript("OnTooltipSetItem", T.AlreadyUsed_CheckStatus)
-	ItemRefTooltip:HookScript("OnTooltipSetItem", T.AlreadyUsed_CheckStatus)
-	ShoppingTooltip1:HookScript("OnTooltipSetItem", T.AlreadyUsed_CheckStatus)
-	EmbeddedItemTooltip:HookScript("OnTooltipSetItem", T.AlreadyUsed_CheckStatus)
+	TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Item, T.AlreadyUsed_CheckStatus)
 end
