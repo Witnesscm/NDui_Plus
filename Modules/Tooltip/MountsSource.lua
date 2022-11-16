@@ -30,7 +30,7 @@ function T:GetOrCreateMountTable(spell)
 	return self.MountTable[spell]
 end
 
-local function addLine(self, source, isCollectedText, type, noadd)
+local function AddLine(self, source, isCollectedText, type, noadd)
 	for i = 1, self:NumLines() do
 		local line = _G[self:GetName() .. "TextLeft" .. i]
 		if not line then break end
@@ -50,12 +50,24 @@ function T:MountsSource()
 		if not T.db["MountsSource"] then return end
 
 		local id = select(10, UnitAura(...))
-		if not id then return end
-		local tab = T:GetOrCreateMountTable(id)
-		if not tab then return end
-		addLine(self, tab.source, T:IsCollected(id) and COLLECTED or NOT_COLLECTED, SOURCE)
-		self:Show()
+		local table = id and T:GetOrCreateMountTable(id)
+		if table then
+			AddLine(self, table.source, T:IsCollected(id) and COLLECTED or NOT_COLLECTED, SOURCE)
+		end
 	end)
+
+	hooksecurefunc(GameTooltip, "SetUnitBuffByAuraInstanceID", function(self, unit, auraInstanceID)
+		if not T.db["MountsSource"] then return end
+
+		local data = C_UnitAuras.GetAuraDataByAuraInstanceID(unit, auraInstanceID)
+		if not data then return end
+
+		local table = data.spellId and T:GetOrCreateMountTable(data.spellId)
+		if table then
+			AddLine(self, table.source, T:IsCollected(data.spellId) and COLLECTED or NOT_COLLECTED, SOURCE)
+		end
+	end)
+
 
 	B:UnregisterEvent("PLAYER_ENTERING_WORLD", T.MountsSource)
 end
