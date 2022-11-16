@@ -20,7 +20,7 @@ local function AddChatIcon(link, linkType, id)
 	if cache[link] then return cache[link] end
 
 	local texture
-	if linkType == "spell" or linkType == "enchant" then
+	if linkType == "spell" or linkType == "enchant" or linkType == "mount" then
 		texture = GetSpellTexture(id)
 	elseif linkType == "item" or linkType == "keystone" then
 		texture = GetItemIcon(id)
