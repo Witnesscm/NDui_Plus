@@ -105,7 +105,7 @@ local function reskinBagItem(button)
 
 	button.IconMask:Hide()
 	button.EmptySlot:Hide()
-	button:SetPushedTexture(P.ClearTexture)
+	button:ClearPushedTexture()
 	button.Icon:SetInside(button, 2, 2)
 	button.Highlight:SetColorTexture(1, 1, 1, .25)
 	button.Highlight:SetAllPoints(button.Icon)

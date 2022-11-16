@@ -153,7 +153,7 @@ do
 	local function resetCollapseTexture(self, texture)
 		if self.settingTexture then return end
 		self.settingTexture = true
-		self:SetNormalTexture(P.ClearTexture)
+		self:ClearNormalTexture()
 
 		if texture and texture ~= "" then
 			if strfind(texture, "Plus") or strfind(texture, "Closed") or texture == 130838 then
@@ -169,9 +169,9 @@ do
 	end
 
 	function P:ReskinCollapse(isAtlas)
-		self:SetNormalTexture(P.ClearTexture)
-		self:SetHighlightTexture(P.ClearTexture)
-		self:SetPushedTexture(P.ClearTexture)
+		self:ClearNormalTexture()
+		self:ClearHighlightTexture()
+		self:ClearPushedTexture()
 
 		local bg = B.CreateBDFrame(self, .25, true)
 		bg:ClearAllPoints()
