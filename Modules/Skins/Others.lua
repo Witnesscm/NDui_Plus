@@ -37,46 +37,50 @@ function S:WorldQuestsList()
 end
 
 function S:MogPartialSets()
-	if _G.MogPartialSetsFilterButton then
-		B.Reskin(_G.MogPartialSetsFilterButton)
+	if _G.MogPartialSets_FilterButton then
+		B.ReskinFilterButton(_G.MogPartialSets_FilterButton)
 	end
 
-	local filter = _G.MogPartialSetsFilter
+	local filter = _G.MogPartialSets_Filter
 	if filter then
 		B.StripTextures(filter)
-		B.SetBD(filter)
+		B.SetBD(filter, .7)
+		filter:SetScale(NDuiADB["UIScale"])
 
-		for _, child in pairs {filter:GetChildren()} do
-			local objType = child:GetObjectType()
-			if objType == "CheckButton" then
+		for _, key in ipairs({"ShowExtraSetsToggle", "OnlyFavoriteToggle", "FavoriteVariantsToggle", "UseHiddenIfMissingToggle"}) do
+			local frame = filter[key]
+			local child = frame and frame:GetChildren()
+			if child and child:GetObjectType() == "CheckButton" then
 				B.ReskinCheck(child)
-			elseif objType == "EditBox" then
-				P.ReskinInput(child)
-			elseif objType == "Button" and child.Text then
-				B.Reskin(child)
 			end
+		end
+
+		for _, key in ipairs({"HeadSlot", "ShoulderSlot", "CloakSlot", "ChestSlot", "WristSlot", "HandsSlot", "WaistSlot", "LegsSlot", "FeetSlot"}) do
+			local slot = filter[key]
+			if slot then
+				B.ReskinCheck(slot.Ignored)
+				B.ReskinCheck(slot.Hidden)
+			end
+		end
+
+		for _, key in ipairs({"OkButton", "RefreshButton"}) do
+			local bu = filter[key]
+			if bu then
+				B.Reskin(bu)
+			end
+		end
+
+		local editbox = _G.MogPartialSets_FilterMaxMissingPiecesEditBox
+		if editbox then
+			B.ReskinInput(editbox, 20, 15)
+			editbox:ClearAllPoints()
+			editbox:SetPoint("TOPLEFT", 6, 0)
 		end
 	end
 end
 
 function S:BigWigs_Options()
 	P.ReskinTooltip(_G.BigWigsOptionsTooltip)
-end
-
-function S:xCT()
-	local styled
-	InterfaceOptionsCombatPanel:HookScript("OnShow", function(self)
-		if styled then return end
-
-		for i = 1, self:GetNumChildren() do
-			local child = select(i, self:GetChildren())
-			if child:GetObjectType() == "Button" and child:GetText() then
-				B.Reskin(child)
-			end
-		end
-
-		styled = true
-	end)
 end
 
 function S:LibQTip()
@@ -135,9 +139,8 @@ end
 
 S:RegisterSkin("WorldQuestsList", S.WorldQuestsList)
 S:RegisterSkin("PremadeGroupsFilter", S.PremadeGroupsFilter)
---S:RegisterSkin("MogPartialSets", S.MogPartialSets)
+S:RegisterSkin("MogPartialSets", S.MogPartialSets)
 S:RegisterSkin("BigWigs_Options", S.BigWigs_Options)
---S:RegisterSkin("xCT+", S.xCT)
 S:RegisterSkin("LibQTip")
 S:RegisterSkin("BagSync", S.BagSync)
 S:RegisterSkin("SavedInstances", S.SavedInstances)

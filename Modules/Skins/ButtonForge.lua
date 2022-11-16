@@ -4,11 +4,13 @@ local S = P:GetModule("Skins")
 local Bar = B:GetModule("Actionbar")
 
 local _G = getfenv(0)
+local margin = C.Bars.margin
 
 local function reskinButton(self)
 	local bu = self.Widget
 	local icon = self.WIcon
 
+	bu:SetSize(34, 34)
 	Bar:StyleActionButton(bu, P.BarConfig)
 	icon:SetTexCoord(unpack(DB.TexCoord))
 	icon.SetTexCoord = B.Dummy
@@ -23,9 +25,17 @@ end
 function S:ButtonForge()
 	if not S.db["ButtonForge"] then return end
 
+	local Const = _G.BFConst
 	local BFUtil = _G.BFUtil
 	local BFButton = _G.BFButton
 	local BFBar = _G.BFBar
+
+	Const.ButtonGap = margin
+	Const.ButtonSize = 34
+	Const.BG = Const.ButtonGap
+	Const.BS = Const.ButtonSize
+	Const.BSize = Const.BS + Const.BG
+	Const.GFrac = Const.BG / Const.BSize
 
 	for _, button in pairs(BFUtil.ActiveButtons) do
 		reskinButton(button)
@@ -41,7 +51,7 @@ function S:ButtonForge()
 
 	for _, bar in pairs(BFUtil.ActiveBars) do
 		reskinBar(bar)
-		bar:SetButtonGap(2)
+		bar:SetButtonGap(margin)
 	end
 
 	local origNewBar = BFBar.New
@@ -53,7 +63,7 @@ function S:ButtonForge()
 	end
 
 	hooksecurefunc(BFBar, "Configure", function(self)
-		self:SetButtonGap(2)
+		self:SetButtonGap(margin)
 	end)
 
 	local configButtons = {
@@ -65,9 +75,10 @@ function S:ButtonForge()
 		"BFToolbarRightClickSelfCast"
 	}
 
-	for _, key in pairs(configButtons) do
+	for i, key in pairs(configButtons) do
 		local bu = _G[key]
 		if bu then
+			bu:SetSize(36, 36)
 			Bar:StyleActionButton(bu, P.BarConfig)
 		end
 	end
@@ -99,4 +110,4 @@ function S:ButtonForge()
 	end
 end
 
---S:RegisterSkin("ButtonForge", S.ButtonForge)
+S:RegisterSkin("ButtonForge", S.ButtonForge)

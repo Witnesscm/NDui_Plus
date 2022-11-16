@@ -17,7 +17,6 @@ P.RotationRightTex = Texture.."UI-RotationRight-Big-Up"
 P.SwapTex = Texture.."Swap"
 P.LEFT_MOUSE_BUTTON = [[|TInterface\TutorialFrame\UI-Tutorial-Frame:12:12:0:0:512:512:10:65:228:283|t]]
 P.RIGHT_MOUSE_BUTTON = [[|TInterface\TutorialFrame\UI-Tutorial-Frame:12:12:0:0:512:512:10:65:330:385|t]]
-P.ClearTexture = P.IsRetail() and 0 or ""
 
 P.BarConfig = {
 	icon = {
@@ -35,15 +34,27 @@ P.BarConfig = {
 		texCoord = DB.TexCoord,
 		color = {.3, .3, .3},
 		points = {
-			{"TOPLEFT", 0, 0},
-			{"BOTTOMRIGHT", 0, 0},
+			{"TOPLEFT", C.mult, -C.mult},
+			{"BOTTOMRIGHT", -C.mult, C.mult},
 		},
 	},
 	flash = {file = DB.textures.flash},
-	pushedTexture = {file = DB.textures.pushed},
-	checkedTexture = {file = DB.textures.checked},
+	pushedTexture = {
+		file = DB.textures.pushed,
+		points = {
+			{"TOPLEFT", C.mult, -C.mult},
+			{"BOTTOMRIGHT", -C.mult, C.mult},
+		},
+	},
+	checkedTexture = {
+		file = 0,
+		points = {
+			{"TOPLEFT", C.mult, -C.mult},
+			{"BOTTOMRIGHT", -C.mult, C.mult},
+		},
+	},
 	highlightTexture = {
-		file = "",
+		file = 0,
 		points = {
 			{"TOPLEFT", C.mult, -C.mult},
 			{"BOTTOMRIGHT", -C.mult, C.mult},
