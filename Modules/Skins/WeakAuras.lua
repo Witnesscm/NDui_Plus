@@ -420,6 +420,42 @@ function S:WeakAurasTextureButton(widget)
 	hl:SetInside()
 end
 
+local function reskinStepper(stepper, direction)
+	B.StripTextures(stepper)
+	stepper:SetWidth(19)
+
+	local tex = stepper:CreateTexture(nil, "ARTWORK")
+	tex:SetAllPoints()
+	B.SetupArrow(tex, direction)
+	stepper.__texture = tex
+
+	stepper:HookScript("OnEnter", B.Texture_OnEnter)
+	stepper:HookScript("OnLeave", B.Texture_OnLeave)
+end
+
+function S:WeakAurasSpinBox(widget)
+	local frame = widget.frame
+	local editbox = widget.editbox
+
+	B.StripTextures(editbox)
+	local bg = B.CreateBDFrame(frame, 0, true)
+	bg:SetPoint("TOPLEFT", editbox, "TOPLEFT", -6, -1)
+	bg:SetPoint("BOTTOMRIGHT", editbox, "BOTTOMRIGHT", 2, 1)
+	local bar = frame:CreateTexture(nil, "ARTWORK")
+	bar:SetTexture(DB.normTex)
+	bar:SetVertexColor(1, .8, 0, .8)
+	bar:SetPoint("TOPLEFT", bg, C.mult, -C.mult)
+	bar:SetPoint("BOTTOMLEFT", bg, C.mult, C.mult)
+	bar:SetPoint("RIGHT", widget.progressBar, "RIGHT")
+	local thumb = frame:CreateTexture(nil, "ARTWORK")
+	thumb:SetTexture(DB.sparkTex)
+	thumb:SetBlendMode("ADD")
+	thumb:SetSize(20, 36)
+	thumb:SetPoint("CENTER", widget.progressBarHandle, "CENTER")
+	reskinStepper(widget.leftbutton, "left")
+	reskinStepper(widget.rightbutton, "right")
+end
+
 function S:WeakAurasTreeGroup(widget)
 	S:Ace3_Frame(widget)
 	widget.treeframe:GetChildren():HideBackdrop()
@@ -435,4 +471,5 @@ S:RegisterAceGUIWidget("WeakAurasMultiLineEditBox")
 S:RegisterAceGUIWidget("WeakAurasLoadedHeaderButton")
 S:RegisterAceGUIWidget("WeakAurasIconButton")
 S:RegisterAceGUIWidget("WeakAurasTextureButton")
+S:RegisterAceGUIWidget("WeakAurasSpinBox")
 S:RegisterAceGUIContainer("WeakAurasTreeGroup")
