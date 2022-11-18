@@ -35,7 +35,7 @@ local function GetEncounterList(instanceID)
 end
 
 function LSM:UpdateRaidData()
-	local maxTier = EJ_GetNumTiers()
+	local maxTier = EJ_GetNumTiers() - 1 -- 10.0.2 add Mythic+ Dungeons tier
 	if EJ_GetCurrentTier() ~= maxTier then
 		EJ_SelectTier(maxTier)
 	end
