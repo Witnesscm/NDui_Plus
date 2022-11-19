@@ -175,7 +175,7 @@ function S:Auctionator()
 		local ShoppingList = _G.AuctionatorShoppingFrame
 		if ShoppingList then
 			reskinListHeader(ShoppingList.ResultsListing)
-			reskinButtons(ShoppingList, {"Import", "Export", "AddItem", "ManualSearch", "ExportCSV", "OneItemSearchButton", "SortItems"})
+			reskinButtons(ShoppingList, {"Import", "Export", "AddItem", "ManualSearch", "ExportCSV", "SortItems"})
 
 			if ShoppingList.ListDropdown then
 				P.ReskinDropDown(ShoppingList.ListDropdown)
@@ -225,14 +225,10 @@ function S:Auctionator()
 				end
 			end
 
-			local OneItemSearchBox = ShoppingList.OneItemSearchBox
-			if OneItemSearchBox then
-				B.ReskinInput(OneItemSearchBox)
-			end
-
-			local OneItemSearchExtendedButton = ShoppingList.OneItemSearchExtendedButton
-			if OneItemSearchExtendedButton then
-				B.Reskin(OneItemSearchExtendedButton)
+			local OneItemSearch = ShoppingList.OneItemSearch
+			if OneItemSearch then
+				reskinButtons(OneItemSearch, {"SearchButton", "ExtendedButton"})
+				B.ReskinInput(OneItemSearch.SearchBox)
 			end
 
 			local TabsContainer = ShoppingList.RecentsTabsContainer
