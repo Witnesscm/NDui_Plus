@@ -2,6 +2,13 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 
 P.Changelog = [[
+v1.7.3
+[易用性] 修复公会银行装等报错
+[易用性] 修复拾取专精管理团本数据
+[易用性] 添加宏命令面板扩展污染提示
+[美化] 添加WeakAurasSpinBox组件美化
+[美化] 更新Auctionator美化
+
 v1.7.2
 [主要] 更新支持10.0.2
 [动作条] 添加动作条678渐隐
