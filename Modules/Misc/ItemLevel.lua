@@ -57,7 +57,7 @@ function M:ItemLevel_GuildBank()
 	hooksecurefunc(_G.GuildBankFrame, "Update", function(self)
 		if self.mode == "bank" then
 			local tab = GetCurrentGuildBankTab()
-			local button, index, column
+			local button, index, column, texture, locked
 			for i = 1, MAX_GUILDBANK_SLOTS_PER_TAB do
 				index = mod(i, NUM_SLOTS_PER_GUILDBANK_GROUP)
 				if index == 0 then
@@ -66,7 +66,12 @@ function M:ItemLevel_GuildBank()
 				column = ceil((i-0.5)/NUM_SLOTS_PER_GUILDBANK_GROUP)
 				button = self.Columns[column].Buttons[index]
 
-				M.ItemLevel_UpdateGuildBank(button, tab, i)
+				if button and button:IsShown() then
+					texture, _, locked = GetGuildBankItemInfo(tab, i)
+					if texture and not locked then
+						M.ItemLevel_UpdateGuildBank(button, tab, i)
+					end
+				end
 			end
 		end
 	end)
