@@ -9,8 +9,8 @@ function M:ExtMacroUI()
 	_G.MacroFrame:SetSize(535, 558)
 	SetUIPanelAttribute(_G.MacroFrame, "width", 535)
 	_G.MacroFrame.MacroSelector:SetSize(516, 232)
-	_G.MacroFrame.MacroSelector:SetCustomStride(12)
-	_G.MacroFrame.MacroSelector:SetCustomPadding(5, 5, 5, 5, 13, 10)
+	_G.MacroFrame.MacroSelector:SetCustomStride(12) -- cause taint
+	_G.MacroFrame.MacroSelector:SetCustomPadding(5, 5, 5, 5, 13, 10) -- cause taint
 	_G.MacroHorizontalBarLeft:SetSize(452, 16)
 	_G.MacroHorizontalBarLeft:SetPoint("TOPLEFT", 2, -298)
 	_G.MacroFrameSelectedMacroBackground:SetPoint("TOPLEFT", 5, -306)
