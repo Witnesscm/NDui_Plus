@@ -103,7 +103,7 @@ function M:IconSearch_Setup()
 		self.SearchBox = editbox
 
 		local helpInfo = CreateFrame("Frame", nil, editbox)
-		helpInfo:SetOutside(editbox.searchIcon, 10, 10)
+		helpInfo:SetOutside(editbox.searchIcon, 6, 6)
 		helpInfo.title = L["IconSearch"]
 		B.AddTooltip(helpInfo, "ANCHOR_RIGHT", L["IconSearchTip"], "info")
 
