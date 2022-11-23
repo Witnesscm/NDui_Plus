@@ -11,7 +11,7 @@ local upper = string.upper
 local GetNumLootItems, GetLootSlotLink, GetLootSlotInfo = GetNumLootItems, GetLootSlotLink, GetLootSlotInfo
 
 local ScrollBoxElementHeight = 46
-local ScrollBoxSpacing = 4
+local ScrollBoxSpacing = 2
 
 function LT:OnLogin()
 	if not LT.db["Enable"] then return end
@@ -19,7 +19,6 @@ function LT:OnLogin()
 	local LootFrame = _G.LootFrame
 	LootFrame.panelMaxHeight = 1000
 	LootFrame.ScrollBox:SetPoint("BOTTOMRIGHT", -4, 4)
-	LootFrame.ScrollBox:GetPadding():SetSpacing(ScrollBoxSpacing)
 
 	local title = LootFrame:CreateFontString(nil, "OVERLAY")
 	title:SetFont(DB.Font[1], DB.Font[2]+2, DB.Font[3])
