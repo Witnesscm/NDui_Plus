@@ -1,7 +1,7 @@
 local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 local S = P:GetModule("Skins")
-local Bar = B:GetModule("Actionbar")
+local AB = P:GetModule("ActionBar")
 
 local _G = getfenv(0)
 local margin = C.Bars.margin
@@ -11,7 +11,7 @@ local function reskinButton(self)
 	local icon = self.WIcon
 
 	bu:SetSize(34, 34)
-	Bar:StyleActionButton(bu, P.BarConfig)
+	AB:StyleActionButton(bu, AB.BarConfig)
 	icon:SetTexCoord(unpack(DB.TexCoord))
 	icon.SetTexCoord = B.Dummy
 end
@@ -79,7 +79,7 @@ function S:ButtonForge()
 		local bu = _G[key]
 		if bu then
 			bu:SetSize(36, 36)
-			Bar:StyleActionButton(bu, P.BarConfig)
+			AB:StyleActionButton(bu, AB.BarConfig)
 		end
 	end
 

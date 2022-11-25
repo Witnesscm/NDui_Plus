@@ -255,7 +255,7 @@ function S:BtWLoadouts()
 			hl:SetColorTexture(1, 1, 1, .25)
 			hl:SetInside()
 
-			slot:SetPushedTexture(DB.textures.pushed)
+			slot:SetPushedTexture(DB.pushedTex)
 		end
 	end
 

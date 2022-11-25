@@ -23,7 +23,7 @@ function S:tdBattlePetScript()
 			B.PixelIcon(AutoButton, "Interface\\Icons\\Trade_Engineering", true)
 			B.CreateSD(AutoButton)
 			AutoButton.HL:SetAllPoints(AutoButton)
-			AutoButton:SetPushedTexture(DB.textures.pushed)
+			AutoButton:SetPushedTexture(DB.pushedTex)
 		end
 
 		local ScriptFrame = PetBattle.ScriptFrame

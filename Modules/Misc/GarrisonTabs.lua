@@ -48,7 +48,7 @@ function M:GarrisonTabs_Create()
 		if C.db["Skins"]["BlizzardSkins"] then
 			tab:GetNormalTexture():SetTexCoord(unpack(DB.TexCoord))
 			tab:GetRegions():Hide()
-			tab:SetCheckedTexture(DB.textures.pushed)
+			tab:SetCheckedTexture(DB.pushedTex)
 			tab:GetHighlightTexture():SetColorTexture(1, 1, 1, .25)
 			B.CreateBDFrame(tab)
 		end
