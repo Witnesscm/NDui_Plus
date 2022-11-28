@@ -82,7 +82,6 @@ L["Too many sets here, please delete one of them and try again."] = "Too many se
 L["GlobalFadeEnable"] = "Enable Global Fade"
 L["Fade Alpha"] = "Fade Out Alpha"
 L["Bar"] = "Bar"
-L["CustomBar"] = "CustomBar"
 L["PetBar"] = "PetBar"
 L["StanceBar"] = "StanceBar"
 L["MountsSource"] = "Mounts Source"

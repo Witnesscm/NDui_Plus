@@ -82,7 +82,6 @@ L["Too many sets here, please delete one of them and try again."] = "Trop d'ense
 L["GlobalFadeEnable"] = "Activer le fondu global"
 L["Fade Alpha"] = "Alpha du fondu"
 L["Bar"] = "Barre"
-L["CustomBar"] = "Barre personnalisée"
 L["PetBar"] = "Barre de familiers"
 L["StanceBar"] = "Barre de posture"
 L["MountsSource"] = "Source des montures"

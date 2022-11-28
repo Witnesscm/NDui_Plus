@@ -82,7 +82,6 @@ L["Too many sets here, please delete one of them and try again."] = "天赋方�
 L["GlobalFadeEnable"] = "启用全局渐隐"
 L["Fade Alpha"] = "渐隐透明度"
 L["Bar"] = "动作条"
-L["CustomBar"] = "附加动作条"
 L["PetBar"] = "宠物动作条"
 L["StanceBar"] = "姿态动作条"
 L["MountsSource"] = "显示坐骑来源"

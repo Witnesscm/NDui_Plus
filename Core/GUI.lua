@@ -132,9 +132,8 @@ G.OptionList = { -- type, key, value, name, horizon, data, callback, tooltip, sc
 		{1, "ActionBar", "Bar6", L["Bar"].."6*", true, nil, updateABFaderState},
 		{1, "ActionBar", "Bar7", L["Bar"].."7*", nil, nil, updateABFaderState},
 		{1, "ActionBar", "Bar8", L["Bar"].."8*", true, nil, updateABFaderState},
-		{1, "ActionBar", "CustomBar", L["CustomBar"].."*", nil, nil, updateABFaderState},
-		{1, "ActionBar", "PetBar", L["PetBar"].."*", true, nil, updateABFaderState},
-		{1, "ActionBar", "StanceBar", L["StanceBar"].."*", nil, nil, updateABFaderState},
+		{1, "ActionBar", "PetBar", L["PetBar"].."*", nil, nil, updateABFaderState},
+		{1, "ActionBar", "StanceBar", L["StanceBar"].."*", true, nil, updateABFaderState},
 	},
 	[2] = {
 		{1, "UnitFrames", "Fader", HeaderTag..L["UnitFramesFader"].."*", nil, setupUFsFader, updateUFsFader, L["UnitFramesFaderTip"]},

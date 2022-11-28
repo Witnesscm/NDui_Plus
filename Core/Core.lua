@@ -39,7 +39,6 @@ P.DefaultSettings = {
 		Bar6 = false,
 		Bar7 = false,
 		Bar8 = false,
-		CustomBar = false,
 		PetBar = false,
 		StanceBar = false
 	},
