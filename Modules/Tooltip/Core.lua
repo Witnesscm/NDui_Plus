@@ -1,4 +1,4 @@
-local _, ns = ...
+local addonName, ns = ...
 local B, C, L, DB, P = unpack(ns)
 local T = P:RegisterModule("Tooltip")
 
@@ -29,12 +29,38 @@ function T:HideCreatedString()
 	end)
 end
 
+local covenantMap = {
+	[1] = "Kyrian",
+	[2] = "Venthyr",
+	[3] = "NightFae",
+	[4] = "Necrolord",
+}
+
+function T:GetCovenantIcon(covenantID, size)
+	local covenant = covenantMap[covenantID]
+	if covenant then
+		return format("|TInterface\\Addons\\"..addonName.."\\Media\\Texture\\Covenants\\%s:%d|t", covenant, size)
+	end
+
+	return ""
+end
+
+local covenantIDToName = {}
+function T:GetCovenantName(covenantID)
+	if not covenantIDToName[covenantID] then
+		local covenantData = C_Covenants.GetCovenantData(covenantID)
+
+		covenantIDToName[covenantID] = covenantData and covenantData.name
+	end
+
+	return covenantIDToName[covenantID] or covenantMap[covenantID]
+end
+
 function T:OnLogin()
 	T.myGUID = UnitGUID("player")
 	T.myFaction = UnitFactionGroup("player")
 
 	T:HideCreatedString()
 	T:Progression()
-	T:Covenant()
 	T:AlreadyUsed()
 end

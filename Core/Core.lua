@@ -117,7 +117,6 @@ P.DefaultSettings = {
 		AchievementList = "",
 		MountsSource = true,
 		HideCreator = false,
-		Covenant = true,
 	},
 	Misc = {
 		LootSpecManager = false,
