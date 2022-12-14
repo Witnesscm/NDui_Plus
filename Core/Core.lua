@@ -135,6 +135,7 @@ P.DefaultSettings = {
 		ExtMacroUI =  false,
 		WormholeHelper = true,
 		TrainAll = true,
+		ModifyProfessionsWidth = true,
 	},
 }
 
