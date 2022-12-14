@@ -512,6 +512,24 @@ local PARAGON_DATA = {
 				},
 			},
 		},
+
+	--Dragonflight
+		[66156] = { -- Dragonscale Expedition
+			factionID = 2507,
+			cache = 199472,
+		}, 
+		[66511] = { -- Iskaara Tuskarr
+			factionID = 2511,
+			cache = 199473,
+		}, 
+		[65606] = { -- Maruuk Centaur
+			factionID = 2503,
+			cache = 199474,
+		}, 
+		[71023] = { -- Valdrakken Accord
+			factionID = 2510,
+			cache = 199475,
+		},
 }
 
 local function PetIsCollected(itemID)
