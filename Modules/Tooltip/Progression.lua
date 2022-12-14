@@ -9,9 +9,7 @@ local cache = {}
 local compareGUID
 
 local tiers = {
-	"Castle Nathria",
-	"Sanctum of Domination",
-	"Sepulcher of the First Ones",
+	"Vault of the Incarnates",
 }
 
 local levels = {
@@ -38,278 +36,111 @@ local locales = {
 		short = L["[ABBR] Mythic"],
 		full = PLAYER_DIFFICULTY6
 	},
-	["Castle Nathria"] = {
-		short = L["[ABBR] Castle Nathria"],
-		full = L["Castle Nathria"]
+	["Vault of the Incarnates"] = {
+		short = L["[ABBR] Vault of the Incarnates"],
+		full = L["Vault of the Incarnates"]
 	},
-	["The Necrotic Wake"] = {
-		short = L["[ABBR] The Necrotic Wake"],
-		full = L["The Necrotic Wake"]
+	["Temple of the Jade Serpent"] = {
+		short = L["[ABBR] Temple of the Jade Serpent"],
+		full = L["Temple of the Jade Serpent"]
 	},
-	["Sepulcher of the First Ones"] = {
-		short = L["[ABBR] Sepulcher of the First Ones"],
-		full = L["Sepulcher of the First Ones"]
+	["Shadowmoon Burial Grounds"] = {
+		short = L["[ABBR] Shadowmoon Burial Grounds"],
+		full = L["Shadowmoon Burial Grounds"]
 	},
-	["Plaguefall"] = {
-		short = L["[ABBR] Plaguefall"],
-		full = L["Plaguefall"]
+	["Halls of Valor"] = {
+		short = L["[ABBR] Halls of Valor"],
+		full = L["Halls of Valor"]
 	},
-	["Mists of Tirna Scithe"] = {
-		short = L["[ABBR] Mists of Tirna Scithe"],
-		full = L["Mists of Tirna Scithe"]
+	["Court of Stars"] = {
+		short = L["[ABBR] Court of Stars"],
+		full = L["Court of Stars"]
 	},
-	["Halls of Atonement"] = {
-		short = L["[ABBR] Halls of Atonement"],
-		full = L["Halls of Atonement"]
+	["Ruby Life Pools"] = {
+		short = L["[ABBR] Ruby Life Pools"],
+		full = L["Ruby Life Pools"]
 	},
-	["Theater of Pain"] = {
-		short = L["[ABBR] Theater of Pain"],
-		full = L["Theater of Pain"]
+	["The Nokhud Offensive"] = {
+		short = L["[ABBR] The Nokhud Offensive"],
+		full = L["The Nokhud Offensive"]
 	},
-	["De Other Side"] = {
-		short = L["[ABBR] De Other Side"],
-		full = L["De Other Side"]
+	["The Azure Vault"] = {
+		short = L["[ABBR] The Azure Vault"],
+		full = L["The Azure Vault"]
 	},
-	["Spires of Ascension"] = {
-		short = L["[ABBR] Spires of Ascension"],
-		full = L["Spires of Ascension"]
+	["Algeth'ar Academy"] = {
+		short = L["[ABBR] Algeth'ar Academy"],
+		full = L["Algeth'ar Academy"]
 	},
-	["Sanguine Depths"] = {
-		short = L["[ABBR] Sanguine Depths"],
-		full = L["Sanguine Depths"]
+	["Dragonflight Keystone Master: Season One"] = {
+		short = L["[ABBR] Dragonflight Keystone Master: Season One"],
+		full = L["Dragonflight Keystone Master: Season One"]
 	},
-	["Sanctum of Domination"] = {
-		short = L["[ABBR] Sanctum of Domination"],
-		full = L["Sanctum of Domination"]
-	},
-	["Tazavesh: Streets of Wonder"] = {
-		short = L["[ABBR] Tazavesh: Streets of Wonder"],
-		full = L["Tazavesh: Streets of Wonder"]
-	},
-	["Tazavesh: So'leah's Gambit"] = {
-		short = L["[ABBR] Tazavesh: So'leah's Gambit"],
-		full = L["Tazavesh: So'leah's Gambit"]
-	},
-	["Grimrail Depot"] = {
-		short = L["[ABBR] Grimrail Depot"],
-		full = L["Grimrail Depot"]
-	},
-	["Iron Docks"] = {
-		short = L["[ABBR] Iron Docks"],
-		full = L["Iron Docks"]
-	},
-	["Return to Karazhan: Lower"] = {
-		short = L["[ABBR] Return to Karazhan: Lower"],
-		full = L["Return to Karazhan: Lower"]
-	},
-	["Return to Karazhan: Upper"] = {
-		short = L["[ABBR] Return to Karazhan: Upper"],
-		full = L["Return to Karazhan: Upper"]
-	},
-	["Operation: Mechagon - Junkyard"] = {
-		short = L["[ABBR] Operation: Mechagon - Junkyard"],
-		full = L["Operation: Mechagon - Junkyard"]
-	},
-	["Operation: Mechagon - Workshop"] = {
-		short = L["[ABBR] Operation: Mechagon - Workshop"],
-		full = L["Operation: Mechagon - Workshop"]
-	},
-	["Shadowlands Keystone Master: Season One"] = {
-		short = L["[ABBR] Shadowlands Keystone Master: Season One"],
-		full = L["Shadowlands Keystone Master: Season One"]
-	},
-	["Shadowlands Keystone Master: Season Two"] = {
-		short = L["[ABBR] Shadowlands Keystone Master: Season Two"],
-		full = L["Shadowlands Keystone Master: Season Two"]
-	},
-	["Shadowlands Keystone Master: Season Three"] = {
-		short = L["[ABBR] Shadowlands Keystone Master: Season Three"],
-		full = L["Shadowlands Keystone Master: Season Three"]
-	},
-	["Shadowlands Keystone Hero: Season Three"] = {
-		short = L["[ABBR] Shadowlands Keystone Hero: Season Three"],
-		full = L["Shadowlands Keystone Hero: Season Three"]
-	},
-	["Shadowlands Keystone Master: Season Four"] = {
-		short = L["[ABBR] Shadowlands Keystone Master: Season Four"],
-		full = L["Shadowlands Keystone Master: Season Four"]
+	["Dragonflight Keystone Hero: Season One"] = {
+		short = L["[ABBR] Dragonflight Keystone Hero: Season One"],
+		full = L["Dragonflight Keystone Hero: Season One"]
 	}
 }
 
 local raidAchievements = {
-	["Castle Nathria"] = {
+	["Vault of the Incarnates"] = {
 		["Mythic"] = {
-			14421,
-			14425,
-			14429,
-			14433,
-			14437,
-			14441,
-			14445,
-			14449,
-			14453,
-			14457
+			16387,  -- 击败艾拉诺格（史诗化身巨龙牢窟）
+			16388,  -- 击败泰洛斯（史诗化身巨龙牢窟）
+			16389,  -- 击败原始议会（史诗化身巨龙牢窟）
+			16390,  -- 击败瑟娜尔丝，冰冷之息（史诗化身巨龙牢窟）
+			16391,  -- 击败晋升者达瑟雅（史诗化身巨龙牢窟）
+			16392,  -- 击败库洛格·恐怖图腾（史诗化身巨龙牢窟）
+			16393,  -- 击败巢穴守护者迪乌尔娜（史诗化身巨龙牢窟）
+			16394,  -- 击败莱萨杰丝（史诗化身巨龙牢窟）
 		},
 		["Heroic"] = {
-			14420,
-			14424,
-			14428,
-			14432,
-			14436,
-			14440,
-			14444,
-			14448,
-			14452,
-			14456
+			16379,  -- 击败艾拉诺格（英雄化身巨龙牢窟）
+			16380,  -- 击败泰洛斯（英雄化身巨龙牢窟）
+			16381,  -- 击败原始议会（英雄化身巨龙牢窟）
+			16382,  -- 击败瑟娜尔丝，冰冷之息（英雄化身巨龙牢窟）
+			16383,  -- 击败晋升者达瑟雅（英雄化身巨龙牢窟）
+			16384,  -- 击败库洛格·恐怖图腾（英雄化身巨龙牢窟）
+			16385,  -- 击败巢穴守护者迪乌尔娜（英雄化身巨龙牢窟）
+			16386,  -- 击败莱萨杰丝（英雄化身巨龙牢窟）
 		},
 		["Normal"] = {
-			14419,
-			14423,
-			14427,
-			14431,
-			14435,
-			14439,
-			14443,
-			14447,
-			14451,
-			14455
+			16371,  -- 击败艾拉诺格（普通化身巨龙牢窟）
+			16372,  -- 击败泰洛斯（普通化身巨龙牢窟）
+			16373,  -- 击败原始议会（普通化身巨龙牢窟）
+			16374,  -- 击败瑟娜尔丝，冰冷之息（普通化身巨龙牢窟）
+			16375,  -- 击败晋升者达瑟雅（普通化身巨龙牢窟）
+			16376,  -- 击败库洛格·恐怖图腾（普通化身巨龙牢窟）
+			16377,  -- 击败巢穴守护者迪乌尔娜（普通化身巨龙牢窟）
+			16378,  -- 击败莱萨杰丝（普通化身巨龙牢窟）
 		},
 		["Raid Finder"] = {
-			14422,
-			14426,
-			14430,
-			14434,
-			14438,
-			14442,
-			14446,
-			14450,
-			14454,
-			14458
-		}
-	},
-	["Sanctum of Domination"] = {
-		["Mythic"] = {
-			15139,
-			15143,
-			15147,
-			15155,
-			15151,
-			15159,
-			15163,
-			15167,
-			15172,
-			15176,
-		},
-		["Heroic"] = {
-			15138,
-			15142,
-			15146,
-			15154,
-			15150,
-			15158,
-			15162,
-			15166,
-			15171,
-			15175,
-		},
-		["Normal"] = {
-			15137,
-			15141,
-			15145,
-			15153,
-			15149,
-			15157,
-			15161,
-			15165,
-			15170,
-			15174,
-		},
-		["Raid Finder"] = {
-			15136,
-			15140,
-			15144,
-			15152,
-			15148,
-			15156,
-			15160,
-			15164,
-			15169,
-			15173,
-		}
-	},
-	["Sepulcher of the First Ones"] = {
-		["Mythic"] = {
-			15427,
-			15431,
-			15435,
-			15439,
-			15443,
-			15447,
-			15451,
-			15455,
-			15459,
-			15463,
-			15467,
-		},
-		["Heroic"] = {
-			15426,
-			15430,
-			15434,
-			15438,
-			15442,
-			15446,
-			15450,
-			15454,
-			15458,
-			15462,
-			15466,
-		},
-		["Normal"] = {
-			15425,
-			15429,
-			15433,
-			15437,
-			15441,
-			15445,
-			15449,
-			15453,
-			15457,
-			15461,
-			15465,
-		},
-		["Raid Finder"] = {
-			15424,
-			15428,
-			15432,
-			15436,
-			15440,
-			15444,
-			15448,
-			15452,
-			15456,
-			15460,
-			15464,
+			16359,  -- 击败艾拉诺格（随机化身巨龙牢窟）
+			16361,  -- 击败泰洛斯（随机化身巨龙牢窟）
+			16362,  -- 击败原始议会（随机化身巨龙牢窟）
+			16366,  -- 击败瑟娜尔丝，冰冷之息（随机化身巨龙牢窟）
+			16367,  -- 击败晋升者达瑟雅（随机化身巨龙牢窟）
+			16368,  -- 击败库洛格·恐怖图腾（随机化身巨龙牢窟）
+			16369,  -- 击败巢穴守护者迪乌尔娜（随机化身巨龙牢窟）
+			16370,  -- 击败莱萨杰丝（随机化身巨龙牢窟）
 		}
 	}
 }
 
 local mythicKeystoneDungeons = { -- C_ChallengeMode.GetMapTable()
-	[166] = "Grimrail Depot",
-	[169] = "Iron Docks",
-	[227] = "Return to Karazhan: Lower",
-	[234] = "Return to Karazhan: Upper",
-	[369] = "Operation: Mechagon - Junkyard",
-	[370] = "Operation: Mechagon - Workshop",
-	[391] = "Tazavesh: Streets of Wonder",
-	[392] = "Tazavesh: So'leah's Gambit",
+	[2] = "Temple of the Jade Serpent",
+	[165] = "Shadowmoon Burial Grounds",
+	[200] = "Halls of Valor",
+	[210] = "Court of Stars",
+	[399] = "Ruby Life Pools",
+	[400] = "The Nokhud Offensive",
+	[401] = "The Azure Vault",
+	[402] = "Algeth'ar Academy",
 }
 
 local keystoneAchievements ={
-	{id = 14532, name = "Shadowlands Keystone Master: Season One"},
-	{id = 15078, name = "Shadowlands Keystone Master: Season Two"},
-	{id = 15499, name = "Shadowlands Keystone Master: Season Three"},
-	{id = 15506, name = "Shadowlands Keystone Hero: Season Three"},
-	{id = 15690, name = "Shadowlands Keystone Master: Season Four"},
+	{id = 16649, name = "Dragonflight Keystone Master: Season One"},
+	{id = 16650, name = "Dragonflight Keystone Hero: Season One"},
 }
 
 local specialAchievements = {}
