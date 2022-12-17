@@ -46,7 +46,7 @@ end
 local rolltypes = {[1] = "need", [2] = "greed", [3] = "disenchant", [0] = "pass"}
 local function SetTip(frame)
 	GameTooltip:SetOwner(frame, "ANCHOR_RIGHT")
-	GameTooltip:SetText(frame.tiptext)
+	GameTooltip:AddLine(frame.tiptext)
 
 	local rolls = frame.parent.rolls[frame.rolltype]
 	if rolls then
