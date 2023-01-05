@@ -7,7 +7,7 @@ local _G = getfenv(0)
 function S:tdBattlePetScript()
 	if not S.db["tdBattlePetScript"] then return end
 
-	local tdBattlePetScript = _G.tdBattlePetScript
+	local tdBattlePetScript = _G.tdBattlePetScript or _G.PetBattleScripts
 	if not tdBattlePetScript then return end
 
 	-- PetBattle
