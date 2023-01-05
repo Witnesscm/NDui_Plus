@@ -4,42 +4,46 @@ local S = P:GetModule("Skins")
 
 local _G = getfenv(0)
 
+function S:ExtVendor_SkinButton(i)
+	local item = _G["MerchantItem"..i]
+	local name = item.Name
+	local button = item.ItemButton
+	local icon = button.icon
+	local moneyFrame = _G["MerchantItem"..i.."MoneyFrame"]
+
+	B.StripTextures(item)
+	B.CreateBDFrame(item, .25)
+
+	B.StripTextures(button)
+	button:ClearAllPoints()
+	button:SetPoint("LEFT", item, 4, 0)
+	local hl = button:GetHighlightTexture()
+	hl:SetColorTexture(1, 1, 1, .25)
+	hl:SetInside()
+
+	icon:SetInside()
+	button.bg = B.ReskinIcon(icon)
+	B.ReskinIconBorder(button.IconBorder)
+	button.IconOverlay:SetInside()
+	button.IconOverlay2:SetInside()
+
+	name:SetFontObject(Number12Font)
+	name:SetPoint("LEFT", button, "RIGHT", 2, 9)
+	moneyFrame:SetPoint("BOTTOMLEFT", button, "BOTTOMRIGHT", 3, 0)
+
+	for j = 1, 3 do
+		local currency = _G["MerchantItem"..i.."AltCurrencyFrameItem"..j]
+		local texture = _G["MerchantItem"..i.."AltCurrencyFrameItem"..j.."Texture"]
+		currency:SetPoint("BOTTOMLEFT", button, "BOTTOMRIGHT", 3, 0)
+		B.ReskinIcon(texture)
+	end
+end
+
 function S:ExtVendor_SkinButtons()
 	if not C.db["Skins"]["BlizzardSkins"] then return end
 
-	for i = 13, _G.MERCHANT_ITEMS_PER_PAGE do
-		local item = _G["MerchantItem"..i]
-		local name = item.Name
-		local button = item.ItemButton
-		local icon = button.icon
-		local moneyFrame = _G["MerchantItem"..i.."MoneyFrame"]
-
-		B.StripTextures(item)
-		B.CreateBDFrame(item, .25)
-
-		B.StripTextures(button)
-		button:ClearAllPoints()
-		button:SetPoint("LEFT", item, 4, 0)
-		local hl = button:GetHighlightTexture()
-		hl:SetColorTexture(1, 1, 1, .25)
-		hl:SetInside()
-
-		icon:SetInside()
-		button.bg = B.ReskinIcon(icon)
-		B.ReskinIconBorder(button.IconBorder)
-		button.IconOverlay:SetInside()
-		button.IconOverlay2:SetInside()
-
-		name:SetFontObject(Number12Font)
-		name:SetPoint("LEFT", button, "RIGHT", 2, 9)
-		moneyFrame:SetPoint("BOTTOMLEFT", button, "BOTTOMRIGHT", 3, 0)
-
-		for j = 1, 3 do
-			local currency = _G["MerchantItem"..i.."AltCurrencyFrameItem"..j]
-			local texture = _G["MerchantItem"..i.."AltCurrencyFrameItem"..j.."Texture"]
-			currency:SetPoint("BOTTOMLEFT", button, "BOTTOMRIGHT", 3, 0)
-			B.ReskinIcon(texture)
-		end
+	for i = _G.BUYBACK_ITEMS_PER_PAGE + 1, _G.MERCHANT_ITEMS_PER_PAGE do
+		S:ExtVendor_SkinButton(i)
 	end
 end
 

@@ -60,6 +60,7 @@ function M:ExtVendorUI()
 	for i = 1, _G.MERCHANT_ITEMS_PER_PAGE do
 		if not _G["MerchantItem" .. i] then
 			CreateFrame("Frame", "MerchantItem" .. i, _G.MerchantFrame, "MerchantItemTemplate")
+			S:ExtVendor_SkinButton(i)
 		end
 	end
 
@@ -72,15 +73,8 @@ function M:ExtVendorUI()
 	_G.MerchantNextPageButton:ClearAllPoints()
 	_G.MerchantNextPageButton:SetPoint("CENTER", _G.MerchantFrame, "BOTTOM", 290, 55)
 
-	hooksecurefunc("MerchantFrame_UpdateMerchantInfo", function()
-		M:ExtVendor_UpdateMerchantPositions()
-	end)
-
-	hooksecurefunc("MerchantFrame_UpdateBuybackInfo", function()
-		M:ExtVendor_UpdateBuybackPositions()
-	end)
-
-	S:ExtVendor_SkinButtons()
+	hooksecurefunc("MerchantFrame_UpdateMerchantInfo", M.ExtVendor_UpdateMerchantPositions)
+	hooksecurefunc("MerchantFrame_UpdateBuybackInfo", M.ExtVendor_UpdateBuybackPositions)
 end
 
 M:RegisterMisc("ExtVendorUI", M.ExtVendorUI)
