@@ -2,6 +2,11 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 
 P.Changelog = [[
+v1.7.6
+[易用性] 更新Roll点增强，修复某些情况下报错；添加物品等级显示、边框染色。
+[美化] 添加AdiBags组件美化
+[美化] 兼容PetBattleScripts插件美化
+
 v1.7.5
 [鼠标提示] PvE进度信息添加巨龙时代S1数据
 [鼠标提示] 移除队友盟约
