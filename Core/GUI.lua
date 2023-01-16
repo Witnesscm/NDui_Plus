@@ -194,6 +194,8 @@ G.OptionList = { -- type, key, value, name, horizon, data, callback, tooltip, sc
 		{4, "Loot", "AnnounceRarity", L["Rarity Threshold"].."*", true, G.Quality},
 		{},
 		{1, "LootRoll", "Enable", HeaderTag..L["LootRoll"], nil, nil, nil, L["LootRollTip"], {OnHide = hideLootRoll}},
+		{1, "LootRoll", "ItemLevel", L["Item Level"].."*", nil, nil, updateLootRoll},
+		{1, "LootRoll", "ItemQuality", L["Item Quality"].."*", true, nil, updateLootRoll},
 		{4, "LootRoll", "Style", L["Style"], false, {L["Style 1"], L["Style 2"]}, updateLootRoll},
 		{4, "LootRoll", "Direction", L["Growth Direction"], true, {L["Up"], L["Down"]}},
 		{3, "LootRoll", "Width", L["Frame Width"], false, {200, 500, 1}, updateLootRoll},

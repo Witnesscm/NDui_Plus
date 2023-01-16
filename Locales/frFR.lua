@@ -189,3 +189,5 @@ L["Dragonflight Keystone Master: Season One"] = "Dragonflight Keystone Master: S
 L["[ABBR] Dragonflight Keystone Master: Season One"] = "Keystone Master S1"
 L["Dragonflight Keystone Hero: Season One"] = "Dragonflight Keystone Hero: Season One"
 L["[ABBR] Dragonflight Keystone Hero: Season One"] = "Keystone Hero S1"
+L["Item Level"] = "Item Level"
+L["Item Quality"] = "Item Quality"
