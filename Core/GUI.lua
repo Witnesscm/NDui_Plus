@@ -171,6 +171,7 @@ G.OptionList = { -- type, key, value, name, horizon, data, callback, tooltip, sc
 		{1, "Skins", "RareScanner", "RareScanner", true},
 		{1, "Skins", "WorldQuestTab", "WorldQuestTab"},
 		{1, "Skins", "ExtVendor", "Extended Vendor UI", true},
+		{1, "Skins", "AdiBags", "AdiBags"},
 		{},
 		{1, "Skins", "HideToggle", L["HideToggle"].."*", nil, nil, updateToggleVisible},
 	},

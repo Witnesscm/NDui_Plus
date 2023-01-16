@@ -106,6 +106,7 @@ P.DefaultSettings = {
 		RareScanner = true,
 		WorldQuestTab = true,
 		ExtVendor = true,
+		AdiBags = true,
 		HideToggle = false,
 	},
 	Tooltip = {
