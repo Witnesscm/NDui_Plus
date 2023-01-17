@@ -5,6 +5,10 @@ local Bar = B:GetModule("Actionbar")
 -----------------
 -- Credit: ElvUI
 -----------------
+local LAB = LibStub("LibActionButton-1.0")
+
+AB.handledbuttons = {}
+
 local function ClearTimers(object)
 	if object.delayTimer then
 		P:CancelTimer(object.delayTimer)
@@ -46,6 +50,24 @@ function AB:Button_OnLeave()
 		DelayFadeOut(AB.fadeParent, .38, AB.fadeParent:GetAlpha(), AB.db["Alpha"])
 		AB:FadeBlings(AB.db["Alpha"])
 	end
+end
+
+local function flyoutButtonAnchor(frame)
+	local parent = frame:GetParent()
+	local _, parentAnchorButton = parent:GetPoint()
+	if not AB.handledbuttons[parentAnchorButton] then return end
+
+	return parentAnchorButton
+end
+
+function AB:FlyoutButton_OnEnter()
+	local anchor = flyoutButtonAnchor(self)
+	if anchor then AB.Button_OnEnter(anchor) end
+end
+
+function AB:FlyoutButton_OnLeave()
+	local anchor = flyoutButtonAnchor(self)
+	if anchor then AB.Button_OnLeave(anchor) end
 end
 
 function AB:FadeParent_OnEvent(event)
@@ -159,9 +181,29 @@ function AB:UpdateFaderState()
 		for _, button in ipairs(Bar.buttons) do
 			button:HookScript("OnEnter", AB.Button_OnEnter)
 			button:HookScript("OnLeave", AB.Button_OnLeave)
+
+			AB.handledbuttons[button] = true
 		end
+
 		AB.isHooked = true
 	end
+end
+
+function AB:SetupFlyoutButton(button)
+	button:HookScript("OnEnter", AB.FlyoutButton_OnEnter)
+	button:HookScript("OnLeave", AB.FlyoutButton_OnLeave)
+end
+
+function AB:LAB_FlyoutCreated(button)
+	AB:SetupFlyoutButton(button)
+end
+
+function AB:SetupLABFlyout()
+	for _, button in next, LAB.FlyoutButtons do
+		AB:SetupFlyoutButton(button)
+	end
+
+	LAB:RegisterCallback("OnFlyoutButtonCreated", AB.LAB_FlyoutCreated)
 end
 
 function AB:GlobalFade()
@@ -176,4 +218,5 @@ function AB:GlobalFade()
 
 	AB:UpdateFaderSettings()
 	AB:UpdateFaderState()
+	AB:SetupLABFlyout()
 end
