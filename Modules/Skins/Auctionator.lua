@@ -22,8 +22,15 @@ local function reskinItemDialog(self)
 	B.ReskinInput(self.SearchContainer.SearchString)
 	B.ReskinCheck(self.SearchContainer.IsExact)
 	P.ReskinDropDown(self.FilterKeySelector)
-	P.ReskinDropDown(self.QualityContainer.DropDown.DropDown)
 	reskinButtons(self, {"Finished", "Cancel", "ResetAllButton"})
+
+	for _, key in ipairs({"QualityContainer", "TierContainer"}) do
+		local container = self[key] and self[key].DropDown
+		local dropDown = container and container.DropDown
+		if dropDown then
+			P.ReskinDropDown(dropDown)
+		end
+	end
 
 	for _, key in ipairs({"LevelRange", "ItemLevelRange", "PriceRange", "CraftedLevelRange"}) do
 		local minMax = self[key]
@@ -103,7 +110,6 @@ end
 local function reskinBagItem(button)
 	if not button then P:Debug("Unknown: BagItem") return end
 
-	button.IconMask:Hide()
 	button.EmptySlot:Hide()
 	button:SetPushedTexture(P.ClearTexture)
 	button.Icon:SetInside(button, 2, 2)
