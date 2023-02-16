@@ -35,9 +35,11 @@ local function GetEncounterList(instanceID)
 end
 
 function LSM:UpdateRaidData()
+	local currentTier = EJ_GetCurrentTier()
 	local maxTier = EJ_GetNumTiers() - 1 -- 10.0.2 add Mythic+ Dungeons tier
-	if EJ_GetCurrentTier() ~= maxTier then
+	if currentTier ~= maxTier then
 		EJ_SelectTier(maxTier)
+		LSM.CurrentTier = currentTier
 	end
 
 	local index = 2
@@ -311,6 +313,11 @@ end
 function LSM:UpdateData()
 	if LSM.Data.Raid[1] and LSM.Data.Raid[1].encounters and next(LSM.Data.Raid[1].encounters) and next(LSM.Data.MythicPlus) then
 		B:UnregisterEvent("UPDATE_INSTANCE_INFO", LSM.UpdateData)
+
+		if LSM.CurrentTier then
+			EJ_SelectTier(LSM.CurrentTier)
+		end
+
 		return
 	end
 
