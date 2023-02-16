@@ -2,9 +2,16 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 
 P.Changelog = [[
+v1.7.7
+[动作条] 修复动作条弹出按钮渐隐
+[易用性] 冒险指南显示战利品标签页，并默认显示套装物品
+[易用性] 修复启用宏命令面板扩展后宏命令显示不完整的问题
+[美化] 更新Auctionator美化
+[美化] 更新RareScanner美化
+
 v1.7.6
 [易用性] 更新Roll点增强，修复某些情况下报错；添加物品等级显示、边框染色。
-[美化] 添加AdiBags组件美化
+[美化] 添加AdiBags美化
 [美化] 兼容PetBattleScripts插件美化
 
 v1.7.5
