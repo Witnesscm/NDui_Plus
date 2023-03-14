@@ -159,6 +159,12 @@ local function reskinMoneyInput(self)
 	end
 end
 
+local function reskinSearchButton(self)
+	if self.SearchButton then
+		B.Reskin(self.SearchButton)
+	end
+end
+
 function S:Auctionator()
 	local Auctionator = _G.Auctionator
 	if not Auctionator or not _G.AuctionatorInitalizeMainlineFrame or not _G.AuctionatorInitalizeMainlineFrame.AuctionHouseShown then return end
@@ -170,8 +176,14 @@ function S:Auctionator()
 		local SplashScreen = _G.AuctionatorSplashScreen
 		if SplashScreen then
 			P.ReskinFrame(SplashScreen)
-			B.ReskinScroll(SplashScreen.ScrollFrame.ScrollBar)
-			B.ReskinCheck(SplashScreen.HideCheckbox.CheckBox)
+
+			if SplashScreen.ScrollBar then
+				B.ReskinTrimScroll(SplashScreen.ScrollBar)
+			end
+
+			if SplashScreen.HideCheckbox and SplashScreen.HideCheckbox.CheckBox then
+				B.ReskinCheck(SplashScreen.HideCheckbox.CheckBox)
+			end
 		end
 
 		for _, tab in ipairs(_G.AuctionatorAHTabsContainer.Tabs) do
@@ -359,14 +371,16 @@ function S:Auctionator()
 		styled = true
 	end)
 
-	if Auctionator.CraftingInfo and Auctionator.CraftingInfo.Initialize then
-		hooksecurefunc(Auctionator.CraftingInfo, "Initialize", function()
-			local frame = _G.AuctionatorCraftingInfo
-			if frame and frame.SearchButton and not frame.styled then
-				B.Reskin(frame.SearchButton)
-				frame.styled = true
-			end
-		end)
+	-- SearchButton
+	if _G.AuctionatorCraftingInfoProfessionsFrameMixin then
+		hooksecurefunc(_G.AuctionatorCraftingInfoProfessionsFrameMixin, "OnLoad", reskinSearchButton)
+	end
+
+	local ObjectiveTrackerFrame = _G.AuctionatorCraftingInfoObjectiveTrackerFrame
+	if ObjectiveTrackerFrame then
+		reskinSearchButton(ObjectiveTrackerFrame)
+	elseif _G.AuctionatorCraftingInfoObjectiveTrackerFrameMixin then
+		hooksecurefunc(_G.AuctionatorCraftingInfoObjectiveTrackerFrameMixin, "OnLoad", reskinSearchButton)
 	end
 end
 
