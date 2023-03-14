@@ -7,19 +7,13 @@ local _G = getfenv(0)
 local select, pairs, type, strfind = select, pairs, type, string.find
 
 function S:PremadeGroupsFilter()
-	local button = _G.UsePFGButton
+	local button = _G.UsePFGButton or _G.UsePGFButton
 	if button then
 		button:SetSize(32, 32)
 		button:ClearAllPoints()
 		button:SetPoint("RIGHT", _G.LFGListFrame.SearchPanel.RefreshButton, "LEFT", -55, 0)
 		button.text:SetText(FILTER)
 		button.text:SetWidth(button.text:GetStringWidth())
-	end
-
-	local dialog = _G.PremadeGroupsFilterDialog
-	if dialog then
-		dialog.Defeated.Title:ClearAllPoints()
-		dialog.Defeated.Title:SetPoint("LEFT", dialog.Defeated.Act, "RIGHT", 2, 0)
 	end
 end
 
