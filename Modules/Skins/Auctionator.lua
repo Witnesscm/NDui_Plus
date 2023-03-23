@@ -24,7 +24,7 @@ local function reskinItemDialog(self)
 	P.ReskinDropDown(self.FilterKeySelector)
 	reskinButtons(self, {"Finished", "Cancel", "ResetAllButton"})
 
-	for _, key in ipairs({"QualityContainer", "TierContainer"}) do
+	for _, key in ipairs({"QualityContainer", "TierContainer", "ExpansionContainer"}) do
 		local container = self[key] and self[key].DropDown
 		local dropDown = container and container.DropDown
 		if dropDown then
