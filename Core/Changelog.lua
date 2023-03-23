@@ -2,6 +2,10 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 
 P.Changelog = [[
+v1.7.8
+[易用性] 移除专业面板宽度调整
+[美化] 更新Auctionator美化
+
 v1.7.7
 [动作条] 修复动作条弹出按钮渐隐
 [易用性] 冒险指南显示战利品标签页，并默认显示套装物品
