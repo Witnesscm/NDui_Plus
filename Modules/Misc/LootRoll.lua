@@ -260,7 +260,7 @@ end
 function LR:LootRoll_Start(rollID, rollTime)
 	local texture, name, count, quality, bop, canNeed, canGreed, canDisenchant, reasonNeed, reasonGreed, reasonDisenchant, deSkillRequired = GetLootRollItemInfo(rollID)
 	if not name then
-		for _, rollBar in next, M.RollBars do
+		for _, rollBar in next, LR.RollBars do
 			if rollBar.rollID == rollID then
 				LR.LootRoll_Cancel(rollBar, nil, rollID)
 			end
