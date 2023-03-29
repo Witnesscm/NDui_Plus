@@ -2,6 +2,7 @@ local addonName, ns = ...
 local B, C, L, DB, P = unpack(ns)
 local G = P:RegisterModule("GUI")
 
+local GetAddOnMetadata = GetAddOnMetadata or C_AddOns.GetAddOnMetadata -- isPatch10_1
 local cr, cg, cb = DB.r, DB.g, DB.b
 local guiTab, guiPage, gui = {}, {}
 
