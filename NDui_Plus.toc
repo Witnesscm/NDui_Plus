@@ -4,6 +4,7 @@
 ## Notes: NDui Plugin
 ## RequiredDeps: NDui
 ## Version: @project-version@
+## IconTexture: Interface\AddOns\NDui_Plus\Media\Texture\icon1
 ## SavedVariables: NDuiPlusDB
 ## SavedVariablesPerCharacter: NDuiPlusCharDB
 ## X-Curse-Project-ID: 389434
