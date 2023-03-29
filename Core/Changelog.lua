@@ -2,6 +2,10 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 
 P.Changelog = [[
+v1.7.9
+[主要] 更新支持PTR 10.1.0.48776
+[易用性] 修复Roll点增强报错
+
 v1.7.8
 [易用性] 移除专业面板宽度调整
 [美化] 更新Auctionator美化
