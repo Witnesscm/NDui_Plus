@@ -2,6 +2,12 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 
 P.Changelog = [[
+v1.8.0
+[易用性] 添加按钮一键学习驭龙术天赋
+[易用性] 添加按钮一键学习专业专精(PTR)
+[美化] 添加BagSync美化
+[美化] 更新Auctionator美化
+
 v1.7.9
 [主要] 更新支持PTR 10.1.0.48776
 [易用性] 修复Roll点增强报错
