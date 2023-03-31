@@ -201,7 +201,6 @@ function P.Developer_ThrowError(...)
 	end
 end
 
-
 function P:Debug(...)
 	if NDuiPlusDB["Debug"] then
 		_G.DEFAULT_CHAT_FRAME:AddMessage("|cFF70B8FFNDui_Plus:|r " .. format(...))
