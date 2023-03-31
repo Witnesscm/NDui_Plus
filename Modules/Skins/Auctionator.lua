@@ -17,10 +17,15 @@ local function reskinButtons(self, buttons)
 end
 
 local function reskinItemDialog(self)
+	if not self then
+		P:Debug("Unknown: ItemDialog")
+		return
+	end
+
 	B.StripTextures(self)
 	B.SetBD(self)
-	B.ReskinInput(self.SearchContainer.SearchString)
-	B.ReskinCheck(self.SearchContainer.IsExact)
+	S:Proxy("ReskinInput", self.SearchContainer.SearchString)
+	S:Proxy("ReskinCheck", self.SearchContainer.IsExact)
 	P.ReskinDropDown(self.FilterKeySelector)
 	reskinButtons(self, {"Finished", "Cancel", "ResetAllButton"})
 
@@ -65,7 +70,7 @@ local function reskinListHeader(frame)
 	if not frame or not frame.tableBuilder or not frame.ScrollArea then P:Debug("Unknown: ListHeader") return end
 
 	B.CreateBDFrame(frame.ScrollArea, .25)
-	B.ReskinTrimScroll(frame.ScrollArea.ScrollBar)
+	S:Proxy("ReskinTrimScroll", frame.ScrollArea.ScrollBar)
 
 	for _, column in ipairs(frame.tableBuilder.columns) do
 		local header = column.headerFrame
@@ -90,14 +95,8 @@ local function reskinSimplePanel(frame)
 	B.StripTextures(frame)
 	B.SetBD(frame)
 
-	if frame.ScrollFrame then
-		B.CreateBDFrame(frame.ScrollFrame, .25)
-		B.ReskinScroll(frame.ScrollFrame.ScrollBar)
-	end
-
-	if frame.CloseDialog then
-		B.ReskinClose(frame.CloseDialog)
-	end
+	if frame.ScrollBar then B.ReskinTrimScroll(frame.ScrollBar) end
+	if frame.CloseDialog then B.ReskinClose(frame.CloseDialog) end
 end
 
 local function reskinInput(editbox)
@@ -136,14 +135,22 @@ local function reskinBagList(frame)
 
 	local buttonPool = frame.ItemContainer and frame.ItemContainer.buttonPool
 	if buttonPool then
-		local origGet = buttonPool.Get
-		buttonPool.Get = function(self)
-			local button = origGet(self)
-			if not button.styled then
-				reskinBagItem(button)
-				button.styled = true
+		if buttonPool.creatorFunc then  -- Compatible with old version
+			local origFunc = buttonPool.creatorFunc
+			buttonPool.creatorFunc = function(self)
+				local bu = origFunc(self)
+				reskinBagItem(bu)
+				return bu
 			end
-			return button
+		else
+			hooksecurefunc(buttonPool, "Acquire", function(self)
+				for bu in self:EnumerateActive() do
+					if not bu.styled then
+						reskinBagItem(bu)
+						bu.styled = true
+					end
+				end
+			end)
 		end
 	end
 end
@@ -160,9 +167,7 @@ local function reskinMoneyInput(self)
 end
 
 local function reskinSearchButton(self)
-	if self.SearchButton then
-		B.Reskin(self.SearchButton)
-	end
+	S:Proxy("Reskin", self.SearchButton)
 end
 
 function S:Auctionator()
@@ -176,13 +181,10 @@ function S:Auctionator()
 		local SplashScreen = _G.AuctionatorSplashScreen
 		if SplashScreen then
 			P.ReskinFrame(SplashScreen)
+			S:Proxy("ReskinTrimScroll", SplashScreen.ScrollBar)
 
-			if SplashScreen.ScrollBar then
-				B.ReskinTrimScroll(SplashScreen.ScrollBar)
-			end
-
-			if SplashScreen.HideCheckbox and SplashScreen.HideCheckbox.CheckBox then
-				B.ReskinCheck(SplashScreen.HideCheckbox.CheckBox)
+			if SplashScreen.HideCheckbox then
+				S:Proxy("ReskinCheck", SplashScreen.HideCheckbox.CheckBox)
 			end
 		end
 
@@ -194,44 +196,45 @@ function S:Auctionator()
 		if ShoppingList then
 			reskinListHeader(ShoppingList.ResultsListing)
 			reskinButtons(ShoppingList, {"Import", "Export", "AddItem", "ManualSearch", "ExportCSV", "SortItems"})
-
-			if ShoppingList.ListDropdown then
-				P.ReskinDropDown(ShoppingList.ListDropdown)
-			end
-
-			local itemDialog = ShoppingList.itemDialog
-			if itemDialog then
-				reskinItemDialog(itemDialog)
-			end
+			P.ReskinDropDown(ShoppingList.ListDropdown)
+			reskinItemDialog(ShoppingList.itemDialog)
+			S:Proxy("StripTextures", ShoppingList.ShoppingResultsInset)
 
 			local exportDialog = ShoppingList.exportDialog
 			if exportDialog then
 				reskinSimplePanel(exportDialog)
 				reskinButtons(exportDialog, {"Export", "SelectAll", "UnselectAll"})
 
-				for _, cb in ipairs(exportDialog.checkBoxPool) do
-					B.ReskinCheck(cb.CheckBox)
-				end
+				if exportDialog.AddToPool then -- Compatible with old version
+					for _, cb in ipairs(exportDialog.checkBoxPool) do
+						S:Proxy("ReskinCheck", cb.CheckBox)
+					end
 
-				hooksecurefunc(exportDialog, "AddToPool", function(self)
-					B.ReskinCheck(self.checkBoxPool[#self.checkBoxPool].CheckBox)
-				end)
+					hooksecurefunc(exportDialog, "AddToPool", function(self)
+						S:Proxy("ReskinCheck", self.checkBoxPool[#self.checkBoxPool].CheckBox)
+					end)
+				else
+					hooksecurefunc(exportDialog.checkBoxPool, "Acquire", function(self)
+						for frame in self:EnumerateActive() do
+							if not frame.styled then
+								S:Proxy("ReskinCheck", frame.CheckBox)
+								frame.styled = true
+							end
+						end
+					end)
+				end
 
 				local copyTextDialog = exportDialog.copyTextDialog
 				if copyTextDialog then
 					reskinSimplePanel(copyTextDialog)
-					B.Reskin(copyTextDialog.Close)
+					S:Proxy("Reskin", copyTextDialog.Close)
 				end
 			end
 
 			local importDialog = ShoppingList.importDialog
 			if importDialog then
 				reskinSimplePanel(importDialog)
-				B.Reskin(importDialog.Import)
-			end
-
-			if ShoppingList.ShoppingResultsInset then
-				B.StripTextures(ShoppingList.ShoppingResultsInset)
+				S:Proxy("Reskin", importDialog.Import)
 			end
 
 			for _, key in ipairs({"ScrollListShoppingList", "ScrollListRecents"}) do
@@ -239,14 +242,14 @@ function S:Auctionator()
 				if scrollList and scrollList.ScrollBox then
 					B.StripTextures(scrollList)
 					B.CreateBDFrame(scrollList.ScrollBox, .25)
-					B.ReskinTrimScroll(scrollList.ScrollBar)
+					S:Proxy("ReskinTrimScroll", scrollList.ScrollBar)
 				end
 			end
 
 			local OneItemSearch = ShoppingList.OneItemSearch
 			if OneItemSearch then
 				reskinButtons(OneItemSearch, {"SearchButton", "ExtendedButton"})
-				B.ReskinInput(OneItemSearch.SearchBox)
+				S:Proxy("ReskinInput", OneItemSearch.SearchBox)
 			end
 
 			local TabsContainer = ShoppingList.RecentsTabsContainer
@@ -265,7 +268,7 @@ function S:Auctionator()
 			local exportCSVDialog = ShoppingList.exportCSVDialog
 			if exportCSVDialog then
 				reskinSimplePanel(exportCSVDialog)
-				B.Reskin(exportCSVDialog.Close)
+				S:Proxy("Reskin", exportCSVDialog.Close)
 			end
 
 			local itemHistoryDialog = ShoppingList.itemHistoryDialog
@@ -300,22 +303,19 @@ function S:Auctionator()
 			end
 
 			local BagListing = SellingFrame.BagListing
-			if BagListing and BagListing.ScrollBox then
-				B.ReskinTrimScroll(BagListing.ScrollBar)
-
+			if BagListing then
 				local frameMap = BagListing.frameMap
 				if frameMap then
 					for _, items in pairs(frameMap) do
 						reskinBagList(items)
 					end
 				end
+
+				S:Proxy("ReskinTrimScroll", BagListing.ScrollBar)
 			end
 
-			for _, key in ipairs({"BagInset", "CurrentItemInset", "HistoricalPriceInset"}) do
-				local inset = SellingFrame[key]
-				if inset then
-					B.StripTextures(inset)
-				end
+			for _, key in ipairs({"BagInset", "HistoricalPriceInset"}) do
+				S:Proxy("StripTextures", SellingFrame[key])
 			end
 
 			reskinListHeader(SellingFrame.CurrentPricesListing)
@@ -345,13 +345,8 @@ function S:Auctionator()
 				end
 			end
 
-			if CancellingFrame.HistoricalPriceInset then
-				B.StripTextures(CancellingFrame.HistoricalPriceInset)
-			end
-
-			if CancellingFrame.SearchFilter then
-				B.ReskinInput(CancellingFrame.SearchFilter)
-			end
+			S:Proxy("StripTextures", CancellingFrame.HistoricalPriceInset)
+			S:Proxy("ReskinInput", CancellingFrame.SearchFilter)
 		end
 
 		local ConfigFrame = _G.AuctionatorConfigFrame
@@ -363,7 +358,7 @@ function S:Auctionator()
 			for _, key in ipairs({"DiscordLink", "BugReportLink", "TechnicalRoadmap"}) do
 				local eb = ConfigFrame[key]
 				if eb then
-					B.ReskinInput(eb.InputBox)
+					S:Proxy("ReskinInput", eb.InputBox)
 				end
 			end
 		end
