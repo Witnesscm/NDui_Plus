@@ -131,6 +131,23 @@ function S:SavedInstances()
 	end
 end
 
+function S:HandyNotes_Dragonflight()
+	local Krowi_WMB = _G.LibStub and _G.LibStub("Krowi_WorldMapButtons-1.4", true)
+	if not Krowi_WMB then return end
+
+	for _, button in ipairs(Krowi_WMB.Buttons) do
+		if button.AlphaOption and button.ScaleOption then
+			B.ReskinSlider(button.AlphaOption.Slider)
+			B.ReskinSlider(button.ScaleOption.Slider)
+
+			if button.Background then button.Background:SetAlpha(0) end
+			if button.Border then button.Border:SetAlpha(0) end
+
+			break
+		end
+	end
+end
+
 S:RegisterSkin("WorldQuestsList", S.WorldQuestsList)
 S:RegisterSkin("PremadeGroupsFilter", S.PremadeGroupsFilter)
 S:RegisterSkin("MogPartialSets", S.MogPartialSets)
@@ -138,6 +155,7 @@ S:RegisterSkin("BigWigs_Options", S.BigWigs_Options)
 S:RegisterSkin("LibQTip")
 S:RegisterSkin("BagSync", S.BagSync)
 S:RegisterSkin("SavedInstances", S.SavedInstances)
+S:RegisterSkin("HandyNotes_Dragonflight", S.HandyNotes_Dragonflight)
 
 -- Hide Toggle Button
 S.ToggleFrames = {}
