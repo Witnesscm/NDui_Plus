@@ -2,7 +2,7 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 local M = P:GetModule("Misc")
 
-if not C_CVar.GetCVar("portal") == "test" then return end -- PTR/Beta
+if C_CVar.GetCVar("portal") ~= "test" then return end -- PTR/Beta
 
 -- One-click learning all profession specializations
 do

@@ -190,8 +190,8 @@ function P.IsClassic()
 end
 
 function P.ThrowError(...)
-    local message = strjoin(" ", ...)
-    _G.geterrorhandler()(format("|cFF70B8FFNDui_Plus:|r %s", message))
+	local message = strjoin(" ", ...)
+	_G.geterrorhandler()(format("|cFF70B8FFNDui_Plus:|r %s", message))
 end
 
 function P.Developer_ThrowError(...)

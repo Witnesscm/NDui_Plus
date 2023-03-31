@@ -37,10 +37,10 @@ function S:Proxy(funcName, object, ...)
 		return
 	end
 
-    if not B[funcName] then
-        P.Developer_ThrowError(format("B.%s is not exist", funcName))
-        return
-    end
+	if not B[funcName] then
+		P.Developer_ThrowError(format("B.%s is not exist", funcName))
+		return
+	end
 
 	B[funcName](object, ...)
 end
