@@ -3,6 +3,7 @@
 	<Script file="Ace3.lua"/>
 	<Script file="AdiBags.lua"/>
 	<Script file="Auctionator.lua"/>
+	<Script file="BagSync.lua"/>
 	<Script file="BtWLoadouts.lua"/>
 	<Script file="ButtonForge.lua"/>
 	<Script file="ExtVendorUI.lua"/>

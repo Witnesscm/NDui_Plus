@@ -90,28 +90,6 @@ function S:LibQTip()
 	end
 end
 
-function S:BagSync()
-	local BagSync = _G.BagSync
-	if not BagSync then return end
-
-	local Tooltip = BagSync:GetModule("Tooltip")
-	if Tooltip then
-		hooksecurefunc(Tooltip, "TallyUnits", function(_, objTooltip)
-			if not objTooltip.qTip then return end
-
-			local BPBIDTooltip
-			if objTooltip == _G.FloatingBattlePetTooltip then
-				BPBIDTooltip = _G["BPBID_BreedTooltip2"]
-			else
-				BPBIDTooltip = _G["BPBID_BreedTooltip"]
-			end
-
-			objTooltip.qTip:ClearAllPoints()
-			objTooltip.qTip:SetPoint("TOPRIGHT", BPBIDTooltip and BPBIDTooltip:IsVisible() and BPBIDTooltip or objTooltip, "BOTTOMRIGHT", 0, 2*C.mult)
-		end)
-	end
-end
-
 function S:SavedInstances()
 	local SI = _G.SavedInstances and _G.SavedInstances[1]
 	if not SI then return end
@@ -137,9 +115,8 @@ function S:HandyNotes_Dragonflight()
 
 	for _, button in ipairs(Krowi_WMB.Buttons) do
 		if button.AlphaOption and button.ScaleOption then
-			B.ReskinSlider(button.AlphaOption.Slider)
-			B.ReskinSlider(button.ScaleOption.Slider)
-
+			S:Proxy("ReskinSlider", button.AlphaOption.Slider)
+			S:Proxy("ReskinSlider", button.ScaleOption.Slider)
 			if button.Background then button.Background:SetAlpha(0) end
 			if button.Border then button.Border:SetAlpha(0) end
 
@@ -153,7 +130,6 @@ S:RegisterSkin("PremadeGroupsFilter", S.PremadeGroupsFilter)
 S:RegisterSkin("MogPartialSets", S.MogPartialSets)
 S:RegisterSkin("BigWigs_Options", S.BigWigs_Options)
 S:RegisterSkin("LibQTip")
-S:RegisterSkin("BagSync", S.BagSync)
 S:RegisterSkin("SavedInstances", S.SavedInstances)
 S:RegisterSkin("HandyNotes_Dragonflight", S.HandyNotes_Dragonflight)
 
