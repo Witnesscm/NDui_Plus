@@ -13,7 +13,7 @@ do
 				C_Traits.PurchaseRank(configID, nodeID)
 			end
 
-			for _, edgeInfo in pairs(nodeInfo.visibleEdges) do
+			for _, edgeInfo in ipairs(nodeInfo.visibleEdges) do
 				Purchase(configID, edgeInfo.targetNode)
 			end
 		end

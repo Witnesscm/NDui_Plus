@@ -142,3 +142,50 @@ do
 
 	P:AddCallbackForAddon("Blizzard_EncounterJournal", M.EJ_DisplayLootTab)
 end
+
+-- One-click learning all dragonriding skills
+do
+	local rootNodeID = 64066 -- first skill
+
+	local function Purchase(configID, nodeID)
+		local nodeInfo = C_Traits.GetNodeInfo(configID, nodeID)
+		if nodeInfo then
+			if nodeInfo.type == Enum.TraitNodeType.Selection then
+				C_Traits.SetSelection(configID, nodeID, nodeInfo.entryIDs[2]) -- choose second
+			else
+				if nodeInfo.ranksPurchased < nodeInfo.maxRanks then
+					C_Traits.PurchaseRank(configID, nodeID)
+				end
+			end
+
+			for _, edgeInfo in ipairs(nodeInfo.visibleEdges) do
+				Purchase(configID, edgeInfo.targetNode)
+			end
+		end
+	end
+
+	local function OnClick(self)
+		local treeID = self:GetParent():GetTalentTreeID()
+		local configID = C_Traits.GetConfigIDByTreeID(treeID)
+		Purchase(configID, rootNodeID)
+		C_Traits.CommitConfig(configID)
+	end
+
+	function M:DragonridingTalent()
+		local button = CreateFrame("Button", nil, _G.GenericTraitFrame, "MagicButtonTemplate")
+		button:SetFrameStrata("HIGH")
+		button:SetSize(120, 26)
+		button:SetPoint("TOPRIGHT", -75, -40)
+		button:SetText(L["Learn All"])
+		button:SetScript("OnClick", OnClick)
+		GlowEmitterFactory:Show(button, GlowEmitterMixin.Anims.NPE_RedButton_GreenGlow)
+
+		if C.db["Skins"]["BlizzardSkins"] then B.Reskin(button) end
+
+		hooksecurefunc(_G.GenericTraitFrame.Currency, "Setup", function(_, info)
+			button:SetShown((info and info.quantity or 0) > 0)
+		end)
+	end
+
+	P:AddCallbackForAddon("Blizzard_GenericTraitUI", M.DragonridingTalent)
+end
