@@ -15,10 +15,7 @@ end
 
 function M:OnLogin()
 	for name, func in next, M.MiscList do
-		if name and type(func) == "function" then
-			local _, catch = pcall(func)
-			P:ThrowError(catch, format("%s Misc", name))
-		end
+		xpcall(func, P.ThrowError)
 	end
 end
 
@@ -175,7 +172,7 @@ do
 		local button = CreateFrame("Button", nil, _G.GenericTraitFrame, "MagicButtonTemplate")
 		button:SetFrameStrata("HIGH")
 		button:SetSize(120, 26)
-		button:SetPoint("TOPRIGHT", -75, -40)
+		button:SetPoint("BOTTOMRIGHT", -75, 40)
 		button:SetText(L["Learn All"])
 		button:SetScript("OnClick", OnClick)
 		GlowEmitterFactory:Show(button, GlowEmitterMixin.Anims.NPE_RedButton_GreenGlow)

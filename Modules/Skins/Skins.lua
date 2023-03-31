@@ -3,7 +3,7 @@ local B, C, L, DB, P = unpack(ns)
 local S = P:RegisterModule("Skins")
 
 local _G = getfenv(0)
-local pcall, pairs, type = pcall, pairs, type
+local xpcall, pairs, type = xpcall, pairs, type
 local tinsert = table.insert
 
 S.nonAddonsToLoad = {}
@@ -30,10 +30,24 @@ function S:RegisterAceGUIContainer(name, func)
 	self.aceContainers[name] = func or self[name]
 end
 
+-- Call NDui skin function (Credit: ElvUI_WindTools)
+function S:Proxy(funcName, object, ...)
+	if not object then
+		P.Developer_ThrowError(format("%s: object is nil", funcName))
+		return
+	end
+
+    if not B[funcName] then
+        P.Developer_ThrowError(format("B.%s is not exist", funcName))
+        return
+    end
+
+	B[funcName](object, ...)
+end
+
 function S:OnLogin()
 	for name, func in pairs(self.nonAddonsToLoad) do
-		local _, catch = pcall(func)
-		P:ThrowError(catch, format("%s Skin", name))
+		xpcall(func, P.ThrowError)
 		self.nonAddonsToLoad[name] = nil
 	end
 end

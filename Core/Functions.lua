@@ -128,6 +128,11 @@ do
 	}
 
 	function P:ReskinInput(height, width)
+		if not self then
+			P.Developer_ThrowError("input is nil")
+			return
+		end
+
 		local frameName = self.GetName and self:GetName()
 		for _, region in pairs(blizzRegions) do
 			region = frameName and _G[frameName..region] or self[region]
@@ -169,6 +174,11 @@ do
 	end
 
 	function P:ReskinCollapse(isAtlas)
+		if not self then
+			P.Developer_ThrowError("collapse is nil")
+			return
+		end
+
 		self:SetNormalTexture(P.ClearTexture)
 		self:SetHighlightTexture(P.ClearTexture)
 		self:SetPushedTexture(P.ClearTexture)
@@ -200,6 +210,11 @@ do
 	end
 
 	function P:ReskinFrame()
+		if not self then
+			P.Developer_ThrowError("frame is nil")
+			return
+		end
+
 		B.StripTextures(self)
 		local bg = B.SetBD(self)
 
@@ -225,6 +240,11 @@ do
 	end
 
 	function P:ReskinDropDown()
+		if not self then
+			P.Developer_ThrowError("dropdown is nil")
+			return
+		end
+
 		B.StripTextures(self)
 
 		local frameName = self.GetName and self:GetName()
@@ -244,6 +264,11 @@ do
 	end
 
 	function P.ReskinFont(font, size)
+		if not font then
+			P.Developer_ThrowError("font is nil")
+			return
+		end
+
 		local oldSize = select(2, font:GetFont())
 		size = size or oldSize
 		local fontSize = size*C.db["Skins"]["FontScale"]
@@ -252,6 +277,11 @@ do
 	end
 
 	function P:ReskinTab(offset)
+		if not self then
+			P.Developer_ThrowError("tab is nil")
+			return
+		end
+
 		offset = offset or 0
 
 		self:DisableDrawLayer("BACKGROUND")
@@ -268,7 +298,11 @@ do
 	end
 
 	function P:ReskinTooltip()
-		if not self then P:Debug("Unknown tooltip spotted.") return end
+		if not self then
+			P.Developer_ThrowError("tooltip is nil")
+			return
+		end
+
 		if self:IsForbidden() then return end
 
 		if not self.tipStyled then
