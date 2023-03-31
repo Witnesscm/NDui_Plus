@@ -105,7 +105,13 @@ do
 			local text = self.Text:GetText()
 			local title = text and strmatch(text, titleString)
 			if title then
-				ChatFrame_OpenChat(title, SELECTED_DOCK_FRAME)
+				title = gsub(title, " %- ", ".")
+
+				if ChatEdit_GetActiveWindow() then
+					ChatEdit_InsertLink(title)
+				else
+					ChatFrame_OpenChat(title, SELECTED_DOCK_FRAME)
+				end
 			end
 		end)
 
