@@ -16,4 +16,5 @@
 	<Script file="ExtMacroUI.lua"/>
 	<Script file="CypherConsole.lua"/>
 	<Script file="WormholeHelper.lua"/>
+	<Script file="PTRTools.lua"/>
 </Ui>

@@ -189,3 +189,4 @@ L["Dragonflight Keystone Hero: Season One"] = "巨龙时代钥石英雄：第一
 L["[ABBR] Dragonflight Keystone Hero: Season One"] = "S1 钥石英雄"
 L["Item Level"] = "物品等级"
 L["Item Quality"] = "物品品质染色"
+L["Learn All Specialization"] = "学习全部专精"
