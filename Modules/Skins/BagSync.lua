@@ -22,6 +22,25 @@ local function SkinInfoFrame(self)
 	S:Proxy("ReskinClose", self.CloseButton)
 end
 
+local function SkinSortOrder(self)
+	if not self.UpdateList then
+		P.Developer_ThrowError("func is nil")
+		return
+	end
+
+	hooksecurefunc(self, "RefreshList", function()
+		local buttons = self.scrollFrame and self.scrollFrame.buttons
+		if buttons then
+			for _, bu in ipairs(buttons) do
+				if not bu.styled then
+					S:Proxy("ReskinInput", bu.SortBox, 18)
+					bu.styled = true
+				end
+			end
+		end
+	end)
+end
+
 local function SkinBagSyncFrame(name, module)
 	local frame = module.frame
 	if not frame then return end
@@ -73,6 +92,8 @@ local function SkinBagSyncFrame(name, module)
 	elseif name == "Whitelist" then
 		S:Proxy("Reskin", frame.addItemIDBtn)
 		S:Proxy("ReskinInput", frame.itemIDBox)
+	elseif name == "SortOrder" then
+		SkinSortOrder(module)
 	end
 end
 
