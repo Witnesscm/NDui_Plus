@@ -27,11 +27,11 @@ local C_LootHistory_GetPlayerInfo = C_LootHistory.GetPlayerInfo
 local ITEM_QUALITY_COLORS = ITEM_QUALITY_COLORS
 local GREED, NEED, PASS = GREED, NEED, PASS
 local ROLL_DISENCHANT = ROLL_DISENCHANT
+local TRANSMOGRIFICATION = TRANSMOGRIFICATION
 
 local enableDisenchant = false
 
 local cachedRolls = {}
-local completedRolls = {}
 LR.RollBars = {}
 
 local fontSize = 14
@@ -42,7 +42,7 @@ local function ClickRoll(button)
 	RollOnLoot(button.parent.rollID, button.rolltype)
 end
 
-local rolltypes = {[1] = "need", [2] = "greed", [3] = "disenchant", [0] = "pass"}
+local rolltypes = {[1] = "need", [2] = "greed", [3] = "disenchant", [4] = "transmog", [0] = "pass"}
 local function SetTip(button)
 	GameTooltip:SetOwner(button, "ANCHOR_RIGHT")
 	GameTooltip:AddLine(button.tiptext)
@@ -100,8 +100,9 @@ end
 local iconCoords = {
 	[0] = {1.05, -0.1, 1.05, -0.1}, -- pass
 	[2] = {0.05, 1.05, -0.025, 0.85}, -- greed
-	[1] = {0.05, 1.05, -0.05, .95}, -- need
-	[3] = {0.05, 1.05, -0.05, .95}, -- disenchant
+	[1] = {0.05, 1.05, -0.05, 0.95}, -- need
+	[3] = {0.05, 1.05, -0.05, 0.95}, -- disenchant
+	[4] = {0.05, 1.05, -0.05, 0.95}, -- transmog
 }
 
 local function RollTexCoords(button, icon, rolltype, minX, maxX, minY, maxY)
@@ -114,11 +115,18 @@ local function RollTexCoords(button, icon, rolltype, minX, maxX, minY, maxY)
 	end
 end
 
-local function RollButtonTextures(button, texture, rolltype)
-	button:SetNormalTexture(texture)
-	button:SetPushedTexture(texture)
-	button:SetDisabledTexture(texture)
-	button:SetHighlightTexture(texture)
+local function RollButtonTextures(button, texture, rolltype, atlas)
+	if atlas then
+		button:SetNormalAtlas(texture)
+		button:SetPushedAtlas(texture)
+		button:SetDisabledAtlas(texture)
+		button:SetHighlightAtlas(texture)
+	else
+		button:SetNormalTexture(texture)
+		button:SetPushedTexture(texture)
+		button:SetDisabledTexture(texture)
+		button:SetHighlightTexture(texture)
+	end
 
 	button.normalTex = button:GetNormalTexture()
 	button.disabledTex = button:GetDisabledTexture()
@@ -144,9 +152,9 @@ local function RollMouseUp(button)
 	end
 end
 
-local function CreateRollButton(parent, texture, rolltype, tiptext, ...)
-	local button = CreateFrame("Button", format("$parent_%sButton", tiptext), parent)
-	button:SetPoint(...)
+local function CreateRollButton(parent, texture, rolltype, tiptext, points, atlas)
+	local button = CreateFrame("Button", nil, parent)
+	button:SetPoint(unpack(points))
 	button:SetWidth(LR.db["Height"] - 4)
 	button:SetHeight(LR.db["Height"] - 4)
 	button:SetScript("OnMouseDown", RollMouseDown)
@@ -157,7 +165,7 @@ local function CreateRollButton(parent, texture, rolltype, tiptext, ...)
 	button:SetMotionScriptsWhileDisabled(true)
 	button:SetHitRectInsets(3, 3, 3, 3)
 
-	RollButtonTextures(button, texture.."-Up", rolltype)
+	RollButtonTextures(button, texture.."-Up", rolltype, atlas)
 
 	button.parent = parent
 	button.rolltype = rolltype
@@ -212,10 +220,11 @@ function LR:CreateRollBar(name)
 	status.parent = bar
 	bar.status = status
 
-	bar.need = CreateRollButton(bar, [[Interface\Buttons\UI-GroupLoot-Dice]], 1, NEED, "LEFT", bar.button, "RIGHT", 6, 0)
-	bar.greed = CreateRollButton(bar, [[Interface\Buttons\UI-GroupLoot-Coin]], 2, GREED, "LEFT", bar.need, "RIGHT", 3, 0)
-	bar.disenchant = enableDisenchant and CreateRollButton(bar, [[Interface\Buttons\UI-GroupLoot-DE]], 3, ROLL_DISENCHANT, "LEFT", bar.greed, "RIGHT", 3, 0)
-	bar.pass = CreateRollButton(bar, [[Interface\Buttons\UI-GroupLoot-Pass]], 0, PASS, "LEFT", bar.disenchant or bar.greed, "RIGHT", 3, 0)
+	bar.need = CreateRollButton(bar, [[Interface\Buttons\UI-GroupLoot-Dice]], 1, NEED, {"LEFT", bar.button, "RIGHT", 6, 0})
+	bar.transmog = P.isNewPatch and CreateRollButton(bar, [[lootroll-toast-icon-transmog]], 4, TRANSMOGRIFICATION, {"LEFT", bar.need, "RIGHT", 3, 2}, true)
+	bar.greed = CreateRollButton(bar, [[Interface\Buttons\UI-GroupLoot-Coin]], 2, GREED, {"LEFT", bar.transmog or bar.need, "RIGHT", 3, bar.transmog and -2 or 0})
+	bar.disenchant = enableDisenchant and CreateRollButton(bar, [[Interface\Buttons\UI-GroupLoot-DE]], 3, ROLL_DISENCHANT, {"LEFT", bar.greed, "RIGHT", 3, 0})
+	bar.pass = CreateRollButton(bar, [[Interface\Buttons\UI-GroupLoot-Pass]], 0, PASS, {"LEFT", bar.disenchant or bar.greed, "RIGHT", 3, 0})
 
 	local bind = bar:CreateFontString()
 	bind:SetPoint("LEFT", bar.pass, "RIGHT", 3, 0)
@@ -258,7 +267,13 @@ local function GetFrame()
 end
 
 function LR:LootRoll_Start(rollID, rollTime)
-	local texture, name, count, quality, bop, canNeed, canGreed, canDisenchant, reasonNeed, reasonGreed, reasonDisenchant, deSkillRequired = GetLootRollItemInfo(rollID)
+	local texture, name, count, quality, bop, canNeed, canGreed, canDisenchant, canTransmog, reasonNeed, reasonGreed, reasonDisenchant, deSkillRequired
+	if P.isNewPatch then
+		texture, name, count, quality, bop, canNeed, canGreed, canDisenchant, canTransmog, reasonNeed, reasonGreed, reasonDisenchant, deSkillRequired = GetLootRollItemInfo(rollID)
+	else
+		texture, name, count, quality, bop, canNeed, canGreed, canDisenchant, reasonNeed, reasonGreed, reasonDisenchant, deSkillRequired = GetLootRollItemInfo(rollID)
+	end
+
 	if not name then
 		for _, rollBar in next, LR.RollBars do
 			if rollBar.rollID == rollID then
@@ -293,35 +308,25 @@ function LR:LootRoll_Start(rollID, rollTime)
 	end
 
 	bar.need.text:SetText(0)
+	bar.need:SetEnabled(canNeed)
+	bar.need.tiptext = canNeed and NEED or _G["LOOT_ROLL_INELIGIBLE_REASON"..reasonNeed]
+
+	if bar.transmog then
+		bar.transmog.text:SetText(0)
+		bar.transmog:SetEnabled(canTransmog)
+	end
+
 	bar.greed.text:SetText(0)
-	bar.pass.text:SetText(0)
-
-	if canNeed then
-		bar.need:Enable()
-		bar.need.tiptext = NEED
-	else
-		bar.need:Disable()
-		bar.need.tiptext = _G["LOOT_ROLL_INELIGIBLE_REASON"..reasonNeed]
-	end
-
-	if canGreed then
-		bar.greed:Enable()
-		bar.greed.tiptext = GREED
-	else
-		bar.greed:Disable()
-		bar.greed.tiptext = _G["LOOT_ROLL_INELIGIBLE_REASON"..reasonGreed]
-	end
+	bar.greed:SetEnabled(canGreed)
+	bar.greed.tiptext = canGreed and GREED or _G["LOOT_ROLL_INELIGIBLE_REASON"..reasonGreed]
 
 	if bar.disenchant then
 		bar.disenchant.text:SetText(0)
-		if canDisenchant then
-			bar.disenchant:Enable()
-			bar.disenchant.tiptext = ROLL_DISENCHANT
-		else
-			bar.disenchant:Disable()
-			bar.disenchant.tiptext = format(_G["LOOT_ROLL_INELIGIBLE_REASON"..reasonDisenchant], deSkillRequired)
-		end
+		bar.disenchant:SetEnabled(canDisenchant)
+		bar.disenchant.tiptext = canDisenchant and ROLL_DISENCHANT or format(_G["LOOT_ROLL_INELIGIBLE_REASON"..reasonDisenchant], deSkillRequired)
 	end
+
+	bar.pass.text:SetText(0)
 
 	bar.fsbind:SetText(bop and "BoP" or "BoE")
 	bar.fsbind:SetVertexColor(bop and 1 or .3, bop and .3 or 1, bop and .1 or .3)
@@ -333,17 +338,13 @@ function LR:LootRoll_Start(rollID, rollTime)
 
 	bar:Show()
 
-	for rollid, rollTable in pairs(cachedRolls) do
-		if bar.rollID == rollid then
-			for rollType, rollerInfo in pairs(rollTable) do
-				local rollerName, class = rollerInfo[1], rollerInfo[2]
-				if not bar.rolls[rollType] then bar.rolls[rollType] = {} end
-				tinsert(bar.rolls[rollType], { rollerName, class })
-				bar[rolltypes[rollType]].text:SetText(#bar.rolls[rollType])
-			end
-
-			completedRolls[rollid] = true
-			break
+	local cachedInfo = cachedRolls[rollID]
+	if cachedInfo then
+		for rollType, rollerInfo in pairs(cachedInfo) do
+			local rollerName, class = rollerInfo[1], rollerInfo[2]
+			if not bar.rolls[rollType] then bar.rolls[rollType] = {} end
+			tinsert(bar.rolls[rollType], { rollerName, class })
+			bar[rolltypes[rollType]].text:SetText(#bar.rolls[rollType])
 		end
 	end
 end
@@ -366,23 +367,23 @@ function LR:LootRoll_Update(itemIdx, playerIdx)
 
 		if rollIsHidden then
 			if not cachedRolls[rollID] then cachedRolls[rollID] = {} end
-			if not cachedRolls[rollID][rollType] then
-				if not cachedRolls[rollID][rollType] then cachedRolls[rollID][rollType] = {} end
-				tinsert(cachedRolls[rollID][rollType], { name, class })
-			end
+			if not cachedRolls[rollID][rollType] then cachedRolls[rollID][rollType] = {} end
+			tinsert(cachedRolls[rollID][rollType], { name, class })
 		end
 	end
 end
 
-function LR:LootRoll_Complete()
-	wipe(cachedRolls)
-	wipe(completedRolls)
+function LR:LootRoll_UpdateDrop(encounterID, lootListID)
+	local dropInfo = C_LootHistory.GetSortedInfoForDrop(encounterID, lootListID)
+	-- need test in raid
 end
 
 function LR:LootRoll_Cancel(_, rollID)
 	if self.rollID == rollID then
 		self.rollID = nil
 		self.time = nil
+
+		if cachedRolls[rollID] then cachedRolls[rollID] = nil end
 	end
 end
 
@@ -394,9 +395,11 @@ function LR:OnLogin()
 	B.Mover(parentFrame, L["teksLoot LootRoll"], "teksLoot", {"TOP", UIParent, 0, -200})
 	fontSize = LR.db["Height"] / 2
 
-	B:RegisterEvent("LOOT_HISTORY_ROLL_CHANGED", self.LootRoll_Update)
-	B:RegisterEvent("LOOT_HISTORY_ROLL_COMPLETE", self.LootRoll_Complete)
-	B:RegisterEvent("LOOT_ROLLS_COMPLETE", self.LootRoll_Complete)
+	if P.isNewPatch then
+		B:RegisterEvent("LOOT_HISTORY_UPDATE_DROP", self.LootRoll_UpdateDrop)
+	else
+		B:RegisterEvent("LOOT_HISTORY_ROLL_CHANGED", self.LootRoll_Update)
+	end
 	B:RegisterEvent("START_LOOT_ROLL", self.LootRoll_Start)
 
 	_G.UIParent:UnregisterEvent("START_LOOT_ROLL")
@@ -425,6 +428,7 @@ function LR:LootRollTest()
 	testFrame:Show()
 	testFrame:SetPoint("TOP", parentFrame, "TOP")
 	testFrame.need:SetScript("OnClick", OnClick_Hide)
+	if testFrame.transmog then testFrame.transmog:SetScript("OnClick", OnClick_Hide) end
 	testFrame.greed:SetScript("OnClick", OnClick_Hide)
 	testFrame.pass:SetScript("OnClick", OnClick_Hide)
 
@@ -471,6 +475,7 @@ function LR:UpdateLootRollTest()
 	testFrame.fsbind:SetFont(DB.Font[1], height / 2, DB.Font[3])
 	testFrame.fsloot:SetFont(DB.Font[1], height / 2, DB.Font[3])
 	testFrame.need:SetSize(height-4, height-4)
+	if testFrame.transmog then testFrame.transmog:SetSize(height-4, height-4) end
 	testFrame.greed:SetSize(height-4, height-4)
 	testFrame.pass:SetSize(height-4, height-4)
 	testFrame.status:SetPoint("TOPLEFT", C.mult, -(LR.db["Style"] == 2 and testFrame:GetHeight() / 1.6 or C.mult))
