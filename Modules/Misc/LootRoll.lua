@@ -22,8 +22,6 @@ local RollOnLoot = RollOnLoot
 local GameTooltip_Hide = GameTooltip_Hide
 local GameTooltip_ShowCompareItem = GameTooltip_ShowCompareItem
 
-local C_LootHistory_GetItem = C_LootHistory.GetItem
-local C_LootHistory_GetPlayerInfo = C_LootHistory.GetPlayerInfo
 local ITEM_QUALITY_COLORS = ITEM_QUALITY_COLORS
 local GREED, NEED, PASS = GREED, NEED, PASS
 local ROLL_DISENCHANT = ROLL_DISENCHANT
@@ -32,17 +30,19 @@ local TRANSMOGRIFICATION = TRANSMOGRIFICATION
 local enableDisenchant = false
 
 local cachedRolls = {}
+local cachedIndex = {}
 LR.RollBars = {}
 
 local fontSize = 14
 local parentFrame
 local GenerateName = P.NameGenerator(addonName.."_LootRoll")
 
+local rolltypes = {[1] = "need", [2] = "greed", [3] = "disenchant", [4] = "transmog", [0] = "pass"}
+
 local function ClickRoll(button)
 	RollOnLoot(button.parent.rollID, button.rolltype)
 end
 
-local rolltypes = {[1] = "need", [2] = "greed", [3] = "disenchant", [4] = "transmog", [0] = "pass"}
 local function SetTip(button)
 	GameTooltip:SetOwner(button, "ANCHOR_RIGHT")
 	GameTooltip:AddLine(button.tiptext)
@@ -284,6 +284,10 @@ function LR:LootRoll_Start(rollID, rollTime)
 		return
 	end
 
+	if LR.EncounterID and not cachedIndex[LR.EncounterID] then
+		cachedIndex[LR.EncounterID] = rollID
+	end
+
 	local link = GetLootRollItemLink(rollID)
 	local level = B.GetItemLevel(link)
 	local color = ITEM_QUALITY_COLORS[quality]
@@ -350,8 +354,8 @@ function LR:LootRoll_Start(rollID, rollTime)
 end
 
 function LR:LootRoll_Update(itemIdx, playerIdx)
-	local rollID = C_LootHistory_GetItem(itemIdx)
-	local name, class, rollType = C_LootHistory_GetPlayerInfo(itemIdx, playerIdx)
+	local rollID = C_LootHistory.GetItem(itemIdx)
+	local name, class, rollType = C_LootHistory.GetPlayerInfo(itemIdx, playerIdx)
 
 	local rollIsHidden = true
 	if name and rollType then
@@ -373,9 +377,64 @@ function LR:LootRoll_Update(itemIdx, playerIdx)
 	end
 end
 
-function LR:LootRoll_UpdateDrop(encounterID, lootListID)
+function LR:LootRoll_GetRollID(encounterID, lootListID)
+	local index = cachedIndex[encounterID]
+	return index and (index + lootListID - 1)
+end
+
+-- local rolltypes = {[1] = "need", [2] = "greed", [3] = "disenchant", [4] = "transmog", [0] = "pass"}
+
+local rollStateToType = {}
+if P.isNewPatch then
+	rollStateToType = {
+		[Enum.EncounterLootDropRollState.NeedMainSpec] = 1,
+		--[Enum.EncounterLootDropRollState.NeedOffSpec] = 1,
+		[Enum.EncounterLootDropRollState.Transmog] = 4,
+		[Enum.EncounterLootDropRollState.Greed] = 2,
+		[Enum.EncounterLootDropRollState.Pass] = 0,
+	}
+end
+
+local function GetRollBarByID(rollID)
+	for _, bar in next, LR.RollBars do
+		if bar.rollID == rollID then
+			return bar
+		end
+	end
+end
+
+function LR:LootRoll_UpdateDrops(encounterID, lootListID)
 	local dropInfo = C_LootHistory.GetSortedInfoForDrop(encounterID, lootListID)
-	-- need test in raid
+	local rollID = LR:LootRoll_GetRollID(encounterID, lootListID)
+	if rollID then
+		cachedRolls[rollID] = {}
+		if not dropInfo.allPassed then
+			for _, roll in ipairs(dropInfo.rollInfos) do
+				local rollType = rollStateToType[roll.state]
+				if rollType then
+					cachedRolls[rollID][rollType] =  cachedRolls[rollID][rollType] or {}
+					tinsert(cachedRolls[rollID][rollType], {roll.playerName, roll.playerClass })
+				end
+			end
+		end
+
+		local bar = GetRollBarByID(rollID)
+		if bar then
+			bar.rolls = {}
+			for rollType, rollerInfo in pairs(cachedRolls[rollID]) do
+				local rollerName, class = rollerInfo[1], rollerInfo[2]
+				bar.rolls[rollType] = bar.rolls[rollType] or {}
+				tinsert(bar.rolls[rollType], { rollerName, class })
+				bar[rolltypes[rollType]].text:SetText(#bar.rolls[rollType])
+			end
+		end
+	end
+end
+
+function LR:LootRoll_EncounterEnd(id, _, _, _, status)
+	if status == 1 then
+		LR.EncounterID = id
+	end
 end
 
 function LR:LootRoll_Cancel(_, rollID)
@@ -396,7 +455,8 @@ function LR:OnLogin()
 	fontSize = LR.db["Height"] / 2
 
 	if P.isNewPatch then
-		B:RegisterEvent("LOOT_HISTORY_UPDATE_DROP", self.LootRoll_UpdateDrop)
+		B:RegisterEvent("LOOT_HISTORY_UPDATE_DROP", self.LootRoll_UpdateDrops)
+		B:RegisterEvent("ENCOUNTER_END", self.LootRoll_EncounterEnd)
 	else
 		B:RegisterEvent("LOOT_HISTORY_ROLL_CHANGED", self.LootRoll_Update)
 	end
