@@ -147,6 +147,8 @@ do
 	local function Purchase(configID, nodeID)
 		local nodeInfo = C_Traits.GetNodeInfo(configID, nodeID)
 		if nodeInfo then
+			if not nodeInfo.meetsEdgeRequirements then return end
+
 			if nodeInfo.type == Enum.TraitNodeType.Selection then
 				C_Traits.SetSelection(configID, nodeID, nodeInfo.entryIDs[2]) -- choose second
 			else
