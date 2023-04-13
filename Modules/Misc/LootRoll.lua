@@ -267,12 +267,7 @@ local function GetFrame()
 end
 
 function LR:LootRoll_Start(rollID, rollTime)
-	local texture, name, count, quality, bop, canNeed, canGreed, canDisenchant, canTransmog, reasonNeed, reasonGreed, reasonDisenchant, deSkillRequired
-	if P.isNewPatch then
-		texture, name, count, quality, bop, canNeed, canGreed, canDisenchant, canTransmog, reasonNeed, reasonGreed, reasonDisenchant, deSkillRequired = GetLootRollItemInfo(rollID)
-	else
-		texture, name, count, quality, bop, canNeed, canGreed, canDisenchant, reasonNeed, reasonGreed, reasonDisenchant, deSkillRequired = GetLootRollItemInfo(rollID)
-	end
+	local texture, name, count, quality, bop, canNeed, canGreed, canDisenchant, reasonNeed, reasonGreed, reasonDisenchant, deSkillRequired, canTransmog = GetLootRollItemInfo(rollID)
 
 	if not name then
 		for _, rollBar in next, LR.RollBars do
