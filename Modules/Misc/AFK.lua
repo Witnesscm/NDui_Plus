@@ -249,18 +249,18 @@ function AFK:OnLogin()
 	-- AFK.AFKMode.bottom.nversion:SetTextColor(0.7, 0.7, 0.7)
 
 	AFK.AFKMode.bottom.factionb = CreateFrame("Frame", nil, AFK.AFKMode)
-	AFK.AFKMode.bottom.factionb:SetPoint("BOTTOM", AFK.AFKMode.bottom, "TOP", 0, -40)
+	AFK.AFKMode.bottom.factionb:SetPoint("BOTTOM", AFK.AFKMode.bottom, "TOP", 0, -30)
 	AFK.AFKMode.bottom.factionb:SetFrameStrata("MEDIUM")
 	AFK.AFKMode.bottom.factionb:SetFrameLevel(10)
 	AFK.AFKMode.bottom.factionb:SetSize(220, 220)
 
 	AFK.AFKMode.bottom.class = AFK.AFKMode.bottom.factionb:CreateTexture(nil, "OVERLAY")
-	AFK.AFKMode.bottom.class:SetInside()
+	AFK.AFKMode.bottom.class:SetAllPoints()
 	AFK.AFKMode.bottom.class:SetTexture("Interface\\AddOns\\NDui_Plus\\Media\\Texture\\ClassIcons\\CLASS-" .. DB.MyClass)
 
 	AFK.AFKMode.bottom.name = AFK.AFKMode.bottom:CreateFontString(nil, "OVERLAY")
 	AFK.AFKMode.bottom.name:SetFont(DB.Font[1], 18, DB.Font[3])
-	AFK.AFKMode.bottom.name:SetPoint("TOP", AFK.AFKMode.bottom.factionb, "BOTTOM", 0, 5)
+	AFK.AFKMode.bottom.name:SetPoint("TOP", AFK.AFKMode.bottom.factionb, "BOTTOM", 0, -5)
 	AFK.AFKMode.bottom.name:SetTextColor(r, g, b)
 	AFK.AFKMode.bottom.name:SetJustifyH("CENTER")
 
