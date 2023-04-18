@@ -42,8 +42,8 @@ local function SkinModuleButton(self)
 end
 
 local function SkinItemButton(self)
-	self:SetNormalTexture(P.ClearTexture)
-	self:SetPushedTexture(P.ClearTexture)
+	self:SetNormalTexture(0)
+	self:SetPushedTexture(0)
 	self:SetHighlightTexture(DB.bdTex)
 	self:GetHighlightTexture():SetVertexColor(1, 1, 1, .25)
 	self:GetHighlightTexture():SetInside()

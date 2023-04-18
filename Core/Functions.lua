@@ -158,7 +158,7 @@ do
 	local function resetCollapseTexture(self, texture)
 		if self.settingTexture then return end
 		self.settingTexture = true
-		self:SetNormalTexture(P.ClearTexture)
+		self:SetNormalTexture(0)
 
 		if texture and texture ~= "" then
 			if strfind(texture, "Plus") or strfind(texture, "Closed") or texture == 130838 then
@@ -179,9 +179,9 @@ do
 			return
 		end
 
-		self:SetNormalTexture(P.ClearTexture)
-		self:SetHighlightTexture(P.ClearTexture)
-		self:SetPushedTexture(P.ClearTexture)
+		self:SetNormalTexture(0)
+		self:SetHighlightTexture(0)
+		self:SetPushedTexture(0)
 
 		local bg = B.CreateBDFrame(self, .25, true)
 		bg:ClearAllPoints()

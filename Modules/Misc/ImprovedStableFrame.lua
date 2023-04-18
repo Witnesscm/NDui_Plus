@@ -103,8 +103,8 @@ function M:ImprovedStableFrame()
 			local bu = _G["PetStableStabledPet"..i]
 
 			if i > NUM_PET_STABLE_SLOTS then
-				bu:SetNormalTexture(P.ClearTexture)
-				bu:SetPushedTexture(P.ClearTexture)
+				bu:SetNormalTexture(0)
+				bu:SetPushedTexture(0)
 				bu.Checked:SetTexture(DB.pushedTex)
 				bu:GetHighlightTexture():SetColorTexture(1, 1, 1, .25)
 				bu:DisableDrawLayer("BACKGROUND")

@@ -110,7 +110,7 @@ local function reskinBagItem(button)
 	if not button then P:Debug("Unknown: BagItem") return end
 
 	button.EmptySlot:Hide()
-	button:SetPushedTexture(P.ClearTexture)
+	button:SetPushedTexture(0)
 	button.Icon:SetInside(button, 2, 2)
 	button.Highlight:SetColorTexture(1, 1, 1, .25)
 	button.Highlight:SetAllPoints(button.Icon)
