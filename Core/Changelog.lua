@@ -2,6 +2,12 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 
 P.Changelog = [[
+v1.8.1
+[易用性] 暂离界面添加唤魔师纹章; 使用更高分辨率的职业纹章材质
+[易用性] Roll点增强添加幻化选项; 尝试修复Roll点人数(PTR)
+[美化] 更新Auctionator美化
+[美化] 更新BagSync美化
+
 v1.8.0
 [易用性] 添加按钮一键学习驭龙术天赋
 [易用性] 添加按钮一键学习专业专精(PTR)
