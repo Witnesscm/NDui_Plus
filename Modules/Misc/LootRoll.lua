@@ -47,10 +47,13 @@ local function SetTip(button)
 	GameTooltip:SetOwner(button, "ANCHOR_RIGHT")
 	GameTooltip:AddLine(button.tiptext)
 
-	local rolls = button.parent.rolls[button.rolltype]
+	local rollID = button.parent.rollID
+	if not rollID then return end
+
+	local rolls = cachedRolls[rollID] and cachedRolls[rollID][button.rolltype]
 	if rolls then
-		for _, infoTable in next, rolls do
-			local playerName, className = unpack(infoTable)
+		for _, rollerInfo in next, rolls do
+			local playerName, className = unpack(rollerInfo)
 			local r, g, b = B.ClassColor(className)
 			GameTooltip:AddLine(playerName, r, g, b)
 		end
@@ -102,7 +105,7 @@ local iconCoords = {
 	[2] = {0.05, 1.05, -0.025, 0.85}, -- greed
 	[1] = {0.05, 1.05, -0.05, 0.95}, -- need
 	[3] = {0.05, 1.05, -0.05, 0.95}, -- disenchant
-	[4] = {0.05, 1.05, -0.05, 0.95}, -- transmog
+	[4] = {0.05, 1.05, 0.025, 1.05}, -- transmog
 }
 
 local function RollTexCoords(button, icon, rolltype, minX, maxX, minY, maxY)
@@ -221,8 +224,8 @@ function LR:CreateRollBar(name)
 	bar.status = status
 
 	bar.need = CreateRollButton(bar, [[Interface\Buttons\UI-GroupLoot-Dice]], 1, NEED, {"LEFT", bar.button, "RIGHT", 6, 0})
-	bar.transmog = P.isNewPatch and CreateRollButton(bar, [[lootroll-toast-icon-transmog]], 4, TRANSMOGRIFICATION, {"LEFT", bar.need, "RIGHT", 3, 2}, true)
-	bar.greed = CreateRollButton(bar, [[Interface\Buttons\UI-GroupLoot-Coin]], 2, GREED, {"LEFT", bar.transmog or bar.need, "RIGHT", 3, bar.transmog and -2 or 0})
+	bar.transmog = P.isNewPatch and CreateRollButton(bar, [[lootroll-toast-icon-transmog]], 4, TRANSMOGRIFICATION, {"LEFT", bar.need, "RIGHT", 3, 0}, true)
+	bar.greed = CreateRollButton(bar, [[Interface\Buttons\UI-GroupLoot-Coin]], 2, GREED, {"LEFT", bar.transmog or bar.need, "RIGHT", 3, 0})
 	bar.disenchant = enableDisenchant and CreateRollButton(bar, [[Interface\Buttons\UI-GroupLoot-DE]], 3, ROLL_DISENCHANT, {"LEFT", bar.greed, "RIGHT", 3, 0})
 	bar.pass = CreateRollButton(bar, [[Interface\Buttons\UI-GroupLoot-Pass]], 0, PASS, {"LEFT", bar.disenchant or bar.greed, "RIGHT", 3, 0})
 
@@ -238,8 +241,6 @@ function LR:CreateRollBar(name)
 	loot:SetSize(200, 10)
 	loot:SetJustifyH("LEFT")
 	bar.fsloot = loot
-
-	bar.rolls = {}
 
 	return bar
 end
@@ -290,7 +291,6 @@ function LR:LootRoll_Start(rollID, rollTime)
 	local bar = GetFrame()
 	if not bar then return end
 
-	wipe(bar.rolls)
 	bar.rollID = rollID
 	bar.time = rollTime
 
@@ -339,11 +339,18 @@ function LR:LootRoll_Start(rollID, rollTime)
 
 	local cachedInfo = cachedRolls[rollID]
 	if cachedInfo then
-		for rollType, rollerInfo in pairs(cachedInfo) do
-			local rollerName, class = rollerInfo[1], rollerInfo[2]
-			if not bar.rolls[rollType] then bar.rolls[rollType] = {} end
-			tinsert(bar.rolls[rollType], { rollerName, class })
-			bar[rolltypes[rollType]].text:SetText(#bar.rolls[rollType])
+		for rollType in pairs(cachedInfo) do
+			bar[rolltypes[rollType]].text:SetText(#cachedInfo[rollType])
+		end
+	end
+
+	P:Debug("RollID: %d %s", rollID, link)
+end
+
+local function GetRollBarByID(rollID)
+	for _, bar in next, LR.RollBars do
+		if bar.rollID == rollID then
+			return bar
 		end
 	end
 end
@@ -352,22 +359,14 @@ function LR:LootRoll_Update(itemIdx, playerIdx)
 	local rollID = C_LootHistory.GetItem(itemIdx)
 	local name, class, rollType = C_LootHistory.GetPlayerInfo(itemIdx, playerIdx)
 
-	local rollIsHidden = true
-	if name and rollType then
-		for _, bar in next, LR.RollBars do
-			if bar.rollID == rollID then
-				if not bar.rolls[rollType] then bar.rolls[rollType] = {} end
-				tinsert(bar.rolls[rollType], { name, class })
-				bar[rolltypes[rollType]].text:SetText(#bar.rolls[rollType])
-				rollIsHidden = false
-				break
-			end
-		end
+	if rollID and name and rollType then
+		cachedRolls[rollID] = cachedRolls[rollID] or {}
+		cachedRolls[rollID][rollType] = cachedRolls[rollID][rollType] or {}
+		tinsert(cachedRolls[rollID][rollType], {name, class})
 
-		if rollIsHidden then
-			if not cachedRolls[rollID] then cachedRolls[rollID] = {} end
-			if not cachedRolls[rollID][rollType] then cachedRolls[rollID][rollType] = {} end
-			tinsert(cachedRolls[rollID][rollType], { name, class })
+		local bar = GetRollBarByID(rollID)
+		if bar then
+			bar[rolltypes[rollType]].text:SetText(#cachedRolls[rollID][rollType])
 		end
 	end
 end
@@ -376,8 +375,6 @@ function LR:LootRoll_GetRollID(encounterID, lootListID)
 	local index = cachedIndex[encounterID]
 	return index and (index + lootListID - 1)
 end
-
--- local rolltypes = {[1] = "need", [2] = "greed", [3] = "disenchant", [4] = "transmog", [0] = "pass"}
 
 local rollStateToType = {}
 if P.isNewPatch then
@@ -388,14 +385,6 @@ if P.isNewPatch then
 		[Enum.EncounterLootDropRollState.Greed] = 2,
 		[Enum.EncounterLootDropRollState.Pass] = 0,
 	}
-end
-
-local function GetRollBarByID(rollID)
-	for _, bar in next, LR.RollBars do
-		if bar.rollID == rollID then
-			return bar
-		end
-	end
 end
 
 function LR:LootRoll_UpdateDrops(encounterID, lootListID)
@@ -415,12 +404,8 @@ function LR:LootRoll_UpdateDrops(encounterID, lootListID)
 
 		local bar = GetRollBarByID(rollID)
 		if bar then
-			bar.rolls = {}
-			for rollType, rollerInfo in pairs(cachedRolls[rollID]) do
-				local rollerName, class = rollerInfo[1], rollerInfo[2]
-				bar.rolls[rollType] = bar.rolls[rollType] or {}
-				tinsert(bar.rolls[rollType], { rollerName, class })
-				bar[rolltypes[rollType]].text:SetText(#bar.rolls[rollType])
+			for rollType in pairs(cachedRolls[rollID]) do
+				bar[rolltypes[rollType]].text:SetText(#cachedRolls[rollID][rollType])
 			end
 		end
 	end
@@ -437,7 +422,7 @@ function LR:LootRoll_Cancel(_, rollID)
 		self.rollID = nil
 		self.time = nil
 
-		if cachedRolls[rollID] then cachedRolls[rollID] = nil end
+		if cachedRolls[rollID] then wipe(cachedRolls[rollID]) end
 	end
 end
 
