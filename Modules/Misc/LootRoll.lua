@@ -101,15 +101,23 @@ local function StatusUpdate(button, elapsed)
 end
 
 local iconCoords = {
-	[0] = {1.05, -0.1, 1.05, -0.1}, -- pass
-	[2] = {0.05, 1.05, -0.025, 0.85}, -- greed
-	[1] = {0.05, 1.05, -0.05, 0.95}, -- need
-	[3] = {0.05, 1.05, -0.05, 0.95}, -- disenchant
-	[4] = {0.05, 1.05, 0.025, 1.05}, -- transmog
+	[0] = {-0.05, 1.05, -0.05, 1.05}, -- pass
+	[1] = {0, 1, -0.05, 0.95}, -- need
+	[2] = {0, 1, -0.025, 0.85}, -- greed
+	[3] = {0, 1, -0.05, 0.95}, -- disenchant
 }
+if P.isNewPatch then
+	iconCoords = {
+		[0] = {-0.05, 1.05, -0.05, 1.05}, -- pass
+		[1] = {0.025, 1.025, -0.05, 0.95}, -- need
+		[2] = {0, 1, 0.05, 0.95}, -- greed
+		[3] = {0, 1, 0, 1},  -- disenchant
+		[4] = {0, 1, 0, 1}, -- transmog
+	}
+end
 
-local function RollTexCoords(button, icon, rolltype, minX, maxX, minY, maxY)
-	local offset = icon == button.pushedTex and (rolltype == 0 and -0.05 or 0.05) or 0
+local function RollTexCoords(button, icon, minX, maxX, minY, maxY)
+	local offset = icon == button.pushedTex and 0.05 or 0
 	icon:SetTexCoord(minX - offset, maxX, minY - offset, maxY)
 
 	if icon == button.disabledTex then
@@ -137,10 +145,10 @@ local function RollButtonTextures(button, texture, rolltype, atlas)
 	button.highlightTex = button:GetHighlightTexture()
 
 	local minX, maxX, minY, maxY = unpack(iconCoords[rolltype])
-	RollTexCoords(button, button.normalTex, rolltype, minX, maxX, minY, maxY)
-	RollTexCoords(button, button.disabledTex, rolltype, minX, maxX, minY, maxY)
-	RollTexCoords(button, button.pushedTex, rolltype, minX, maxX, minY, maxY)
-	RollTexCoords(button, button.highlightTex, rolltype, minX, maxX, minY, maxY)
+	RollTexCoords(button, button.normalTex, minX, maxX, minY, maxY)
+	RollTexCoords(button, button.disabledTex, minX, maxX, minY, maxY)
+	RollTexCoords(button, button.pushedTex, minX, maxX, minY, maxY)
+	RollTexCoords(button, button.highlightTex, minX, maxX, minY, maxY)
 end
 
 local function RollMouseDown(button)
@@ -223,11 +231,18 @@ function LR:CreateRollBar(name)
 	status.parent = bar
 	bar.status = status
 
-	bar.need = CreateRollButton(bar, [[Interface\Buttons\UI-GroupLoot-Dice]], 1, NEED, {"LEFT", bar.button, "RIGHT", 6, 0})
-	bar.transmog = P.isNewPatch and CreateRollButton(bar, [[lootroll-toast-icon-transmog]], 4, TRANSMOGRIFICATION, {"LEFT", bar.need, "RIGHT", 3, 0}, true)
-	bar.greed = CreateRollButton(bar, [[Interface\Buttons\UI-GroupLoot-Coin]], 2, GREED, {"LEFT", bar.transmog or bar.need, "RIGHT", 3, 0})
-	bar.disenchant = enableDisenchant and CreateRollButton(bar, [[Interface\Buttons\UI-GroupLoot-DE]], 3, ROLL_DISENCHANT, {"LEFT", bar.greed, "RIGHT", 3, 0})
-	bar.pass = CreateRollButton(bar, [[Interface\Buttons\UI-GroupLoot-Pass]], 0, PASS, {"LEFT", bar.disenchant or bar.greed, "RIGHT", 3, 0})
+	if P.isNewPatch then
+		bar.need = CreateRollButton(bar, [[lootroll-toast-icon-need]], 1, NEED, {"LEFT", bar.button, "RIGHT", 6, 0}, true)
+		bar.transmog = CreateRollButton(bar, [[lootroll-toast-icon-transmog]], 4, TRANSMOGRIFICATION, {"LEFT", bar.need, "RIGHT", 3, 0}, true)
+		bar.greed = CreateRollButton(bar, [[lootroll-toast-icon-greed]], 2, GREED, {"LEFT", bar.transmog, "RIGHT", 3, 0}, true)
+		bar.disenchant = enableDisenchant and CreateRollButton(bar, [[lootroll-toast-icon-disenchant]], 3, ROLL_DISENCHANT, {"LEFT", bar.greed, "RIGHT", 3, 0}, true)
+		bar.pass = CreateRollButton(bar, [[lootroll-toast-icon-pass]], 0, PASS, {"LEFT", bar.disenchant or bar.greed, "RIGHT", 3, 0}, true)
+	else
+		bar.need = CreateRollButton(bar, [[Interface\Buttons\UI-GroupLoot-Dice]], 1, NEED, {"LEFT", bar.button, "RIGHT", 6, 0})
+		bar.greed = CreateRollButton(bar, [[Interface\Buttons\UI-GroupLoot-Coin]], 2, GREED, {"LEFT", bar.need, "RIGHT", 3, 0})
+		bar.disenchant = enableDisenchant and CreateRollButton(bar, [[Interface\Buttons\UI-GroupLoot-DE]], 3, ROLL_DISENCHANT, {"LEFT", bar.greed, "RIGHT", 3, 0})
+		bar.pass = CreateRollButton(bar, [[Interface\Buttons\UI-GroupLoot-Pass]], 0, PASS, {"LEFT", bar.disenchant or bar.greed, "RIGHT", 3, 0})
+	end
 
 	local bind = bar:CreateFontString()
 	bind:SetPoint("LEFT", bar.pass, "RIGHT", 3, 0)
@@ -470,6 +485,7 @@ function LR:LootRollTest()
 	testFrame.need:SetScript("OnClick", OnClick_Hide)
 	if testFrame.transmog then testFrame.transmog:SetScript("OnClick", OnClick_Hide) end
 	testFrame.greed:SetScript("OnClick", OnClick_Hide)
+	if testFrame.disenchant then testFrame.disenchant:SetScript("OnClick", OnClick_Hide) end
 	testFrame.pass:SetScript("OnClick", OnClick_Hide)
 
 	local itemID = 17103
@@ -517,6 +533,7 @@ function LR:UpdateLootRollTest()
 	testFrame.need:SetSize(height-4, height-4)
 	if testFrame.transmog then testFrame.transmog:SetSize(height-4, height-4) end
 	testFrame.greed:SetSize(height-4, height-4)
+	if testFrame.disenchant then testFrame.disenchant:SetSize(height-4, height-4) end
 	testFrame.pass:SetSize(height-4, height-4)
 	testFrame.status:SetPoint("TOPLEFT", C.mult, -(LR.db["Style"] == 2 and testFrame:GetHeight() / 1.6 or C.mult))
 
