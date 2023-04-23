@@ -163,7 +163,6 @@ L["GarrisonTabsTip"] = "Add tabs on mission report panel for old expansion page,
 L["AuctionEnhanced"] = "Auction House Enhanced"
 L["AuctionEnhancedTip"] = "Show the tertiary stats of equipments in auction house."
 L["GuildBankItemLevel"] = "Guild Bank ItemLevel"
-L["CypherResearchConsole"] = "Cypher Research Console"
 L["Wormhole Centrifuge Helper"] = "Wormhole Centrifuge Helper"
 L["Vault of the Incarnates"] = "Vault of the Incarnates"
 L["[ABBR] Vault of the Incarnates"] = "VOTI"

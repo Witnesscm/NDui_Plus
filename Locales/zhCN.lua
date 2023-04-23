@@ -163,7 +163,6 @@ L["GarrisonTabsTip"] = "添加标签快速切换旧资料片报告面板，修�
 L["AuctionEnhanced"] = "拍卖行增强"
 L["AuctionEnhancedTip"] = "显示拍卖行装备额外绿字。"
 L["GuildBankItemLevel"] = "公会银行装备等级"
-L["CypherResearchConsole"] = "密文研究控制台"
 L["Wormhole Centrifuge Helper"] = "虫洞离心机助手"
 L["Vault of the Incarnates"] = "化身巨龙牢窟"
 L["[ABBR] Vault of the Incarnates"] = "化身巨龙牢窟"

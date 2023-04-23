@@ -163,7 +163,6 @@ L["GarrisonTabsTip"] = "Ajouter des onglets sur le panneau de rapport de mission
 L["AuctionEnhanced"] = "Hotel des ventes amélioré"
 L["AuctionEnhancedTip"] = "Afficher les statistiques tertiaires des équipements dans l'hotel des ventes."
 L["GuildBankItemLevel"] = "Niveau d'objet de la banque de guilde"
-L["CypherResearchConsole"] = "Console de recherche cryptique"
 L["Wormhole Centrifuge Helper"] = "Wormhole Centrifuge Helper"
 L["Vault of the Incarnates"] = "Vault of the Incarnates"
 L["[ABBR] Vault of the Incarnates"] = "VOTI"
