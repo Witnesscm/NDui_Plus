@@ -102,19 +102,11 @@ end
 
 local iconCoords = {
 	[0] = {-0.05, 1.05, -0.05, 1.05}, -- pass
-	[1] = {0, 1, -0.05, 0.95}, -- need
-	[2] = {0, 1, -0.025, 0.85}, -- greed
-	[3] = {0, 1, -0.05, 0.95}, -- disenchant
+	[1] = {0.025, 1.025, -0.05, 0.95}, -- need
+	[2] = {0, 1, 0.05, 0.95}, -- greed
+	[3] = {0, 1, 0, 1},  -- disenchant
+	[4] = {0, 1, 0, 1}, -- transmog
 }
-if P.isNewPatch then
-	iconCoords = {
-		[0] = {-0.05, 1.05, -0.05, 1.05}, -- pass
-		[1] = {0.025, 1.025, -0.05, 0.95}, -- need
-		[2] = {0, 1, 0.05, 0.95}, -- greed
-		[3] = {0, 1, 0, 1},  -- disenchant
-		[4] = {0, 1, 0, 1}, -- transmog
-	}
-end
 
 local function RollTexCoords(button, icon, minX, maxX, minY, maxY)
 	local offset = icon == button.pushedTex and 0.05 or 0
@@ -231,18 +223,11 @@ function LR:CreateRollBar(name)
 	status.parent = bar
 	bar.status = status
 
-	if P.isNewPatch then
-		bar.need = CreateRollButton(bar, [[lootroll-toast-icon-need]], 1, NEED, {"LEFT", bar.button, "RIGHT", 6, 0}, true)
-		bar.transmog = CreateRollButton(bar, [[lootroll-toast-icon-transmog]], 4, TRANSMOGRIFICATION, {"LEFT", bar.need, "RIGHT", 3, 0}, true)
-		bar.greed = CreateRollButton(bar, [[lootroll-toast-icon-greed]], 2, GREED, {"LEFT", bar.transmog, "RIGHT", 3, 0}, true)
-		bar.disenchant = enableDisenchant and CreateRollButton(bar, [[lootroll-toast-icon-disenchant]], 3, ROLL_DISENCHANT, {"LEFT", bar.greed, "RIGHT", 3, 0}, true)
-		bar.pass = CreateRollButton(bar, [[lootroll-toast-icon-pass]], 0, PASS, {"LEFT", bar.disenchant or bar.greed, "RIGHT", 3, 0}, true)
-	else
-		bar.need = CreateRollButton(bar, [[Interface\Buttons\UI-GroupLoot-Dice]], 1, NEED, {"LEFT", bar.button, "RIGHT", 6, 0})
-		bar.greed = CreateRollButton(bar, [[Interface\Buttons\UI-GroupLoot-Coin]], 2, GREED, {"LEFT", bar.need, "RIGHT", 3, 0})
-		bar.disenchant = enableDisenchant and CreateRollButton(bar, [[Interface\Buttons\UI-GroupLoot-DE]], 3, ROLL_DISENCHANT, {"LEFT", bar.greed, "RIGHT", 3, 0})
-		bar.pass = CreateRollButton(bar, [[Interface\Buttons\UI-GroupLoot-Pass]], 0, PASS, {"LEFT", bar.disenchant or bar.greed, "RIGHT", 3, 0})
-	end
+	bar.need = CreateRollButton(bar, [[lootroll-toast-icon-need]], 1, NEED, {"LEFT", bar.button, "RIGHT", 6, 0}, true)
+	bar.transmog = CreateRollButton(bar, [[lootroll-toast-icon-transmog]], 4, TRANSMOGRIFICATION, {"LEFT", bar.need, "RIGHT", 3, 0}, true)
+	bar.greed = CreateRollButton(bar, [[lootroll-toast-icon-greed]], 2, GREED, {"LEFT", bar.transmog, "RIGHT", 3, 0}, true)
+	bar.disenchant = enableDisenchant and CreateRollButton(bar, [[lootroll-toast-icon-disenchant]], 3, ROLL_DISENCHANT, {"LEFT", bar.greed, "RIGHT", 3, 0}, true)
+	bar.pass = CreateRollButton(bar, [[lootroll-toast-icon-pass]], 0, PASS, {"LEFT", bar.disenchant or bar.greed, "RIGHT", 3, 0}, true)
 
 	local bind = bar:CreateFontString()
 	bind:SetPoint("LEFT", bar.pass, "RIGHT", 3, 0)
@@ -370,37 +355,18 @@ local function GetRollBarByID(rollID)
 	end
 end
 
-function LR:LootRoll_Update(itemIdx, playerIdx)
-	local rollID = C_LootHistory.GetItem(itemIdx)
-	local name, class, rollType = C_LootHistory.GetPlayerInfo(itemIdx, playerIdx)
-
-	if rollID and name and rollType then
-		cachedRolls[rollID] = cachedRolls[rollID] or {}
-		cachedRolls[rollID][rollType] = cachedRolls[rollID][rollType] or {}
-		tinsert(cachedRolls[rollID][rollType], {name, class})
-
-		local bar = GetRollBarByID(rollID)
-		if bar then
-			bar[rolltypes[rollType]].text:SetText(#cachedRolls[rollID][rollType])
-		end
-	end
-end
-
 function LR:LootRoll_GetRollID(encounterID, lootListID)
 	local index = cachedIndex[encounterID]
 	return index and (index + lootListID - 1)
 end
 
-local rollStateToType = {}
-if P.isNewPatch then
-	rollStateToType = {
-		[Enum.EncounterLootDropRollState.NeedMainSpec] = 1,
-		--[Enum.EncounterLootDropRollState.NeedOffSpec] = 1,
-		[Enum.EncounterLootDropRollState.Transmog] = 4,
-		[Enum.EncounterLootDropRollState.Greed] = 2,
-		[Enum.EncounterLootDropRollState.Pass] = 0,
-	}
-end
+local rollStateToType = {
+	[Enum.EncounterLootDropRollState.NeedMainSpec] = 1,
+	--[Enum.EncounterLootDropRollState.NeedOffSpec] = 1,
+	[Enum.EncounterLootDropRollState.Transmog] = 4,
+	[Enum.EncounterLootDropRollState.Greed] = 2,
+	[Enum.EncounterLootDropRollState.Pass] = 0,
+}
 
 function LR:LootRoll_UpdateDrops(encounterID, lootListID)
 	local dropInfo = C_LootHistory.GetSortedInfoForDrop(encounterID, lootListID)
@@ -449,12 +415,8 @@ function LR:OnLogin()
 	B.Mover(parentFrame, L["teksLoot LootRoll"], "teksLoot", {"TOP", UIParent, 0, -200})
 	fontSize = LR.db["Height"] / 2
 
-	if P.isNewPatch then
-		B:RegisterEvent("LOOT_HISTORY_UPDATE_DROP", self.LootRoll_UpdateDrops)
-		B:RegisterEvent("ENCOUNTER_END", self.LootRoll_EncounterEnd)
-	else
-		B:RegisterEvent("LOOT_HISTORY_ROLL_CHANGED", self.LootRoll_Update)
-	end
+	B:RegisterEvent("LOOT_HISTORY_UPDATE_DROP", self.LootRoll_UpdateDrops)
+	B:RegisterEvent("ENCOUNTER_END", self.LootRoll_EncounterEnd)
 	B:RegisterEvent("START_LOOT_ROLL", self.LootRoll_Start)
 
 	_G.UIParent:UnregisterEvent("START_LOOT_ROLL")

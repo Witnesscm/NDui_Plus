@@ -2,7 +2,6 @@ local addonName, ns = ...
 local B, C, L, DB, P = unpack(ns)
 local G = P:RegisterModule("GUI")
 
-local GetAddOnMetadata = GetAddOnMetadata or C_AddOns.GetAddOnMetadata -- isPatch10_1
 local cr, cg, cb = DB.r, DB.g, DB.b
 local guiTab, guiPage, gui = {}, {}
 
@@ -529,7 +528,7 @@ function P:OpenGUI()
 	credit.Icon:SetTexture(DB.creditTex)
 	credit:SetHighlightTexture(DB.creditTex)
 	credit.title = "Credits"
-	B.AddTooltip(credit, "ANCHOR_RIGHT", "|n"..GetAddOnMetadata(addonName, "X-Credits"), "info")
+	B.AddTooltip(credit, "ANCHOR_RIGHT", "|n"..C_AddOns.GetAddOnMetadata(addonName, "X-Credits"), "info")
 
 	local toggle = G.CreateToggleButton(gui)
 	toggle:SetPoint("TOPLEFT", 25, -5)

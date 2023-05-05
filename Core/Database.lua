@@ -1,8 +1,7 @@
 local addonName, ns = ...
 local B, C, L, DB, P = unpack(ns)
 
-local GetAddOnMetadata = GetAddOnMetadata or C_AddOns.GetAddOnMetadata -- isPatch10_1
-P.Version = GetAddOnMetadata(addonName, "Version")
+P.Version = C_AddOns.GetAddOnMetadata(addonName, "Version")
 P.SupportVersion = "7.0.0"
 P.isNewPatch = select(4, GetBuildInfo()) >= 100100 -- 10.1.0
 
