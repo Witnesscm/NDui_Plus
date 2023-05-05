@@ -153,7 +153,8 @@ function S:Immersion()
 			reskinItemButton(skillPointFrame)
 		end
 
-		if GetNumRewardSpells() > 0 then
+		local spellRewards = C_QuestInfoSystem.GetQuestRewardSpells(GetQuestID()) or {}
+		if #spellRewards > 0 then
 			-- Follower Rewards
 			for reward in rewardsFrame.followerRewardPool:EnumerateActive() do
 				local portrait = reward.PortraitFrame
