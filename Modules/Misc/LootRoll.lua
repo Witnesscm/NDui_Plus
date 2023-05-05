@@ -48,9 +48,7 @@ local function SetTip(button)
 	GameTooltip:AddLine(button.tiptext)
 
 	local rollID = button.parent.rollID
-	if not rollID then return end
-
-	local rolls = cachedRolls[rollID] and cachedRolls[rollID][button.rolltype]
+	local rolls = rollID and cachedRolls[rollID] and cachedRolls[rollID][button.rolltype]
 	if rolls then
 		for _, rollerInfo in next, rolls do
 			local playerName, className = unpack(rollerInfo)
@@ -225,7 +223,7 @@ function LR:CreateRollBar(name)
 
 	bar.need = CreateRollButton(bar, [[lootroll-toast-icon-need]], 1, NEED, {"LEFT", bar.button, "RIGHT", 6, 0}, true)
 	bar.transmog = CreateRollButton(bar, [[lootroll-toast-icon-transmog]], 4, TRANSMOGRIFICATION, {"LEFT", bar.need, "RIGHT", 3, 0}, true)
-	bar.greed = CreateRollButton(bar, [[lootroll-toast-icon-greed]], 2, GREED, {"LEFT", bar.transmog, "RIGHT", 3, 0}, true)
+	bar.greed = CreateRollButton(bar, [[lootroll-toast-icon-greed]], 2, GREED, {"LEFT", bar.need, "RIGHT", 3, 0}, true)
 	bar.disenchant = enableDisenchant and CreateRollButton(bar, [[lootroll-toast-icon-disenchant]], 3, ROLL_DISENCHANT, {"LEFT", bar.greed, "RIGHT", 3, 0}, true)
 	bar.pass = CreateRollButton(bar, [[lootroll-toast-icon-pass]], 0, PASS, {"LEFT", bar.disenchant or bar.greed, "RIGHT", 3, 0}, true)
 
@@ -310,12 +308,12 @@ function LR:LootRoll_Start(rollID, rollTime)
 	bar.need:SetEnabled(canNeed)
 	bar.need.tiptext = canNeed and NEED or _G["LOOT_ROLL_INELIGIBLE_REASON"..reasonNeed]
 
-	if bar.transmog then
-		bar.transmog.text:SetText(0)
-		bar.transmog:SetEnabled(canTransmog)
-	end
+	bar.transmog.text:SetText(0)
+	bar.transmog:SetShown(not not canTransmog)
+	bar.transmog:SetEnabled(canTransmog)
 
 	bar.greed.text:SetText(0)
+	bar.greed:SetShown(not canTransmog)
 	bar.greed:SetEnabled(canGreed)
 	bar.greed.tiptext = canGreed and GREED or _G["LOOT_ROLL_INELIGIBLE_REASON"..reasonGreed]
 
@@ -445,13 +443,15 @@ function LR:LootRollTest()
 	testFrame:Show()
 	testFrame:SetPoint("TOP", parentFrame, "TOP")
 	testFrame.need:SetScript("OnClick", OnClick_Hide)
-	if testFrame.transmog then testFrame.transmog:SetScript("OnClick", OnClick_Hide) end
+	testFrame.transmog:SetScript("OnClick", OnClick_Hide)
 	testFrame.greed:SetScript("OnClick", OnClick_Hide)
+	testFrame.greed:Hide()
 	if testFrame.disenchant then testFrame.disenchant:SetScript("OnClick", OnClick_Hide) end
 	testFrame.pass:SetScript("OnClick", OnClick_Hide)
 
 	local itemID = 17103
 	local bop = 1
+	local canTransmog = true
 	local name, link, quality, itemLevel, _, _, _, _, _, icon = GetItemInfo(itemID)
 	if not name then
 		name, link, quality, itemLevel, icon = "碧空之歌", "|cffa335ee|Hitem:17103::::::::17:::::::|h[碧空之歌]|h|r", 4, 29, 135349
@@ -462,6 +462,9 @@ function LR:LootRollTest()
 	testFrame.fsloot:SetText(name)
 	testFrame.fsbind:SetText(bop and "BoP" or "BoE")
 	testFrame.fsbind:SetVertexColor(bop and 1 or .3, bop and .3 or 1, bop and .1 or .3)
+
+	testFrame.transmog:SetShown(not not canTransmog)
+	testFrame.greed:SetShown(not canTransmog)
 
 	testFrame.status:SetStatusBarColor(color.r, color.g, color.b, .7)
 	testFrame.status:SetMinMaxValues(0, 100)
@@ -493,7 +496,7 @@ function LR:UpdateLootRollTest()
 	testFrame.fsbind:SetFont(DB.Font[1], height / 2, DB.Font[3])
 	testFrame.fsloot:SetFont(DB.Font[1], height / 2, DB.Font[3])
 	testFrame.need:SetSize(height-4, height-4)
-	if testFrame.transmog then testFrame.transmog:SetSize(height-4, height-4) end
+	testFrame.transmog:SetSize(height-4, height-4)
 	testFrame.greed:SetSize(height-4, height-4)
 	if testFrame.disenchant then testFrame.disenchant:SetSize(height-4, height-4) end
 	testFrame.pass:SetSize(height-4, height-4)
