@@ -29,113 +29,33 @@ local function removeBorder(frame)
 end
 
 local function SkinProfilingWindow(frame)
-	B.StripTextures(frame)
-	B.SetBD(frame)
-
-	local statsFrame = frame.statsFrame
-	if statsFrame then
-		reskinChildButtons(statsFrame)
-	end
-
-	local titleFrame = frame.titleFrame
-	if titleFrame then
-		for _, child in pairs {titleFrame:GetChildren()} do
-			if child:GetObjectType() == "Button" then
-				local texture = child.GetNormalTexture and child:GetNormalTexture():GetTexture()
-				if texture and (texture == 252125 or strfind(texture, "CollapseButton")) then
-					B.ReskinArrow(child, "up")
-					child:SetSize(16, 16)
-					child:ClearAllPoints()
-					child:SetPoint("TOPRIGHT", titleFrame, "TOPRIGHT", -20, -2)
-					child.SetNormalTexture = B.Dummy
-					child.SetPushedTexture = B.Dummy
-					child:HookScript("OnClick",function(self)
-						if frame.minimized then
-							B.SetupArrow(self.__texture, "down")
-						else
-							B.SetupArrow(self.__texture, "up")
-						end
-					end)
-				else
-					B.ReskinClose(child, titleFrame, -2, -2)
-				end
-			end
-		end
-	end
+	B.ReskinPortraitFrame(frame)
+	S:Proxy("ReskinMinMax", frame.MaxMinButtonFrame)
+	reskinChildButtons(frame)
 end
 
 local function SkinPrintProfile()
-	local popupFrame = _G.WADebugEditBox
-	if not popupFrame or popupFrame.styled then return end
+	local frame = _G.WeakAurasProfilingReport
+	if frame and not frame.styled then
+		B.ReskinPortraitFrame(frame)
 
-	local background = popupFrame.Background
-	local scrollFrame = popupFrame.ScrollFrame
-	if background and scrollFrame then
-		B.StripTextures(background)
-		B.SetBD(background)
-		background:SetPoint("TOPLEFT", scrollFrame, -20, 30)
-		background:SetPoint("BOTTOMRIGHT", scrollFrame, 28, -25)
-
-		for _, child in pairs {background:GetChildren()} do
-			local numRegions = child:GetNumRegions()
-			local numChildren = child:GetNumChildren()
-			if numRegions == 3 and numChildren == 1 and child.PixelSnapDisabled then
-				B.StripTextures(child)
-				local close = child:GetChildren()
-				B.ReskinClose(close)
-				close:ClearAllPoints()
-				close:SetPoint("TOPRIGHT", background, "TOPRIGHT", -6, -6)
-			end
+		local scrollFrame = frame.messageFrame and frame.messageFrame:GetParent()
+		if scrollFrame then
+			S:Proxy("ReskinScroll", scrollFrame.ScrollBar)
 		end
 
-		local scrollBar = scrollFrame.ScrollBar
-		if scrollBar then
-			B.ReskinScroll(scrollBar)
-		end
+		frame.styled = true
 	end
-
-	popupFrame.styled = true
 end
 
 local function SkinWeakAurasOptions()
 	local frame = _G.WeakAurasOptions
 	if not frame or frame.styled then return end
 
-	B.StripTextures(frame)
-	B.SetBD(frame)
-	B.ReskinInput(frame.filterInput, 18)
-	B.Reskin(_G.WASettingsButton)
-
-	-- Minimize, Close Button (Credit: ElvUI_WindTools)
-	for _, child in pairs {frame:GetChildren()} do
-		local numRegions = child:GetNumRegions()
-		local numChildren = child:GetNumChildren()
-
-		if numRegions == 3 and numChildren == 1 and child.PixelSnapDisabled then
-			B.StripTextures(child)
-			local button = child:GetChildren()
-			local texture = button.GetNormalTexture and button:GetNormalTexture():GetTexture()
-			if texture and (texture == 252125 or strfind(texture, "CollapseButton")) then
-				B.ReskinArrow(button, "up")
-				button:SetSize(18, 18)
-				button:ClearAllPoints()
-				button:SetPoint("TOPRIGHT", frame, "TOPRIGHT", -30, -6)
-				button.SetNormalTexture = B.Dummy
-				button.SetPushedTexture = B.Dummy
-
-				button:HookScript("OnClick",function(self)
-					if frame.minimized then
-						B.SetupArrow(self.__texture, "down")
-					else
-						B.SetupArrow(self.__texture, "up")
-					end
-				end)
-			else
-				B.ReskinClose(button, frame)
-				button:SetSize(18, 18)
-			end
-		end
-	end
+	B.ReskinPortraitFrame(frame)
+	S:Proxy("ReskinMinMax", frame.MaxMinButtonFrame)
+	S:Proxy("ReskinInput", frame.filterInput, 18)
+	S:Proxy("Reskin", _G.WASettingsButton)
 
 	-- Child Groups
 	local childGroups = {
