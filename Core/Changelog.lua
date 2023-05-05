@@ -2,6 +2,13 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 
 P.Changelog = [[
+v1.8.2
+[主要] 更新支持10.1.0
+[易用性] 移除中键打开密文控制台
+[美化] 添加TalentLoadoutsEx美化
+[美化] 更新Immersion美化
+[美化] 更新WeakAuras美化
+
 v1.8.1
 [易用性] 暂离界面添加唤魔师纹章; 使用更高分辨率的职业纹章材质
 [易用性] Roll点增强添加幻化选项; 尝试修复Roll点人数(PTR)
