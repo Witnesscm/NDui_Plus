@@ -289,7 +289,7 @@ function S:BtWLoadouts()
 		if shareFrame then
 			B.StripTextures(shareFrame.Inset)
 			B.CreateBDFrame(shareFrame.Inset, .25)
-			B.ReskinScroll(shareFrame.Scroll.ScrollBar)
+			B.ReskinTrimScroll(shareFrame.Scroll.ScrollBar)
 		end
 	end
 
@@ -308,9 +308,10 @@ function S:BtWLoadouts()
 		B.ReskinClose(logFrame.CloseButton)
 		B.StripTextures(logFrame.BodyInset)
 
+		B.StripTextures(logFrame.Scroll)
 		local bg = B.CreateBDFrame(logFrame.Scroll, .25)
-		bg:SetPoint("BOTTOMRIGHT", -16, -3)
-		B.ReskinScroll(logFrame.Scroll.ScrollBar)
+		bg:SetPoint("BOTTOMRIGHT", 6, -6)
+		B.ReskinTrimScroll(logFrame.Scroll.ScrollBar)
 	end
 end
 
