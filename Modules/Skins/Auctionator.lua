@@ -135,23 +135,14 @@ local function reskinBagList(frame)
 
 	local buttonPool = frame.ItemContainer and frame.ItemContainer.buttonPool
 	if buttonPool then
-		if buttonPool.creatorFunc then  -- Compatible with old version
-			local origFunc = buttonPool.creatorFunc
-			buttonPool.creatorFunc = function(self)
-				local bu = origFunc(self)
-				reskinBagItem(bu)
-				return bu
-			end
-		else
-			hooksecurefunc(buttonPool, "Acquire", function(self)
-				for bu in self:EnumerateActive() do
-					if not bu.styled then
-						reskinBagItem(bu)
-						bu.styled = true
-					end
+		hooksecurefunc(buttonPool, "Acquire", function(self)
+			for bu in self:EnumerateActive() do
+				if not bu.styled then
+					reskinBagItem(bu)
+					bu.styled = true
 				end
-			end)
-		end
+			end
+		end)
 	end
 end
 
@@ -195,34 +186,29 @@ function S:Auctionator()
 		local ShoppingList = _G.AuctionatorShoppingFrame
 		if ShoppingList then
 			reskinListHeader(ShoppingList.ResultsListing)
-			reskinButtons(ShoppingList, {"Import", "Export", "AddItem", "ManualSearch", "ExportCSV", "SortItems"})
-			P.ReskinDropDown(ShoppingList.ListDropdown)
+			reskinButtons(ShoppingList, {"ImportButton", "ExportButton", "ExportCSV", "NewListButton"})
 			reskinItemDialog(ShoppingList.itemDialog)
 			S:Proxy("StripTextures", ShoppingList.ShoppingResultsInset)
+
+			local SearchOptions = ShoppingList.SearchOptions
+			if SearchOptions then
+				reskinButtons(SearchOptions, {"AddToListButton", "MoreButton", "ResetSearchStringButton", "SearchButton"})
+				S:Proxy("ReskinInput", SearchOptions.SearchString)
+			end
 
 			local exportDialog = ShoppingList.exportDialog
 			if exportDialog then
 				reskinSimplePanel(exportDialog)
 				reskinButtons(exportDialog, {"Export", "SelectAll", "UnselectAll"})
 
-				if exportDialog.AddToPool then -- Compatible with old version
-					for _, cb in ipairs(exportDialog.checkBoxPool) do
-						S:Proxy("ReskinCheck", cb.CheckBox)
-					end
-
-					hooksecurefunc(exportDialog, "AddToPool", function(self)
-						S:Proxy("ReskinCheck", self.checkBoxPool[#self.checkBoxPool].CheckBox)
-					end)
-				else
-					hooksecurefunc(exportDialog.checkBoxPool, "Acquire", function(self)
-						for frame in self:EnumerateActive() do
-							if not frame.styled then
-								S:Proxy("ReskinCheck", frame.CheckBox)
-								frame.styled = true
-							end
+				hooksecurefunc(exportDialog.checkBoxPool, "Acquire", function(self)
+					for frame in self:EnumerateActive() do
+						if not frame.styled then
+							S:Proxy("ReskinCheck", frame.CheckBox)
+							frame.styled = true
 						end
-					end)
-				end
+					end
+				end)
 
 				local copyTextDialog = exportDialog.copyTextDialog
 				if copyTextDialog then
@@ -237,31 +223,22 @@ function S:Auctionator()
 				S:Proxy("Reskin", importDialog.Import)
 			end
 
-			for _, key in ipairs({"ScrollListShoppingList", "ScrollListRecents"}) do
+			for _, key in ipairs({"ListsContainer", "RecentsContainer"}) do
 				local scrollList = ShoppingList[key]
 				if scrollList and scrollList.ScrollBox then
 					B.StripTextures(scrollList)
-					B.CreateBDFrame(scrollList.ScrollBox, .25)
+					local bg = B.CreateBDFrame(scrollList, .25)
+					bg:SetAllPoints()
 					S:Proxy("ReskinTrimScroll", scrollList.ScrollBar)
 				end
 			end
 
-			local OneItemSearch = ShoppingList.OneItemSearch
-			if OneItemSearch then
-				reskinButtons(OneItemSearch, {"SearchButton", "ExtendedButton"})
-				S:Proxy("ReskinInput", OneItemSearch.SearchBox)
-			end
-
-			local TabsContainer = ShoppingList.RecentsTabsContainer
-			if TabsContainer then
-				for _, tab in ipairs(TabsContainer.Tabs) do
+			local ContainerTabs = ShoppingList.ContainerTabs
+			if ContainerTabs then
+				for _, tab in ipairs(ContainerTabs.Tabs) do
 					B.ReskinTab(tab)
-				end
-
-				if ShoppingList.ScrollListShoppingList then
-					TabsContainer:ClearAllPoints()
-					TabsContainer:SetPoint("TOPLEFT", ShoppingList.ScrollListShoppingList, "TOPLEFT", -5, 30)
-					TabsContainer:SetPoint("BOTTOMRIGHT", ShoppingList.ScrollListShoppingList, "TOPRIGHT", 0, 0)
+					tab.bg:SetInside()
+					tab:SetSize(102, 30)
 				end
 			end
 
