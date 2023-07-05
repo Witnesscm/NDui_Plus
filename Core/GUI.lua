@@ -84,6 +84,15 @@ local function updateAFKMode()
 	P:GetModule("AFK"):Toggle()
 end
 
+local function toggleLootSpecManager()
+	local LSM = P:GetModule("LootSpecManager")
+	if LSM.GUI then
+		B:TogglePanel(LSM.GUI)
+	else
+		LSM:CreateGUI()
+	end
+end
+
 local function setupTexStyle()
 	NDuiPlusDB["TexStyle"]["Index"] = 0
 
@@ -215,7 +224,7 @@ G.OptionList = { -- type, key, value, name, horizon, data, callback, tooltip, sc
 		{1, "Misc", "WormholeHelper", L["Wormhole Centrifuge Helper"]},
 		{1, "Misc", "TrainAll", L["TrainAll"], true, nil, nil, L["TrainAllTip"]},
 		{},
-		{1, "Misc", "LootSpecManager", HeaderTag..L["LootSpecManagerEnable"], nil, nil, nil, L["LootSpecManagerTip"]},
+		{1, "Misc", "LootSpecManager", HeaderTag..L["LootSpecManagerEnable"], nil, toggleLootSpecManager, nil, L["LootSpecManagerTip"]},
 		{},
 		{1, "Misc", "CopyMog", HeaderTag..L["CopyMogEnable"], nil, nil, nil, L["CopyMogTip"]},
 		{1, "Misc", "ShowHideVisual", L["ShowHideVisual"].."*"},

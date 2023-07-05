@@ -174,6 +174,7 @@ local function CreateSubGroup(parent, y, specs, info, type)
 end
 
 function LSM:CreateGUI()
+	if not next(LSM.Data.MythicPlus) then return end
 	if LSM.GUI then LSM.GUI:Show() return end
 
 	local gui = CreateFrame("Frame", "NDuiPlus_LSMFrame", UIParent)
