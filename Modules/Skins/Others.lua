@@ -94,9 +94,10 @@ function S:SavedInstances()
 	local SI = _G.SavedInstances and _G.SavedInstances[1]
 	if not SI then return end
 
-	if SI.ShowDetached then
-		hooksecurefunc(SI, "ShowDetached", function(self)
-			local frame = self.detachframe
+	local Tooltip = SI:GetModule("Tooltip")
+	if Tooltip and Tooltip.ShowDetached then
+		hooksecurefunc(Tooltip, "ShowDetached", function()
+			local frame = _G.SavedInstancesDetachHeader
 			if frame and not frame.styled then
 				B.StripTextures(frame)
 				B.SetBD(frame)
