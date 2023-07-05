@@ -16,6 +16,44 @@ local function reskinButtons(self, buttons)
 	end
 end
 
+local function reskinInput(editbox)
+	if not editbox then P:Debug("Unknown: Input") return end
+
+	P.ReskinInput(editbox, 24)
+	editbox.bg:SetPoint("TOPLEFT", -2, 4)
+end
+
+local function reskinSimplePanel(frame)
+	if not frame then P:Debug("Unknown: Panel") return end
+
+	B.StripTextures(frame)
+	B.SetBD(frame)
+
+	if frame.ScrollBar then B.ReskinTrimScroll(frame.ScrollBar) end
+	if frame.CloseDialog then B.ReskinClose(frame.CloseDialog) end
+end
+
+local function reskinRefreshButton(self)
+	for i = 1, self:GetNumChildren() do
+		local child = select(i, self:GetChildren())
+		if child.iconAtlas and child.iconAtlas == "UI-RefreshButton" then
+			B.Reskin(child)
+			child:SetSize(22, 22)
+			break
+		end
+	end
+end
+
+local function reskinIconAndName(self)
+	if not self then
+		P:Debug("Unknown: IconAndName")
+		return
+	end
+
+	self.bg = B.ReskinIcon(self.Icon)
+	B.ReskinIconBorder(self.QualityBorder)
+end
+
 local function reskinItemDialog(self)
 	if not self then
 		P:Debug("Unknown: ItemDialog")
@@ -28,6 +66,7 @@ local function reskinItemDialog(self)
 	S:Proxy("ReskinCheck", self.SearchContainer.IsExact)
 	P.ReskinDropDown(self.FilterKeySelector)
 	reskinButtons(self, {"Finished", "Cancel", "ResetAllButton"})
+	reskinInput(self.PurchaseQuantity.InputBox)
 
 	for _, key in ipairs({"QualityContainer", "TierContainer", "ExpansionContainer"}) do
 		local container = self[key] and self[key].DropDown
@@ -89,23 +128,6 @@ local function reskinListHeader(frame)
 	end
 end
 
-local function reskinSimplePanel(frame)
-	if not frame then P:Debug("Unknown: Panel") return end
-
-	B.StripTextures(frame)
-	B.SetBD(frame)
-
-	if frame.ScrollBar then B.ReskinTrimScroll(frame.ScrollBar) end
-	if frame.CloseDialog then B.ReskinClose(frame.CloseDialog) end
-end
-
-local function reskinInput(editbox)
-	if not editbox then P:Debug("Unknown: Input") return end
-
-	P.ReskinInput(editbox, 24)
-	editbox.bg:SetPoint("TOPLEFT", -2, 4)
-end
-
 local function reskinBagItem(button)
 	if not button then P:Debug("Unknown: BagItem") return end
 
@@ -118,6 +140,7 @@ local function reskinBagItem(button)
 	B.ReskinIconBorder(button.IconBorder)
 	button.IconBorder:Hide()
 	button.IconBorder.Show = B.Dummy
+	button.IconBorder.SetShown = B.Dummy
 end
 
 local function reskinBagList(frame)
@@ -254,6 +277,44 @@ function S:Auctionator()
 				reskinListHeader(itemHistoryDialog.ResultsListing)
 				reskinButtons(itemHistoryDialog, {"Close", "Dock"})
 			end
+
+			for _, frameName in ipairs({"AuctionatorBuyCommodityFrame", "AuctionatorBuyItemFrame"}) do
+				local buyFrame = _G[frameName]
+				if buyFrame then
+					B.StripTextures(buyFrame)
+					S:Proxy("Reskin", buyFrame.BackButton)
+					reskinRefreshButton(buyFrame)
+					reskinIconAndName(buyFrame.IconAndName)
+
+					local DetailsContainer = buyFrame.DetailsContainer
+					if DetailsContainer then
+						S:Proxy("Reskin", DetailsContainer.BuyButton)
+						reskinInput(DetailsContainer.Quantity)
+					end
+
+					for _, key in ipairs({"QuantityCheckConfirmationDialog", "FinalConfirmationDialog"}) do
+						local dialog = buyFrame[key]
+						if dialog then
+							reskinSimplePanel(dialog)
+							reskinButtons(dialog, {"AcceptButton", "CancelButton"})
+							if dialog.QuantityInput then reskinInput(dialog.QuantityInput) end
+						end
+					end
+
+					local ResultsListing = buyFrame.ResultsListing
+					if ResultsListing then
+						reskinListHeader(ResultsListing)
+					end
+
+					local BuyDialog = buyFrame.BuyDialog
+					if BuyDialog then
+						B.StripTextures(BuyDialog)
+						B.SetBD(BuyDialog)
+						reskinButtons(BuyDialog, {"Buy", "Cancel"})
+						reskinIconAndName(BuyDialog.IconAndName)
+					end
+				end
+			end
 		end
 
 		local SellingFrame = _G.AuctionatorSellingFrame
@@ -265,17 +326,10 @@ function S:Auctionator()
 				reskinMoneyInput(SaleItemFrame.Price)
 				reskinMoneyInput(SaleItemFrame.BidPrice)
 				reskinButtons(SaleItemFrame, {"PostButton", "SkipButton", "MaxButton"})
+				reskinRefreshButton(SaleItemFrame)
 
 				for _, bu in ipairs(SaleItemFrame.Duration.radioButtons) do
 					B.ReskinRadio(bu.RadioButton)
-				end
-
-				for i = 1, SaleItemFrame:GetNumChildren() do
-					local child = select(i, SaleItemFrame:GetChildren())
-					if child.iconAtlas and child.iconAtlas == "UI-RefreshButton" then
-						B.Reskin(child)
-						child:SetSize(22, 22)
-					end
 				end
 			end
 
@@ -310,15 +364,13 @@ function S:Auctionator()
 		local CancellingFrame = _G.AuctionatorCancellingFrame
 		if CancellingFrame then
 			reskinListHeader(CancellingFrame.ResultsListing)
+			reskinRefreshButton(CancellingFrame)
 
-			for i = 1, CancellingFrame:GetNumChildren() do
-				local child = select(i, CancellingFrame:GetChildren())
-				if child.iconAtlas and child.iconAtlas == "UI-RefreshButton" then
-					B.Reskin(child)
-					child:SetSize(22, 22)
-				elseif child.StartScanButton and child.CancelNextButton then
+			for _, child in pairs {CancellingFrame:GetChildren()} do
+				if child.StartScanButton and child.CancelNextButton then
 					B.Reskin(child.StartScanButton)
 					B.Reskin(child.CancelNextButton)
+					break
 				end
 			end
 
