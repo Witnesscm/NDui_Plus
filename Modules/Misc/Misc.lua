@@ -137,7 +137,9 @@ do
 		EncounterJournal_SetLootJournalView(LOOT_JOURNAL_ITEM_SETS) -- Display item sets by default
 	end
 
-	P:AddCallbackForAddon("Blizzard_EncounterJournal", M.EJ_DisplayLootTab)
+	if not P.isNewPatch then
+		P:AddCallbackForAddon("Blizzard_EncounterJournal", M.EJ_DisplayLootTab)
+	end
 end
 
 -- One-click learning all dragonriding skills
