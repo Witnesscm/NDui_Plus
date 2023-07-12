@@ -2,6 +2,12 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 
 P.Changelog = [[
+v1.8.3
+[主要] 更新版本号至10.1.5
+[美化] 更新Auctionator 美化
+[美化] 更新BtWLoadouts美化
+[美化] 更新SavedInstances美化
+
 v1.8.2
 [主要] 更新支持10.1.0
 [易用性] 移除中键打开密文控制台
