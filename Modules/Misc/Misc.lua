@@ -123,25 +123,6 @@ do
 	P:AddCallbackForAddon("Blizzard_DebugTools", M.Blizzard_TableInspector)
 end
 
--- Display EJ loot tab when select DF tier
-do
-	function M:EJ_DisplayLootTab()
-		hooksecurefunc("EncounterJournal_CheckAndDisplayLootTab", function()
-			if EJ_GetCurrentTier() >= 9 then
-				PanelTemplates_ShowTab(EncounterJournal, EncounterJournal.LootJournalTab:GetID())
-			else
-				PanelTemplates_HideTab(EncounterJournal, EncounterJournal.LootJournalTab:GetID())
-			end
-		end)
-
-		EncounterJournal_SetLootJournalView(LOOT_JOURNAL_ITEM_SETS) -- Display item sets by default
-	end
-
-	if not P.isNewPatch then
-		P:AddCallbackForAddon("Blizzard_EncounterJournal", M.EJ_DisplayLootTab)
-	end
-end
-
 -- One-click learning all dragonriding skills
 do
 	local rootNodeID = 64066 -- first skill
