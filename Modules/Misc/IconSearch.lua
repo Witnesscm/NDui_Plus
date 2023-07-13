@@ -78,7 +78,6 @@ local function Button_OnClick(self)
 	frame.IconSelector:SetSelectedIndex(frame:GetIndexOfIcon(self.icon))
 	frame.IconSelector:ScrollToSelectedIndex()
 	frame.BorderBox.SelectedIconArea.SelectedIconButton:SetIconTexture(self.icon)
-	frame.BorderBox.SelectedIconArea.SelectedIconButton:SetSelectedTexture()
 	frame.SearchBox:SetText("")
 end
 
