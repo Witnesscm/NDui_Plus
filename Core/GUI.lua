@@ -192,7 +192,7 @@ G.OptionList = { -- type, key, value, name, horizon, data, callback, tooltip, sc
 		{1, "Tooltip", "CombatHide", L["CombatHide"].."*"},
 		{1, "Tooltip", "ShowByShift", L["ShowByShift"].."*", true},
 		{1, "Tooltip", "ProgRaids", L["Raids"].."*", nil, nil, updateProgression},
-		{1, "Tooltip", "ProgDungeons", L["MythicDungeons"].."*", true},
+		{1, "Tooltip", "ProgDungeons", CHALLENGES.."*", true},
 		{1, "Tooltip", "ProgAchievement", L["Special Achievements"].."*", nil, nil, updateProgression},
 		{1, "Tooltip", "KeystoneMaster", L["Keystone Master Achievement"].."*", nil, nil, updateAchievementList},
 		{2, "Tooltip", "AchievementList", L["AchievementList"].."*", true, nil, updateAchievementList, L["AchievementListTip"]},
