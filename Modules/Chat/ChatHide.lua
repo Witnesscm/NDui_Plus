@@ -11,6 +11,7 @@ local isMoving = false
 local hasNew = false
 local timeout = 0
 local chatIn = true
+local offset = 18
 
 do
 	-- NDui CopyButton
@@ -35,15 +36,15 @@ function CH:MoveOut()
 	isMoving = true
 	chatIn = false
 	CH.ChatBG:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", 0, 30)
-	P:Slide(CH.ChatBG, "LEFT", C.db["Chat"]["ChatWidth"] + 28, 220)
+	P:Slide(CH.ChatBG, "LEFT", C.db["Chat"]["ChatWidth"] + offset, 220)
 	P:UIFrameFadeOut(CH.ChatBG, .5, CH.ChatBG:GetAlpha(), 0)
 end
 
 function CH:MoveIn()
 	isMoving = true
 	chatIn = true
-	CH.ChatBG:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", -C.db["Chat"]["ChatWidth"] - 28, 30)
-	P:Slide(CH.ChatBG, "RIGHT", C.db["Chat"]["ChatWidth"] + 28, 220)
+	CH.ChatBG:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", -C.db["Chat"]["ChatWidth"] - offset, 30)
+	P:Slide(CH.ChatBG, "RIGHT", C.db["Chat"]["ChatWidth"] + offset, 220)
 	P:UIFrameFadeIn(CH.ChatBG, .5, CH.ChatBG:GetAlpha(), 1)
 	CH:StopFlash()
 end
@@ -159,7 +160,7 @@ end
 local function resetChatAnchor(self, _, parent)
 	if not parent or parent == UIParent then
 		CH.ChatBG:ClearAllPoints()
-		CH.ChatBG:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", chatIn and 0 or -C.db["Chat"]["ChatWidth"] - 28, 30)
+		CH.ChatBG:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", chatIn and 0 or -C.db["Chat"]["ChatWidth"] - offset, 30)
 		CH.ChatBG:SetWidth(C.db["Chat"]["ChatWidth"])
 		CH.ChatBG:SetHeight(C.db["Chat"]["ChatHeight"])
 
@@ -184,7 +185,7 @@ function CH:ChatHide()
 	-- Toggle Button
 	local button = CreateFrame("Button", nil, UIParent)
 	button:SetSize(20, 80)
-	button:SetPoint("LEFT", CH.ChatBG, "RIGHT", 27, 0)
+	button:SetPoint("LEFT", chatBG, "RIGHT", offset, 0)
 	B.ReskinMenuButton(button)
 	B.CreateSD(button.bg, nil, true)
 	button.text = B.CreateFS(button, 18, "<", true)
