@@ -53,9 +53,31 @@ local function SkinWeakAurasOptions()
 	if not frame or frame.styled then return end
 
 	B.ReskinPortraitFrame(frame)
-	S:Proxy("ReskinMinMax", frame.MaxMinButtonFrame)
 	S:Proxy("ReskinInput", frame.filterInput, 18)
 	S:Proxy("Reskin", _G.WASettingsButton)
+
+	-- Minimize, Close Button
+	B.ReskinClose(frame.CloseButton, frame)
+	frame.CloseButton:SetSize(18, 18)
+	B.ReskinMinMax(frame.MaxMinButtonFrame)
+	frame.MaxMinButtonFrame:ClearAllPoints()
+	frame.MaxMinButtonFrame:SetPoint("RIGHT", frame.CloseButton, "LEFT", 4, 0)
+	frame.MaxMinButtonFrame.MaximizeButton:SetSize(18, 18)
+	frame.MaxMinButtonFrame.MinimizeButton:SetSize(18, 18)
+
+	-- ToolbarContainer
+	local toolbarContainer = frame.toolbarContainer
+	if toolbarContainer then
+		local importButton, newButton, magnetButton, lockButton = toolbarContainer:GetChildren()
+		newButton:ClearAllPoints()
+		newButton:SetPoint("BOTTOMLEFT", frame.filterInput, "TOPLEFT", 0, 10)
+		importButton:ClearAllPoints()
+		importButton:SetPoint("LEFT", newButton, "RIGHT", 2, 0)
+		lockButton:ClearAllPoints()
+		lockButton:SetPoint("LEFT", importButton, "RIGHT", 2, 0)
+		magnetButton:ClearAllPoints()
+		magnetButton:SetPoint("LEFT", lockButton, "RIGHT", 2, 0)
+	end
 
 	-- Child Groups
 	local childGroups = {
@@ -73,6 +95,17 @@ local function SkinWeakAurasOptions()
 		local group = frame[key]
 		if group then
 			reskinChildButtons(group.frame)
+		end
+	end
+
+	-- TextEditor
+	local texteditor = frame.texteditor and frame.texteditor.frame
+	if texteditor then
+		for _, child in pairs {texteditor:GetChildren()} do
+			if child.GetObjectType and child:GetObjectType() == "EditBox" then
+				B.ReskinInput(child)
+				break
+			end
 		end
 	end
 
@@ -117,6 +150,7 @@ local function SkinWeakAurasOptions()
 	if snippets then
 		B.StripTextures(snippets)
 		B.SetBD(snippets)
+		B.ReskinClose(snippets.CloseButton)
 		reskinChildButtons(snippets)
 	end
 
