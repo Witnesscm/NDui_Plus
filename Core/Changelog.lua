@@ -2,6 +2,11 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 
 P.Changelog = [[
+v1.8.4
+[鼠标提示] 更新PvE进度信息
+[易用性] 修复宏图标搜索报错
+[美化] 更新WeakAuras美化
+
 v1.8.3
 [主要] 更新版本号至10.1.5
 [美化] 更新Auctionator 美化
