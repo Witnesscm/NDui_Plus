@@ -184,6 +184,10 @@ local function reskinSearchButton(self)
 	S:Proxy("Reskin", self.SearchButton)
 end
 
+local function reskinCopyAndPaste(self)
+	S:Proxy("ReskinInput", self.InputBox)
+end
+
 function S:Auctionator()
 	local Auctionator = _G.Auctionator
 	if not Auctionator or not _G.AuctionatorInitalizeMainlineFrame or not _G.AuctionatorInitalizeMainlineFrame.AuctionHouseShown then return end
@@ -383,17 +387,12 @@ function S:Auctionator()
 			B.StripTextures(ConfigFrame)
 			B.CreateBDFrame(ConfigFrame, .25)
 			reskinButtons(ConfigFrame, {"ScanButton", "OptionsButton"})
-
-			for _, key in ipairs({"DiscordLink", "BugReportLink", "TechnicalRoadmap"}) do
-				local eb = ConfigFrame[key]
-				if eb then
-					S:Proxy("ReskinInput", eb.InputBox)
-				end
-			end
 		end
 
 		styled = true
 	end)
+
+	hooksecurefunc(_G.AuctionatorConfigurationCopyAndPasteMixin, "OnLoad", reskinCopyAndPaste)
 
 	-- SearchButton
 	if _G.AuctionatorCraftingInfoProfessionsFrameMixin then

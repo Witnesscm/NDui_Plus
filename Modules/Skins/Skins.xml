@@ -10,6 +10,7 @@
 	<Script file="Immersion.lua"/>
 	<Script file="ImprovedAddonList.lua"/>
 	<Script file="InboxMailBag.lua"/>
+	<Script file="Journalator.lua"/>
 	<Script file="LibUIDropDownMenu.lua"/>
 	<Script file="ls_Toasts.lua"/>
 	<Script file="MeetingStone.lua"/>
