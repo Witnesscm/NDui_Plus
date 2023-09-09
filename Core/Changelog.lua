@@ -2,6 +2,10 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 
 P.Changelog = [[
+v1.8.5
+[易用性] 修复兽栏面板扩展报错
+[美化] 新增Journalator插件美化
+
 v1.8.4
 [鼠标提示] 更新PvE进度信息
 [易用性] 修复宏图标搜索报错
