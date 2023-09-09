@@ -53,8 +53,8 @@ function M:ImprovedStableFrame()
 	PetStableFrame:SetHeight(oldHeight + newHeight)
 	PetStableFrameModelBg:SetHeight(281 + newHeight)
 
-	local mp1, mp2, mp3, mp4, mp5 = PetStableModel:GetPoint()
-	PetStableModel:SetPoint(mp1, mp2, mp3, mp4, mp5 - 32)
+	local mp1, mp2, mp3, mp4, mp5 = PetStableModelScene:GetPoint()
+	PetStableModelScene:SetPoint(mp1, mp2, mp3, mp4, mp5 - 32)
 
 	local search = CreateFrame("EditBox", "ISF_SearchInput", frame, "SearchBoxTemplate")
 	search:SetPoint("TOPLEFT", 9, -3)
