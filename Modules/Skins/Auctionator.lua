@@ -16,6 +16,14 @@ local function reskinButtons(self, buttons)
 	end
 end
 
+local function reskinChildButtons(self)
+	for _, child in pairs {self:GetChildren()} do
+		if child:GetObjectType() == "Button" and child.Text then
+			B.Reskin(child)
+		end
+	end
+end
+
 local function reskinInput(editbox)
 	if not editbox then P:Debug("Unknown: Input") return end
 
@@ -128,6 +136,10 @@ local function reskinListHeader(frame)
 	end
 end
 
+local function updateSelectedColor(self, r, g, b)
+	self:SetColorTexture(r, g, b, .5)
+end
+
 local function reskinBagItem(button)
 	if not button then P:Debug("Unknown: BagItem") return end
 
@@ -137,10 +149,10 @@ local function reskinBagItem(button)
 	button.Highlight:SetColorTexture(1, 1, 1, .25)
 	button.Highlight:SetAllPoints(button.Icon)
 	button.bg = B.ReskinIcon(button.Icon)
-	B.ReskinIconBorder(button.IconBorder)
-	button.IconBorder:Hide()
-	button.IconBorder.Show = B.Dummy
-	button.IconBorder.SetShown = B.Dummy
+	button.IconBorder.SetVertexColor = B.Dummy
+	B.ReskinIconBorder(button.IconBorder, true)
+	button.IconSelectedHighlight.SetVertexColor = updateSelectedColor
+	button.IconSelectedHighlight:SetAllPoints(button.bg)
 end
 
 local function reskinBagList(frame)
@@ -186,6 +198,46 @@ end
 
 local function reskinCopyAndPaste(self)
 	S:Proxy("ReskinInput", self.InputBox)
+end
+
+local function reskinBagViewSection(self)
+	B.StripTextures(self.SectionTitle)
+	local bg = B.CreateBDFrame(self.SectionTitle, .25)
+	bg:SetAllPoints()
+
+	for _, child in pairs {self:GetChildren()} do
+		local objType = child:GetObjectType()
+		if objType == "Button" and child.Text then
+			B.Reskin(child)
+		elseif objType == "Frame" and child.Divider then
+			child.Divider:SetAlpha(0)
+		end
+	end
+end
+
+local function reskinBagView(self)
+	S:Proxy("ReskinTrimScroll", self.ScrollBar)
+
+	hooksecurefunc(self, "UpdateFromExisting", function()
+		for bu in self.sectionPool:EnumerateActive() do
+			if not bu.styled then
+				reskinBagViewSection(bu)
+				bu.styled = true
+			end
+		end
+	end)
+end
+
+local function reskinBagCustomise(self)
+	B.ReskinPortraitFrame(self)
+	reskinChildButtons(self)
+end
+
+local function reskinBagItemButton(self)
+	if not self.styled then
+		reskinBagItem(self)
+		self.styled = true
+	end
 end
 
 function S:Auctionator()
@@ -339,14 +391,18 @@ function S:Auctionator()
 
 			local BagListing = SellingFrame.BagListing
 			if BagListing then
-				local frameMap = BagListing.frameMap
+				local frameMap = BagListing.frameMap -- compatible with old version
 				if frameMap then
 					for _, items in pairs(frameMap) do
 						reskinBagList(items)
 					end
 				end
 
-				S:Proxy("ReskinTrimScroll", BagListing.ScrollBar)
+				if BagListing.ScrollBar then -- compatible with old version
+					B.ReskinTrimScroll(BagListing.ScrollBar)
+				end
+
+				reskinChildButtons(BagListing)
 			end
 
 			for _, key in ipairs({"BagInset", "HistoricalPriceInset"}) do
@@ -392,18 +448,20 @@ function S:Auctionator()
 		styled = true
 	end)
 
-	hooksecurefunc(_G.AuctionatorConfigurationCopyAndPasteMixin, "OnLoad", reskinCopyAndPaste)
-
-	-- SearchButton
-	if _G.AuctionatorCraftingInfoProfessionsFrameMixin then
-		hooksecurefunc(_G.AuctionatorCraftingInfoProfessionsFrameMixin, "OnLoad", reskinSearchButton)
-	end
-
 	local ObjectiveTrackerFrame = _G.AuctionatorCraftingInfoObjectiveTrackerFrame
 	if ObjectiveTrackerFrame then
 		reskinSearchButton(ObjectiveTrackerFrame)
 	elseif _G.AuctionatorCraftingInfoObjectiveTrackerFrameMixin then
 		hooksecurefunc(_G.AuctionatorCraftingInfoObjectiveTrackerFrameMixin, "OnLoad", reskinSearchButton)
+	end
+
+	hooksecurefunc(_G.AuctionatorConfigurationCopyAndPasteMixin, "OnLoad", reskinCopyAndPaste)
+	hooksecurefunc(_G.AuctionatorCraftingInfoProfessionsFrameMixin, "OnLoad", reskinSearchButton)
+	-- newBag
+	if _G.AuctionatorBagViewMixin then
+		hooksecurefunc(_G.AuctionatorBagViewMixin, "OnLoad", reskinBagView)
+		hooksecurefunc(_G.AuctionatorBagCustomiseMixin, "OnLoad", reskinBagCustomise)
+		hooksecurefunc(_G.AuctionatorBagViewItemMixin, "SetItemInfo", reskinBagItemButton)
 	end
 end
 
