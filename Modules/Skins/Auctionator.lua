@@ -200,17 +200,29 @@ local function reskinCopyAndPaste(self)
 	S:Proxy("ReskinInput", self.InputBox)
 end
 
-local function reskinBagViewSection(self)
-	B.StripTextures(self.SectionTitle)
-	local bg = B.CreateBDFrame(self.SectionTitle, .25)
-	bg:SetAllPoints()
+local function reskinCustomiseGroup(self)
+	reskinButtons(self, {"FocusButton", "RenameButton", "DeleteButton", "HideButton", "ShiftUpButton", "ShiftDownButton"})
+
+	for _, key in ipairs({"NumStacks", "StackSize", "Quantity"}) do
+		local editbox = self.Quantity and self.Quantity[key]
+		if editbox then
+			P.ReskinInput(editbox)
+			editbox.bg:SetPoint("TOPLEFT", -2, -2)
+			editbox.bg:SetPoint("BOTTOMRIGHT", 0, 2)
+		end
+	end
+
+	for _, key in ipairs({"Short", "Medium", "Long", "Default"}) do
+		local radio = self.Durations and self.Durations[key]
+		if radio then
+			B.ReskinRadio(radio)
+		end
+	end
 
 	for _, child in pairs {self:GetChildren()} do
-		local objType = child:GetObjectType()
-		if objType == "Button" and child.Text then
-			B.Reskin(child)
-		elseif objType == "Frame" and child.Divider then
+		if child.Divider then
 			child.Divider:SetAlpha(0)
+			break
 		end
 	end
 end
@@ -219,9 +231,12 @@ local function reskinBagView(self)
 	S:Proxy("ReskinTrimScroll", self.ScrollBar)
 
 	hooksecurefunc(self, "UpdateFromExisting", function()
-		for bu in self.sectionPool:EnumerateActive() do
+		for bu in self.groupPool:EnumerateActive() do
 			if not bu.styled then
-				reskinBagViewSection(bu)
+				B.StripTextures(bu.GroupTitle)
+				local bg = B.CreateBDFrame(bu.GroupTitle, .25)
+				bg:SetAllPoints()
+
 				bu.styled = true
 			end
 		end
@@ -458,10 +473,11 @@ function S:Auctionator()
 	hooksecurefunc(_G.AuctionatorConfigurationCopyAndPasteMixin, "OnLoad", reskinCopyAndPaste)
 	hooksecurefunc(_G.AuctionatorCraftingInfoProfessionsFrameMixin, "OnLoad", reskinSearchButton)
 	-- newBag
-	if _G.AuctionatorBagViewMixin then
-		hooksecurefunc(_G.AuctionatorBagViewMixin, "OnLoad", reskinBagView)
-		hooksecurefunc(_G.AuctionatorBagCustomiseMixin, "OnLoad", reskinBagCustomise)
-		hooksecurefunc(_G.AuctionatorBagViewItemMixin, "SetItemInfo", reskinBagItemButton)
+	if _G.AuctionatorGroupsViewMixin then
+		hooksecurefunc(_G.AuctionatorGroupsViewMixin, "OnLoad", reskinBagView)
+		hooksecurefunc(_G.AuctionatorGroupsCustomiseMixin, "OnLoad", reskinBagCustomise)
+		hooksecurefunc(_G.AuctionatorGroupsViewItemMixin, "SetItemInfo", reskinBagItemButton)
+		hooksecurefunc(_G.AuctionatorGroupsCustomiseGroupMixin, "OnLoad", reskinCustomiseGroup)
 	end
 end
 
