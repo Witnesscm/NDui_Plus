@@ -2,6 +2,10 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 
 P.Changelog = [[
+v1.8.6
+[美化] 更新Auctionator美化
+[美化] 更新WeakAurasOptions美化
+
 v1.8.5
 [易用性] 修复兽栏面板扩展报错
 [美化] 新增Journalator插件美化
