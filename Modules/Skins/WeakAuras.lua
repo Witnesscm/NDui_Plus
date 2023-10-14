@@ -197,36 +197,37 @@ local function SkinWeakAurasOptions()
 	frame.styled = true
 end
 
+-- Remove Options Aura Border (Credit: ElvUI_WindTools)
+local function RemoveOptionsBorder(Private)
+	if not Private.RegisterRegionOptions then return end
+
+	local origRegisterRegionOptions = Private.RegisterRegionOptions
+	Private.RegisterRegionOptions = function(name, createFunction, icon, displayName, createThumbnail, ...)
+		if type(icon) == "function" then
+			local OldIcon = icon
+			icon = function()
+				local f = OldIcon()
+				removeBorder(f)
+				return f
+			end
+		end
+
+		if type(createThumbnail) == "function" then
+			local OldCreateThumbnail = createThumbnail
+			createThumbnail = function()
+				local f = OldCreateThumbnail()
+				removeBorder(f)
+				return f
+			end
+		end
+
+		return origRegisterRegionOptions(name, createFunction, icon, displayName, createThumbnail, ...)
+	end
+end
+
 function S:WeakAuras()
 	local WeakAuras = _G.WeakAuras
 	if not WeakAuras then return end
-
-	-- Remove Aura Border (Credit: ElvUI_WindTools)
-	if WeakAuras.RegisterRegionOptions then
-		local origRegisterRegionOptions = WeakAuras.RegisterRegionOptions
-
-		WeakAuras.RegisterRegionOptions = function(name, createFunction, icon, displayName, createThumbnail, ...)
-			if type(icon) == "function" then
-				local OldIcon = icon
-				icon = function()
-					local f = OldIcon()
-					removeBorder(f)
-					return f
-				end
-			end
-
-			if type(createThumbnail) == "function" then
-				local OldCreateThumbnail = createThumbnail
-				createThumbnail = function()
-					local f = OldCreateThumbnail()
-					removeBorder(f)
-					return f
-				end
-			end
-
-			return origRegisterRegionOptions(name, createFunction, icon, displayName, createThumbnail, ...)
-		end
-	end
 
 	local profilingWindow = WeakAuras.RealTimeProfilingWindow
 	if profilingWindow then
@@ -240,9 +241,25 @@ end
 
 function S:WeakAurasOptions()
 	local WeakAuras = _G.WeakAuras
-	if not WeakAuras or not WeakAuras.ShowOptions then return end
+	if not WeakAuras then return end
 
-	hooksecurefunc(WeakAuras, "ShowOptions", SkinWeakAurasOptions)
+	if WeakAuras.ShowOptions then
+		hooksecurefunc(WeakAuras, "ShowOptions", SkinWeakAurasOptions)
+	end
+
+	if WeakAuras.ToggleOptions then
+		local privateHooked
+		local origToggleOptions = WeakAuras.ToggleOptions
+		WeakAuras.ToggleOptions = function(...)
+			local _, private = ...
+			if private and not privateHooked then
+				RemoveOptionsBorder(private)
+				privateHooked = true
+			end
+
+			return origToggleOptions(...)
+		end
+	end
 end
 
 function S:WeakAurasTemplates()
