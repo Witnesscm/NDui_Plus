@@ -155,32 +155,6 @@ local function reskinBagItem(button)
 	button.IconSelectedHighlight:SetAllPoints(button.bg)
 end
 
-local function reskinBagList(frame)
-	B.StripTextures(frame.SectionTitle)
-	frame.titleBG = B.CreateBDFrame(frame.SectionTitle, .25)
-	frame.titleBG:SetAllPoints()
-
-	local buttons = frame.ItemContainer and frame.ItemContainer.buttons
-	if buttons then
-		for _, bu in ipairs(buttons) do
-			reskinBagItem(bu)
-			bu.styled = true
-		end
-	end
-
-	local buttonPool = frame.ItemContainer and frame.ItemContainer.buttonPool
-	if buttonPool then
-		hooksecurefunc(buttonPool, "Acquire", function(self)
-			for bu in self:EnumerateActive() do
-				if not bu.styled then
-					reskinBagItem(bu)
-					bu.styled = true
-				end
-			end
-		end)
-	end
-end
-
 local function reskinMoneyInput(self)
 	if not self or not self.MoneyInput then P:Debug("Unknown: MoneyInput") return end
 
@@ -198,6 +172,10 @@ end
 
 local function reskinCopyAndPaste(self)
 	S:Proxy("ReskinInput", self.InputBox)
+end
+
+local function reskinBagUse(self)
+	S:Proxy("Reskin", self.CustomiseButton)
 end
 
 local function reskinCustomiseGroup(self)
@@ -404,22 +382,6 @@ function S:Auctionator()
 				end
 			end
 
-			local BagListing = SellingFrame.BagListing
-			if BagListing then
-				local frameMap = BagListing.frameMap -- compatible with old version
-				if frameMap then
-					for _, items in pairs(frameMap) do
-						reskinBagList(items)
-					end
-				end
-
-				if BagListing.ScrollBar then -- compatible with old version
-					B.ReskinTrimScroll(BagListing.ScrollBar)
-				end
-
-				reskinChildButtons(BagListing)
-			end
-
 			for _, key in ipairs({"BagInset", "HistoricalPriceInset"}) do
 				S:Proxy("StripTextures", SellingFrame[key])
 			end
@@ -463,22 +425,31 @@ function S:Auctionator()
 		styled = true
 	end)
 
+	local function hook(object, method, func)
+		if type(object) == "string" then
+			object = _G[object]
+		end
+		if object and object[method] then
+			hooksecurefunc(object, method, func)
+		else
+			P.Developer_ThrowError(format("function %s:%s does not exist", object, method))
+		end
+	end
+
 	local ObjectiveTrackerFrame = _G.AuctionatorCraftingInfoObjectiveTrackerFrame
 	if ObjectiveTrackerFrame then
 		reskinSearchButton(ObjectiveTrackerFrame)
-	elseif _G.AuctionatorCraftingInfoObjectiveTrackerFrameMixin then
-		hooksecurefunc(_G.AuctionatorCraftingInfoObjectiveTrackerFrameMixin, "OnLoad", reskinSearchButton)
+	else
+		hook("AuctionatorCraftingInfoObjectiveTrackerFrameMixin", "OnLoad", reskinSearchButton)
 	end
 
-	hooksecurefunc(_G.AuctionatorConfigurationCopyAndPasteMixin, "OnLoad", reskinCopyAndPaste)
-	hooksecurefunc(_G.AuctionatorCraftingInfoProfessionsFrameMixin, "OnLoad", reskinSearchButton)
-	-- newBag
-	if _G.AuctionatorGroupsViewMixin then
-		hooksecurefunc(_G.AuctionatorGroupsViewMixin, "OnLoad", reskinBagView)
-		hooksecurefunc(_G.AuctionatorGroupsCustomiseMixin, "OnLoad", reskinBagCustomise)
-		hooksecurefunc(_G.AuctionatorGroupsViewItemMixin, "SetItemInfo", reskinBagItemButton)
-		hooksecurefunc(_G.AuctionatorGroupsCustomiseGroupMixin, "OnLoad", reskinCustomiseGroup)
-	end
+	hook("AuctionatorConfigurationCopyAndPasteMixin", "OnLoad", reskinCopyAndPaste)
+	hook("AuctionatorCraftingInfoProfessionsFrameMixin", "OnLoad", reskinSearchButton)
+	hook("AuctionatorBagUseMixin", "OnLoad", reskinBagUse)
+	hook("AuctionatorGroupsViewMixin", "OnLoad", reskinBagView)
+	hook("AuctionatorGroupsCustomiseMixin", "OnLoad", reskinBagCustomise)
+	hook("AuctionatorGroupsViewItemMixin", "SetItemInfo", reskinBagItemButton)
+	hook("AuctionatorGroupsCustomiseGroupMixin", "OnLoad", reskinCustomiseGroup)
 end
 
 S:RegisterSkin("Auctionator", S.Auctionator)
