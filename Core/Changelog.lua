@@ -2,6 +2,11 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 
 P.Changelog = [[
+v1.8.7
+[主要] 更新版本号至10.2.0
+[美化] 修复BtWLoadouts美化
+[美化] 修复PetBattleScripts美化
+
 v1.8.6
 [美化] 更新Auctionator美化
 [美化] 更新WeakAurasOptions美化
@@ -17,7 +22,7 @@ v1.8.4
 
 v1.8.3
 [主要] 更新版本号至10.1.5
-[美化] 更新Auctionator 美化
+[美化] 更新Auctionator美化
 [美化] 更新BtWLoadouts美化
 [美化] 更新SavedInstances美化
 
