@@ -141,7 +141,6 @@ function S:BtWLoadouts()
 
 	local SidebarInset = frame.SidebarInset
 	if SidebarInset then
-		--reskinInset(SidebarInset)
 		B.StripTextures(SidebarInset)
 	end
 
@@ -149,7 +148,7 @@ function S:BtWLoadouts()
 	if Sidebar then
 		B.ReskinFilterButton(frame.Sidebar.FilterButton)
 		B.ReskinInput(Sidebar.SearchBox)
-		B.ReskinScroll(Sidebar.Scroll.ScrollBar)
+		B.ReskinScroll(Sidebar.Scroll.scrollBar)
 	end
 
 	local Loadouts = frame.Loadouts
