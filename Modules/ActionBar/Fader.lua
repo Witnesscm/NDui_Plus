@@ -5,7 +5,7 @@ local Bar = B:GetModule("Actionbar")
 -----------------
 -- Credit: ElvUI
 -----------------
-local LAB = LibStub("LibActionButton-1.0")
+local LAB = LibStub("LibActionButton-1.0-NDui")
 
 AB.handledbuttons = {}
 

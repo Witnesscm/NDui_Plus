@@ -2,7 +2,7 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 local AB = P:GetModule("ActionBar")
 
-local LAB = LibStub("LibActionButton-1.0")
+local LAB = LibStub("LibActionButton-1.0-NDui")
 local ActionButtons = LAB.actionButtons
 
 -- https://www.wowhead.com/cn/resource/4
