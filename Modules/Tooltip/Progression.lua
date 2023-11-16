@@ -10,7 +10,8 @@ local compareGUID
 
 local tiers = {
 	"Vault of the Incarnates",
-	"Aberrus, the Shadowed Crucible"
+	"Aberrus, the Shadowed Crucible",
+	"Amirdrassil, the Dream's Hope"
 }
 
 local levels = {
@@ -44,6 +45,10 @@ local locales = {
 	["Aberrus, the Shadowed Crucible"] = {
 		short = L["[ABBR] Aberrus, the Shadowed Crucible"],
 		full = L["Aberrus, the Shadowed Crucible"]
+	},
+	["Amirdrassil, the Dream's Hope"] = {
+		short = L["[ABBR] Amirdrassil, the Dream's Hope"],
+		full = L["Amirdrassil, the Dream's Hope"]
 	},
 	["Temple of the Jade Serpent"] = {
 		short = L["[ABBR] Temple of the Jade Serpent"],
@@ -109,6 +114,38 @@ local locales = {
 		short = L["[ABBR] The Vortex Pinnacle"],
 		full = L["The Vortex Pinnacle"]
 	},
+	["The Everbloom"] = {
+		short = L["[ABBR] The Everbloom"],
+		full = L["The Everbloom"]
+	},
+	["Darkheart Thicket"] = {
+		short = L["[ABBR] Darkheart Thicket"],
+		full = L["Darkheart Thicket"]
+	},
+	["Black Rook Hold"] = {
+		short = L["[ABBR] Black Rook Hold"],
+		full = L["Black Rook Hold"]
+	},
+	["Atal'Dazar"] = {
+		short = L["[ABBR] Atal'Dazar"],
+		full = L["Atal'Dazar"]
+	},
+	["Waycrest Manor"] = {
+		short = L["[ABBR] Waycrest Manor"],
+		full = L["Waycrest Manor"]
+	},
+	["Throne of the Tides"] = {
+		short = L["[ABBR] Throne of the Tides"],
+		full = L["Throne of the Tides"]
+	},
+	["Dawn of the Infinite: Galakrond's Fall"] = {
+		short = L["[ABBR] Dawn of the Infinite: Galakrond's Fall"],
+		full = L["Dawn of the Infinite: Galakrond's Fall"]
+	},
+	["Dawn of the Infinite: Murozond's Rise"] = {
+		short = L["[ABBR] Dawn of the Infinite: Murozond's Rise"],
+		full = L["Dawn of the Infinite: Murozond's Rise"]
+	},
 	["Dragonflight Keystone Master: Season One"] = {
 		short = L["[ABBR] Dragonflight Keystone Master: Season One"],
 		full = L["Dragonflight Keystone Master: Season One"]
@@ -124,6 +161,14 @@ local locales = {
 	["Dragonflight Keystone Hero: Season Two"] = {
 		short = L["[ABBR] Dragonflight Keystone Hero: Season Two"],
 		full = L["Dragonflight Keystone Hero: Season Two"]
+	},
+	["Dragonflight Keystone Master: Season Three"] = {
+		short = L["[ABBR] Dragonflight Keystone Master: Season Three"],
+		full = L["Dragonflight Keystone Master: Season Three"]
+	},
+	["Dragonflight Keystone Hero: Season Three"] = {
+		short = L["[ABBR] Dragonflight Keystone Hero: Season Three"],
+		full = L["Dragonflight Keystone Hero: Season Three"]
 	}
 }
 
@@ -215,18 +260,64 @@ local raidAchievements = {
 			18188,  -- 消灭奈萨里奥的回响（随机亚贝鲁斯，焰影熔炉）
 			18187,  -- 消灭鳞长萨卡雷斯（随机亚贝鲁斯，焰影熔炉）
 		}
+	},
+	["Amirdrassil, the Dream's Hope"] = {
+		["Mythic"] = {
+			19378,  -- 消灭瘤根（史诗阿梅达希尔，梦境之愿）
+			19379,  -- 消灭残虐者艾姬拉（史诗阿梅达希尔，梦境之愿）
+			19380,  -- 消灭沃尔科罗斯（史诗阿梅达希尔，梦境之愿）
+			19381,  -- 消灭梦境议会（史诗阿梅达希尔，梦境之愿）
+			19382,  -- 消灭拉罗达尔，烈焰守护者（史诗阿梅达希尔，梦境之愿）
+			19383,  -- 消灭尼穆威，轮回编织者（史诗阿梅达希尔，梦境之愿）
+			19384,  -- 消灭斯莫德隆（史诗阿梅达希尔，梦境之愿）
+			19385,  -- 消灭丁达尔·迅贤，烈焰预言者（史诗阿梅达希尔，梦境之愿）
+			19386,  -- 消灭火光之龙菲莱克（史诗阿梅达希尔，梦境之愿）
+		},
+		["Heroic"] = {
+			19369,  -- 消灭瘤根（英雄阿梅达希尔，梦境之愿）
+			19370,  -- 消灭残虐者艾姬拉（英雄阿梅达希尔，梦境之愿）
+			19371,  -- 消灭沃尔科罗斯（英雄阿梅达希尔，梦境之愿）
+			19372,  -- 消灭梦境议会（英雄阿梅达希尔，梦境之愿）
+			19373,  -- 消灭拉罗达尔，烈焰守护者（英雄阿梅达希尔，梦境之愿）
+			19374,  -- 消灭尼穆威，轮回编织者（英雄阿梅达希尔，梦境之愿）
+			19375,  -- 消灭斯莫德隆（英雄阿梅达希尔，梦境之愿）
+			19376,  -- 消灭丁达尔·迅贤，烈焰预言者（英雄阿梅达希尔，梦境之愿）
+			19377,  -- 消灭火光之龙菲莱克（英雄阿梅达希尔，梦境之愿）
+		},
+		["Normal"] = {
+			19360,  -- 消灭瘤根（普通阿梅达希尔，梦境之愿）
+			19361,  -- 消灭残虐者艾姬拉（普通阿梅达希尔，梦境之愿）
+			19362,  -- 消灭沃尔科罗斯（普通阿梅达希尔，梦境之愿）
+			19363,  -- 消灭梦境议会（普通阿梅达希尔，梦境之愿）
+			19364,  -- 消灭拉罗达尔，烈焰守护者（普通阿梅达希尔，梦境之愿）
+			19365,  -- 消灭尼穆威，轮回编织者（普通阿梅达希尔，梦境之愿）
+			19366,  -- 消灭斯莫德隆（普通阿梅达希尔，梦境之愿）
+			19367,  -- 消灭丁达尔·迅贤，烈焰预言者（普通阿梅达希尔，梦境之愿）
+			19368,  -- 消灭火光之龙菲莱克（普通阿梅达希尔，梦境之愿）
+		},
+		["Raid Finder"] = {
+			19348,  -- 消灭瘤根（随机阿梅达希尔，梦境之愿）
+			19352,  -- 消灭残虐者艾姬拉（随机阿梅达希尔，梦境之愿）
+			19353,  -- 消灭沃尔科罗斯（随机阿梅达希尔，梦境之愿）
+			19354,  -- 消灭梦境议会（随机阿梅达希尔，梦境之愿）
+			19355,  -- 消灭拉罗达尔，烈焰守护者（随机阿梅达希尔，梦境之愿）
+			19356,  -- 消灭尼穆威，轮回编织者（随机阿梅达希尔，梦境之愿）
+			19357,  -- 消灭斯莫德隆（随机阿梅达希尔，梦境之愿）
+			19358,  -- 消灭丁达尔·迅贤，烈焰预言者（随机阿梅达希尔，梦境之愿）
+			19359,  -- 消灭火光之龙菲莱克（随机阿梅达希尔，梦境之愿）
+		}
 	}
 }
 
 local mythicKeystoneDungeons = { -- C_ChallengeMode.GetMapTable()
-	[206] = "Neltharion's Lair",
-	[245] = "Freehold",
-	[251] = "The Underrot",
-	[403] = "Uldaman: Legacy of Tyr",
-	[404] = "Neltharus",
-	[405] = "Brackenhide Hollow",
-	[406] = "Halls of Infusion",
-	[438] = "The Vortex Pinnacle",
+	[168] = "The Everbloom",
+	[198] = "Darkheart Thicket",
+	[199] = "Black Rook Hold",
+	[244] = "Atal'Dazar",
+	[248] = "Waycrest Manor",
+	[456] = "Throne of the Tides",
+	[463] = "Dawn of the Infinite: Galakrond's Fall",
+	[464] = "Dawn of the Infinite: Murozond's Rise"
 }
 
 local keystoneAchievements ={
@@ -237,6 +328,10 @@ local keystoneAchievements ={
 	[2] = {
 		{id = 17845, name = "Dragonflight Keystone Hero: Season Two"},
 		{id = 17844, name = "Dragonflight Keystone Master: Season Two"}
+	},
+	[3] = {
+		{id = 19012, name = "Dragonflight Keystone Hero: Season Three"},
+		{id = 19011, name = "Dragonflight Keystone Master: Season Three"}
 	}
 }
 
