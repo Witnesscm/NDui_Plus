@@ -2,6 +2,10 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 
 P.Changelog = [[
+v1.8.8
+[主要] 更新支持NDui 7.14.2
+[鼠标提示] PvE进度信息更新巨龙时代S3数据
+
 v1.8.7
 [主要] 更新版本号至10.2.0
 [美化] 修复BtWLoadouts美化
