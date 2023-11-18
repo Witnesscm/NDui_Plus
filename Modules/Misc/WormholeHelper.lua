@@ -39,7 +39,7 @@ function M:WormholeHelper()
 		end
 	end)
 
-	if not IsAddOnLoaded("Immersion") then return end
+	if not C_AddOns.IsAddOnLoaded("Immersion") then return end
 
 	local Titles = _G.ImmersionFrame.TitleButtons
 	hooksecurefunc(Titles, "UpdateGossipOptions", function(self)

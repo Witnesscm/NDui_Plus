@@ -7,10 +7,10 @@ local M = P:GetModule("Misc")
 local tabs = {}
 
 local garrisonData = {
-	{Enum.GarrisonType.Type_9_0, GARRISON_TYPE_9_0_LANDING_PAGE_TITLE, 3675495},
-	{Enum.GarrisonType.Type_8_0, GARRISON_TYPE_8_0_LANDING_PAGE_TITLE, 1044517},
-	{Enum.GarrisonType.Type_7_0, ORDER_HALL_LANDING_PAGE_TITLE, 1411833},
-	{Enum.GarrisonType.Type_6_0, GARRISON_LANDING_PAGE_TITLE, 237381},
+	{Enum.GarrisonType.Type_9_0_Garrison, GARRISON_TYPE_9_0_LANDING_PAGE_TITLE, 3675495},
+	{Enum.GarrisonType.Type_8_0_Garrison, GARRISON_TYPE_8_0_LANDING_PAGE_TITLE, 1044517},
+	{Enum.GarrisonType.Type_7_0_Garrison, ORDER_HALL_LANDING_PAGE_TITLE, 1411833},
+	{Enum.GarrisonType.Type_6_0_Garrison, GARRISON_LANDING_PAGE_TITLE, 237381},
 }
 
 local function ToggleLandingPage(self)
@@ -64,9 +64,9 @@ end
 -- fix error and some incorrect wigdets when toggle old expansion page
 function M:FixOldExpansionPage()
 	hooksecurefunc(_G.GarrisonLandingPage, "UpdateUIToGarrisonType", function(self)
-		self.Report.Sections:SetShown(self.garrTypeID == Enum.GarrisonType.Type_9_0)
+		self.Report.Sections:SetShown(self.garrTypeID == Enum.GarrisonType.Type_9_0_Garrison)
 
-		if self.garrTypeID ~= Enum.GarrisonType.Type_6_0 and GarrisonThreatCountersFrame:IsShown() then
+		if self.garrTypeID ~= Enum.GarrisonType.Type_6_0_Garrison and GarrisonThreatCountersFrame:IsShown() then
 			GarrisonThreatCountersFrame:Hide()
 		end
 	end)
@@ -103,7 +103,7 @@ function M:FixOldExpansionPage()
 	end)
 
 	hooksecurefunc(_G.GarrisonLandingPage.FollowerTab, "ShowFollower", function(self)
-		local isAutoCombatant = self:GetParent():GetFollowerList().followerType == Enum.GarrisonFollowerType.FollowerType_9_0
+		local isAutoCombatant = self:GetParent():GetFollowerList().followerType == Enum.GarrisonFollowerType.FollowerType_9_0_GarrisonFollower
 		if not isAutoCombatant then
 			if self.CovenantFollowerPortraitFrame then
 				self.CovenantFollowerPortraitFrame:Hide()

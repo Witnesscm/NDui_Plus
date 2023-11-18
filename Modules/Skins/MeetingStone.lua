@@ -614,7 +614,7 @@ function S:MeetingStone()
 	end
 
 	-- MeetingStoneEX
-	if IsAddOnLoaded("MeetingStoneEX") then
+	if C_AddOns.IsAddOnLoaded("MeetingStoneEX") then
 		if BrowsePanel then
 			local ExSearchButton = BrowsePanel.ExSearchButton
 			if ExSearchButton then

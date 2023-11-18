@@ -38,7 +38,7 @@ local function ImprovedStableFrame_Update()
 end
 
 function M:ImprovedStableFrame()
-	if DB.MyClass ~= "HUNTER" or IsAddOnLoaded("ImprovedStableFrame") or not M.db["ImprovedStableFrame"] then return end
+	if DB.MyClass ~= "HUNTER" or C_AddOns.IsAddOnLoaded("ImprovedStableFrame") or not M.db["ImprovedStableFrame"] then return end
 
 	local newWidth, newHeight = 300, 204
 	local oldWidth, oldHeight = PetStableFrame:GetSize()

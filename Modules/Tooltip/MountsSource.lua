@@ -44,7 +44,7 @@ local function AddLine(self, source, isCollectedText, type, noadd)
 end
 
 function T:MountsSource()
-	if IsAddOnLoaded("MountsSource") then return end
+	if C_AddOns.IsAddOnLoaded("MountsSource") then return end
 
 	hooksecurefunc(GameTooltip, "SetUnitAura", function(self, ...)
 		if not T.db["MountsSource"] then return end

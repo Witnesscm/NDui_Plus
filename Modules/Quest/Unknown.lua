@@ -16,7 +16,7 @@ local correctFairies = {
 local Handler = CreateFrame("Frame")
 Handler:RegisterEvent("GOSSIP_SHOW")
 Handler:SetScript("OnEvent", function(self)
-	if IsAddOnLoaded("BetterWorldQuests") then return end
+	if C_AddOns.IsAddOnLoaded("BetterWorldQuests") then return end
 	if not NDuiPlusDB["Misc"]["QuestHelper"] then return end
 
 	if IsShiftKeyDown() then return end
