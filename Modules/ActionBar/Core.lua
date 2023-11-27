@@ -357,5 +357,5 @@ end
 
 function AB:OnLogin()
 	AB:GlobalFade()
-	AB:ComboGlow()
+	AB:FinisherGlow()
 end

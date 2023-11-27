@@ -6,12 +6,13 @@ local LAB = LibStub("LibActionButton-1.0-NDui")
 local ActionButtons = LAB.actionButtons
 
 -- https://www.wowhead.com/cn/resource/4
-local AllGlowSpells = {
+local FinisherSpells = {
 	["ROGUE"] = {
 		[408] = true,		-- 肾击
 		[1943] = true,		-- 割裂
 		[2098] = true,		-- 斩击
 		[32645] = true,		-- 毒伤
+		[51690] = true,		-- 影舞步
 		[121411] = true,	-- 猩红风暴
 		[196819] = true,	-- 刺骨
 		[269513] = true,	-- 天降杀机
@@ -30,17 +31,20 @@ local AllGlowSpells = {
 }
 
 local function IsSpellOverlayed(spellId)
-	if AB.GlowSpells[spellId] then
+	if AB.Finishers[spellId] then
 		return UnitPower("player", Enum.PowerType.ComboPoints) == AB.MaxComboPoints
 	end
 	return false
 end
 
-function AB:UpdateMaxCombo()
-	AB.MaxComboPoints = UnitPowerMax("player", Enum.PowerType.ComboPoints)
+function AB:UpdateMaxPoints(...)
+	local unit, powerType = ...
+	if not unit or (unit == "player" and powerType == "COMBO_POINTS") then
+		AB.MaxComboPoints = UnitPowerMax("player", Enum.PowerType.ComboPoints)
+	end
 end
 
-function AB:ComboGlow_Update()
+function AB:FinisherGlow_Update()
 	local spellId = self:GetSpellId()
 	if spellId and IsSpellOverlayed(spellId) then
 		B.ShowOverlayGlow(self)
@@ -49,27 +53,27 @@ function AB:ComboGlow_Update()
 	end
 end
 
-function AB:ComboGlow_OnEvent( ...)
+function AB:FinisherGlow_OnEvent( ...)
 	local unit, powerType = ...
 	if unit == "player" and powerType == "COMBO_POINTS" then
 		for button in next, ActionButtons do
-			AB.ComboGlow_Update(button)
+			AB.FinisherGlow_Update(button)
 		end
 	end
 end
 
-function AB:ComboGlow_OnButtonUpdate(button)
-	AB.ComboGlow_Update(button)
+function AB:FinisherGlow_OnButtonUpdate(button)
+	AB.FinisherGlow_Update(button)
 end
 
-function AB:ComboGlow()
-	if not AB.db["ComboGlow"] then return end
+function AB:FinisherGlow()
+	if not AB.db["FinisherGlow"] then return end
 
-	AB.GlowSpells = AllGlowSpells[DB.MyClass]
-	if not AB.GlowSpells then return end
+	AB.Finishers = FinisherSpells[DB.MyClass]
+	if not AB.Finishers then return end
 
-	AB:UpdateMaxCombo()
-	B:RegisterEvent("UNIT_MAXPOWER", AB.UpdateMaxCombo)
-	B:RegisterEvent("UNIT_POWER_UPDATE", AB.ComboGlow_OnEvent)
-	LAB:RegisterCallback("OnButtonUpdate", AB.ComboGlow_OnButtonUpdate)
+	AB:UpdateMaxPoints()
+	B:RegisterEvent("UNIT_MAXPOWER", AB.UpdateMaxPoints)
+	B:RegisterEvent("UNIT_POWER_UPDATE", AB.FinisherGlow_OnEvent)
+	LAB:RegisterCallback("OnButtonUpdate", AB.FinisherGlow_OnButtonUpdate)
 end

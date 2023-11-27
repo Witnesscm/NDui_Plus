@@ -130,7 +130,7 @@ G.TabList = {
 
 G.OptionList = { -- type, key, value, name, horizon, data, callback, tooltip, scripts
 	[1] = {
-		{1, "ActionBar", "ComboGlow", HeaderTag..L["ComboGlow"], nil, nil, nil, L["ComboGlowTip"]},
+		{1, "ActionBar", "FinisherGlow", HeaderTag..L["FinisherGlow"], nil, nil, nil, L["FinisherGlowTip"]},
 		{},
 		{1, "ActionBar", "GlobalFade", HeaderTag..L["GlobalFadeEnable"], nil, setupABFader},
 		{1, "ActionBar", "Bar1", L["Bar"].."1*", nil, nil, updateABFaderState},

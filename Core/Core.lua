@@ -22,7 +22,7 @@ P.DefaultSettings = {
 		Index = 1,
 	},
 	ActionBar = {
-		ComboGlow = true,
+		FinisherGlow = true,
 		GlobalFade = true,
 		Alpha = .1,
 		Delay = 0,
