@@ -181,6 +181,41 @@ function G:SetupABFader(parent)
 	end
 end
 
+local function updateMageBar()
+	P:GetModule("ActionBar"):UpdateMageBar()
+end
+
+function G:SetupMageBar(parent)
+	local guiName = "NDuiPlusGUI_MageBar"
+	toggleExtraGUI(guiName)
+	if extraGUIs[guiName] then return end
+
+	local panel = createExtraGUI(parent, guiName, L["MageBar"].."*", true)
+	local frame = panel.scroll.child
+
+	local offset = 20
+
+	local options = {
+		[1] = {"MageBarTeleport", L["Teleport"]},
+		[2] = {"MageBarPortal", L["Portal"]},
+		[3] = {"MageBarFood", L["Food"]},
+		[4] = {"MageBarWater", L["Water"]},
+		[5] = {"MageBarGem", L["Mana Gem"]},
+	}
+
+	for _, option in ipairs(options) do
+		local value, text = unpack(option)
+		local box = createOptionCheck(frame, offset, text)
+		box:SetChecked(G.Variable("ActionBar", value))
+		box:SetScript("OnClick", function()
+			G.Variable("ActionBar", value, box:GetChecked())
+			updateMageBar()
+		end)
+
+		offset = offset + 35
+	end
+end
+
 local function updateUFsFader()
 	P:GetModule("UnitFrames"):UpdateUFsFader()
 end
@@ -228,25 +263,6 @@ function G:SetupUFsFader(parent)
 	local blank = CreateFrame("Frame", nil, frame)
 	blank:SetSize(20, 20)
 	blank:SetPoint("TOPLEFT", 20, -offset)
-end
-
-local function updateUFsRole()
-	P:GetModule("UnitFrames"):UpdateRoleIcons()
-end
-
-function G:SetupUFsRole(parent)
-	local guiName = "NDuiPlusGUI_UFsRole"
-	toggleExtraGUI(guiName)
-	if extraGUIs[guiName] then return end
-
-	local panel = createExtraGUI(parent, guiName, L["Role Icon Settings"].."*", true)
-	local frame = panel.scroll.child
-
-	local offset = -10
-	createOptionDropDown(frame, -offset-60, L["Point"], "UnitFrames", "RolePoint", G.Points, updateUFsRole)
-	createOptionSlider(frame, L["X Offset"], -100, 100, 1, 20, -offset-130, "UnitFrames", "RoleXOffset", updateUFsRole)
-	createOptionSlider(frame, L["Y Offset"], -100, 100, 1, 20, -offset-200, "UnitFrames", "RoleYOffset", updateUFsRole)
-	createOptionSlider(frame, L["Icon Size"], 8, 50, 1, 20, -offset-270, "UnitFrames", "RoleSize", updateUFsRole)
 end
 
 local function updateChatAutoShow()

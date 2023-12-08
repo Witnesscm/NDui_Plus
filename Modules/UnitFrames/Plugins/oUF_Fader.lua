@@ -47,8 +47,14 @@ local function ToggleAlpha(self, element, endAlpha)
 
 	if element.Smooth then
 		P:UIFrameFadeOut(self, element.Smooth, self:GetAlpha(), endAlpha)
+		if self.Portrait then
+			P:UIFrameFadeOut(self.Portrait, element.Smooth, self.Portrait:GetAlpha(), endAlpha == 0 and 0 or .2)
+		end
 	else
 		self:SetAlpha(endAlpha)
+		if self.Portrait then
+			self.Portrait:SetAlpha(endAlpha == 0 and 0 or .2)
+		end
 	end
 end
 
@@ -56,6 +62,9 @@ local function Update(self, _, unit)
 	local element = self.Fader
 	if self.isForced or (not element or not element.count or element.count <= 0) then
 		self:SetAlpha(1)
+		if self.Portrait then
+			self.Portrait:SetAlpha(.2)
+		end
 		return
 	end
 

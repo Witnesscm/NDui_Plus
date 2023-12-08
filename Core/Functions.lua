@@ -151,8 +151,11 @@ do
 	end
 
 	local function updateCollapseTexture(texture, collapsed)
-		local atlas = collapsed and "Soulbinds_Collection_CategoryHeader_Expand" or "Soulbinds_Collection_CategoryHeader_Collapse"
-		texture:SetAtlas(atlas, true)
+		if collapsed then
+			texture:SetTexCoord(0, .4375, 0, .4375)
+		else
+			texture:SetTexCoord(.5625, 1, 0, .4375)
+		end
 	end
 
 	local function resetCollapseTexture(self, texture)
@@ -179,9 +182,9 @@ do
 			return
 		end
 
-		self:SetNormalTexture(0)
 		self:SetHighlightTexture(0)
 		self:SetPushedTexture(0)
+		self:SetDisabledTexture(0)
 
 		local bg = B.CreateBDFrame(self, .25, true)
 		bg:ClearAllPoints()
@@ -191,6 +194,8 @@ do
 
 		self.__texture = bg:CreateTexture(nil, "OVERLAY")
 		self.__texture:SetPoint("CENTER")
+		self.__texture:SetSize(7, 7)
+		self.__texture:SetTexture("Interface\\Buttons\\UI-PlusMinus-Buttons")
 		self.__texture.DoCollapse = updateCollapseTexture
 
 		self:HookScript("OnEnter", B.Texture_OnEnter)
@@ -334,6 +339,16 @@ do
 		end
 		self.__bg:SetBackdropBorderColor(0, 0, 0)
 	end
+
+	function P:RemoveBD()
+		for _, child in pairs {self:GetChildren()} do
+			if child.backdropInfo and (child.backdropInfo.bgFile == DB.bdTex and child.backdropInfo.edgeSize == C.mult) then
+				child:Hide()
+				child:SetAlpha(0)
+				break
+			end
+		end
+	end
 end
 
 -- Misc
@@ -396,5 +411,17 @@ do
 	local t, d = "|T%s%s|t", ""
 	function P.TextureString(texture, data)
 		return format(t, texture, data or d)
+	end
+
+	function P.CopyTable(tbl)
+		local copy = {}
+		for k, v in pairs(tbl) do
+			if type(v) == "table" then
+				copy[k] = P.CopyTable(v)
+			else
+				copy[k] = v
+			end
+		end
+		return copy
 	end
 end

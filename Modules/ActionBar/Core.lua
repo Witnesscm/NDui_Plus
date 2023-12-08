@@ -350,12 +350,10 @@ function AB:StyleActionButton(button, cfg)
 		autoCastable:SetInside()
 	end
 
-	--ButtonRange:RegisterButtonRange(button)
-
 	button.__styled = true
 end
 
 function AB:OnLogin()
+	AB:MageBar()
 	AB:GlobalFade()
-	AB:FinisherGlow()
 end

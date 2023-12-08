@@ -27,11 +27,6 @@ function M:IconSearch_DoSearch(frame, str)
 		tinsert(results, item)
 	end
 
-	local pvptal = select(3, GetPvpTalentInfoByID(id))
-	if pvptal then
-		tinsert(results, pvptal)
-	end
-
 	local achievement = select(10, GetAchievementInfo(id))
 	if achievement then
 		tinsert(results, achievement)
@@ -78,6 +73,7 @@ local function Button_OnClick(self)
 	frame.IconSelector:SetSelectedIndex(frame:GetIndexOfIcon(self.icon))
 	frame.IconSelector:ScrollToSelectedIndex()
 	frame.BorderBox.SelectedIconArea.SelectedIconButton:SetIconTexture(self.icon)
+	frame.BorderBox.SelectedIconArea.SelectedIconButton:SetSelectedTexture()
 	frame.SearchBox:SetText("")
 end
 

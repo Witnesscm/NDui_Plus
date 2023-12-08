@@ -117,7 +117,8 @@ function S:Ace3_CheckBox(widget)
 	highlight:SetVertexColor(cr, cg, cb, .25)
 	highlight.SetTexture = B.Dummy
 
-	check:SetAtlas("checkmark-minimal")
+	check:SetTexture("Interface\\Buttons\\UI-CheckBox-Check")
+	check:SetTexCoord(0, 1, 0, 1)
 	check:SetDesaturated(true)
 	check:SetVertexColor(cr, cg, cb)
 	check.SetDesaturated = B.Dummy
@@ -138,7 +139,7 @@ function S:Ace3_CheckBox(widget)
 			self.check:SetInside(bg)
 		else
 			bg:SetInside(checkbg, 4, 4)
-			self.check:SetAtlas("checkmark-minimal")
+			self.check:SetTexture("Interface\\Buttons\\UI-CheckBox-Check")
 			self.check:SetAllPoints(self.checkbg)
 		end
 	end)

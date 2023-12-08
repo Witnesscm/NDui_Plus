@@ -36,6 +36,9 @@ function UF:Configure_Fader(frame)
 	elseif frame:IsElementEnabled("Fader") then
 		frame:DisableElement("Fader")
 		P:UIFrameFadeIn(frame, 1, frame:GetAlpha(), 1)
+		if frame.Portrait then
+			P:UIFrameFadeIn(frame.Portrait, 1, frame.Portrait:GetAlpha(), .2)
+		end
 	end
 end
 

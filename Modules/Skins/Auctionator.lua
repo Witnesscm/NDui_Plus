@@ -39,27 +39,7 @@ local function reskinSimplePanel(frame)
 
 	if frame.ScrollBar then B.ReskinTrimScroll(frame.ScrollBar) end
 	if frame.CloseDialog then B.ReskinClose(frame.CloseDialog) end
-end
-
-local function reskinRefreshButton(self)
-	for i = 1, self:GetNumChildren() do
-		local child = select(i, self:GetChildren())
-		if child.iconAtlas and child.iconAtlas == "UI-RefreshButton" then
-			B.Reskin(child)
-			child:SetSize(22, 22)
-			break
-		end
-	end
-end
-
-local function reskinIconAndName(self)
-	if not self then
-		P:Debug("Unknown: IconAndName")
-		return
-	end
-
-	self.bg = B.ReskinIcon(self.Icon)
-	B.ReskinIconBorder(self.QualityBorder)
+	if frame.Inset then frame.Inset:SetAlpha(0)end
 end
 
 local function reskinItemDialog(self)
@@ -73,15 +53,12 @@ local function reskinItemDialog(self)
 	S:Proxy("ReskinInput", self.SearchContainer.SearchString)
 	S:Proxy("ReskinCheck", self.SearchContainer.IsExact)
 	P.ReskinDropDown(self.FilterKeySelector)
+	P.ReskinDropDown(self.QualityContainer.DropDown.DropDown)
 	reskinButtons(self, {"Finished", "Cancel", "ResetAllButton"})
 	reskinInput(self.PurchaseQuantity.InputBox)
 
-	for _, key in ipairs({"QualityContainer", "TierContainer", "ExpansionContainer"}) do
-		local container = self[key] and self[key].DropDown
-		local dropDown = container and container.DropDown
-		if dropDown then
-			P.ReskinDropDown(dropDown)
-		end
+	if self.Inset then
+		self.Inset:SetAlpha(0)
 	end
 
 	for _, key in ipairs({"LevelRange", "ItemLevelRange", "PriceRange", "CraftedLevelRange"}) do
@@ -166,6 +143,38 @@ local function reskinMoneyInput(self)
 	end
 end
 
+local function reskinBuyFrame(self)
+	if not self then P:Debug("Unknown: BuyFrame") return end
+
+	if self.HistoryButton then
+		B.Reskin(self.HistoryButton)
+	end
+
+	local CurrentPrices = self.CurrentPrices
+	if CurrentPrices then
+		reskinButtons(CurrentPrices, {"BuyButton", "CancelButton", "RefreshButton"})
+		reskinListHeader(CurrentPrices.SearchResultsListing)
+
+		local BuyDialog = CurrentPrices.BuyDialog
+		if BuyDialog then
+			reskinSimplePanel(BuyDialog)
+			reskinButtons(BuyDialog, {"Cancel", "BuyStack"})
+			B.ReskinCheck(BuyDialog.ChainBuy.CheckBox)
+		end
+
+		if CurrentPrices.Inset then CurrentPrices.Inset:SetAlpha(0) end
+	end
+
+	local HistoryPrices = self.HistoryPrices
+	if HistoryPrices then
+		reskinButtons(HistoryPrices, {"PostingHistoryButton", "RealmHistoryButton"})
+		reskinListHeader(HistoryPrices.PostingHistoryResultsListing)
+		reskinListHeader(HistoryPrices.RealmHistoryResultsListing)
+
+		if HistoryPrices.Inset then HistoryPrices.Inset:SetAlpha(0) end
+	end
+end
+
 local function reskinSearchButton(self)
 	S:Proxy("Reskin", self.SearchButton)
 end
@@ -234,11 +243,13 @@ local function reskinBagItemButton(self)
 end
 
 function S:Auctionator()
+	if not S.db["Auctionator"] then return end
+
 	local Auctionator = _G.Auctionator
-	if not Auctionator or not _G.AuctionatorInitalizeMainlineFrame or not _G.AuctionatorInitalizeMainlineFrame.AuctionHouseShown then return end
+	if not Auctionator or not _G.AuctionatorInitalizeClassicFrame or not _G.AuctionatorInitalizeClassicFrame.AuctionHouseShown then return end
 
 	local styled
-	hooksecurefunc(_G.AuctionatorInitalizeMainlineFrame, "AuctionHouseShown", function()
+	hooksecurefunc(_G.AuctionatorInitalizeClassicFrame, "AuctionHouseShown", function()
 		if styled then return end
 
 		local SplashScreen = _G.AuctionatorSplashScreen
@@ -249,10 +260,10 @@ function S:Auctionator()
 			if SplashScreen.HideCheckbox then
 				S:Proxy("ReskinCheck", SplashScreen.HideCheckbox.CheckBox)
 			end
-		end
 
-		for _, tab in ipairs(_G.AuctionatorAHTabsContainer.Tabs) do
-			B.ReskinTab(tab)
+			if SplashScreen.Inset then
+				SplashScreen.Inset:SetAlpha(0)
+			end
 		end
 
 		local ShoppingList = _G.AuctionatorShoppingFrame
@@ -260,7 +271,7 @@ function S:Auctionator()
 			reskinListHeader(ShoppingList.ResultsListing)
 			reskinButtons(ShoppingList, {"ImportButton", "ExportButton", "ExportCSV", "NewListButton"})
 			reskinItemDialog(ShoppingList.itemDialog)
-			S:Proxy("StripTextures", ShoppingList.ShoppingResultsInset)
+			if ShoppingList.ShoppingResultsInset then ShoppingList.ShoppingResultsInset:SetAlpha(0) end
 
 			local SearchOptions = ShoppingList.SearchOptions
 			if SearchOptions then
@@ -299,9 +310,9 @@ function S:Auctionator()
 				local scrollList = ShoppingList[key]
 				if scrollList and scrollList.ScrollBox then
 					B.StripTextures(scrollList)
-					local bg = B.CreateBDFrame(scrollList, .25)
-					bg:SetAllPoints()
+					B.CreateBDFrame(scrollList, .25)
 					S:Proxy("ReskinTrimScroll", scrollList.ScrollBar)
+					if scrollList.Inset then scrollList.Inset:SetAlpha(0) end
 				end
 			end
 
@@ -309,8 +320,7 @@ function S:Auctionator()
 			if ContainerTabs then
 				for _, tab in ipairs(ContainerTabs.Tabs) do
 					B.ReskinTab(tab)
-					tab.bg:SetInside()
-					tab:SetSize(102, 30)
+					tab:SetHeight(30)
 				end
 			end
 
@@ -326,42 +336,19 @@ function S:Auctionator()
 				reskinListHeader(itemHistoryDialog.ResultsListing)
 				reskinButtons(itemHistoryDialog, {"Close", "Dock"})
 			end
+		end
 
-			for _, frameName in ipairs({"AuctionatorBuyCommodityFrame", "AuctionatorBuyItemFrame"}) do
-				local buyFrame = _G[frameName]
-				if buyFrame then
-					B.StripTextures(buyFrame)
-					S:Proxy("Reskin", buyFrame.BackButton)
-					reskinRefreshButton(buyFrame)
-					reskinIconAndName(buyFrame.IconAndName)
+		local BuyFrame = _G.AuctionatorBuyFrame
+		if BuyFrame then
+			reskinBuyFrame(BuyFrame)
 
-					local DetailsContainer = buyFrame.DetailsContainer
-					if DetailsContainer then
-						S:Proxy("Reskin", DetailsContainer.BuyButton)
-						reskinInput(DetailsContainer.Quantity)
-					end
+			if BuyFrame.ReturnButton then
+				B.Reskin(BuyFrame.ReturnButton)
+			end
 
-					for _, key in ipairs({"QuantityCheckConfirmationDialog", "FinalConfirmationDialog"}) do
-						local dialog = buyFrame[key]
-						if dialog then
-							reskinSimplePanel(dialog)
-							reskinButtons(dialog, {"AcceptButton", "CancelButton"})
-							if dialog.QuantityInput then reskinInput(dialog.QuantityInput) end
-						end
-					end
-
-					local ResultsListing = buyFrame.ResultsListing
-					if ResultsListing then
-						reskinListHeader(ResultsListing)
-					end
-
-					local BuyDialog = buyFrame.BuyDialog
-					if BuyDialog then
-						B.StripTextures(BuyDialog)
-						B.SetBD(BuyDialog)
-						reskinButtons(BuyDialog, {"Buy", "Cancel"})
-						reskinIconAndName(BuyDialog.IconAndName)
-					end
+			for _, child in pairs {BuyFrame:GetChildren()} do
+				if child.Icon then
+					B.ReskinIcon(child.Icon)
 				end
 			end
 		end
@@ -371,37 +358,38 @@ function S:Auctionator()
 			local SaleItemFrame = SellingFrame.SaleItemFrame
 			if SaleItemFrame then
 				reskinBagItem(SaleItemFrame.Icon)
-				reskinInput(SaleItemFrame.Quantity.InputBox)
-				reskinMoneyInput(SaleItemFrame.Price)
+				reskinMoneyInput(SaleItemFrame.StackPrice)
+				reskinMoneyInput(SaleItemFrame.UnitPrice)
 				reskinMoneyInput(SaleItemFrame.BidPrice)
-				reskinButtons(SaleItemFrame, {"PostButton", "SkipButton", "MaxButton"})
-				reskinRefreshButton(SaleItemFrame)
+				reskinButtons(SaleItemFrame, {"PostButton", "SkipButton"})
 
-				for _, bu in ipairs(SaleItemFrame.Duration.radioButtons) do
-					B.ReskinRadio(bu.RadioButton)
+				local Duration = SaleItemFrame.Duration
+				if Duration and Duration.radioButtons then
+					for _, bu in ipairs(Duration.radioButtons) do
+						B.ReskinRadio(bu.RadioButton)
+					end
+				end
+
+				local Stacks = SaleItemFrame.Stacks
+				if Stacks then
+					reskinInput(Stacks.NumStacks)
+					reskinInput(Stacks.StackSize)
 				end
 			end
 
-			for _, key in ipairs({"BagInset", "HistoricalPriceInset"}) do
-				S:Proxy("StripTextures", SellingFrame[key])
+			if SellingFrame.BagInset then
+				SellingFrame.BagInset:SetAlpha(0)
 			end
 
-			reskinListHeader(SellingFrame.CurrentPricesListing)
-			reskinListHeader(SellingFrame.HistoricalPriceListing)
-			reskinListHeader(SellingFrame.PostingHistoryListing)
-
-			local PricesTabsContainer = SellingFrame.PricesTabsContainer
-			if PricesTabsContainer then
-				for _, tab in ipairs(PricesTabsContainer.Tabs) do
-					B.ReskinTab(tab)
-				end
+			local SellingBuyFrame = SellingFrame.BuyFrame
+			if SellingBuyFrame then
+				reskinBuyFrame(SellingBuyFrame)
 			end
 		end
 
 		local CancellingFrame = _G.AuctionatorCancellingFrame
 		if CancellingFrame then
 			reskinListHeader(CancellingFrame.ResultsListing)
-			reskinRefreshButton(CancellingFrame)
 
 			for _, child in pairs {CancellingFrame:GetChildren()} do
 				if child.StartScanButton and child.CancelNextButton then
@@ -411,7 +399,10 @@ function S:Auctionator()
 				end
 			end
 
-			S:Proxy("StripTextures", CancellingFrame.HistoricalPriceInset)
+			if CancellingFrame.HistoricalPriceInset then
+				CancellingFrame.HistoricalPriceInset:SetAlpha(0)
+			end
+
 			S:Proxy("ReskinInput", CancellingFrame.SearchFilter)
 		end
 
@@ -420,7 +411,36 @@ function S:Auctionator()
 			B.StripTextures(ConfigFrame)
 			B.CreateBDFrame(ConfigFrame, .25)
 			reskinButtons(ConfigFrame, {"ScanButton", "OptionsButton"})
+
+			for _, child in pairs {ConfigFrame:GetChildren()} do
+				if child:GetObjectType() == "Frame" and child.BorderTopRight then
+					child:SetAlpha(0)
+				end
+			end
 		end
+
+		for _, key in ipairs({"AuctionatorPageStatusDialogFrame", "AuctionatorThrottlingTimeoutDialogFrame"}) do
+			local dialog = _G[key]
+			if dialog then
+				B.StripTextures(dialog)
+				B.SetBD(dialog)
+			end
+		end
+
+		for _, tab in ipairs(_G.AuctionatorAHTabsContainer.Tabs) do
+			B.ReskinTab(tab)
+		end
+
+		-- fix the duplicate tab background (NDui)
+		local done
+		_G.AuctionatorAHTabsContainer:HookScript("OnHide", function(self)
+			if not done and C.db["Skins"]["BlizzardSkins"] then
+				for _, tab in ipairs(self.Tabs) do
+					tab.bg:Hide()
+				end
+				done = true
+			end
+		end)
 
 		styled = true
 	end)
@@ -436,15 +456,8 @@ function S:Auctionator()
 		end
 	end
 
-	local ObjectiveTrackerFrame = _G.AuctionatorCraftingInfoObjectiveTrackerFrame
-	if ObjectiveTrackerFrame then
-		reskinSearchButton(ObjectiveTrackerFrame)
-	else
-		hook("AuctionatorCraftingInfoObjectiveTrackerFrameMixin", "OnLoad", reskinSearchButton)
-	end
-
 	hook("AuctionatorConfigurationCopyAndPasteMixin", "OnLoad", reskinCopyAndPaste)
-	hook("AuctionatorCraftingInfoProfessionsFrameMixin", "OnLoad", reskinSearchButton)
+	hook("AuctionatorCraftingInfoFrameMixin", "OnLoad", reskinSearchButton)
 	hook("AuctionatorBagUseMixin", "OnLoad", reskinBagUse)
 	hook("AuctionatorGroupsViewMixin", "OnLoad", reskinBagView)
 	hook("AuctionatorGroupsCustomiseMixin", "OnLoad", reskinBagCustomise)

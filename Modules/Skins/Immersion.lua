@@ -79,20 +79,6 @@ function S:Immersion()
 	local bg = B.CreateBDFrame(MainFrame.Model, 0)
 	bg:SetFrameLevel(MainFrame.Model:GetFrameLevel() + 1)
 
-	local ReputationBar = TalkBox.ReputationBar
-	ReputationBar.icon:SetPoint("TOPLEFT", -30, 6)
-	B.StripTextures(ReputationBar)
-	ReputationBar:SetStatusBarTexture(DB.normTex)
-	B.CreateBDFrame(ReputationBar, .25)
-
-	for i = 1, 4 do
-		local notch = _G["ImmersionFrameNotch"..i]
-		if notch then
-			notch:SetColorTexture(0, 0, 0)
-			notch:SetSize(C.mult, 16)
-		end
-	end
-
 	local Indicator = MainFrame.Indicator
 	Indicator:SetScale(1.25)
 	Indicator:ClearAllPoints()
@@ -126,6 +112,11 @@ function S:Immersion()
 		local honorFrame = rewardsFrame.HonorFrame
 		if honorFrame then
 			reskinItemButton(honorFrame)
+
+			-- Classic honor icon
+			local icon = honorFrame.Icon
+			icon:SetTexture(format("Interface\\TargetingFrame\\UI-PVP-%s", (DB.MyFaction or "Horde")))
+			icon:SetTexCoord(0, .66, 0, .66)
 		end
 
 		-- Title Rewards
@@ -153,29 +144,9 @@ function S:Immersion()
 			reskinItemButton(skillPointFrame)
 		end
 
+		-- Spell Rewards
 		local spellRewards = C_QuestInfoSystem.GetQuestRewardSpells(GetQuestID()) or {}
 		if #spellRewards > 0 then
-			-- Follower Rewards
-			for reward in rewardsFrame.followerRewardPool:EnumerateActive() do
-				local portrait = reward.PortraitFrame
-				if not reward.styled then
-					B.ReskinGarrisonPortrait(portrait)
-					reward.BG:Hide()
-					portrait:SetPoint("TOPLEFT", 2, -5)
-					reward.textBg = B.CreateBDFrame(reward, .25)
-					reward.textBg:SetPoint("TOPLEFT", 0, -3)
-					reward.textBg:SetPoint("BOTTOMRIGHT", 2, 7)
-					reward.Class:SetPoint("TOPRIGHT", reward.textBg, "TOPRIGHT", -C.mult, -C.mult)
-					reward.Class:SetPoint("BOTTOMRIGHT", reward.textBg, "BOTTOMRIGHT", -C.mult, C.mult)
-
-					reward.styled = true
-				end
-
-				local color = DB.QualityColors[portrait.quality or 1]
-				portrait.squareBG:SetBackdropBorderColor(color.r, color.g, color.b)
-				reward.Class:SetTexCoord(unpack(DB.TexCoord))
-			end
-			-- Spell Rewards
 			for spellReward in rewardsFrame.spellRewardPool:EnumerateActive() do
 				if not spellReward.textBg then
 					local icon = spellReward.Icon

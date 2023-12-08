@@ -2,8 +2,7 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 local M = P:RegisterModule("Misc")
 
-local _G = getfenv(0)
-local format, select = string.format, select
+local format = format
 
 M.MiscList = {}
 
@@ -17,6 +16,43 @@ function M:OnLogin()
 	for name, func in next, M.MiscList do
 		xpcall(func, P.ThrowError)
 	end
+end
+
+-- Add player name on TradeSkillFrame from Retail
+do
+	local function TradeSkill_UpdateTitle()
+		local frame = _G.TradeSkillFrame
+		if not frame.LinkNameButton then return end
+
+		local linked, linkedName = IsTradeSkillLinked()
+		if linked and linkedName then
+			frame.LinkNameButton:Show()
+			_G.TradeSkillFrameTitleText:SetFormattedText("%s %s[%s]|r", TRADE_SKILL_TITLE:format(GetTradeSkillLine()), HIGHLIGHT_FONT_COLOR_CODE, linkedName)
+			frame.LinkNameButton.linkedName = linkedName
+		else
+			frame.LinkNameButton:Hide()
+			frame.LinkNameButton.linkedName = nil
+		end
+	end
+
+	function M:TradeSkill_AddName()
+		local frame = _G.TradeSkillFrame
+		if not frame.LinkNameButton then
+			local button = CreateFrame("Button", nil, frame)
+			button:SetAllPoints(_G.TradeSkillFrameTitleText)
+			button:SetScript("OnClick", function(self)
+				if self.linkedName then
+					PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+					ChatFrame_OpenChat(SLASH_WHISPER1.." "..self.linkedName.." ", DEFAULT_CHAT_FRAME)
+				end
+			end)
+			frame.LinkNameButton = button
+
+			hooksecurefunc("TradeSkillFrame_Update", TradeSkill_UpdateTitle)
+		end
+	end
+
+	P:AddCallbackForAddon("Blizzard_TradeSkillUI", M.TradeSkill_AddName)
 end
 
 -- Learn all available skills. Credit: TrainAll
@@ -39,7 +75,7 @@ do
 
 		button:SetScript("OnClick", function()
 			for i = 1, GetNumTrainerServices() do
-				if select(2, GetTrainerServiceInfo(i)) == "available" then
+				if select(3, GetTrainerServiceInfo(i)) == "available" then
 					BuyTrainerService(i)
 				end
 			end
@@ -58,12 +94,14 @@ do
 
 		if C.db["Skins"]["BlizzardSkins"] then
 			B.Reskin(button)
+			if button.LeftSeparator then button.LeftSeparator:SetAlpha(0) end
+			if button.RightSeparator then button.RightSeparator:SetAlpha(0) end
 		end
 
 		hooksecurefunc("ClassTrainerFrame_Update",function()
 			local sum, total = 0, 0
 			for i = 1, GetNumTrainerServices() do
-				if select(2, GetTrainerServiceInfo(i)) == "available" then
+				if select(3, GetTrainerServiceInfo(i)) == "available" then
 					sum = sum + 1
 					total = total + GetTrainerServiceCost(i)
 				end
@@ -76,20 +114,6 @@ do
 	end
 
 	P:AddCallbackForAddon("Blizzard_TrainerUI", M.TrainAllSkills)
-end
-
--- Autofill the Threads of Fate confirmation string
-do
-	function M:ThreadsOfFateString()
-		local fateDialog = StaticPopupDialogs["CONFIRM_PLAYER_CHOICE_WITH_CONFIRMATION_STRING"]
-		if fateDialog and fateDialog.OnShow then
-			hooksecurefunc(fateDialog, "OnShow", function(self)
-				self.editBox:SetText(SHADOWLANDS_EXPERIENCE_THREADS_OF_FATE_CONFIRMATION_STRING)
-			end)
-		end
-	end
-
-	P:AddCallbackForAddon("Blizzard_PlayerChoice", M.ThreadsOfFateString)
 end
 
 do
@@ -123,51 +147,18 @@ do
 	P:AddCallbackForAddon("Blizzard_DebugTools", M.Blizzard_TableInspector)
 end
 
--- One-click learning all dragonriding skills
+-- Scale FlightMap
 do
-	local rootNodeID = 64066 -- first skill
+	function M:UpdateFlightMapScale()
+		if not C.db["Skins"]["BlizzardSkins"] then return end
 
-	local function Purchase(configID, nodeID)
-		local nodeInfo = C_Traits.GetNodeInfo(configID, nodeID)
-		if nodeInfo then
-			if not nodeInfo.meetsEdgeRequirements then return end
-
-			if nodeInfo.type == Enum.TraitNodeType.Selection then
-				C_Traits.SetSelection(configID, nodeID, nodeInfo.entryIDs[2]) -- choose second
-			else
-				if nodeInfo.ranksPurchased < nodeInfo.maxRanks then
-					C_Traits.PurchaseRank(configID, nodeID)
-				end
-			end
-
-			for _, edgeInfo in ipairs(nodeInfo.visibleEdges) do
-				Purchase(configID, edgeInfo.targetNode)
-			end
-		end
+		local scale = M.db["FlightMapScale"]
+		_G.TAXI_MAP_WIDTH = 316*scale
+		_G.TAXI_MAP_HEIGHT = 352*scale
+		_G.TaxiFrame:SetSize(384 + (scale - 1)*316, 512 + (scale - 1)*352)
+		_G.TaxiMap:SetSize(_G.TAXI_MAP_WIDTH, _G.TAXI_MAP_HEIGHT)
+		_G.TaxiRouteMap:SetSize(_G.TAXI_MAP_WIDTH, _G.TAXI_MAP_HEIGHT)
 	end
 
-	local function OnClick(self)
-		local treeID = self:GetParent():GetTalentTreeID()
-		local configID = C_Traits.GetConfigIDByTreeID(treeID)
-		Purchase(configID, rootNodeID)
-		C_Traits.CommitConfig(configID)
-	end
-
-	function M:DragonridingTalent()
-		local button = CreateFrame("Button", nil, _G.GenericTraitFrame, "MagicButtonTemplate")
-		button:SetFrameStrata("HIGH")
-		button:SetSize(120, 26)
-		button:SetPoint("BOTTOMRIGHT", -75, 40)
-		button:SetText(L["Learn All"])
-		button:SetScript("OnClick", OnClick)
-		GlowEmitterFactory:Show(button, GlowEmitterMixin.Anims.NPE_RedButton_GreenGlow)
-
-		if C.db["Skins"]["BlizzardSkins"] then B.Reskin(button) end
-
-		hooksecurefunc(_G.GenericTraitFrame.Currency, "Setup", function(_, info)
-			button:SetShown((info and info.quantity or 0) > 0)
-		end)
-	end
-
-	P:AddCallbackForAddon("Blizzard_GenericTraitUI", M.DragonridingTalent)
+	M:RegisterMisc("FlightMapScale", M.UpdateFlightMapScale)
 end

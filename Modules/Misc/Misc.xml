@@ -1,19 +1,14 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
 	<Script file="Misc.lua"/>
-	<Script file="ItemLevel.lua"/>
 	<Script file="AFK.lua"/>
-	<Script file="CopyMog.lua"/>
-	<Script file="Loot.lua"/>
-	<Script file="LootRoll.lua"/>
-	<Script file="LootSpecManager.lua"/>
-	<Script file="IconSearch.lua"/>
-	<Script file="ParagonRepRewards.lua"/>
-	<Script file="ImprovedStableFrame.lua"/>
-	<Script file="GarrisonTabs.lua"/>
-	<Script file="AuctionEnhanced.lua"/>
-	<Script file="RenownTracker.lua"/>
+	<Script file="ExtTalentUI.lua"/>
+	<Script file="ExtTalentUI_Glyph.lua"/>
+	<Script file="ExtTrainerUI.lua"/>
+	<Script file="ExtGuildUI.lua"/>
 	<Script file="ExtVendorUI.lua"/>
 	<Script file="ExtMacroUI.lua"/>
-	<Script file="WormholeHelper.lua"/>
-	<Script file="PTRTools.lua"/>
+	<Script file="Loot.lua"/>
+	<Script file="LootRoll.lua"/>
+	<Script file="Lockpicking.lua"/>
+	<Script file="IconSearch.lua"/>
 </Ui>

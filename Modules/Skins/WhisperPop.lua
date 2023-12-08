@@ -64,10 +64,10 @@ function S:WhisperPop()
 
 	local notify = _G.WhisperPopNotifyButton
 	B.Reskin(notify)
-	notify:SetCheckedTexture(0)
+	notify:SetCheckedTexture("")
 	notify.icon:SetDesaturated(false)
 	notify.icon.SetDesaturated = B.Dummy
-	notify.icon:SetSize(13, 13)
+	notify.icon:SetSize(12, 12)
 	notify.icon:SetTexture("Interface\\Buttons\\UI-GuildButton-MOTD-Up")
 
 	WhisperPopFrameList:HookScript("OnShow", reskinListFont)

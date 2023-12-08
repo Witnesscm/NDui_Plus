@@ -17,12 +17,7 @@ P.DefaultSettings = {
 		Texture = "NDui_Plus",
 		Index = 0,
 	},
-	RoleStyle = {
-		Enable = false,
-		Index = 1,
-	},
 	ActionBar = {
-		FinisherGlow = true,
 		GlobalFade = true,
 		Alpha = .1,
 		Delay = 0,
@@ -40,7 +35,22 @@ P.DefaultSettings = {
 		Bar7 = false,
 		Bar8 = false,
 		PetBar = false,
-		StanceBar = false
+		StanceBar = false,
+		AspectBar = false,
+		MageBarFade = false,
+		MageBar = true,
+		MageBarVertical = false,
+		MageBarSize = 34,
+		MageBarTeleport = true,
+		MageBarPortal = true,
+		MageBarFood = false,
+		MageBarWater = false,
+		MageBarGem = false,
+	},
+	Bags = {
+		OfflineBag = false,
+		BagsWidth = 12,
+		IconSize = 34,
 	},
 	UnitFrames= {
 		Fader = false,
@@ -55,11 +65,6 @@ P.DefaultSettings = {
 		Smooth = .4,
 		MinAlpha = .1,
 		MaxAlpha = 1,
-		RolePos = false,
-		RolePoint = 2,
-		RoleXOffset = 5,
-		RoleYOffset = 5,
-		RoleSize = 12,
 	},
 	Chat = {
 		Emote = false,
@@ -100,51 +105,50 @@ P.DefaultSettings = {
 		ls_Toasts = true,
 		WhisperPop = true,
 		Immersion = true,
-		TinyInspect = true,
-		MeetingStone = true,
-		tdBattlePetScript = true,
-		RareScanner = true,
-		WorldQuestTab = true,
-		ExtVendor = true,
-		AdiBags = true,
+		AutoBar = true,
+		AtlasLootClassic = true,
+		MerInspect = true,
+		alaGearMan = true,
+		ClassicThreatMeter = true,
+		Spy = true,
+		MeetingHorn = true,
+		GearMenu = true,
+		alaCalendar = true,
+		WIM = true,
+		ItemRack = true,
+		Skillet = true,
+		tdInspect = true,
+		tdAuction = true,
+		Auctionator = true,
+		ShadowDancer = true,
+		Krowi_AchievementFilter = true,
 		HideToggle = false,
-	},
-	Tooltip = {
-		Progression = true,
-		CombatHide = true,
-		ShowByShift = true,
-		ProgRaids = true,
-		ProgDungeons = true,
-		ProgAchievement = true,
-		KeystoneMaster = true,
-		AchievementList = "",
-		MountsSource = true,
-		HideCreator = false,
+		CategoryArrow = false,
 	},
 	Misc = {
-		LootSpecManager = false,
-		TalentManager = true,
-		QuestHelper = true,
-		CopyMog = true,
-		ShowHideVisual = true,
-		ShowIllusion = true,
-		IconSearch = true,
-		ParagonRepRewards = true,
-		ImprovedStableFrame = true,
-		GarrisonTabs = true,
-		AuctionEnhanced = true,
-		GuildBankItemLevel = true,
+		ExtTrainerUI = true,
+		GuildExpand = false,
+		ExtGuildUI = true,
+		ExtTalentUI = true,
+		TalentExpand = true,
 		ExtVendorUI = true,
 		ExtMacroUI =  false,
-		WormholeHelper = true,
+		IconSearch = true,
+		FlightMapScale = 1.2,
 		TrainAll = true,
 	},
 }
 
 P.CharacterSettings = {
-	LootSpecManager = {},
-	TalentManager = {},
-	RenownLevels = {},
+	UnitFrames= {
+		TankFrame = false,
+		TankWidth = 100,
+		TankHeight = 30,
+		TankPowerHeight = 2,
+		TankTarget = false,
+		TankFilter = 1,
+		TankDirec = 1,
+	},
 }
 
 function P:InitialSettings(source, target, fullClean)
@@ -297,7 +301,7 @@ function P:Initialize()
 	end
 
 	for addonName, object in pairs(addonsToLoad) do
-		local isLoaded, isFinished = C_AddOns.IsAddOnLoaded(addonName)
+		local isLoaded, isFinished = IsAddOnLoaded(addonName)
 		if isLoaded and isFinished then
 			P:CallLoadedAddon(addonName, object)
 		end
