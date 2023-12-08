@@ -1,11 +1,11 @@
 <div align="center">
 
-# NDui_Plus
+![Logo](https://imgur.com/4jObAvk.png)
 
-[![](https://img.shields.io/github/stars/Witnesscm/NDui_Plus?style=flat-square)](https://github.com/Witnesscm/NDui_Plus/stargazers)
-[![](https://img.shields.io/github/last-commit/Witnesscm/NDui_Plus/main?style=flat-square&label=Retail)](https://github.com/Witnesscm/NDui_Plus)
-[![](https://img.shields.io/github/last-commit/Witnesscm/NDui_Plus/classic?style=flat-square&label=Wrath)](https://github.com/Witnesscm/NDui_Plus/tree/classic)
-[![](https://img.shields.io/github/last-commit/Witnesscm/NDui_Plus/classic_era?style=flat-square&label=Classic)](https://github.com/Witnesscm/NDui_Plus/tree/classic_era)
+[![Github Stars](https://img.shields.io/github/stars/Witnesscm/NDui_Plus?style=flat-square)](https://github.com/Witnesscm/NDui_Plus/stargazers)
+[![GitHub last commit main](https://img.shields.io/github/last-commit/Witnesscm/NDui_Plus/main?style=flat-square&label=Retail)](https://github.com/Witnesscm/NDui_Plus)
+[![GitHub last commit classic](https://img.shields.io/github/last-commit/Witnesscm/NDui_Plus/classic?style=flat-square&label=Wrath)](https://github.com/Witnesscm/NDui_Plus/tree/classic)
+[![GitHub last commit classic_era](https://img.shields.io/github/last-commit/Witnesscm/NDui_Plus/classic_era?style=flat-square&label=Classic)](https://github.com/Witnesscm/NDui_Plus/tree/classic_era)
 
 </div>
 
