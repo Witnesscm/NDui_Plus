@@ -1,7 +1,6 @@
 name: Update TOC Interface version(s)
 
 on:
-  workflow_dispatch:
   schedule:
     - cron: 0 12 * * *
 
@@ -13,13 +12,14 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Update TOC Interface version
-        uses: p3lim/toc-interface-updater@v2
+        uses: p3lim/toc-interface-updater@v3
+        with:
+          flavor: retail # this is the default
 
       - name: Create pull request
-        uses: peter-evans/create-pull-request@v3
+        uses: peter-evans/create-pull-request@v5
         with:
           title: Update Interface version
-          body:
           commit-message: Update Interface version
           branch: interface-version
           delete-branch: true

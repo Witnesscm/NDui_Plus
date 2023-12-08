@@ -10,18 +10,21 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    env:
+      GITHUB_OAUTH: ${{ secrets.GITHUB_TOKEN }}
+      CF_API_KEY: ${{ secrets.CF_API_KEY }}
+      WAGO_API_TOKEN: ${{ secrets.WAGO_API_TOKEN }}
+
     steps:
-      - name: 拉取分支
-        uses: actions/checkout@v1
+      - name: Clone project
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 
-      - name: 创建包
-        uses: BigWigsMods/packager@master
-        env:
-          GITHUB_OAUTH: ${{ secrets.GITHUB_TOKEN }}
-          CF_API_KEY: ${{ secrets.CF_API_KEY }}
-          WAGO_API_TOKEN: ${{ secrets.WAGO_API_TOKEN }}
+      - name: Create Mainline Package
+        uses: BigWigsMods/packager@v2
 
-      - name: 上传到 Github Actions
+      - name: Upload Github Actions
         uses: actions/upload-artifact@v2
         with:
           name: NDui_Plus
