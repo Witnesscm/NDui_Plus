@@ -27,11 +27,6 @@ function M:IconSearch_DoSearch(frame, str)
 		tinsert(results, item)
 	end
 
-	local pvptal = select(3, GetPvpTalentInfoByID(id))
-	if pvptal then
-		tinsert(results, pvptal)
-	end
-
 	local achievement = select(10, GetAchievementInfo(id))
 	if achievement then
 		tinsert(results, achievement)

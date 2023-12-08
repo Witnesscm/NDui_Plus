@@ -19,7 +19,6 @@ function UF:Configure_Fader(frame)
 		frame.Fader:SetOption("PlayerTarget", UF.db["Target"])
 		frame.Fader:SetOption("Focus", UF.db["Focus"])
 		frame.Fader:SetOption("Health", UF.db["Health"])
-		frame.Fader:SetOption("Vehicle", UF.db["Vehicle"])
 		frame.Fader:SetOption("Casting", UF.db["Casting"])
 		frame.Fader:SetOption("MinAlpha", UF.db["MinAlpha"])
 		frame.Fader:SetOption("MaxAlpha", UF.db["MaxAlpha"])
@@ -36,6 +35,9 @@ function UF:Configure_Fader(frame)
 	elseif frame:IsElementEnabled("Fader") then
 		frame:DisableElement("Fader")
 		P:UIFrameFadeIn(frame, 1, frame:GetAlpha(), 1)
+		if frame.Portrait then
+			P:UIFrameFadeIn(frame.Portrait, 1, frame.Portrait:GetAlpha(), .2)
+		end
 	end
 end
 

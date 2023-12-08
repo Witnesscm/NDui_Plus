@@ -5,10 +5,6 @@ local Bar = B:GetModule("Actionbar")
 -----------------
 -- Credit: ElvUI
 -----------------
-local LAB = LibStub("LibActionButton-1.0-NDui")
-
-AB.handledbuttons = {}
-
 local function ClearTimers(object)
 	if object.delayTimer then
 		P:CancelTimer(object.delayTimer)
@@ -52,32 +48,13 @@ function AB:Button_OnLeave()
 	end
 end
 
-local function flyoutButtonAnchor(frame)
-	local parent = frame:GetParent()
-	local _, parentAnchorButton = parent:GetPoint()
-	if not AB.handledbuttons[parentAnchorButton] then return end
-
-	return parentAnchorButton
-end
-
-function AB:FlyoutButton_OnEnter()
-	local anchor = flyoutButtonAnchor(self)
-	if anchor then AB.Button_OnEnter(anchor) end
-end
-
-function AB:FlyoutButton_OnLeave()
-	local anchor = flyoutButtonAnchor(self)
-	if anchor then AB.Button_OnLeave(anchor) end
-end
-
 function AB:FadeParent_OnEvent(event)
 	if
 		(event == "ACTIONBAR_SHOWGRID") or
 		(AB.db["Combat"] and UnitAffectingCombat("player")) or
 		(AB.db["Target"] and UnitExists("target")) or
 		(AB.db["Casting"] and (UnitCastingInfo("player") or UnitChannelInfo("player"))) or
-		(AB.db["Health"] and (UnitHealth("player") ~= UnitHealthMax("player"))) or
-		(AB.db["Vehicle"] and UnitHasVehicleUI("player"))
+		(AB.db["Health"] and (UnitHealth("player") ~= UnitHealthMax("player")))
 	then
 		self.mouseLock = true
 		ClearTimers(AB.fadeParent)
@@ -120,14 +97,6 @@ local options = {
 		end,
 		events = {"UNIT_HEALTH"}
 	},
-	Vehicle = {
-		enable = function(self)
-			self:RegisterEvent("UNIT_ENTERED_VEHICLE")
-			self:RegisterEvent("UNIT_EXITED_VEHICLE")
-			self:RegisterEvent("VEHICLE_UPDATE")
-		end,
-		events = {"UNIT_ENTERED_VEHICLE", "UNIT_EXITED_VEHICLE", "VEHICLE_UPDATE"}
-	},
 }
 
 function AB:UpdateFaderSettings()
@@ -152,11 +121,11 @@ local NDui_ActionBar = {
 	["Bar3"] = "NDui_ActionBar3",
 	["Bar4"] = "NDui_ActionBar4",
 	["Bar5"] = "NDui_ActionBar5",
-	["Bar6"] = "NDui_ActionBar6",
-	["Bar7"] = "NDui_ActionBar7",
-	["Bar8"] = "NDui_ActionBar8",
+	["CustomBar"] = "NDui_ActionBarX",
 	["PetBar"] = "NDui_ActionBarPet",
 	["StanceBar"] = "NDui_ActionBarStance",
+	["AspectBar"] = "NDuiHunterAspectFrame",
+	["MageBarFade"] = "NDuiPlus_MageBar",
 }
 
 local function updateAfterCombat(event)
@@ -181,29 +150,21 @@ function AB:UpdateFaderState()
 		for _, button in ipairs(Bar.buttons) do
 			button:HookScript("OnEnter", AB.Button_OnEnter)
 			button:HookScript("OnLeave", AB.Button_OnLeave)
-
-			AB.handledbuttons[button] = true
 		end
-
 		AB.isHooked = true
 	end
 end
 
-function AB:SetupFlyoutButton(button)
-	button:HookScript("OnEnter", AB.FlyoutButton_OnEnter)
-	button:HookScript("OnLeave", AB.FlyoutButton_OnLeave)
-end
-
-function AB:LAB_FlyoutCreated(button)
-	AB:SetupFlyoutButton(button)
-end
-
-function AB:SetupLABFlyout()
-	for _, button in next, LAB.FlyoutButtons do
-		AB:SetupFlyoutButton(button)
+do
+	if Bar.CreateAspectButton then
+		hooksecurefunc(Bar, "CreateAspectButton", function (self, _, index)
+			local button = _G["NDuiHunterAspectFrameButton"..index]
+			if button and AB.db["GlobalFade"] then
+				button:HookScript("OnEnter", AB.Button_OnEnter)
+				button:HookScript("OnLeave", AB.Button_OnLeave)
+			end
+		end)
 	end
-
-	LAB:RegisterCallback("OnFlyoutButtonCreated", AB.LAB_FlyoutCreated)
 end
 
 function AB:GlobalFade()
@@ -218,5 +179,4 @@ function AB:GlobalFade()
 
 	AB:UpdateFaderSettings()
 	AB:UpdateFaderState()
-	AB:SetupLABFlyout()
 end

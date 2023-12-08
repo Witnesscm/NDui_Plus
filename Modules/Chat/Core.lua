@@ -7,7 +7,6 @@ local CH = P:RegisterModule("Chat")
 CH.GuidCache = {}
 CH.ClassNames = {}
 CH.GroupNames = {}
-CH.GroupRoles = {}
 
 CH.ChatEvents = {
 	"CHAT_MSG_BATTLEGROUND",
@@ -29,8 +28,7 @@ CH.ChatEvents = {
 	"CHAT_MSG_WHISPER",
 	"CHAT_MSG_WHISPER_INFORM",
 	"CHAT_MSG_YELL",
-	"CHAT_MSG_LOOT",
-	"CHAT_MSG_CURRENCY",
+	"CHAT_MSG_LOOT"
 }
 
 local isCalling = false
@@ -126,7 +124,7 @@ function CH:HookBubble(frame, backdrop)
 	frame.isHooked = true
 end
 
-function CH:UpdateChatColor(_, msg, ...)
+function CH:UpdateChatColor(event, msg, ...)
 	msg = CH:ClassFilter(msg) or msg
 	return false, msg, ...
 end
@@ -138,7 +136,7 @@ function CH:ChatClassColor()
 		ChatFrame_AddMessageEventFilter(event, CH.UpdateChatColor)
 	end
 
-	hooksecurefunc("GetPlayerInfoByGUID",function(...)
+	hooksecurefunc("GetPlayerInfoByGUID",function(...) 
 		CH:GetPlayerInfoByGUID(...)
 	end)
 end

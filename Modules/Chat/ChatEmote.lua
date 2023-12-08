@@ -5,7 +5,7 @@ local CH = P:GetModule("Chat")
 -- TinyChat, Author:M
 ----------------------------
 local _G = getfenv(0)
-local ipairs, select = ipairs, select
+local ipairs = ipairs
 local gsub = string.gsub
 
 local locale = GetLocale()
@@ -153,7 +153,7 @@ function CH:ChatEmote()
 	B.SetBD(panel)
 	panel:Hide()
 
-	hooksecurefunc("ChatEdit_OnHide", function() C_Timer.After(.5, function() panel:Hide() end) end)
+	hooksecurefunc("ChatEdit_OnHide", function() panel:Hide() end)
 	hooksecurefunc("ChatEdit_OnTextChanged", function(self, userInput)
 		local text = self:GetText()
 		if (userInput and strsub(text, -1) == "{") then

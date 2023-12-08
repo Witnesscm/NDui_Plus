@@ -12,6 +12,19 @@ local function GetHyperlink(hyperlink, texture)
 	end
 end
 
+local tip = B.ScanTip
+local talentLink = "talent:%d:0"
+
+local function GetTalentIconByID(id)
+	tip:SetOwner(UIParent, "ANCHOR_NONE")
+	tip:SetHyperlink(format(talentLink, id))
+
+	local _, spell = tip:GetSpell()
+	if spell then
+		return GetSpellTexture(spell)
+	end
+end
+
 local cache = {}
 
 local function AddChatIcon(link, linkType, id)
@@ -20,34 +33,12 @@ local function AddChatIcon(link, linkType, id)
 	if cache[link] then return cache[link] end
 
 	local texture
-	if linkType == "spell" or linkType == "enchant" or linkType == "mount" then
+	if linkType == "spell" or linkType == "enchant" then
 		texture = GetSpellTexture(id)
-	elseif linkType == "item" or linkType == "keystone" then
+	elseif linkType == "item" then
 		texture = GetItemIcon(id)
 	elseif linkType == "talent" then
-		texture = select(3, GetTalentInfoByID(id))
-	elseif linkType == "pvptal" then
-		texture = select(3, GetPvpTalentInfoByID(id))
-	elseif linkType == "achievement" then
-		texture = select(10, GetAchievementInfo(id))
-	elseif linkType == "currency" then
-		local info = C_CurrencyInfo.GetCurrencyInfo(id)
-		texture = info and info.iconFileID
-	elseif linkType == "battlepet" then
-		texture = select(2, C_PetJournal.GetPetInfoBySpeciesID(id))
-	elseif linkType == "battlePetAbil" then
-		texture = select(3, C_PetBattles.GetAbilityInfoByID(id))
-	elseif linkType == "azessence" then
-		local info = C_AzeriteEssence.GetEssenceInfo(id)
-		texture = info and info.icon
-	elseif linkType == "conduit" then
-		local spell = C_Soulbinds.GetConduitSpellID(id, 1)
-		texture = spell and GetSpellTexture(spell)
-	elseif linkType == "transmogappearance" then
-		texture = select(4, C_TransmogCollection.GetAppearanceSourceInfo(id))
-	elseif linkType == "transmogillusion" then
-		local info = C_TransmogCollection.GetIllusionInfo(id)
-		texture = info and info.icon
+		texture = GetTalentIconByID(id)
 	end
 
 	cache[link] = GetHyperlink(link, texture)

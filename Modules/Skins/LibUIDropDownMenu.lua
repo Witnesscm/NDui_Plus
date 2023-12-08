@@ -56,7 +56,7 @@ local function reskinDropDownMenu(level, isQuestie)
 			if not bu.notCheckable then
 				local _, co = check:GetTexCoord()
 				if co == 0 then
-					check:SetAtlas("checkmark-minimal")
+					check:SetTexture("Interface\\Buttons\\UI-CheckBox-Check")
 					check:SetVertexColor(r, g, b, 1)
 					check:SetSize(20, 20)
 					check:SetDesaturated(true)
@@ -84,7 +84,7 @@ end
 
 local function Line_SetCheckedState(self, state)
 	local check = self.Radio
-	check:SetAtlas("checkmark-minimal")
+	check:SetTexture("Interface\\Buttons\\UI-CheckBox-Check")
 	check:SetTexCoord(0, 1, 0, 1)
 	check:SetVertexColor(r, g, b, 1)
 	check:SetSize(20, 20)
