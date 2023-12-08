@@ -4,9 +4,6 @@ local M = P:GetModule("Misc")
 
 if not P.IsWrath() then return end
 
-local LSP = LibStub("LibShowUIPanel-1.0")
-local ShowUIPanel = LSP.ShowUIPanel
-local HideUIPanel = LSP.HideUIPanel
 local r, g, b = DB.r, DB.g, DB.b
 
 -- https://nether.wowhead.com/wotlk/data/talents-classic
@@ -45,7 +42,7 @@ M.GlyphSpellToIcon = {
 	[54927] = 135891, [55439] = 237575, [58377] = 132365, [54754] = 136081, [56814] = 136136, [56830] = 132127, [56846] = 135813, [54818] = 132152, [56367] = 134134, [56383] = 135991,
 	[62971] = 236162, [59307] = 132099, [63065] = 236176, [63090] = 236214, [55441] = 135861, [63279] = 136089, [63219] = 236253, [62132] = 237589, [63246] = 135982, [58365] = 132350,
 	[63256] = 236283, [63218] = 236247, [58635] = 132388, [57904] = 132242, [60200] = 136119, [56833] = 132179, [63298] = 136097, [56849] = 132211, [63330] = 135277, [55681] = 136207,
-	[63224] = 135972, [56224] = 135230, [56240] = 136197, [70947] = 136118, [71013] = 136081, [55115] = 135068, [405004] = 135984,
+	[63224] = 135972, [56224] = 135230, [56240] = 136197, [70947] = 136118, [71013] = 136081, [55115] = 135068, [405004] = 135984, [413895] = 136017, [414812] = 311430
 }
 
 local GLYPHTYPE_MAJOR = 1
@@ -159,8 +156,7 @@ end
 function M:GlyphUI_UpdateSlot()
 	local id = self:GetID()
 	local talentGroup = M.TalentUI.talentGroup
-	local enabled, glyphType, glyphSpell  = GetGlyphSocketInfo(id, talentGroup)
-	local icon = M.GlyphSpellToIcon[glyphSpell]
+	local enabled, glyphType, glyphSpell, iconFile = GetGlyphSocketInfo(id, talentGroup)
 
 	self.enabled = enabled
 	self.glyphType = glyphType
@@ -185,7 +181,7 @@ function M:GlyphUI_UpdateSlot()
 		self.spell = glyphSpell
 		self.glyphName = GetSpellInfo(glyphSpell)
 		self.name:SetText(self.glyphName)
-		self.icon:SetTexture(icon or "Interface\\Spellbook\\UI-Glyph-Rune1")
+		self.icon:SetTexture(M.GlyphSpellToIcon[glyphSpell] or iconFile)
 	end
 end
 
@@ -212,7 +208,7 @@ function M.GlyphUI_OnUpdate(self, elapsed)
 			local button = M.GlyphUI.slots[i]
 			local id = button:GetID()
 			local shadow = button.bg.__shadow
-			if button.enabled and not button.spell then
+			if button.enabled then
 				if GlyphMatchesSocket(id) then
 					if not button.IsFlashing then
 						shadow:Show()
