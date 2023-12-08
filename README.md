@@ -1,4 +1,13 @@
+<div align="center">
+
 # NDui_Plus
+
+[![](https://img.shields.io/github/stars/Witnesscm/NDui_Plus?style=flat-square)](https://github.com/Witnesscm/NDui_Plus/stargazers)
+[![](https://img.shields.io/github/last-commit/Witnesscm/NDui_Plus/main?style=flat-square&label=Retail)](https://github.com/Witnesscm/NDui_Plus)
+[![](https://img.shields.io/github/last-commit/Witnesscm/NDui_Plus/classic?style=flat-square&label=Wrath)](https://github.com/Witnesscm/NDui_Plus/tree/classic)
+[![](https://img.shields.io/github/last-commit/Witnesscm/NDui_Plus/classic_era?style=flat-square&label=Classic)](https://github.com/Witnesscm/NDui_Plus/tree/classic_era)
+
+</div>
 
 Plugin for [NDui](https://github.com/siweia/NDui), includes some useful features and addon skins.
 
@@ -6,42 +15,42 @@ Click on the arrow in the upper left corner of the NDui console or type `/ndp`, 
 
 Support **Dragonflight**, **WotLK Classic** and **Classic Era**.
 
-## Download
+# Download
 
 [Curseforge](https://www.curseforge.com/wow/addons/ndui_plus)
 
 [Github Release](https://github.com/Witnesscm/NDui_Plus/releases)
 
-## Features
+# Features
 
 ![](https://imgur.com/8vqyITZ.png) means only support Mainline, ![](https://imgur.com/Zrhi3Yi.png) only support Classic.
 
-### ActionBar
+## ActionBar
 
 - **Global Fade**: ActionBar global fade, support multiple conditions.
 - **Finisher Glow ![](https://imgur.com/8vqyITZ.png)**: Rogue and Druid's finishers glow with full combo points. Only support NDui ActionBar.
 - **Mage Bar ![](https://imgur.com/Zrhi3Yi.png)**: An action bar that includes mage spells such as Teleport, Conjure Food, and Mana Gem.
 
-### Bags
+## Bags
 
 - **Offline Bag ![](https://imgur.com/Zrhi3Yi.png)**: Offline bags and banks, support for all characters on the same realm.
 
-### UnitFrames
+## UnitFrames
 
 - **UnitFrames Fade**: Supports player and pet frames only.
 
-### Chat
+## Chat
 
 - **Player Name Colouring**: Colouring of player names in chat messages.
 - **Hyperlink Icons**: Add icons for hyperlinks in the chat frame, support most of the link formats in the game.
 - **ChatFrame Hide**: Hide/Show ChatFrame, need lock NDui ChatFrame Settings.
 
-### Tooltip
+## Tooltip
 
 - **Mounts Source ![](https://imgur.com/8vqyITZ.png)**: Show mounts source on aura's GameTooltip.
 - **PvE Progression ![](https://imgur.com/8vqyITZ.png)**: Add PvE Progression on GameTooltip.
 
-### Misc
+## Misc
 
 - **Loot Enhanced**: Show all loots on one page, add button for quick notification of items.
 - **AFK Mode**: AFK animation.
@@ -50,7 +59,7 @@ Support **Dragonflight**, **WotLK Classic** and **Classic Era**.
 - **Loot Roll**: teksloot style loot roll bar.
 - **Extended UI**: Extended Blizzard UI, including Vendor UI, Guild UI, Talent UI, etc.
 
-### Skins
+## Skins
 
 - AceGUI
 - AdiBags
