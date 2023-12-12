@@ -10,4 +10,5 @@
 	<Script file="LootRoll.lua"/>
 	<Script file="Lockpicking.lua"/>
 	<Script file="IconSearch.lua"/>
+	<Script file="EngravingUI.lua"/>
 </Ui>
