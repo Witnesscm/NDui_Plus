@@ -56,6 +56,18 @@ local function updateMageBarSize()
 	P:GetModule("ActionBar"):UpdateMageBarSize()
 end
 
+local function toggleRuneBar()
+	P:GetModule("ActionBar"):RuneBar_Toggle()
+end
+
+local function updateRuneBar()
+	P:GetModule("ActionBar"):RuneBar_Update()
+end
+
+local function updateRuneBarSize()
+	P:GetModule("ActionBar"):RuneBar_UpdateSize()
+end
+
 local function openKeyBindingFrame()
 	_G.GameMenuButtonKeybindings:Click()
 
@@ -135,10 +147,10 @@ end
 
 -- Config
 local HeaderTag = "|cff00cc4c"
-local NewFeatureTag = "|TInterface\\OptionsFrame\\UI-OptionsFrame-NewFeatureIcon:0|t"
+local NewTag = "|TInterface\\OptionsFrame\\UI-OptionsFrame-NewFeatureIcon:0|t"
 
 G.TabList = {
-	L["Actionbar"],
+	NewTag..L["Actionbar"],
 	L["Bags"],
 	L["UnitFrames"],
 	L["Chat"],
@@ -159,10 +171,15 @@ G.OptionList = { -- type, key, value, name, horizon, data, callback, tooltip, sc
 		{1, "ActionBar", "StanceBar", L["StanceBar"].."*", true, nil, updateABFaderState},
 		{1, "ActionBar", "AspectBar", L["AspectBar"].."*", nil, nil, updateABFaderState},
 		{1, "ActionBar", "MageBarFade", L["MageBar"].."*", true, nil, updateABFaderState},
+		{1, "ActionBar", "RuneBarFade", L["RuneBar"].."*", nil, nil, updateABFaderState},
 		{},
 		{1, "ActionBar", "MageBar", HeaderTag..L["MageBar"].."*", nil, setupMageBar, toggleMageBar, L["MageBarTip"]},
-		{1, "ActionBar", "MageBarVertical", L["MageBarVertical"].."*", nil, nil, updateMageBar},
-		{3, "ActionBar", "MageBarSize", L["MageBarSize"].."*", true, {24, 60, 1}, updateMageBarSize},
+		{1, "ActionBar", "MageBarVertical", L["Vertical"].."*", nil, nil, updateMageBar},
+		{3, "ActionBar", "MageBarSize", L["BarSize"].."*", true, {24, 60, 1}, updateMageBarSize},
+		{},
+		{1, "ActionBar", "RuneBar", NewTag..HeaderTag..L["RuneBar"].."*", nil, nil, toggleRuneBar},
+		{1, "ActionBar", "RuneBarVertical", L["Vertical"].."*", nil, nil, updateRuneBar},
+		{3, "ActionBar", "RuneBarSize", L["BarSize"].."*", true, {24, 60, 1}, updateRuneBarSize},
 	},
 	[2] = {
 		{1, "Bags", "OfflineBag", HeaderTag..L["OfflineBagEnable"], nil, nil, nil, L["OfflineBagTip"]},

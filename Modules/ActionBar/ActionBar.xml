@@ -2,4 +2,5 @@
 	<Script file="Core.lua"/>
 	<Script file="Fader.lua"/>
 	<Script file="MageBar.lua"/>
+	<Script file="RuneBar.lua"/>
 </Ui>

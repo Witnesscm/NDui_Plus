@@ -35,6 +35,7 @@ P.DefaultSettings = {
 		StanceBar = false,
 		AspectBar = false,
 		MageBarFade = false,
+		RuneBarFade = false,
 		MageBar = true,
 		MageBarVertical = false,
 		MageBarSize = 34,
@@ -43,6 +44,9 @@ P.DefaultSettings = {
 		MageBarFood = false,
 		MageBarWater = false,
 		MageBarGem = false,
+		RuneBar = true,
+		RuneBarVertical = false,
+		RuneBarSize = 34,
 	},
 	Bags = {
 		OfflineBag = false,

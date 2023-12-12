@@ -126,6 +126,7 @@ local NDui_ActionBar = {
 	["StanceBar"] = "NDui_ActionBarStance",
 	["AspectBar"] = "NDuiHunterAspectFrame",
 	["MageBarFade"] = "NDuiPlus_MageBar",
+	["RuneBarFade"] = "NDuiPlus_RuneBar",
 }
 
 local function updateAfterCombat(event)

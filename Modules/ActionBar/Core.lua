@@ -355,5 +355,6 @@ end
 
 function AB:OnLogin()
 	AB:MageBar()
+	AB:RuneBar()
 	AB:GlobalFade()
 end
