@@ -354,7 +354,7 @@ function AB:StyleActionButton(button, cfg)
 end
 
 function AB:OnLogin()
-	AB:MageBar()
-	AB:RuneBar()
+	AB:MageBar_Init()
+	AB:RuneBar_Init()
 	AB:GlobalFade()
 end

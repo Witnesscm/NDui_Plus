@@ -32,7 +32,6 @@ local mageSpellData = {
 	}
 }
 
-local mageBar
 local mageButtons = {}
 local mainButtons = {}
 
@@ -174,7 +173,7 @@ function AB:CreateMainButton(info)
 	local buttonName = "NDuiPlus_MageBarButton"..index
 	local button = _G[buttonName]
 	if not button then
-		button = AB:CreateMageButton(buttonName, mageBar, info.mainSpell)
+		button = AB:CreateMageButton(buttonName, AB.MageBar, info.mainSpell)
 		button:HookScript("OnEnter", AB.MageButton_UpdateFlyout)
 		button:HookScript("OnLeave", AB.MageButton_UpdateFlyout)
 		button.popupButtonList = {}
@@ -282,7 +281,9 @@ function AB:CreateMainButton(info)
 end
 
 local spellList = {}
-function AB:UpdateMageBar()
+function AB:MageBar_Update()
+	if not AB.MageBar then return end
+
 	wipe(spellList)
 
 	for _, value in ipairs(mainButtons) do
@@ -340,22 +341,22 @@ function AB:UpdateMageBar()
 	end
 
 	AB.NumMageButons = num
-	AB:UpdateMageBarSize()
+	AB:MageBar_UpdateSize()
 end
 
-function AB:UpdateMageBarSize()
-	if not mageBar then return end
+function AB:MageBar_UpdateSize()
+	if not AB.MageBar then return end
 
 	local size = AB.db["MageBarSize"]
 	local num = AB.NumMageButons or 1
 	local width, height = num*size + (num-1)*margin + 2*padding, size + 2*padding
 
 	if AB.db["MageBarVertical"] then
-		mageBar:SetSize(height, width)
-		mageBar.mover:SetSize(height, width)
+		AB.MageBar:SetSize(height, width)
+		AB.MageBar.mover:SetSize(height, width)
 	else
-		mageBar:SetSize(width, height)
-		mageBar.mover:SetSize(width, height)
+		AB.MageBar:SetSize(width, height)
+		AB.MageBar.mover:SetSize(width, height)
 	end
 
 	for _, button in ipairs(mageButtons) do
@@ -363,30 +364,29 @@ function AB:UpdateMageBarSize()
 	end
 end
 
-function AB:ToggleMageBar()
-	if not mageBar then return end
+function AB:MageBar_Toggle()
+	if not AB.MageBar then return end
 
 	if AB.db["MageBar"] then
-		AB.UpdateMageBar()
-		B:RegisterEvent("LEARNED_SPELL_IN_TAB", AB.UpdateMageBar)
+		AB:MageBar_Update()
+		B:RegisterEvent("LEARNED_SPELL_IN_TAB", AB.MageBar_Update)
 		B:RegisterEvent("ACTIONBAR_UPDATE_COOLDOWN", AB.MageBar_UpdateCooldown)
 		B:RegisterEvent("ACTIONBAR_UPDATE_USABLE", AB.MageBar_UpdateUsable)
 		B:RegisterEvent("UPDATE_SHAPESHIFT_FORMS", AB.MageBar_UpdateUsable)
-		mageBar:Show()
+		AB.MageBar:Show()
 	else
-		B:UnregisterEvent("LEARNED_SPELL_IN_TAB", AB.UpdateMageBar)
+		B:UnregisterEvent("LEARNED_SPELL_IN_TAB", AB.MageBar_Update)
 		B:UnregisterEvent("ACTIONBAR_UPDATE_COOLDOWN", AB.MageBar_UpdateCooldown)
 		B:UnregisterEvent("ACTIONBAR_UPDATE_USABLE", AB.MageBar_UpdateUsable)
 		B:UnregisterEvent("UPDATE_SHAPESHIFT_FORMS", AB.MageBar_UpdateUsable)
-		mageBar:Hide()
+		AB.MageBar:Hide()
 	end
 end
 
-function AB:MageBar()
+function AB:MageBar_Init()
 	if DB.MyClass ~= "MAGE" then return end
 
-	mageBar = CreateFrame("Frame", "NDuiPlus_MageBar", UIParent)
-	mageBar.mover = B.Mover(mageBar, L["MageBar"], "MageBar", {"BOTTOMRIGHT", -480, 24})
-
-	AB:ToggleMageBar()
+	AB.MageBar = CreateFrame("Frame", "NDuiPlus_MageBar", UIParent)
+	AB.MageBar.mover = B.Mover(AB.MageBar, L["MageBar"], "MageBar", {"BOTTOMRIGHT", -480, 24})
+	AB:MageBar_Toggle()
 end

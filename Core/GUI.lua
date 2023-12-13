@@ -45,15 +45,15 @@ local function updateABFaderState()
 end
 
 local function toggleMageBar()
-	P:GetModule("ActionBar"):ToggleMageBar()
+	P:GetModule("ActionBar"):MageBar_Toggle()
 end
 
 local function updateMageBar()
-	P:GetModule("ActionBar"):UpdateMageBar()
+	P:GetModule("ActionBar"):MageBar_Update()
 end
 
 local function updateMageBarSize()
-	P:GetModule("ActionBar"):UpdateMageBarSize()
+	P:GetModule("ActionBar"):MageBar_UpdateSize()
 end
 
 local function toggleRuneBar()

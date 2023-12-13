@@ -4,22 +4,32 @@ local AB = P:GetModule("ActionBar")
 
 local margin, padding = C.Bars.margin, C.Bars.padding
 
-AB.RuneSlotButtons = {}
-
 function AB:RuneButton_Update(info)
 	self.icon:SetTexture(info.iconTexture)
 	self.skillLineAbilityID = info.skillLineAbilityID
 	self.slotID = info.equipmentSlot
 end
 
+local function ClearTimers(object)
+	if object.delayTimer then
+		P:CancelTimer(object.delayTimer)
+		object.delayTimer = nil
+	end
+end
+
 local function buttonOnEnter(self)
 	GameTooltip_SetDefaultAnchor(GameTooltip, self)
 	if self.skillLineAbilityID then
 		GameTooltip:SetEngravingRune(self.skillLineAbilityID)
-	elseif self.name then
-		GameTooltip:AddLine(self.name)
+	elseif self.text then
+		GameTooltip:AddLine(self.text)
 	end
 	GameTooltip:Show()
+
+	if self.popupBar then
+		ClearTimers(self.popupBar)
+		self.popupBar:Show()
+	end
 
 	if AB.fadeParent then
 		AB.Button_OnEnter(self)
@@ -28,6 +38,11 @@ end
 
 local function buttonOnLeave(self)
 	GameTooltip:Hide()
+
+	if self.popupBar then
+		ClearTimers(self.popupBar)
+		self.popupBar.delayTimer = P:ScheduleTimer(self.popupBar.Hide, .5, self.popupBar)
+	end
 
 	if AB.fadeParent then
 		AB.Button_OnLeave(self)
@@ -45,25 +60,11 @@ function AB:RuneBar_CreateButton(name, parent)
 	return button
 end
 
-local function ClearTimers(object)
-	if object.delayTimer then
-		P:CancelTimer(object.delayTimer)
-		object.delayTimer = nil
-	end
-end
-
-function AB:RuneButton_OnEnter()
-	ClearTimers(self.popupBar)
-	self.popupBar:Show()
-end
-
-function AB:RuneButton_OnLeave()
-	ClearTimers(self.popupBar)
-	self.popupBar.delayTimer = P:ScheduleTimer(self.popupBar.Hide, .5, self.popupBar)
-end
-
 function AB:RuneButton_OnClick()
-	if InCombatLockdown() then P:Error(ERR_NOT_IN_COMBAT) return end
+	if InCombatLockdown() then
+		P:Error(ERR_NOT_IN_COMBAT)
+		return
+	end
 
 	if self.skillLineAbilityID then
 		C_Engraving.CastRune(self.skillLineAbilityID)
@@ -79,23 +80,23 @@ function AB:RuneButton_OnClick()
 end
 
 function AB:RuneBar_Update()
+	if not AB.RuneBar then return end
+
 	C_Engraving.RefreshRunesList()
 	local categories = C_Engraving.GetRuneCategories(false, true)
 	for _, category in ipairs(categories) do
 		local buttonName = "NDuiPlus_RuneBarSlot" .. category
-		local slot = _G[buttonName]
+		local slot = AB.RuneBar.slotButtons[category]
 		if not slot then
 			slot = AB:RuneBar_CreateButton(buttonName, AB.RuneBar)
-			slot:HookScript("OnEnter", AB.RuneButton_OnEnter)
-			slot:HookScript("OnLeave", AB.RuneButton_OnLeave)
-			slot.name = GetItemInventorySlotInfo(category)
+			slot.text = GetItemInventorySlotInfo(category)
 			slot.popupList = {}
 
 			slot.popupBar = CreateFrame("Frame", buttonName .. "PopupBar", slot)
 			slot.popupBar:SetFrameStrata("DIALOG")
 			slot.popupBar:Hide()
 
-			AB.RuneSlotButtons[category] = slot
+			AB.RuneBar.slotButtons[category] = slot
 		end
 
 		local equippedInfo = C_Engraving.GetRuneForEquipmentSlot(category)
@@ -115,14 +116,14 @@ function AB:RuneBar_Update()
 				if not button then
 					button = AB:RuneBar_CreateButton(buttonName .. "Button" .. index, slot.popupBar)
 					button.popupBar = slot.popupBar
-					button:HookScript("OnEnter", AB.RuneButton_OnEnter)
-					button:HookScript("OnLeave", AB.RuneButton_OnLeave)
 					button:HookScript("OnClick", AB.RuneButton_OnClick)
+
 					slot.popupList[index] = button
 				end
+
 				AB.RuneButton_Update(button, info)
-				button:ClearAllPoints()
 				button:Show()
+				button:ClearAllPoints()
 
 				if AB.db["RuneBarVertical"] then
 					if not prevButton then
@@ -147,7 +148,6 @@ function AB:RuneBar_Update()
 			slot.popupList[i]:Hide()
 		end
 
-
 		local size = AB.db["RuneBarSize"]
 		local num = index - 1
 		local width, height = num * size + (num + 1) * margin, size + 2 * margin
@@ -164,7 +164,7 @@ function AB:RuneBar_Update()
 
 	local prevButton
 	for _, category in ipairs(categories) do
-		local button = AB.RuneSlotButtons[category]
+		local button = AB.RuneBar.slotButtons[category]
 		button:ClearAllPoints()
 		if not prevButton then
 			button:SetPoint("TOPLEFT", padding, -padding)
@@ -198,7 +198,7 @@ function AB:RuneBar_UpdateSize()
 		AB.RuneBar.mover:SetSize(width, height)
 	end
 
-	for _, slot in pairs(AB.RuneSlotButtons) do
+	for _, slot in pairs(AB.RuneBar.slotButtons) do
 		slot:SetSize(size, size)
 		for _, button in ipairs(slot.popupList) do
 			button:SetSize(size, size)
@@ -229,8 +229,11 @@ function AB:RuneBar_Toggle()
 	end
 end
 
-function AB:RuneBar()
+function AB:RuneBar_Init()
+	if not C_Engraving.IsEngravingEnabled() then return end
+
 	AB.RuneBar = CreateFrame("Frame", "NDuiPlus_RuneBar", UIParent)
+	AB.RuneBar.slotButtons = {}
 	AB.RuneBar.mover = B.Mover(AB.RuneBar, L["RuneBar"], "RuneBar", { "BOTTOMRIGHT", -480, 24 })
 	AB:RuneBar_Toggle()
 end
