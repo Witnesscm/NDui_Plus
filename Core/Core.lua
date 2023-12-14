@@ -18,6 +18,7 @@ P.DefaultSettings = {
 		Index = 0,
 	},
 	ActionBar = {
+		FinisherGlow = true,
 		GlobalFade = true,
 		Alpha = .1,
 		Delay = 0,

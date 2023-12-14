@@ -3,4 +3,5 @@
 	<Script file="Fader.lua"/>
 	<Script file="MageBar.lua"/>
 	<Script file="RuneBar.lua"/>
+	<Script file="FinisherGlow.lua"/>
 </Ui>
