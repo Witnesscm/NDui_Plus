@@ -182,7 +182,7 @@ function G:SetupABFader(parent)
 end
 
 local function updateMageBar()
-	P:GetModule("ActionBar"):UpdateMageBar()
+	P:GetModule("ActionBar"):MageBar_Update()
 end
 
 function G:SetupMageBar(parent)
