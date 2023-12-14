@@ -53,11 +53,13 @@ function AB:FinisherGlow_Update()
 	end
 end
 
-function AB:FinisherGlow_OnEvent( ...)
+function AB:FinisherGlow_OnEvent(...)
 	local unit, powerType = ...
 	if unit == "player" and powerType == "COMBO_POINTS" then
 		for button in next, ActionButtons do
-			AB.FinisherGlow_Update(button)
+			if button:IsVisible() then
+				AB.FinisherGlow_Update(button)
+			end
 		end
 	end
 end
