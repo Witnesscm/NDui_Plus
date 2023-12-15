@@ -41,7 +41,11 @@ local function buttonOnLeave(self)
 
 	if self.popupBar then
 		ClearTimers(self.popupBar)
-		self.popupBar.delayTimer = P:ScheduleTimer(self.popupBar.Hide, .5, self.popupBar)
+		if self.popupList then -- slot button
+			self.popupBar:Hide()
+		else
+			self.popupBar.delayTimer = P:ScheduleTimer(self.popupBar.Hide, .5, self.popupBar)
+		end
 	end
 
 	if AB.fadeParent then
