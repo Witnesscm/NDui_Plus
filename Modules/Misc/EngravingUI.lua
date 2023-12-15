@@ -4,10 +4,12 @@ local M = P:GetModule("Misc")
 
 -- Sod Rune frame enhanced, inspired by https://wago.io/mwyLaQAlZ
 
-local function RuneSpellButton_OnClick(self)
+local function RuneSpellButton_OnClick(self, button)
 	if InCombatLockdown() then P:Error(ERR_NOT_IN_COMBAT) return end
 
-	if not C_Engraving.IsRuneEquipped(self.skillLineAbilityID) then
+	if button == "RightButton" then
+		C_Engraving.CastRune(self.skillLineAbilityID)
+	elseif not C_Engraving.IsRuneEquipped(self.skillLineAbilityID) then
 		C_Engraving.CastRune(self.skillLineAbilityID)
 		local rune = C_Engraving.GetCurrentRuneCast()
 		if rune and rune.equipmentSlot then
@@ -21,7 +23,7 @@ local function RuneSpellButton_OnClick(self)
 	end
 end
 
-local function UpdateEquippedTextures()
+function M:EngravingUI_Update()
 	if not (_G.EngravingFrame and _G.EngravingFrame:IsVisible()) then return end
 
 	local buttons = _G.EngravingFrame.scrollFrame.buttons
@@ -38,19 +40,19 @@ local function UpdateEquippedTextures()
 	end
 end
 
-local function OnEquipmentChanged(_, slotID)
+function M:EngravingUI_OnEquipmentChanged(slotID)
 	if C_Engraving.IsEquipmentSlotEngravable(slotID) then
-		UpdateEquippedTextures()
+		M:EngravingUI_Update()
 	end
 end
 
 function M:EngravingUI()
-	if not C_Engraving.IsEngravingEnabled() then return end
+	if not M.db["EngravingUI"] or not C_Engraving.IsEngravingEnabled() then return end
 
 	EngravingFrameSpell_OnClick = RuneSpellButton_OnClick
-	hooksecurefunc("EngravingFrame_UpdateRuneList", UpdateEquippedTextures)
-	B:RegisterEvent("RUNE_UPDATED", UpdateEquippedTextures)
-	B:RegisterEvent("PLAYER_EQUIPMENT_CHANGED", OnEquipmentChanged)
+	hooksecurefunc("EngravingFrame_UpdateRuneList", M.EngravingUI_Update)
+	B:RegisterEvent("RUNE_UPDATED", M.EngravingUI_Update)
+	B:RegisterEvent("PLAYER_EQUIPMENT_CHANGED", M.EngravingUI_OnEquipmentChanged)
 end
 
 P:AddCallbackForAddon("Blizzard_EngravingUI", M.EngravingUI)
