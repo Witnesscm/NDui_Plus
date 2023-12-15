@@ -155,12 +155,12 @@ G.TabList = {
 	L["UnitFrames"],
 	L["Chat"],
 	L["Skins"],
-	L["Misc"],
+	NewTag..L["Misc"],
 }
 
 G.OptionList = { -- type, key, value, name, horizon, data, callback, tooltip, scripts
 	[1] = {
-		{1, "ActionBar", "FinisherGlow", HeaderTag..L["FinisherGlow"], nil, nil, nil, L["FinisherGlowTip"]},
+		{1, "ActionBar", "FinisherGlow", NewTag..HeaderTag..L["FinisherGlow"], nil, nil, nil, L["FinisherGlowTip"]},
 		{},
 		{1, "ActionBar", "GlobalFade", HeaderTag..L["GlobalFadeEnable"], nil, setupABFader},
 		{1, "ActionBar", "Bar1", L["Bar1"].."*", nil, nil, updateABFaderState},
@@ -265,6 +265,7 @@ G.OptionList = { -- type, key, value, name, horizon, data, callback, tooltip, sc
 		{1, "Misc", "IconSearch", L["IconSearch"], nil, nil, nil, L["IconSearchGUITip"]},
 		{1, "AFK", "Enable", L["AFK Mode"].."*", nil, nil, updateAFKMode},
 		{3, "Misc", "FlightMapScale", L["FlightMap Scale"].."*", true, {1, 2, .1}, updateFlightMapScale},
+		{1, "Misc", "EngravingUI", NewTag..L["EnhancedEngravingUI"], nil, nil, nil, L["EnhancedEngravingUITip"]},
 	},
 }
 
