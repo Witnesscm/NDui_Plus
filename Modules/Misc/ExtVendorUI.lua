@@ -65,7 +65,7 @@ function M:ExtVendorUI()
 	end
 
 	_G.MerchantBuyBackItem:ClearAllPoints()
-	_G.MerchantBuyBackItem:SetPoint("TOPLEFT", _G.MerchantItem10, "BOTTOMLEFT", -14, -20)
+	_G.MerchantBuyBackItem:SetPoint("TOPLEFT", _G.MerchantItem10, "BOTTOMLEFT", 10, -20)
 	_G.MerchantPrevPageButton:ClearAllPoints()
 	_G.MerchantPrevPageButton:SetPoint("CENTER", _G.MerchantFrame, "BOTTOM", 30, 55)
 	_G.MerchantPageText:ClearAllPoints()
