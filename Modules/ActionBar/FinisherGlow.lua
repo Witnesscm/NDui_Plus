@@ -30,13 +30,6 @@ local FinisherSpells = {
 	}
 }
 
-local function IsSpellOverlayed(spellId)
-	if AB.Finishers[spellId] then
-		return UnitPower("player", Enum.PowerType.ComboPoints) == AB.MaxComboPoints
-	end
-	return false
-end
-
 function AB:UpdateMaxPoints(...)
 	local unit, powerType = ...
 	if not unit or (unit == "player" and powerType == "COMBO_POINTS") then
@@ -46,10 +39,12 @@ end
 
 function AB:FinisherGlow_Update()
 	local spellId = self:GetSpellId()
-	if spellId and IsSpellOverlayed(spellId) then
-		B.ShowOverlayGlow(self)
-	else
-		B.HideOverlayGlow(self)
+	if spellId and AB.Finishers[spellId] then
+		if UnitPower("player", Enum.PowerType.ComboPoints) == AB.MaxComboPoints then
+			B.ShowOverlayGlow(self)
+		else
+			B.HideOverlayGlow(self)
+		end
 	end
 end
 
