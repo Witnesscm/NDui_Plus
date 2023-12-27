@@ -58,12 +58,20 @@ function S:ThreatClassic2()
 			end
 		end
 
-		-- Lock the options of bar texture and padding
+		-- Initialize the options of bar texture and padding
 		local options = LibStub("AceConfigRegistry-3.0"):GetOptionsTable("ThreatClassic2", "cmd", "MyLib-1.0")
 		if options then
+			local get = options.args.appearance.get
 			local set = options.args.appearance.set
-			set({nil, "bar", "texture"}, "normTex")
-			set({nil, "bar", "padding"}, 2)
+			local texturePath = {"appearance", "bar", "texture"}
+			local paddingPath = {"appearance", "bar", "padding"}
+			local texture = get(texturePath)
+			if texture == "TC2 Default" then
+				set(texturePath, "normTex")
+				set(paddingPath, 2)
+			else
+				set(texturePath, texture) -- TC2:UpdateFrame()
+			end
 		end
 	end)
 end
