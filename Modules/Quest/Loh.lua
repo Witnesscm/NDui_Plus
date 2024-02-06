@@ -155,7 +155,7 @@ function Handler:GetCheckpoint()
 	local checkpoint
 	local index = 1
 	while(true) do
-		local exists, _, num, _, _, _, _, _, _, spellID = UnitAura("vehicle", index, "HARMFUL")
+		local exists, _, num, _, _, _, _, _, _, spellID = AuraUtil.UnpackAuraData(C_UnitAuras.GetAuraDataByIndex("vehicle", index, "HARMFUL"))
 		if(not exists) then
 			checkpoint = 0
 			break

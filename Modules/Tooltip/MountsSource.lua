@@ -49,7 +49,7 @@ function T:MountsSource()
 	hooksecurefunc(GameTooltip, "SetUnitAura", function(self, ...)
 		if not T.db["MountsSource"] then return end
 
-		local id = select(10, UnitAura(...))
+		local id = select(10, AuraUtil.UnpackAuraData(C_UnitAuras.GetAuraDataByIndex(...)))
 		local table = id and T:GetOrCreateMountTable(id)
 		if table then
 			AddLine(self, table.source, T:IsCollected(id) and COLLECTED or NOT_COLLECTED, SOURCE)

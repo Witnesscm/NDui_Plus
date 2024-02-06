@@ -23,7 +23,7 @@ local itemCache = {}
 local function GetStatsString(link)
 	if not itemCache[link] then
 		local text = ""
-		local stats = GetItemStats(link)
+		local stats = C_Item.GetItemStats(link)
 		if stats then
 			for stat in pairs(stats) do
 				if statWatchList[stat] then
