@@ -43,6 +43,28 @@ function S:ItemLevel_UpdateGemInfo(link, index, slotFrame, refresh)
 	end
 end
 
+local function GetILvlTextColor(level)
+	if level >= 150 then
+		return 1, .5, 0
+	elseif level >= 115 then
+		return .63, .2, .93
+	elseif level >= 80 then
+		return 0, .43, .87
+	elseif level >= 45 then
+		return .12, 1, 0
+	else
+		return 1, 1, 1
+	end
+end
+
+local function GetItemSlotLevel(itemLink)
+	local level
+	if itemLink then
+		level = select(4, GetItemInfo(itemLink))
+	end
+	return tonumber(level) or 0
+end
+
 function S:tdInspect()
 	if not S.db["tdInspect"] then return end
 
@@ -51,6 +73,7 @@ function S:tdInspect()
 	local UITalentFrame = tdInspect:GetClass("UI.TalentFrame")
 	local UISlotItem = tdInspect:GetClass("UI.SlotItem")
 	local UIInspectFrame = tdInspect:GetClass("UI.InspectFrame")
+	local UIPaperDoll = tdInspect:GetClass("UI.PaperDoll")
 
 	hooksecurefunc(tdInspect, "SetupUI", function()
 		B.ReskinCheck(InspectPaperDollFrame.ToggleButton)
@@ -122,7 +145,7 @@ function S:tdInspect()
 		local item = Inspect:GetItemLink(slot)
 		if item then
 			local quality, level = select(3, GetItemInfo(item))
-			if quality and quality > 1 then
+			if quality then
 				local color = DB.QualityColors[quality]
 				M:ItemBorderSetColor(self, color.r, color.g, color.b)
 				if C.db["Misc"]["ShowItemLevel"] and level and level > 1 and self.iLvlText then
@@ -157,6 +180,38 @@ function S:tdInspect()
 		InspectModelFrameRotateLeftButton:Hide()
 
 		anchored = true
+	end)
+
+	-- Inspect iLvl
+	hooksecurefunc(UIPaperDoll, "Update", function()
+		if not M.InspectILvl then return end
+
+		local total, level = 0
+		for index = 1, 15 do
+			if index ~= 4 then
+				level = GetItemSlotLevel(Inspect:GetItemLink(index))
+				if level > 0 then
+					total = total + level
+				end
+			end
+		end
+
+		local mainhand = GetItemSlotLevel(Inspect:GetItemLink(16))
+		local offhand = GetItemSlotLevel(Inspect:GetItemLink(17))
+		local ranged = GetItemSlotLevel(Inspect:GetItemLink(18))
+
+		if mainhand > 0 and offhand > 0 then
+			total = total + mainhand + offhand
+		elseif offhand > 0 and ranged > 0 then
+			total = total + offhand + ranged
+		else
+			total = total + max(mainhand, offhand, ranged) * 2
+		end
+
+		local average = B:Round(total/16, 1)
+		M.InspectILvl:SetText(average)
+		M.InspectILvl:SetTextColor(GetILvlTextColor(average))
+		M.InspectILvl:SetFormattedText("iLvl %s", M.InspectILvl:GetText())
 	end)
 end
 
