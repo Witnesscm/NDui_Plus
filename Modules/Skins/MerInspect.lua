@@ -83,6 +83,11 @@ function S:MerInspect()
 
 			self.styled = true
 		end
+
+		if self.EnhancementsCategory and self.SuitCategory and self.EnhancementsCategory:IsShown() then
+			local a1, p, a2, x, y = self.SuitCategory:GetPoint(1)
+			self.SuitCategory:SetPoint(a1, p, a2, x, y+C.mult)
+		end
 	end)
 end
 
