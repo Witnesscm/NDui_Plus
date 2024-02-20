@@ -189,6 +189,22 @@ local function reskinBagItemButton(self)
 	end
 end
 
+local function reskinPopout(self)
+	if self.Border then
+		B.StripTextures(self.Border)
+		B.SetBD(self.Border, .7, 5, -2, -5, 20)
+	end
+end
+
+local function reskinPopoutEntry(self)
+	if self.HighlightBGTex then
+		B.StripTextures(self.HighlightBGTex)
+	end
+	self.HL = self:CreateTexture(nil, "HIGHLIGHT")
+	self.HL:SetAllPoints()
+	self.HL:SetColorTexture(DB.r, DB.g, DB.b, .25)
+end
+
 function S:Auctionator()
 	local Auctionator = _G.Auctionator
 	if not Auctionator or not _G.AuctionatorInitalizeMainlineFrame or not _G.AuctionatorInitalizeMainlineFrame.AuctionHouseShown then return end
@@ -400,6 +416,8 @@ function S:Auctionator()
 	hook("AuctionatorCraftingInfoProfessionsFrameMixin", "OnLoad", reskinSearchButton)
 	hook("AuctionatorGroupsViewMixin", "OnLoad", reskinBagView)
 	hook("AuctionatorGroupsViewItemMixin", "SetItemInfo", reskinBagItemButton)
+	hook("AuctionatorSelectionPopoutMixin", "OnLoad", reskinPopout)
+	hook("AuctionatorSelectionPopoutEntryMixin", "OnLoad", reskinPopoutEntry)
 end
 
 S:RegisterSkin("Auctionator", S.Auctionator)
