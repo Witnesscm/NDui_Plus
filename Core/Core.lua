@@ -5,7 +5,7 @@ local pairs, type, next= pairs, type, next
 local tinsert = table.insert
 local xpcall = xpcall
 
-local modules, initQueue, addonsToLoad = {}, {}, {}
+local modules, initQueue, addonsToLoad, addonsToLoadEarly = {}, {}, {}, {}
 
 P.DefaultSettings = {
 	Debug = false,
@@ -107,6 +107,7 @@ P.DefaultSettings = {
 		WorldQuestTab = true,
 		ExtVendor = true,
 		AdiBags = true,
+		BetterBags = true,
 		HideToggle = false,
 	},
 	Tooltip = {
@@ -263,6 +264,24 @@ function P:AddCallbackForAddon(addonName, func)
 	tinsert(addon, func)
 end
 
+function P:CallLoadedAddonEarly(addonName, object)
+	for _, func in next, object do
+		xpcall(func, P.ThrowError)
+	end
+
+	addonsToLoadEarly[addonName] = nil
+end
+
+function P:AddCallbackForAddonEarly(addonName, func)
+	local addon = addonsToLoadEarly[addonName]
+	if not addon then
+		addonsToLoadEarly[addonName] = {}
+		addon = addonsToLoadEarly[addonName]
+	end
+
+	tinsert(addon, func)
+end
+
 -- Modules
 function P:RegisterModule(name)
 	if modules[name] then P:Print("Module <"..name.."> has been registered.") return end
@@ -332,6 +351,13 @@ loader:SetScript("OnEvent", function(self, event, addon)
 				setmetatable(module.db, {__index=charDB})
 			elseif charDB then
 				module.db = charDB
+			end
+		end
+
+		for addonName, object in pairs(addonsToLoadEarly) do
+			local isLoaded, isFinished = C_AddOns.IsAddOnLoaded(addonName)
+			if isLoaded and isFinished then
+				P:CallLoadedAddonEarly(addonName, object)
 			end
 		end
 

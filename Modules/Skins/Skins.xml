@@ -1,9 +1,10 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
-	<Script file="Skins.lua"/>
+	<Script file="Core.lua"/>
 	<Script file="Ace3.lua"/>
 	<Script file="AdiBags.lua"/>
 	<Script file="Auctionator.lua"/>
 	<Script file="BagSync.lua"/>
+	<Script file="BetterBags.lua"/>
 	<Script file="BtWLoadouts.lua"/>
 	<Script file="ButtonForge.lua"/>
 	<Script file="ExtVendorUI.lua"/>
