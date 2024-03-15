@@ -101,6 +101,8 @@ local function SkinContainerButton(self)
 end
 
 function S:AdiBags()
+	if not S.db["AdiBags"] then return end
+
 	AdiBags = LibStub("AceAddon-3.0"):GetAddon("AdiBags")
 	if not AdiBags then return end
 
