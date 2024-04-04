@@ -60,7 +60,7 @@ end
 local function GetItemSlotLevel(itemLink)
 	local level
 	if itemLink then
-		level = select(4, GetItemInfo(itemLink))
+		level = select(4, C_Item.GetItemInfo(itemLink))
 	end
 	return tonumber(level) or 0
 end
@@ -92,6 +92,11 @@ function S:tdInspect()
 
 			slot.IconBorder:SetTexture("")
 			slot:DisableDrawLayer("BACKGROUND")
+
+			if slot.RuneIcon then
+				local bg = B.ReskinIcon(slot.RuneIcon)
+				bg:SetFrameLevel(4)
+			end
 		end
 
 		M:CreateItemString(_G.InspectFrame, "Inspect")
@@ -144,7 +149,7 @@ function S:tdInspect()
 		local slot = self:GetID()
 		local item = Inspect:GetItemLink(slot)
 		if item then
-			local quality, level = select(3, GetItemInfo(item))
+			local quality, level = select(3, C_Item.GetItemInfo(item))
 			if quality then
 				local color = DB.QualityColors[quality]
 				M:ItemBorderSetColor(self, color.r, color.g, color.b)

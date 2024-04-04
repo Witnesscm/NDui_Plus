@@ -75,10 +75,10 @@ local function getInfo(itemData)
 		data.link = "item:" .. link
 		data.count = tonumber(count)
 		data.id = tonumber(link:match("^(%d+)"))
-		data.icon = GetItemIcon(data.id)
+		data.icon = C_Item.GetItemIconByID(data.id)
 		data.timeout = tonumber(timeout)
 
-		local name, itemLink, quality = GetItemInfo(data.link)
+		local name, itemLink, quality = C_Item.GetItemInfo(data.link)
 		if name then
 			data.name = name
 			data.link = itemLink
@@ -195,7 +195,7 @@ end
 local function ItemButton_UpdateInfo(self)
 	if not self.info.noCache then return end
 
-	local name, link, quality = GetItemInfo(self.info.link)
+	local name, link, quality = C_Item.GetItemInfo(self.info.link)
 	if name then
 		self.info.name = name
 		self.info.link = link

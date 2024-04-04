@@ -22,7 +22,7 @@ end
 do
 	local function TrainAllButton_OnEnter(self)
 		GameTooltip:ClearLines()
-		GameTooltip:AddLine(format(L["TrainAllCost"], self.Count, GetCoinTextureString(self.Cost)), 1, 1, 1)
+		GameTooltip:AddLine(format(L["TrainAllCost"], self.Count, C_CurrencyInfo.GetCoinTextureString(self.Cost)), 1, 1, 1)
 		GameTooltip:Show()
 	end
 

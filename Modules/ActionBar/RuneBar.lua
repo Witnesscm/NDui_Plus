@@ -93,7 +93,7 @@ function AB:RuneBar_Update()
 		local slot = AB.RuneBar.slotButtons[category]
 		if not slot then
 			slot = AB:RuneBar_CreateButton(buttonName, AB.RuneBar)
-			slot.text = GetItemInventorySlotInfo(category)
+			slot.text = C_Item.GetItemInventorySlotInfo(category)
 			slot.popupList = {}
 
 			slot.popupBar = CreateFrame("Frame", buttonName .. "PopupBar", slot)
