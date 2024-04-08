@@ -46,6 +46,53 @@ function M:EngravingUI_OnEquipmentChanged(slotID)
 	end
 end
 
+local KnownRunes = {}
+
+function M:EngravingUI_UpdateKnownRunes()
+	C_Engraving.RefreshRunesList()
+	local categories = C_Engraving.GetRuneCategories(false, true)
+	for _, category in ipairs(categories) do
+		local runes = C_Engraving.GetRunesForCategory(category, true)
+		for _, info in ipairs(runes) do
+			KnownRunes[info.skillLineAbilityID] = true
+		end
+	end
+end
+
+local function Collected_OnEnter(self)
+	local exclusiveFilter = C_Engraving.GetExclusiveCategoryFilter()
+	local known, max = C_Engraving.GetNumRunesKnown(exclusiveFilter)
+	if known < max then
+		GameTooltip:ClearLines()
+		GameTooltip:SetOwner(self, "ANCHOR_BOTTOM", 0, -4)
+		GameTooltip:AddLine(exclusiveFilter and format("%s %s", C_Item.GetItemInventorySlotInfo(exclusiveFilter), NOT_COLLECTED) or NOT_COLLECTED)
+
+		local categories = exclusiveFilter and {exclusiveFilter} or C_Engraving.GetRuneCategories(false, false)
+		for _, category in ipairs(categories) do
+			local runes = C_Engraving.GetRunesForCategory(category, false)
+			for _, info in ipairs(runes) do
+				if not KnownRunes[info.skillLineAbilityID] then
+					GameTooltip:AddLine(format("%s %s", P.TextureString(info.iconTexture, ":18:18:0:-2:64:64:5:59:5:59"), info.name), .6, .8, 1)
+				end
+			end
+		end
+
+		GameTooltip:Show()
+	end
+end
+
+function M:EngravingUI_AddUncollectedTips()
+	local parent = _G.EngravingFrame and _G.EngravingFrame.collected
+	if not parent then return end
+
+	local frame = CreateFrame("Frame", nil, parent)
+	frame:SetPoint("TOPLEFT")
+	frame:SetPoint("BOTTOMLEFT")
+	frame:SetWidth(100)
+	frame:SetScript("OnEnter", Collected_OnEnter)
+	frame:SetScript("OnLeave", B.HideTooltip)
+end
+
 function M:EngravingUI()
 	if not M.db["EngravingUI"] or not C_Engraving.IsEngravingEnabled() then return end
 
@@ -53,6 +100,11 @@ function M:EngravingUI()
 	hooksecurefunc("EngravingFrame_UpdateRuneList", M.EngravingUI_Update)
 	B:RegisterEvent("RUNE_UPDATED", M.EngravingUI_Update)
 	B:RegisterEvent("PLAYER_EQUIPMENT_CHANGED", M.EngravingUI_OnEquipmentChanged)
+
+	-- Uncollected Runes
+	M:EngravingUI_UpdateKnownRunes()
+	B:RegisterEvent("NEW_RECIPE_LEARNED", M.EngravingUI_UpdateKnownRunes)
+	M:EngravingUI_AddUncollectedTips()
 end
 
 P:AddCallbackForAddon("Blizzard_EngravingUI", M.EngravingUI)
