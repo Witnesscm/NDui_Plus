@@ -2,6 +2,10 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 
 P.Changelog = [[
+v1.15.4
+[易用性] 天赋扩展支持双天赋
+[美化] 更新部分插件美化
+
 v1.15.3
 [美化] 更新部分插件美化
 
