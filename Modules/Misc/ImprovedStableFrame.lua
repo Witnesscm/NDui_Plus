@@ -4,6 +4,8 @@ local M = P:GetModule("Misc")
 ----------------------------
 -- Improved Loot Frame, by Cybeloras
 ----------------------------
+if select(4, GetBuildInfo()) >= 100207 then return end
+
 local NUM_PER_ROW = 10
 local maxSlots = NUM_PET_STABLE_PAGES * NUM_PET_STABLE_SLOTS
 
