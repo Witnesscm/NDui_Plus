@@ -169,6 +169,14 @@ local locales = {
 	["Dragonflight Keystone Hero: Season Three"] = {
 		short = L["[ABBR] Dragonflight Keystone Hero: Season Three"],
 		full = L["Dragonflight Keystone Hero: Season Three"]
+	},
+	["Dragonflight Keystone Master: Season Four"] = {
+		short = L["[ABBR] Dragonflight Keystone Master: Season Four"],
+		full = L["Dragonflight Keystone Master: Season Four"]
+	},
+	["Dragonflight Keystone Hero: Season Four"] = {
+		short = L["[ABBR] Dragonflight Keystone Hero: Season Four"],
+		full = L["Dragonflight Keystone Hero: Season Four"]
 	}
 }
 
@@ -309,15 +317,81 @@ local raidAchievements = {
 	}
 }
 
-local mythicKeystoneDungeons = { -- C_ChallengeMode.GetMapTable()
+-- https://wago.tools/db2/MapChallengeMode
+local mythicKeystoneDungeons = {
+	[2] = "Temple of the Jade Serpent",
+	[56] = "Stormstout Brewery",
+	[57] = "Gate of the Setting Sun",
+	[58] = "Shado-Pan Monastery",
+	[59] = "Siege of Niuzao Temple",
+	[60] = "Mogu'shan Palace",
+	[76] = "Scholomance",
+	[77] = "Scarlet Halls",
+	[78] = "Scarlet Monastery",
+	[161] = "Skyreach",
+	[163] = "Bloodmaul Slag Mines",
+	[164] = "Auchindoun",
+	[165] = "Shadowmoon Burial Grounds",
+	[166] = "Grimrail Depot",
+	[167] = "Upper Blackrock Spire",
 	[168] = "The Everbloom",
+	[169] = "Iron Docks",
+	[197] = "Eye of Azshara",
 	[198] = "Darkheart Thicket",
 	[199] = "Black Rook Hold",
+	[200] = "Halls of Valor",
+	[206] = "Neltharion's Lair",
+	[207] = "Vault of the Wardens",
+	[208] = "Maw of Souls",
+	[209] = "The Arcway",
+	[210] = "Court of Stars",
+	[227] = "Return to Karazhan: Lower",
+	[233] = "Cathedral of Eternal Night",
+	[234] = "Return to Karazhan: Upper",
+	[239] = "Seat of the Triumvirate",
 	[244] = "Atal'Dazar",
+	[245] = "Freehold",
+	[246] = "Tol Dagor",
+	[247] = "The MOTHERLODE!!",
 	[248] = "Waycrest Manor",
+	[249] = "Kings' Rest",
+	[250] = "Temple of Sethraliss",
+	[251] = "The Underrot",
+	[252] = "Shrine of the Storm",
+	[353] = "Siege of Boralus",
+	[369] = "Operation: Mechagon - Junkyard",
+	[370] = "Operation: Mechagon - Workshop",
+	[375] = "Mists of Tirna Scithe",
+	[376] = "The Necrotic Wake",
+	[377] = "De Other Side",
+	[378] = "Halls of Atonement",
+	[379] = "Plaguefall",
+	[380] = "Sanguine Depths",
+	[381] = "Spires of Ascension",
+	[382] = "Theater of Pain",
+	[391] = "Tazavesh: Streets of Wonder",
+	[392] = "Tazavesh: So'leah's Gambit",
+	[399] = "Ruby Life Pools",
+	[400] = "The Nokhud Offensive",
+	[401] = "The Azure Vault",
+	[402] = "Algeth'ar Academy",
+	[403] = "Uldaman: Legacy of Tyr",
+	[404] = "Neltharus",
+	[405] = "Brackenhide Hollow",
+	[406] = "Halls of Infusion",
+	[438] = "The Vortex Pinnacle",
 	[456] = "Throne of the Tides",
 	[463] = "Dawn of the Infinite: Galakrond's Fall",
-	[464] = "Dawn of the Infinite: Murozond's Rise"
+	[464] = "Dawn of the Infinite: Murozond's Rise",
+	[499] = "Priory of the Sacred Flame",
+	[500] = "The Rookery",
+	[501] = "The Stonevault",
+	[502] = "City of Threads",
+	[503] = "Ara-Kara, City of Echoes",
+	[504] = "Darkflame Cleft",
+	[505] = "The Dawnbreaker",
+	[506] = "Cinderbrew Meadery",
+	[507] = "Grim Batol",
 }
 
 local keystoneAchievements ={
@@ -332,6 +406,10 @@ local keystoneAchievements ={
 	[3] = {
 		{id = 19012, name = "Dragonflight Keystone Hero: Season Three"},
 		{id = 19011, name = "Dragonflight Keystone Master: Season Three"}
+	},
+	[4] = {
+		{id = 19783, name = "Dragonflight Keystone Hero: Season Four"},
+		{id = 19782, name = "Dragonflight Keystone Master: Season Four"}
 	}
 }
 
@@ -501,7 +579,7 @@ function T:SetProgressionInfo(unit, guid)
 		GameTooltip:AddDoubleLine(CHALLENGES, L["Score (Level)"])
 
 		for _, info in ipairs(runs) do
-			local name = mythicKeystoneDungeons[info.challengeModeID] and locales[mythicKeystoneDungeons[info.challengeModeID]].short or C_ChallengeMode.GetMapUIInfo(info.challengeModeID)
+			local name = mythicKeystoneDungeons[info.challengeModeID] and locales[mythicKeystoneDungeons[info.challengeModeID]] and locales[mythicKeystoneDungeons[info.challengeModeID]].short or C_ChallengeMode.GetMapUIInfo(info.challengeModeID)
 			local scoreColor = C_ChallengeMode.GetSpecificDungeonOverallScoreRarityColor(info.mapScore) or HIGHLIGHT_FONT_COLOR
 			local levelColor = info.finishedSuccess and "|cffffffff" or "|cff888888"
 			local right = format("%s (%s)", scoreColor:WrapTextInColorCode(info.mapScore), levelColor..info.bestRunLevel.."|r")
