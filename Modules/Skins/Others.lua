@@ -168,6 +168,17 @@ function S:TalentLoadoutsEx()
 	hooksecurefunc(TLX.Frame, "OnLoad", TLX_SkinFrame)
 end
 
+function S:BuyEmAll()
+	B.StripTextures(_G.BuyEmAllFrame)
+	B.SetBD(_G.BuyEmAllFrame, nil, 10, -10, -10, 10)
+	B.Reskin(_G.BuyEmAllOkayButton)
+	B.Reskin(_G.BuyEmAllCancelButton)
+	B.Reskin(_G.BuyEmAllStackButton)
+	B.Reskin(_G.BuyEmAllMaxButton)
+
+	B.CreateMF(_G.BuyEmAllFrame)
+end
+
 S:RegisterSkin("WorldQuestsList", S.WorldQuestsList)
 S:RegisterSkin("PremadeGroupsFilter", S.PremadeGroupsFilter)
 S:RegisterSkin("MogPartialSets", S.MogPartialSets)
@@ -176,6 +187,7 @@ S:RegisterSkin("LibQTip")
 S:RegisterSkin("SavedInstances", S.SavedInstances)
 S:RegisterSkin("HandyNotes_Dragonflight", S.HandyNotes_Dragonflight)
 S:RegisterSkin("TalentLoadoutsEx", S.TalentLoadoutsEx)
+S:RegisterSkin("BuyEmAll", S.BuyEmAll)
 
 -- Hide Toggle Button
 S.ToggleFrames = {}
