@@ -136,7 +136,6 @@ local NDui_ActionBar = {
 	["PetBar"] = "NDui_ActionBarPet",
 	["StanceBar"] = "NDui_ActionBarStance",
 	["AspectBar"] = "NDuiHunterAspectFrame",
-	["MageBarFade"] = "NDuiPlus_MageBar",
 }
 
 local function updateAfterCombat(event)
