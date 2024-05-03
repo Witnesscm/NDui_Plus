@@ -21,6 +21,7 @@
 	<Script file="RareScanner.lua"/>
 	<Script file="Rematch.lua"/>
 	<Script file="StdUi.lua"/>
+	<Script file="TalentLoadoutsEx.lua"/>
 	<Script file="tdBattlePetScript.lua"/>
 	<Script file="tdGUI.lua"/>
 	<Script file="TinyInspect.lua"/>
