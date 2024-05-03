@@ -45,9 +45,10 @@ function S:MerInspect()
 
 		local frameName = parent:GetName()
 		if frameName == "PaperDollFrame" then
-			frame.bg:SetPoint("TOPLEFT", -C.mult, C.mult)
+			-- frame.bg:SetPoint("TOPLEFT", -C.mult, C.mult)
+			if frame:GetHeight() <= 424 then frame:SetHeight(424) end
 		elseif frameName == "InspectFrame" then
-			frame:SetPoint("TOPLEFT", parent, "TOPRIGHT", -33, -15-C.mult)
+			frame:SetPoint("TOPLEFT", parent, "TOPRIGHT", -34, -15-C.mult)
 		else
 			frame:SetPoint("TOPLEFT", parent, "TOPRIGHT", C.mult, 0)
 		end
