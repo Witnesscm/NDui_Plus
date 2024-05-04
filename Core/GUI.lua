@@ -41,14 +41,7 @@ local function updateABFaderState()
 end
 
 local function openKeyBindingFrame()
-	_G.GameMenuButtonKeybindings:Click()
-
-	for _, button in ipairs(_G.KeyBindingFrame.categoryList.buttons) do
-		if button.text:GetText() == ADDONS then
-			button:Click()
-			break
-		end
-	end
+	Settings.OpenToCategory(Settings.KEYBINDINGS_CATEGORY_ID)
 end
 
 local function updateUFsFader()
@@ -149,7 +142,7 @@ G.OptionList = { -- type, key, value, name, horizon, data, callback, tooltip, sc
 	},
 	[2] = {
 		{1, "Bags", "OfflineBag", HeaderTag..L["OfflineBagEnable"], nil, nil, nil, L["OfflineBagTip"]},
-		{6, nil, nil, L["Set KeyBinding"], true, openKeyBindingFrame},
+		-- {6, nil, nil, L["Set KeyBinding"], true, openKeyBindingFrame},
 		{},
 		{3, "Bags", "BagsWidth", L["BagsWidth"], nil, {10, 20, 1}},
 		{3, "Bags", "IconSize", L["BagsIconSize"], true, {30, 42, 1}},
