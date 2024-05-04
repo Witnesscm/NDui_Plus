@@ -162,3 +162,34 @@ do
 
 	M:RegisterMisc("FlightMapScale", M.UpdateFlightMapScale)
 end
+
+-- DoubleClick to change talents
+do
+	local specs = {
+		["spec1"] = 1,
+		["spec2"] = 2
+	}
+
+	local function AddTips(self)
+		if specs[self.specIndex] ~= GetActiveTalentGroup() then
+			GameTooltip:AddLine(" ")
+			GameTooltip:AddLine(P.LeftButtonTip(L["QuickChangeTalents"]), .6, .8, 1)
+			GameTooltip:Show()
+		end
+	end
+
+	local function OnDoubleClick(self)
+		local talentGroup = specs[self.specIndex]
+		if talentGroup ~= GetActiveTalentGroup() then
+			SetActiveTalentGroup(talentGroup)
+		end
+	end
+
+	function M:Blizzard_TalentUI()
+		_G.PlayerSpecTab1:SetScript("OnDoubleClick", OnDoubleClick)
+		_G.PlayerSpecTab2:SetScript("OnDoubleClick", OnDoubleClick)
+		hooksecurefunc("PlayerSpecTab_OnEnter", AddTips)
+	end
+
+	P:AddCallbackForAddon("Blizzard_TalentUI", M.Blizzard_TalentUI)
+end
