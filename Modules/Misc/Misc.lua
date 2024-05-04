@@ -199,7 +199,7 @@ do
 	function M:FixGlyphUIMouseWheel()
 		local scrollFrame = _G.GlyphFrame.scrollFrame
 		if scrollFrame.stepSize and scrollFrame.stepSize < scrollFrame.buttonHeight then
-			scrollFrame.stepSize = nil
+			scrollFrame.stepSize = 80
 		end
 	end
 
