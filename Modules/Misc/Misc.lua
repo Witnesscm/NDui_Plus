@@ -193,15 +193,3 @@ do
 
 	P:AddCallbackForAddon("Blizzard_TalentUI", M.QuickChangeTalents)
 end
-
--- fix GlyphUI mouse wheel
-do
-	function M:FixGlyphUIMouseWheel()
-		local scrollFrame = _G.GlyphFrame.scrollFrame
-		if scrollFrame.stepSize and scrollFrame.stepSize < scrollFrame.buttonHeight then
-			scrollFrame.stepSize = 80
-		end
-	end
-
-	P:AddCallbackForAddon("Blizzard_GlyphUI", M.FixGlyphUIMouseWheel)
-end
