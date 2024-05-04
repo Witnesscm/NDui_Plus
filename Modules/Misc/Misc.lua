@@ -185,11 +185,23 @@ do
 		end
 	end
 
-	function M:Blizzard_TalentUI()
+	function M:QuickChangeTalents()
 		_G.PlayerSpecTab1:SetScript("OnDoubleClick", OnDoubleClick)
 		_G.PlayerSpecTab2:SetScript("OnDoubleClick", OnDoubleClick)
 		hooksecurefunc("PlayerSpecTab_OnEnter", AddTips)
 	end
 
-	P:AddCallbackForAddon("Blizzard_TalentUI", M.Blizzard_TalentUI)
+	P:AddCallbackForAddon("Blizzard_TalentUI", M.QuickChangeTalents)
+end
+
+-- fix GlyphUI mouse wheel
+do
+	function M:FixGlyphUIMouseWheel()
+		local scrollFrame = _G.GlyphFrame.scrollFrame
+		if scrollFrame.stepSize and scrollFrame.stepSize < scrollFrame.buttonHeight then
+			scrollFrame.stepSize = nil
+		end
+	end
+
+	P:AddCallbackForAddon("Blizzard_GlyphUI", M.FixGlyphUIMouseWheel)
 end
