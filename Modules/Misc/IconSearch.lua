@@ -22,7 +22,7 @@ function M:IconSearch_DoSearch(frame, str)
 		tinsert(results, spell)
 	end
 
-	local item = GetItemIcon(id)
+	local item = C_Item.GetItemIconByID(id)
 	if item then
 		tinsert(results, item)
 	end

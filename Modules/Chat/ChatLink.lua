@@ -23,7 +23,7 @@ local function AddChatIcon(link, linkType, id)
 	if linkType == "spell" or linkType == "enchant" or linkType == "mount" then
 		texture = GetSpellTexture(id)
 	elseif linkType == "item" or linkType == "keystone" then
-		texture = GetItemIcon(id)
+		texture = C_Item.GetItemIconByID(id)
 	elseif linkType == "talent" then
 		texture = select(3, GetTalentInfoByID(id))
 	elseif linkType == "pvptal" then

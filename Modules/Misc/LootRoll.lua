@@ -10,7 +10,6 @@ local pairs, unpack, next = pairs, unpack, next
 local wipe, tinsert, format = wipe, tinsert, format
 --WoW API / Variables
 local CreateFrame = CreateFrame
-local GetItemInfo = GetItemInfo
 local GameTooltip = GameTooltip
 local GetLootRollItemInfo = GetLootRollItemInfo
 local GetLootRollItemLink = GetLootRollItemLink
@@ -452,7 +451,7 @@ function LR:LootRollTest()
 	local itemID = 17103
 	local bop = 1
 	local canTransmog = true
-	local name, link, quality, itemLevel, _, _, _, _, _, icon = GetItemInfo(itemID)
+	local name, link, quality, itemLevel, _, _, _, _, _, icon = C_Item.GetItemInfo(itemID)
 	if not name then
 		name, link, quality, itemLevel, icon = "碧空之歌", "|cffa335ee|Hitem:17103::::::::17:::::::|h[碧空之歌]|h|r", 4, 29, 135349
 	end

@@ -551,7 +551,7 @@ function M:AddParagonRewards()
 
 	for _, data in ipairs(rewards) do
 		local collected
-		local name, _, quality, _, _, _, _, _, _, icon = GetItemInfo(data.itemID)
+		local name, _, quality, _, _, _, _, _, _, icon = C_Item.GetItemInfo(data.itemID)
 		if data.type == MOUNT then
 			collected = select(11,C_MountJournal.GetMountInfoByID(data.mountID))
 		elseif data.type == PET then

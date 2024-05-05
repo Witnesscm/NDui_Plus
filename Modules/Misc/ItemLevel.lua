@@ -33,7 +33,7 @@ function M:ItemLevel_UpdateGuildBank(tab, index)
 			end
 		else
 			level = B.GetItemLevel(link)
-			quality = select(3, GetItemInfo(link))
+			quality = select(3, C_Item.GetItemInfo(link))
 		end
 	end
 
