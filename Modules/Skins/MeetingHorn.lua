@@ -521,7 +521,7 @@ function S:MeetingHorn()
 		B.ReskinScroll(MissionGuidance.MissionGuidanceScrollFrame.ScrollBar)
 	end
 
-	if IsAddOnLoaded("tdInspect") then  -- Credit: tdUI
+	if C_AddOns.IsAddOnLoaded("tdInspect") then  -- Credit: tdUI
 		local tdInspect = LibStub("AceAddon-3.0"):GetAddon("tdInspect")
 		local Browser = MeetingHorn:GetClass("UI.Browser")
 		local Inspect = tdInspect:GetModule("Inspect")

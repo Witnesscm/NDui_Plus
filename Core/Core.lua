@@ -291,7 +291,7 @@ function P:Initialize()
 	end
 
 	for addonName, object in pairs(addonsToLoad) do
-		local isLoaded, isFinished = IsAddOnLoaded(addonName)
+		local isLoaded, isFinished = C_AddOns.IsAddOnLoaded(addonName)
 		if isLoaded and isFinished then
 			P:CallLoadedAddon(addonName, object)
 		end

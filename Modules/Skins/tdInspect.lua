@@ -141,7 +141,7 @@ function S:tdInspect()
 		local slot = self:GetID()
 		local item = Inspect:GetItemLink(slot)
 		if item then
-			local quality, level = select(3, GetItemInfo(item))
+			local quality, level = select(3, C_Item.GetItemInfo(item))
 			if quality and quality > 1 then
 				local color = DB.QualityColors[quality]
 				M:ItemBorderSetColor(self, color.r, color.g, color.b)
