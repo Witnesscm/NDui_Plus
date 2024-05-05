@@ -26,7 +26,7 @@ local ITEM_QUALITY_COLORS = ITEM_QUALITY_COLORS
 local GREED, NEED, PASS = GREED, NEED, PASS
 local ROLL_DISENCHANT = ROLL_DISENCHANT
 
-local enableDisenchant = false
+local enableDisenchant = true
 
 local cachedRolls = {}
 LR.RollBars = {}
@@ -316,7 +316,7 @@ function LR:LootRoll_Start(rollID, rollTime)
 	if bar.disenchant then
 		bar.disenchant.text:SetText(0)
 		bar.disenchant:SetEnabled(canDisenchant)
-		bar.disenchant.tiptext = canDisenchant and ROLL_DISENCHANT or format(_G["LOOT_ROLL_INELIGIBLE_REASON"..reasonDisenchant], deSkillRequired)
+		bar.disenchant.tiptext = canDisenchant and ROLL_DISENCHANT or _G["LOOT_ROLL_INELIGIBLE_REASON"..reasonDisenchant] and format(_G["LOOT_ROLL_INELIGIBLE_REASON"..reasonDisenchant], deSkillRequired)
 	end
 
 	bar.pass.text:SetText(0)
