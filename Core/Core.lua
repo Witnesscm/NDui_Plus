@@ -119,8 +119,6 @@ P.DefaultSettings = {
 	},
 	Misc = {
 		ExtTrainerUI = true,
-		GuildExpand = false,
-		ExtGuildUI = true,
 		ExtVendorUI = true,
 		ExtMacroUI =  false,
 		IconSearch = true,

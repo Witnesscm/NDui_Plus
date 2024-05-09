@@ -217,7 +217,6 @@ G.OptionList = { -- type, key, value, name, horizon, data, callback, tooltip, sc
 		{},
 		{1, "Misc", "ExtTrainerUI", L["ExtTrainerUI"]},
 		{1, "Misc", "TrainAll", L["TrainAll"], true, nil, nil, L["TrainAllTip"]},
-		{1, "Misc", "ExtGuildUI", L["ExtGuildUI"], nil, nil, nil, L["ExtendedUITip"]},
 		{1, "Misc", "ExtVendorUI", L["ExtVendorUI"], true},
 		{1, "Misc", "ExtMacroUI", L["ExtMacroUI"], nil, nil, nil ,L["ExtMacroUITip"]},
 		{1, "Misc", "IconSearch", L["IconSearch"], nil, nil, nil, L["IconSearchGUITip"]},

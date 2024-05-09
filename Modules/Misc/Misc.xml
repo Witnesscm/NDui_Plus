@@ -2,7 +2,6 @@
 	<Script file="Misc.lua"/>
 	<Script file="AFK.lua"/>
 	<Script file="ExtTrainerUI.lua"/>
-	<Script file="ExtGuildUI.lua"/>
 	<Script file="ExtVendorUI.lua"/>
 	<Script file="ExtMacroUI.lua"/>
 	<Script file="Loot.lua"/>
