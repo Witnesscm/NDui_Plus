@@ -121,6 +121,7 @@ P.DefaultSettings = {
 		ExtTrainerUI = true,
 		ExtVendorUI = true,
 		ExtMacroUI =  false,
+		ImprovedStableFrame = true,
 		IconSearch = true,
 		FlightMapScale = 1.2,
 		TrainAll = true,
