@@ -29,6 +29,7 @@
 	<Script file="NovaWorldBuffs.lua"/>
 	<Script file="Others.lua"/>
 	<Script file="PallyPower.lua"/>
+	<Script file="ReforgeLite.lua"/>
 	<Script file="ShadowDancer.lua"/>
 	<Script file="Skillet.lua"/>
 	<Script file="Spy.lua"/>
