@@ -205,3 +205,25 @@ do
 
 	P:AddCallbackForAddon("Blizzard_GlyphUI", M.FixGlyphUIMouseWheel)
 end
+
+-- fix Blizz CharacterFrame auto expand, because CVar 'characterFrameCollapsed' is not implemented
+do
+	local function ExpandCharacterFrame()
+		if M.db["CharacterFrameCollapsed"] then
+			CharacterFrame:Expand()
+		else
+			CharacterFrame:Collapse()
+		end
+	end
+
+	function M:FixCharacterFrameExpand()
+		_G.CharacterFrameExpandButton:HookScript("OnClick", function()
+			M.db["CharacterFrameCollapsed"] = not not _G.CharacterFrame.Expanded
+		end)
+
+		_G.PaperDollFrame:HookScript("OnShow", ExpandCharacterFrame)
+		_G.PetPaperDollFrame:HookScript("OnShow", ExpandCharacterFrame)
+	end
+
+	P:AddCallbackForAddon("Blizzard_CharacterFrame", M.FixCharacterFrameExpand)
+end
