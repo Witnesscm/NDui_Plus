@@ -85,7 +85,7 @@ function M:ImprovedStableFrame()
 			button = CreateFrame("Button", "PetStableStabledPet"..i, _G.PetStableFrame, "PetStableSlotTemplate", i)
 		end
 
-        button:SetScale(7/NUM_PER_ROW)
+		button:SetScale(7/NUM_PER_ROW)
 		button:ClearAllPoints()
 
 		if i == 1 then
@@ -112,7 +112,7 @@ function M:ImprovedStableFrame()
 		for i = 1, maxSlots do
 			local bu = _G["PetStableStabledPet"..i]
 
-            bu:SetScale(1)
+			bu:SetScale(1)
 			bu:SetSize(24.5, 24.5)
 			bu.Checked:SetTexture("")
 			hooksecurefunc(bu.Checked, "Show", updateBackdropColor)
