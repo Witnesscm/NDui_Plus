@@ -217,6 +217,8 @@ do
 	end
 
 	function M:FixCharacterFrameExpand()
+		if C_CVar.GetCVar("characterFrameCollapsed") then return end
+
 		_G.CharacterFrameExpandButton:HookScript("OnClick", function()
 			M.db["CharacterFrameCollapsed"] = not not _G.CharacterFrame.Expanded
 		end)
