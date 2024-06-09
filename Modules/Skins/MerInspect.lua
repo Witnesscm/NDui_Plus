@@ -3,10 +3,7 @@ local B, C, L, DB, P = unpack(ns)
 local S = P:GetModule("Skins")
 local M = B:GetModule("Misc")
 
-local _G = getfenv(0)
-local select, pairs = select, pairs
-
-local function reskinInspect(frame)
+local function reskinFrame(frame)
 	frame:SetBackdrop(nil)
 	frame.SetBackdrop = B.Dummy
 	frame:SetBackdropColor(0, 0, 0, 0)
@@ -17,8 +14,13 @@ local function reskinInspect(frame)
 		return self.backdrop
 	end
 
-	if frame:GetHeight() <= 424 then frame:SetHeight(422) end
 	frame.bg = B.SetBD(frame, nil, 0, C.mult, 0, -C.mult)
+end
+
+local function resizeStatsFrame(self, _, relativeTo)
+	if self:GetHeight() <= 424 then
+		self:SetHeight(relativeTo == PaperDollFrame and 424 or 422)
+	end
 end
 
 function S:MerInspect()
@@ -31,7 +33,7 @@ function S:MerInspect()
 		if not frame then return end
 
 		if not frame.styled then
-			reskinInspect(frame)
+			reskinFrame(frame)
 
 			for i = 1, frame:GetNumChildren() do
 				local child = select(i, frame:GetChildren())
@@ -44,24 +46,25 @@ function S:MerInspect()
 		end
 
 		local frameName = parent:GetName()
-		if frameName == "PaperDollFrame" then
-			-- frame.bg:SetPoint("TOPLEFT", -C.mult, C.mult)
-			if frame:GetHeight() <= 424 then frame:SetHeight(424) end
-		elseif frameName == "InspectFrame" then
+		if frameName == "InspectFrame" then
 			frame:SetPoint("TOPLEFT", parent, "TOPRIGHT", -34, -15-C.mult)
-		else
+		elseif frameName ~= "PaperDollFrame" then
 			frame:SetPoint("TOPLEFT", parent, "TOPRIGHT", C.mult, 0)
+		end
+
+		if frame:GetHeight() <= 424 then
+			frame:SetHeight(frameName == "PaperDollFrame" and 424 or 422)
 		end
 	end)
 
 	if not _G.ClassicStatsFrameTemplate_OnShow then return end
 
-	hooksecurefunc("ClassicStatsFrameTemplate_OnShow", function(self)
-		if self:GetHeight() <= 424 then self:SetHeight(422) end
+	local PlayerStatsFrame
 
+	hooksecurefunc("ClassicStatsFrameTemplate_OnShow", function(self)
 		if not self.styled then
 			B.StripTextures(self)
-			reskinInspect(self)
+			reskinFrame(self)
 
 			for _, key in pairs({"AttributesCategory", "ResistanceCategory", "EnhancementsCategory", "SuitCategory"}) do
 				local category = self[key]
@@ -75,6 +78,17 @@ function S:MerInspect()
 			end
 
 			self.styled = true
+		end
+
+		if not PlayerStatsFrame then
+			if self:GetParent() == _G.UIParent then
+				PlayerStatsFrame = self
+				hooksecurefunc(PlayerStatsFrame, "SetPoint", resizeStatsFrame)
+			end
+		end
+
+		if self ~= PlayerStatsFrame and self:GetHeight() <= 424 then
+			self:SetHeight(422)
 		end
 	end)
 end
