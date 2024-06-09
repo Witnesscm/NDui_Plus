@@ -18,7 +18,7 @@ function T:GetOrCreateMountTable(spell)
 	if not self.MountTable[spell] then
 		local index = C_MountJournal.GetMountFromSpell(spell)
 		if index then
-			local _, mSpell, _, _, _, sourceType = C_MountJournal.GetMountInfoByID(index)
+			local _, mSpell = C_MountJournal.GetMountInfoByID(index)
 			if spell == mSpell then
 				local _, _, source = C_MountJournal.GetMountInfoExtraByID(index)
 				self.MountTable[spell] = {source = source, index = index}
