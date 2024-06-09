@@ -63,8 +63,11 @@ function CH:SetupChat()
 
 	self:SetParent(CH.ChatBG)
 	self.__parentBG = CH.ChatBG
-	self:SetFrameStrata("LOW")
 	_G[self:GetName() .. "Tab"]:SetParent(CH.ChatBG)
+
+	if self.__gradient then
+		self.__gradient:SetFrameLevel(0)
+	end
 end
 
 function CH:AutoShow()
