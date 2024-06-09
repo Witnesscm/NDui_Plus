@@ -2,6 +2,12 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 
 P.Changelog = [[
+v10.2.4
+[主要] 更新版本号至10.2.7; 适配部分API改动
+[聊天] 修复启用聊天框隐藏时背景层级问题
+[美化] 更新BetterBags美化
+[美化] 更新TalentLoadoutsEx美化
+
 v10.2.3
 [鼠标提示] PvE进度信息更新巨龙时代S4数据
 [美化] 添加BuyEmAll美化
