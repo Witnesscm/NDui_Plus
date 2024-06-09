@@ -36,7 +36,7 @@ function S:TalentLoadoutsEx()
 		frame:SetPoint("BOTTOMLEFT", _G.ClassTalentFrame, "BOTTOMRIGHT", 1, 0)
 		S:Proxy("ReskinTrimScroll", frame.ScrollBar)
 
-		for _, key in ipairs({"LoadButton", "SaveButton", "EditButton", "DeleteButton", "UpButton", "DownButton"}) do
+		for _, key in ipairs({"ImportButton", "ExportButton", "LoadButton", "SaveButton", "EditButton", "DeleteButton", "UpButton", "DownButton"}) do
 			S:Proxy("Reskin", frame[key])
 		end
 
