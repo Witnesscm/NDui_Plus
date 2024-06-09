@@ -1,5 +1,5 @@
 <Bindings>
-	<Binding name="NDUIPLUSTOGGLEBAG" header="NDUIPLUS" Category="ADDONS">
+	<Binding name="NDUIPLUSTOGGLEBAG" Category="BINDING_HEADER_NDUIPLUS">
 		if _G.NDui_Plus_BagFrame then
 			ToggleFrame(_G.NDui_Plus_BagFrame)
 		end
