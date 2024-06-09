@@ -141,6 +141,34 @@ local function SkinQuestion(self)
 	S:Proxy("ReskinInput", self.input)
 end
 
+local function SkinList(self)
+	S:Proxy("ReskinTrimScroll", self.ScrollBar)
+end
+
+local function SkinSectionItem(self)
+	if self.Expand and not self.styled then
+		B.ReskinArrow(self.Expand, "left")
+
+		self.styled = true
+	end
+end
+
+local function SkinSectionConfig(self)
+	S:Proxy("StripTextures", self.frame)
+	S:Proxy("SetBD", self.frame)
+
+	if self.content and self.content.ScrollBox then
+		hooksecurefunc(self.content.ScrollBox, "Update", function(self)
+			self:ForEachFrame(SkinSectionItem)
+		end)
+	end
+end
+
+local function SkinSectionItemList(self)
+	S:Proxy("StripTextures", self.frame)
+	S:Proxy("SetBD", self.frame)
+end
+
 function S:BetterBags()
 	if not S.db["BetterBags"] then return end
 
@@ -170,6 +198,9 @@ function S:BetterBags()
 	hook("Currency", "Create", SkinCurrencyFrame)
 	hook("Grid", "Create", SkinGrid)
 	hook("Question", "_OnCreate", SkinQuestion)
+	hook("List", "Create", SkinList)
+	hook("SectionConfig", "Create", SkinSectionConfig)
+	hook("SectionItemList", "Create", SkinSectionItemList)
 end
 
 S:RegisterSkin("BetterBags", S.BetterBags, true)
