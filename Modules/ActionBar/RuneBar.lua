@@ -4,10 +4,27 @@ local AB = P:GetModule("ActionBar")
 
 local margin, padding = C.Bars.margin, C.Bars.padding
 
+local SlotIDtoType = {
+	[INVSLOT_HEAD] = Enum.InventoryType.IndexHeadType,
+	[INVSLOT_NECK] = Enum.InventoryType.IndexNeckType,
+	[INVSLOT_SHOULDER] = Enum.InventoryType.IndexShoulderType,
+	[INVSLOT_BODY] = Enum.InventoryType.IndexBodyType,
+	[INVSLOT_CHEST] = Enum.InventoryType.IndexChestType,
+	[INVSLOT_WAIST] = Enum.InventoryType.IndexWaistType,
+	[INVSLOT_LEGS] = Enum.InventoryType.IndexLegsType,
+	[INVSLOT_FEET] = Enum.InventoryType.IndexFeetType,
+	[INVSLOT_WRIST] = Enum.InventoryType.IndexWristType,
+	[INVSLOT_HAND]= Enum.InventoryType.IndexHandType,
+	[INVSLOT_FINGER1]= Enum.InventoryType.IndexFingerType,
+	[INVSLOT_FINGER2]= Enum.InventoryType.IndexFingerType,
+	[INVSLOT_TRINKET1]= Enum.InventoryType.IndexTrinketType,
+	[INVSLOT_TRINKET2]= Enum.InventoryType.IndexTrinketType,
+	[INVSLOT_BACK]= Enum.InventoryType.IndexCloakType,
+}
+
 function AB:RuneButton_Update(info)
 	self.icon:SetTexture(info.iconTexture)
 	self.skillLineAbilityID = info.skillLineAbilityID
-	self.slotID = info.equipmentSlot
 end
 
 local function ClearTimers(object)
@@ -87,103 +104,111 @@ function AB:RuneBar_Update()
 	if not AB.RuneBar then return end
 
 	C_Engraving.RefreshRunesList()
-	local categories = C_Engraving.GetRuneCategories(false, true)
-	for _, category in ipairs(categories) do
-		local buttonName = "NDuiPlus_RuneBarSlot" .. category
-		local slot = AB.RuneBar.slotButtons[category]
-		if not slot then
-			slot = AB:RuneBar_CreateButton(buttonName, AB.RuneBar)
-			slot.text = C_Item.GetItemInventorySlotInfo(category)
-			slot.popupList = {}
 
-			slot.popupBar = CreateFrame("Frame", buttonName .. "PopupBar", slot)
-			slot.popupBar:SetFrameStrata("DIALOG")
-			slot.popupBar:Hide()
+	for slotID, invType in ipairs(SlotIDtoType) do
+		local runes = C_Engraving.GetRunesForCategory(invType, true)
+		if runes and next(runes) then
+			local buttonName = "NDuiPlus_RuneBarSlot" .. slotID
+			local slot = AB.RuneBar.slotButtons[slotID]
+			if not slot then
+				slot = AB:RuneBar_CreateButton(buttonName, AB.RuneBar)
+				slot.slotID = slotID
+				slot.text = P.SlotIDtoName[slotID]
+				slot.popupList = {}
 
-			AB.RuneBar.slotButtons[category] = slot
-		end
+				slot.popupBar = CreateFrame("Frame", buttonName .. "PopupBar", slot)
+				slot.popupBar:SetFrameStrata("DIALOG")
+				slot.popupBar:Hide()
 
-		local equippedInfo = C_Engraving.GetRuneForEquipmentSlot(category)
-		if equippedInfo then
-			AB.RuneButton_Update(slot, equippedInfo)
-		else
-			slot.icon:SetTexture(nil)
-			slot.skillLineAbilityID = nil
-		end
-
-		local index = 1
-		local prevButton
-		local runes = C_Engraving.GetRunesForCategory(category, true)
-		for _, info in ipairs(runes) do
-			if info.skillLineAbilityID ~= slot.skillLineAbilityID then
-				local button = slot.popupList[index]
-				if not button then
-					button = AB:RuneBar_CreateButton(buttonName .. "Button" .. index, slot.popupBar)
-					button.popupBar = slot.popupBar
-					button:HookScript("OnClick", AB.RuneButton_OnClick)
-
-					slot.popupList[index] = button
-				end
-
-				AB.RuneButton_Update(button, info)
-				button:Show()
-				button:ClearAllPoints()
-
-				if AB.db["RuneBarVertical"] then
-					if not prevButton then
-						button:SetPoint("RIGHT", -margin, 0)
-					else
-						button:SetPoint("RIGHT", prevButton, "LEFT", -margin, 0)
-					end
-				else
-					if not prevButton then
-						button:SetPoint("BOTTOM", 0, margin)
-					else
-						button:SetPoint("BOTTOM", prevButton, "TOP", 0, margin)
-					end
-				end
-
-				prevButton = button
-				index = index + 1
+				AB.RuneBar.slotButtons[slotID] = slot
 			end
-		end
 
-		for i = index, #slot.popupList do
-			slot.popupList[i]:Hide()
-		end
-
-		local size = AB.db["RuneBarSize"]
-		local num = index - 1
-		local width, height = num * size + (num + 1) * margin, size + 2 * margin
-
-		slot.popupBar:ClearAllPoints()
-		if AB.db["RuneBarVertical"] then
-			slot.popupBar:SetSize(width, height)
-			slot.popupBar:SetPoint("RIGHT", slot, "LEFT")
-		else
-			slot.popupBar:SetSize(height, width)
-			slot.popupBar:SetPoint("BOTTOM", slot, "TOP")
-		end
-	end
-
-	local prevButton
-	for _, category in ipairs(categories) do
-		local button = AB.RuneBar.slotButtons[category]
-		button:ClearAllPoints()
-		if not prevButton then
-			button:SetPoint("TOPLEFT", padding, -padding)
-		else
-			if AB.db["RuneBarVertical"] then
-				button:SetPoint("TOP", prevButton, "BOTTOM", 0, -margin)
+			local equippedInfo = C_Engraving.GetRuneForEquipmentSlot(slotID)
+			if equippedInfo then
+				AB.RuneButton_Update(slot, equippedInfo)
 			else
-				button:SetPoint("LEFT", prevButton, "RIGHT", margin, 0)
+				slot.icon:SetTexture(nil)
+				slot.skillLineAbilityID = nil
+			end
+
+			local index = 1
+			local prevButton
+			for _, info in ipairs(runes) do
+				if info.skillLineAbilityID ~= slot.skillLineAbilityID then
+					local button = slot.popupList[index]
+					if not button then
+						button = AB:RuneBar_CreateButton(buttonName .. "Button" .. index, slot.popupBar)
+						button.slotID = slotID
+						button.popupBar = slot.popupBar
+						button:HookScript("OnClick", AB.RuneButton_OnClick)
+
+						slot.popupList[index] = button
+					end
+
+					AB.RuneButton_Update(button, info)
+					button:Show()
+					button:ClearAllPoints()
+
+					if AB.db["RuneBarVertical"] then
+						if not prevButton then
+							button:SetPoint("RIGHT", -margin, 0)
+						else
+							button:SetPoint("RIGHT", prevButton, "LEFT", -margin, 0)
+						end
+					else
+						if not prevButton then
+							button:SetPoint("BOTTOM", 0, margin)
+						else
+							button:SetPoint("BOTTOM", prevButton, "TOP", 0, margin)
+						end
+					end
+
+					prevButton = button
+					index = index + 1
+				end
+			end
+
+			for i = index, #slot.popupList do
+				slot.popupList[i]:Hide()
+			end
+
+			local size = AB.db["RuneBarSize"]
+			local num = index - 1
+			local width, height = num * size + (num + 1) * margin, size + 2 * margin
+
+			slot.popupBar:ClearAllPoints()
+			if AB.db["RuneBarVertical"] then
+				slot.popupBar:SetSize(width, height)
+				slot.popupBar:SetPoint("RIGHT", slot, "LEFT")
+			else
+				slot.popupBar:SetSize(height, width)
+				slot.popupBar:SetPoint("BOTTOM", slot, "TOP")
 			end
 		end
-
-		prevButton = button
 	end
 
-	AB.RuneBar_NumSlots = #categories
+	local numSlots = 0
+	local prevButton
+	for slotID in ipairs(SlotIDtoType) do
+		local button = AB.RuneBar.slotButtons[slotID]
+		if button then
+			button:ClearAllPoints()
+			if not prevButton then
+				button:SetPoint("TOPLEFT", padding, -padding)
+			else
+				if AB.db["RuneBarVertical"] then
+					button:SetPoint("TOP", prevButton, "BOTTOM", 0, -margin)
+				else
+					button:SetPoint("LEFT", prevButton, "RIGHT", margin, 0)
+				end
+			end
+
+			numSlots = numSlots + 1
+			prevButton = button
+		end
+	end
+
+	AB.RuneBar_NumSlots = numSlots
 	AB:RuneBar_UpdateSize()
 end
 
@@ -191,7 +216,7 @@ function AB:RuneBar_UpdateSize()
 	if not AB.RuneBar then return end
 
 	local size = AB.db["RuneBarSize"]
-	local num = AB.RuneBar_NumSlots or 1
+	local num = AB.RuneBar_NumSlots > 0 and AB.RuneBar_NumSlots or 1
 	local width, height = num * size + (num - 1) * margin + 2 * padding, size + 2 * padding
 
 	if AB.db["RuneBarVertical"] then
@@ -238,6 +263,6 @@ function AB:RuneBar_Init()
 
 	AB.RuneBar = CreateFrame("Frame", "NDuiPlus_RuneBar", UIParent)
 	AB.RuneBar.slotButtons = {}
-	AB.RuneBar.mover = B.Mover(AB.RuneBar, L["RuneBar"], "RuneBar", { "BOTTOMRIGHT", -480, 24 })
+	AB.RuneBar.mover = B.Mover(AB.RuneBar, L["RuneBar"], "RuneBar", {"BOTTOMLEFT", UIParent, "BOTTOMRIGHT", -640, 24})
 	AB:RuneBar_Toggle()
 end
