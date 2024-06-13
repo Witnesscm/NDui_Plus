@@ -13,7 +13,8 @@ local function RuneSpellButton_OnClick(self, button)
 		C_Engraving.CastRune(self.skillLineAbilityID)
 		local rune = C_Engraving.GetCurrentRuneCast()
 		if rune and rune.equipmentSlot then
-			PickupInventoryItem(rune.equipmentSlot)
+			local slotID = rune.equipmentSlot == 16 and 15 or rune.equipmentSlot
+			PickupInventoryItem(slotID)
 			ClearCursor()
 			local _, dialog = StaticPopup_Visible("REPLACE_ENCHANT")
 			if dialog then
@@ -65,7 +66,7 @@ local function Collected_OnEnter(self)
 	if known < max then
 		GameTooltip:ClearLines()
 		GameTooltip:SetOwner(self, "ANCHOR_BOTTOM", 0, -4)
-		GameTooltip:AddLine(exclusiveFilter and format("%s %s", C_Item.GetItemInventorySlotInfo(exclusiveFilter), NOT_COLLECTED) or NOT_COLLECTED)
+		GameTooltip:AddLine(exclusiveFilter and format("%s %s", P.SlotIDtoName[exclusiveFilter], NOT_COLLECTED) or NOT_COLLECTED)
 
 		local categories = exclusiveFilter and {exclusiveFilter} or C_Engraving.GetRuneCategories(false, false)
 		for _, category in ipairs(categories) do
