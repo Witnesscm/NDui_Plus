@@ -179,10 +179,20 @@ local function SkinAchievementFrame()
 	local FilterButton = _G.KrowiAF_AchievementFrameFilterButton
 	B.ReskinFilterButton(FilterButton)
 	FilterButton:SetSize(116, 20)
+	FilterButton:ClearAllPoints()
 	FilterButton:SetPoint("TOPLEFT", 142, -2)
 	if _G.AchievementFrameHeaderLeftDDLInset then _G.AchievementFrameHeaderLeftDDLInset:SetAlpha(0) end
 
-	local CalendarButton = _G.KrowiAF_AchievementCalendarButton
+	local PrevButton = _G.KrowiAF_AchievementFrameBrowsingHistoryPrevAchievementButton
+	local NextButton = _G.KrowiAF_AchievementFrameBrowsingHistoryNextAchievementButton
+	B.ReskinArrow(PrevButton, "left")
+	B.ReskinArrow(NextButton, "right")
+	PrevButton:ClearAllPoints()
+	PrevButton:SetPoint("LEFT", FilterButton, "RIGHT", 10, 0)
+	NextButton:ClearAllPoints()
+	NextButton:SetPoint("LEFT", PrevButton, "RIGHT", 6, 0)
+
+	local CalendarButton = _G.KrowiAF_AchievementFrameCalendarButton
 	B.Reskin(CalendarButton)
 	CalendarButton:SetSize(24, 24)
 	local CalendarFS = CalendarButton:GetFontString()
