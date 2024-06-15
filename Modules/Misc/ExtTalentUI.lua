@@ -213,52 +213,11 @@ function M:TalentUI_CreatePanel(i)
 	return frame
 end
 
-local currentSpecTab
-
-local function SelectRole(self)
-	if InCombatLockdown() then P:Error(ERR_NOT_IN_COMBAT) return end
-
-	if currentSpecTab then
-		SetTalentGroupRole(currentSpecTab, self.value)
-	end
-end
-
-local function IsRoleChecked(self)
-	local currentRole = currentSpecTab and GetTalentGroupRole(currentSpecTab) or "NONE"
-	return currentRole == self.value
-end
-
-local roleList = {
-	{text = P.TextureString(B.GetRoleTex("TANK"), ":16:16")..TANK, func = SelectRole, classicChecks = true, value = "TANK", checked = IsRoleChecked},
-	{text = P.TextureString(B.GetRoleTex("HEALER"), ":16:16")..HEALER, func = SelectRole, classicChecks = true, value = "HEALER", checked = IsRoleChecked},
-	{text = P.TextureString(B.GetRoleTex("DAMAGER"), ":16:16")..DAMAGER, func = SelectRole, classicChecks = true, value = "DAMAGER", checked = IsRoleChecked},
-}
-
-local RoleDropDown
-
 local function TalentSpecTab_OnClick(self, btn)
 	PlaySound(SOUNDKIT.IG_CHARACTER_INFO_TAB)
 
 	local specIndex = self.specIndex
 	local spec = specs[specIndex]
-
-	if btn == "RightButton" then
-		self:SetChecked(not self:GetChecked())
-
-		if not spec.pet then
-			currentSpecTab = spec.talentGroup
-
-			if not RoleDropDown then
-				RoleDropDown = CreateFrame("Frame", "NDuiPlus_RoleDropMenu", UIParent, "UIDropDownMenuTemplate")
-				RoleDropDown.displayMode = "MENU"
-				RoleDropDown.initialize = EasyMenu_Initialize
-			end
-
-			ToggleDropDownMenu(1, nil, RoleDropDown, "cursor", 10, -10, roleList)
-		end
-
-		return
-	end
 
 	for _, frame in next, specTabs do
 		frame:SetChecked(nil)
@@ -286,25 +245,14 @@ end
 local function TalentSpecTab_OnEnter(self)
 	local specIndex = self.specIndex
 	local spec = specs[specIndex]
-	local role = GetTalentGroupRole(spec.talentGroup)
 	if spec.tooltip then
 		GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
 		local numTalentGroups, numPetTalentGroups = GetNumTalentGroups(false, false), GetNumTalentGroups(false, true)
 
 		if numPetTalentGroups <= 1 and numTalentGroups <= 1 then
-			if not spec.pet then
-				GameTooltip:AddDoubleLine(UnitName(spec.unit), P.TextureString(B.GetRoleTex(role), ":16:16"), NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b)
-				GameTooltip:AddLine(" ")
-			else
-				GameTooltip:AddLine(UnitName(spec.unit), NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b)
-			end
+			GameTooltip:AddLine(UnitName(spec.unit), NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b)
 		else
-			if not spec.pet then
-				GameTooltip:AddDoubleLine(spec.tooltip, P.TextureString(B.GetRoleTex(role), ":16:16"))
-				GameTooltip:AddLine(" ")
-			else
-				GameTooltip:AddLine(spec.tooltip)
-			end
+			GameTooltip:AddLine(spec.tooltip)
 			if self.specIndex == activeSpec then
 				GameTooltip:AddLine(TALENT_ACTIVE_SPEC_STATUS, GREEN_FONT_COLOR.r, GREEN_FONT_COLOR.g, GREEN_FONT_COLOR.b)
 			end
@@ -329,11 +277,10 @@ local function TalentSpecTab_OnEnter(self)
 		end
 
 		if not spec.pet then
-			GameTooltip:AddLine(" ")
 			if numTalentGroups > 1 and specIndex ~= activeSpec then
+				GameTooltip:AddLine(" ")
 				GameTooltip:AddLine(P.LeftButtonTip(L["QuickChangeTalents"]), .6, .8, 1)
 			end
-			GameTooltip:AddLine(P.RightButtonTip(SET_ROLE_TOOLTIP), .6, .8, 1)
 		end
 
 		GameTooltip:Show()
@@ -365,7 +312,7 @@ function M:TalentUI_CreateSpecTab(i, specIndex)
 	tab:SetID(i)
 	tab.specIndex = specIndex
 	specTabs[specIndex] = tab
-	tab:RegisterForClicks("LeftButtonUp", "RightButtonUp")
+	-- tab:RegisterForClicks("LeftButtonUp", "RightButtonUp")
 	tab:RegisterEvent("TALENT_GROUP_ROLE_CHANGED")
 	tab:SetScript("OnClick", TalentSpecTab_OnClick)
 	tab:SetScript("OnDoubleClick", TalentSpecTab_OnDoubleClick)
@@ -1010,7 +957,7 @@ function M.TalentUI_UpdateSpecs(activeTalentGroup, numTalentGroups, activePetTal
 	end
 
 	if numShown == 1 and lastShownTab then
-		--lastShownTab:Hide()
+		-- lastShownTab:Hide()
 	end
 
 	return true
