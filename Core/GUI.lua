@@ -599,9 +599,21 @@ function G:SetupToggle()
 end
 
 function G:OnLogin()
-	local NDuiBtn = _G.GameMenuFrameNDui
-	if not NDuiBtn then return end
-	NDuiBtn:HookScript("PostClick",G.SetupToggle)
+	if P.isNewPatch then
+		local NL = select(3, unpack(_G.NDui))
+		hooksecurefunc(_G.GameMenuFrame, "InitButtons", function(self)
+			for button in self.buttonPool:EnumerateActive() do
+				if button:GetText() == NL["NDui Console"] then
+					button:HookScript("PostClick", G.SetupToggle)
+					break
+				end
+			end
+		end)
+	else
+		local NDuiBtn = _G.GameMenuFrameNDui
+		if not NDuiBtn then return end
+		NDuiBtn:HookScript("PostClick", G.SetupToggle)
+	end
 end
 
 SlashCmdList["NDUI_PLUS"] = function(msg)
