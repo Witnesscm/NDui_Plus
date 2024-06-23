@@ -2,50 +2,8 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 local S = P:GetModule("Skins")
 
-local function SkinBagFrame(self)
-	local frame = self.frame
-	if not frame then return end
-
-	B.StripTextures(frame)
-	B.SetBD(frame)
-	S:Proxy("ReskinClose", frame.CloseButton)
-
-	local portrait = frame.PortraitContainer
-	if portrait then
-		B.StripTextures(portrait)
-		local button = portrait:GetChildren()
-		if button then
-			B.StripTextures(button)
-			B.Reskin(button)
-			button:SetSize(32, 32)
-			button:ClearAllPoints()
-			button:SetPoint("TOPLEFT", frame, "TOPLEFT", 6, -6)
-			button.Icon = button:CreateTexture(nil, "ARTWORK")
-			button.Icon:SetTexture([[Interface\Icons\INV_Misc_Bag_07]])
-			button.Icon:SetInside()
-			button.Icon:SetTexCoord(unpack(DB.TexCoord))
-		end
-	end
-
-	local searchBox = self.searchBox and self.searchBox.frame
-	if searchBox then
-		searchBox:ClearAllPoints()
-		searchBox:SetPoint("TOP", 0, -6)
-	end
-end
-
 local function SkinSearchBox(self)
 	S:Proxy("ReskinInput", self.textBox)
-end
-
-local function SkinSearchFrame(self)
-	S:Proxy("StripTextures", self.frame)
-	S:Proxy("SetBD", self.frame)
-end
-
-local function SkinBagSlots(self)
-	S:Proxy("StripTextures", self.frame)
-	S:Proxy("SetBD", self.frame)
 end
 
 local function SkinItemButton(self)
@@ -81,6 +39,10 @@ local function updateQuestTag(self, isQuestItem, questID, isActive)
 	else
 		self.QuestTag:Hide()
 	end
+
+	if questID or isQuestItem then
+		self.bg:SetBackdropBorderColor(.8, .8, 0)
+	end
 end
 
 local function SkinContainerButton(self)
@@ -90,7 +52,7 @@ local function SkinContainerButton(self)
 		self.button.IconQuestTexture:SetAlpha(0)
 		self.button.ItemSlotBackground:SetAlpha(0)
 		self.button.QuestTag = B.CreateFS(self.button, 30, "!", "system", "LEFT", 3, 0)
-		hooksecurefunc(self.button, "UpdateQuestItem", updateQuestTag)
+		self.button.UpdateQuestItem = updateQuestTag
 		self.ilvlText:SetPoint("BOTTOMLEFT", 1, 1)
 		B.SetFontSize(self.ilvlText, 13)
 
@@ -123,8 +85,6 @@ local function SkinCurrencyItems(self)
 end
 
 local function SkinCurrencyFrame(self)
-	S:Proxy("StripTextures", self.frame)
-	S:Proxy("SetBD", self.frame)
 	SkinCurrencyItems(self)
 	hooksecurefunc(self, "Update", SkinCurrencyItems)
 end
@@ -154,9 +114,6 @@ local function SkinSectionItem(self)
 end
 
 local function SkinSectionConfig(self)
-	S:Proxy("StripTextures", self.frame)
-	S:Proxy("SetBD", self.frame)
-
 	if self.content and self.content.ScrollBox then
 		hooksecurefunc(self.content.ScrollBox, "Update", function(self)
 			self:ForEachFrame(SkinSectionItem)
@@ -164,16 +121,16 @@ local function SkinSectionConfig(self)
 	end
 end
 
-local function SkinSectionItemList(self)
-	S:Proxy("StripTextures", self.frame)
-	S:Proxy("SetBD", self.frame)
-end
-
 function S:BetterBags()
 	if not S.db["BetterBags"] then return end
 
 	local BetterBags = LibStub("AceAddon-3.0"):GetAddon("BetterBags")
 	if not BetterBags then return end
+
+	local ItemFrame = BetterBags:GetModule("ItemFrame")
+	local Themes = BetterBags:GetModule("Themes")
+	local Search = BetterBags:GetModule("Search")
+	local Database = BetterBags:GetModule("Database")
 
 	local function hook(name, method, func)
 		local module = BetterBags:GetModule(name)
@@ -189,10 +146,7 @@ function S:BetterBags()
 		end
 	end
 
-	hook("BagFrame", "Create", SkinBagFrame)
 	hook("Search", "CreateBox", SkinSearchBox)
-	hook("Search", "Create", SkinSearchFrame)
-	hook("BagSlots", "CreatePanel", SkinBagSlots)
 	hook("BagButton", "Create", SkinBagButton)
 	hook("ItemFrame", "Create", SkinContainerButton)
 	hook("Currency", "Create", SkinCurrencyFrame)
@@ -200,7 +154,145 @@ function S:BetterBags()
 	hook("Question", "_OnCreate", SkinQuestion)
 	hook("List", "Create", SkinList)
 	hook("SectionConfig", "Create", SkinSectionConfig)
-	hook("SectionItemList", "Create", SkinSectionItemList)
+
+	-- update quest tag
+	B:RegisterEvent("UNIT_QUEST_LOG_CHANGED", function()
+		for item in ItemFrame._pool:EnumerateActive() do
+			if item.kind and item.data then
+				local questInfo = C_Container.GetContainerItemQuestInfo(item.data.bagid, item.data.slotid)
+				item.button:UpdateQuestItem(questInfo.isQuestItem, questInfo.questID, questInfo.isActive)
+			end
+		end
+	end)
+
+	-- register theme
+	local decoratorFrames = {}
+
+	local theme = {
+		Name = "NDui",
+		Description = "NDui Theme for BetterBags",
+		Available = true,
+		Portrait = function(frame)
+			local decoration = decoratorFrames[frame:GetName()]
+			if not decoration then
+				decoration = CreateFrame("Frame", frame:GetName() .. "ThemeNDui", frame)
+				decoration:SetAllPoints()
+				decoration:SetFrameLevel(frame:GetFrameLevel() - 1)
+				decoration.CloseButton = CreateFrame("Button", frame:GetName() .. "CloseButton", decoration)
+				decoration.CloseButton:SetScript("OnClick", function()
+					frame.Owner:Hide()
+				end)
+				decoration.CloseButton:SetPoint("TOPRIGHT", decoration, "TOPRIGHT", -4, -4)
+				decoration.CloseButton:SetSize(24, 24)
+				decoration.CloseButton:SetFrameLevel(1001)
+				B.ReskinClose(decoration.CloseButton)
+
+				local searchBox = Search:CreateBox(frame.Owner.kind, decoration)
+				searchBox.frame:SetPoint("TOP", decoration, "TOP", 0, -14)
+				searchBox.frame:SetSize(150, 20)
+				decoration.search = searchBox
+
+				local title = decoration:CreateFontString(nil, "OVERLAY", "GameFontWhite")
+				title:SetPoint("TOP", decoration, "TOP", 0, 0)
+				title:SetHeight(30)
+				decoration.title = title
+
+				if Themes.titles[frame:GetName()] then
+					decoration.title:SetText(Themes.titles[frame:GetName()])
+				end
+
+				local bagButton = Themes.SetupBagButton(frame.Owner, decoration)
+				B.StripTextures(bagButton)
+				B.Reskin(bagButton)
+				bagButton:SetSize(32, 32)
+				bagButton:ClearAllPoints()
+				bagButton:SetPoint("TOPLEFT", decoration, "TOPLEFT", 6, -6)
+				bagButton.Icon = bagButton:CreateTexture(nil, "ARTWORK")
+				bagButton.Icon:SetTexture([[Interface\Icons\INV_Misc_Bag_07]])
+				bagButton.Icon:SetInside()
+				bagButton.Icon:SetTexCoord(unpack(DB.TexCoord))
+				B.StripTextures(decoration)
+				B.SetBD(decoration)
+				decoratorFrames[frame:GetName()] = decoration
+			else
+				decoration:Show()
+			end
+		end,
+		Simple = function(frame)
+			local decoration = decoratorFrames[frame:GetName()]
+			if not decoration then
+				decoration = CreateFrame("Frame", frame:GetName() .. "ThemeElvUI", frame)
+				decoration:SetAllPoints()
+				decoration:SetFrameLevel(frame:GetFrameLevel() - 1)
+				decoration.CloseButton = CreateFrame("Button", frame:GetName() .. "CloseButton", decoration)
+				decoration.CloseButton:SetScript("OnClick", function()
+					frame:Hide()
+				end)
+				decoration.CloseButton:SetPoint("TOPRIGHT", decoration, "TOPRIGHT", -4, -4)
+				decoration.CloseButton:SetSize(24, 24)
+				decoration.CloseButton:SetFrameLevel(1001)
+				B.ReskinClose(decoration.CloseButton)
+
+				local title = decoration:CreateFontString(nil, "OVERLAY", "GameFontWhite")
+				title:SetPoint("TOP", decoration, "TOP", 0, 0)
+				title:SetHeight(30)
+				decoration.title = title
+
+				if Themes.titles[frame:GetName()] then
+					decoration.title:SetText(Themes.titles[frame:GetName()])
+				end
+
+				B.StripTextures(decoration)
+				B.SetBD(decoration)
+				decoratorFrames[frame:GetName()] = decoration
+			else
+				decoration:Show()
+			end
+		end,
+		Flat = function(frame)
+			local decoration = decoratorFrames[frame:GetName()]
+			if not decoration then
+				decoration = CreateFrame("Frame", frame:GetName() .. "ThemeElvUI", frame) --[[@as ElvUIDecoration]]
+				decoration:SetAllPoints()
+				decoration:SetFrameLevel(frame:GetFrameLevel() - 1)
+				B.StripTextures(decoration)
+				B.SetBD(decoration)
+				decoratorFrames[frame:GetName()] = decoration
+			else
+				decoration:Show()
+			end
+		end,
+		Opacity = B.Dummy,
+		Reset = function()
+			for _, frame in pairs(decoratorFrames) do
+				frame:Hide()
+			end
+		end,
+		SectionFont = function(font)
+			font:SetFontObject("GameFontNormal")
+		end,
+		SetTitle = function(frame, title)
+			local decoration = decoratorFrames[frame:GetName()]
+			if decoration then
+				decoration.title:SetText(title)
+			end
+		end,
+		ToggleSearch = function(frame, shown)
+			local decoration = decoratorFrames[frame:GetName()]
+			if decoration then
+				decoration.search:SetShown(shown)
+				if shown then
+					decoration.title:Hide()
+				else
+					decoration.title:Show()
+				end
+			end
+		end,
+	}
+	Themes:RegisterTheme("ndui", theme)
+
+	-- load theme
+	Database:SetTheme("ndui")
 end
 
 S:RegisterSkin("BetterBags", S.BetterBags, true)
