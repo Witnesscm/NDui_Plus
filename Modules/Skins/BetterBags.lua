@@ -2,8 +2,9 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 local S = P:GetModule("Skins")
 
-local function SkinSearchBox(self)
-	S:Proxy("ReskinInput", self.textBox)
+local function SkinSearchFrame(self)
+	S:Proxy("StripTextures", self.frame)
+	S:Proxy("SetBD", self.frame)
 end
 
 local function SkinItemButton(self)
@@ -26,8 +27,10 @@ end
 local function SkinBagButton(self)
 	if self.frame and not self.frame.styled then
 		SkinItemButton(self.frame)
-		self.frame.ItemSlotBackground:SetTexture([[Interface\Paperdoll\UI-PaperDoll-Slot-Bag]])
-		self.frame.ItemSlotBackground:SetTexCoord(unpack(DB.TexCoord))
+		if self.frame.ItemSlotBackground then
+			self.frame.ItemSlotBackground:SetTexture([[Interface\Paperdoll\UI-PaperDoll-Slot-Bag]])
+			self.frame.ItemSlotBackground:SetTexCoord(unpack(DB.TexCoord))
+		end
 
 		self.frame.styled = true
 	end
@@ -47,12 +50,11 @@ end
 
 local function SkinContainerButton(self)
 	if self.button and not self.button.styled then
-		SkinItemButton(self.button)
-		self.button.Cooldown:SetInside()
-		self.button.IconQuestTexture:SetAlpha(0)
-		self.button.ItemSlotBackground:SetAlpha(0)
-		self.button.QuestTag = B.CreateFS(self.button, 30, "!", "system", "LEFT", 3, 0)
-		self.button.UpdateQuestItem = updateQuestTag
+		self.button:SetNormalTexture(0)
+		self.button:SetPushedTexture(0)
+		self.button:SetHighlightTexture(DB.bdTex)
+		self.button:GetHighlightTexture():SetVertexColor(1, 1, 1, .25)
+		self.button:GetHighlightTexture():SetInside()
 		self.ilvlText:SetPoint("BOTTOMLEFT", 1, 1)
 		B.SetFontSize(self.ilvlText, 13)
 
@@ -134,7 +136,7 @@ function S:BetterBags()
 
 	local function hook(name, method, func)
 		local module = BetterBags:GetModule(name)
-		if module and module[method]then
+		if module and module[method] then
 			local orig = module[method]
 			module[method] = function(...)
 				local obj = orig(...)
@@ -146,7 +148,7 @@ function S:BetterBags()
 		end
 	end
 
-	hook("Search", "CreateBox", SkinSearchBox)
+	hook("Search", "Create", SkinSearchFrame)
 	hook("BagButton", "Create", SkinBagButton)
 	hook("ItemFrame", "Create", SkinContainerButton)
 	hook("Currency", "Create", SkinCurrencyFrame)
@@ -155,18 +157,25 @@ function S:BetterBags()
 	hook("List", "Create", SkinList)
 	hook("SectionConfig", "Create", SkinSectionConfig)
 
-	-- update quest tag
+	-- tooltip
+	hooksecurefunc(ItemFrame, "OnEnable", function(self)
+		P.ReskinTooltip(self.emptyItemTooltip)
+	end)
+
+	-- [BetterBags fix] update quest tag when accept/abandon
 	B:RegisterEvent("UNIT_QUEST_LOG_CHANGED", function()
 		for item in ItemFrame._pool:EnumerateActive() do
 			if item.kind and item.data then
+				local button = Themes:GetItemButton(item)
 				local questInfo = C_Container.GetContainerItemQuestInfo(item.data.bagid, item.data.slotid)
-				item.button:UpdateQuestItem(questInfo.isQuestItem, questInfo.questID, questInfo.isActive)
+				button:UpdateQuestItem(questInfo.isQuestItem, questInfo.questID, questInfo.isActive)
 			end
 		end
 	end)
 
 	-- register theme
 	local decoratorFrames = {}
+	local itemButtons = {}
 
 	local theme = {
 		Name = "NDui",
@@ -190,6 +199,7 @@ function S:BetterBags()
 				local searchBox = Search:CreateBox(frame.Owner.kind, decoration)
 				searchBox.frame:SetPoint("TOP", decoration, "TOP", 0, -14)
 				searchBox.frame:SetSize(150, 20)
+				S:Proxy("ReskinInput", searchBox.textBox)
 				decoration.search = searchBox
 
 				local title = decoration:CreateFontString(nil, "OVERLAY", "GameFontWhite")
@@ -221,7 +231,7 @@ function S:BetterBags()
 		Simple = function(frame)
 			local decoration = decoratorFrames[frame:GetName()]
 			if not decoration then
-				decoration = CreateFrame("Frame", frame:GetName() .. "ThemeElvUI", frame)
+				decoration = CreateFrame("Frame", frame:GetName() .. "ThemeNDui", frame)
 				decoration:SetAllPoints()
 				decoration:SetFrameLevel(frame:GetFrameLevel() - 1)
 				decoration.CloseButton = CreateFrame("Button", frame:GetName() .. "CloseButton", decoration)
@@ -252,7 +262,7 @@ function S:BetterBags()
 		Flat = function(frame)
 			local decoration = decoratorFrames[frame:GetName()]
 			if not decoration then
-				decoration = CreateFrame("Frame", frame:GetName() .. "ThemeElvUI", frame) --[[@as ElvUIDecoration]]
+				decoration = CreateFrame("Frame", frame:GetName() .. "ThemeNDui", frame)
 				decoration:SetAllPoints()
 				decoration:SetFrameLevel(frame:GetFrameLevel() - 1)
 				B.StripTextures(decoration)
@@ -266,6 +276,9 @@ function S:BetterBags()
 		Reset = function()
 			for _, frame in pairs(decoratorFrames) do
 				frame:Hide()
+			end
+			for _, button in pairs(itemButtons) do
+				button:Hide()
 			end
 		end,
 		SectionFont = function(font)
@@ -288,6 +301,30 @@ function S:BetterBags()
 				end
 			end
 		end,
+		ItemButton = function(item)
+			local buttonName = item.button:GetName()
+			local button = itemButtons[buttonName]
+			if button then
+				button:Show()
+				return button
+			end
+			button = Themes.CreateBlankItemButtonDecoration(item.frame, "NDui", buttonName)
+			button:Show()
+			SkinItemButton(button)
+			if button.Cooldown then
+				button.Cooldown:SetInside()
+			end
+			if button.ItemSlotBackground then
+				button.ItemSlotBackground:SetAlpha(0)
+			end
+			if button.IconQuestTexture then
+				button.IconQuestTexture:SetAlpha(0)
+				button.QuestTag = B.CreateFS(button, 30, "!", "system", "LEFT", 3, 0)
+				button.UpdateQuestItem = updateQuestTag
+			end
+			itemButtons[buttonName] = button
+			return button
+		end
 	}
 	Themes:RegisterTheme("ndui", theme)
 
