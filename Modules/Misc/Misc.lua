@@ -194,18 +194,6 @@ do
 	P:AddCallbackForAddon("Blizzard_TalentUI", M.QuickChangeTalents)
 end
 
--- fix Blizz GlyphUI mouse wheel
-do
-	function M:FixGlyphUIMouseWheel()
-		local scrollFrame = _G.GlyphFrame.scrollFrame
-		if scrollFrame.stepSize and scrollFrame.stepSize < scrollFrame.buttonHeight then
-			scrollFrame.stepSize = nil
-		end
-	end
-
-	P:AddCallbackForAddon("Blizzard_GlyphUI", M.FixGlyphUIMouseWheel)
-end
-
 -- fix Blizz CharacterFrame auto expand, because CVar 'characterFrameCollapsed' is not implemented
 do
 	local function ExpandCharacterFrame()
