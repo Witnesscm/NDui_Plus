@@ -26,8 +26,13 @@ local function SkinRLWidget(self)
 	self.styled = true
 end
 
-local function SkinNewRLWidget(self)
-	SkinRLWidget(_G["ReforgeLiteWidget"..self.widgetCount])
+local widgetCount = 1
+
+local function SkinAllWidgets()
+	while _G["ReforgeLiteWidget"..widgetCount] do
+		SkinRLWidget(_G["ReforgeLiteWidget"..widgetCount])
+		widgetCount = widgetCount + 1
+	end
 end
 
 local function SkinMethodCategory(self)
@@ -35,6 +40,7 @@ local function SkinMethodCategory(self)
 		reskinCollapse(self.methodCategory)
 		S:Proxy("Reskin", self.methodShow)
 		S:Proxy("Reskin", self.methodReset)
+		S:Proxy("Reskin", self.importWowSims)
 
 		self.methodCategory.styled = true
 	end
@@ -79,22 +85,25 @@ function S:ReforgeLite()
 	end)
 
 	-- Widget
-	local GUI = _G.ReforgeLiteGUI
-	for index = 1, GUI.widgetCount do
-		SkinRLWidget(_G["ReforgeLiteWidget"..index])
+	SkinAllWidgets()
+	for _, method in ipairs({"AddCapPoint", "UpdateStatWeightList", "CreateOptionList", "FillSettings", "ShowMethodWindow"}) do
+		if frame[method] and type(frame[method]) == "function" then
+			hooksecurefunc(frame, method, SkinAllWidgets)
+		end
 	end
 
-	hooksecurefunc(GUI, "CreateEditBox", SkinNewRLWidget)
-	hooksecurefunc(GUI, "CreateDropdown", SkinNewRLWidget)
-	hooksecurefunc(GUI, "CreateCheckButton", SkinNewRLWidget)
-
 	-- ErrorFrame
-	local ErrorFrame = _G.ReforgeLiteErrorFrame
-	if ErrorFrame then
-		B.StripTextures(ErrorFrame)
-		B.SetBD(ErrorFrame)
-		S:Proxy("Reskin", ErrorFrame.ok)
-		S:Proxy("ReskinScroll", ErrorFrame.scroll.ScrollBar)
+	if frame.DebugMethod then
+		hooksecurefunc(frame, "DebugMethod", function()
+			local ErrorFrame = _G.ReforgeLiteErrorFrame
+			if ErrorFrame and not ErrorFrame.styled then
+				B.StripTextures(ErrorFrame)
+				B.SetBD(ErrorFrame)
+				S:Proxy("Reskin", ErrorFrame.ok)
+				S:Proxy("ReskinScroll", ErrorFrame.scroll.ScrollBar)
+				ErrorFrame.styled = true
+			end
+		end)
 	end
 end
 
