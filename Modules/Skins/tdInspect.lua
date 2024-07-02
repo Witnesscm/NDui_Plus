@@ -157,6 +157,10 @@ function S:tdInspect()
 		end
 	end)
 
+	if UISlotItem.UpdateItemLevel then
+		UISlotItem.UpdateItemLevel = B.Dummy
+	end
+
 	local anchored
 	hooksecurefunc(UIInspectFrame, "OnShow", function()
 		if anchored then return end
