@@ -129,9 +129,15 @@ function AB:MageBar_UpdateCooldown()
 	end
 end
 
+local lastTime = 0
 function AB:MageBar_UpdateUsable()
-	for _, button in ipairs(mageButtons) do
-		AB.MageButton_UpdateUsable(button)
+	local thisTime = GetTime()
+	if thisTime - lastTime > .5 then
+		for _, button in ipairs(mageButtons) do
+			AB.MageButton_UpdateUsable(button)
+		end
+
+		lastTime = thisTime
 	end
 end
 
@@ -371,13 +377,13 @@ function AB:MageBar_Toggle()
 		AB:MageBar_Update()
 		B:RegisterEvent("LEARNED_SPELL_IN_TAB", AB.MageBar_Update)
 		B:RegisterEvent("ACTIONBAR_UPDATE_COOLDOWN", AB.MageBar_UpdateCooldown)
-		B:RegisterEvent("ACTIONBAR_UPDATE_USABLE", AB.MageBar_UpdateUsable)
+		B:RegisterEvent("SPELL_UPDATE_USABLE", AB.MageBar_UpdateUsable)
 		B:RegisterEvent("UPDATE_SHAPESHIFT_FORMS", AB.MageBar_UpdateUsable)
 		AB.MageBar:Show()
 	else
 		B:UnregisterEvent("LEARNED_SPELL_IN_TAB", AB.MageBar_Update)
 		B:UnregisterEvent("ACTIONBAR_UPDATE_COOLDOWN", AB.MageBar_UpdateCooldown)
-		B:UnregisterEvent("ACTIONBAR_UPDATE_USABLE", AB.MageBar_UpdateUsable)
+		B:UnregisterEvent("SPELL_UPDATE_USABLE", AB.MageBar_UpdateUsable)
 		B:UnregisterEvent("UPDATE_SHAPESHIFT_FORMS", AB.MageBar_UpdateUsable)
 		AB.MageBar:Hide()
 	end
