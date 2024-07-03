@@ -25,6 +25,7 @@
 	<Script file="ls_Toasts.lua"/>
 	<Script file="MeetingHorn.lua"/>
 	<Script file="MerInspect.lua"/>
+	<Script file="MountJournalEnhanced.lua"/>
 	<Script file="Myslot.lua"/>
 	<Script file="NovaWorldBuffs.lua"/>
 	<Script file="Others.lua"/>
