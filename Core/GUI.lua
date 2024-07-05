@@ -95,6 +95,10 @@ local function updateArrowVisible()
 	P:GetModule("Skins"):UpdateArrowVisible()
 end
 
+local function clearInspectCache()
+	P:GetModule("Tooltip"):ClearInspectCache()
+end
+
 local function hideLootRoll()
 	if _G.NDuiPlus_LootRoll then _G.NDuiPlus_LootRoll:Hide() end
 end
@@ -135,7 +139,7 @@ end
 
 -- Config
 local HeaderTag = "|cff00cc4c"
-local NewFeatureTag = "|TInterface\\OptionsFrame\\UI-OptionsFrame-NewFeatureIcon:0|t"
+local NewTag = "|TInterface\\OptionsFrame\\UI-OptionsFrame-NewFeatureIcon:0|t"
 
 G.TabList = {
 	L["Actionbar"],
@@ -143,6 +147,7 @@ G.TabList = {
 	L["UnitFrames"],
 	L["Chat"],
 	L["Skins"],
+	NewTag..L["Tooltip"],
 	L["Misc"],
 }
 
@@ -230,6 +235,10 @@ G.OptionList = { -- type, key, value, name, horizon, data, callback, tooltip, sc
 		{1, "Skins", "CategoryArrow", L["CategoryArrow"].."*", true, nil, updateArrowVisible},
 	},
 	[6] = {
+		{1, "Tooltip", "SpecLevel", NewTag..HeaderTag..L["SpecLevel"].."*"},
+		{1, "Tooltip", "TalentPoints", L["TalentPoints"].."*", true, nil, clearInspectCache},
+	},
+	[7] = {
 		{1, "Loot", "Enable", HeaderTag..L["LootEnhancedEnable"], nil, nil, nil, L["LootEnhancedTip"]},
 		{1, "Loot", "Announce", L["LootAnnounceButton"]},
 		{1, "Loot", "AnnounceTitle", L["Announce Target Name"].."*"},

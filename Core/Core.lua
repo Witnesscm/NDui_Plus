@@ -126,6 +126,10 @@ P.DefaultSettings = {
 		HideToggle = false,
 		CategoryArrow = false,
 	},
+	Tooltip = {
+		SpecLevel = true,
+		TalentPoints = false,
+	},
 	Misc = {
 		ExtTrainerUI = true,
 		GuildExpand = false,

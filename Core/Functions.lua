@@ -5,10 +5,10 @@ local cr, cg, cb = DB.r, DB.g, DB.b
 local _G = getfenv(0)
 local select, pairs, type = select, pairs, type
 
--- Math
 do
-	-- AceTimer
+	-- Libs
 	_G.LibStub("AceTimer-3.0"):Embed(P)
+	_G.LibStub("AceComm-3.0"):Embed(P)
 
 	function P:WaitFunc(elapse)
 		local i = 1
@@ -423,5 +423,19 @@ do
 			end
 		end
 		return copy
+	end
+
+	function P.Memorize(func)
+		local cache = {}
+
+		return function(k, ...)
+			if not k then
+				return
+			end
+			if not cache[k] then
+				cache[k] = func(k, ...)
+			end
+			return cache[k]
+		end
 	end
 end

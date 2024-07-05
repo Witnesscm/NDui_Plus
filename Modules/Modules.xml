@@ -4,5 +4,6 @@
 	<Include file="Chat\Chat.xml"/>
 	<Include file="Skins\Skins.xml"/>
 	<Include file="Misc\Misc.xml"/>
+	<Include file="Tooltip\Tooltip.xml"/>
 	<Include file="UnitFrames\UnitFrames.xml"/>
 </Ui>
