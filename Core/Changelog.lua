@@ -2,6 +2,13 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 
 P.Changelog = [[
+v3.4.3
+[鼠标提示] 添加天赋和装备等级显示
+[美化] 添加 MountJournalEnhanced 美化
+[美化] 更新 ThreatClassic2 美化
+[美化] 更新 tdInspect 美化
+[美化] 修复 Restocker 美化
+
 v3.4.2
 [聊天] 修复启用聊天框隐藏时背景层级问题
 [易用性] 移除天赋面板扩展职责选择
