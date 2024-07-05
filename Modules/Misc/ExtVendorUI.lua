@@ -27,6 +27,11 @@ function M:ExtVendor_UpdateMerchantPositions()
 			end
 		end
 	end
+
+	if not CanMerchantRepair() then
+		_G.MerchantSellAllJunkButton:ClearAllPoints()
+		_G.MerchantSellAllJunkButton:SetPoint("RIGHT", _G.MerchantBuyBackItem, "LEFT", -36, 0)
+	end
 end
 
 function M:ExtVendor_UpdateBuybackPositions()
