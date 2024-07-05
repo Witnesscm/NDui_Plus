@@ -129,6 +129,7 @@ P.DefaultSettings = {
 	Tooltip = {
 		SpecLevel = true,
 		TalentPoints = false,
+		TalentIcon = false,
 	},
 	Misc = {
 		ExtTrainerUI = true,

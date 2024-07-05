@@ -8,7 +8,6 @@ local levelPrefix = STAT_AVERAGE_ITEM_LEVEL .. ": " .. DB.InfoColor
 local isPending = LFG_LIST_LOADING
 local resetTime, frequency = 900, .5
 local cache, currentUNIT, currentGUID = {}
-local talentCache = {}
 
 function T:InspectOnUpdate(elapsed)
 	self.elapsed = (self.elapsed or frequency) + elapsed
@@ -581,16 +580,15 @@ local GetClassFileName = P.Memorize(function(classId)
 end)
 
 function T:GetRemoteSpec(db)
+	local talentData = TalentTabData[GetClassFileName(db.class)]
 	local data = db.talents[db.activeGroup]
 	data = data:gsub("[^%d]+", "")
 
-	local talentData = TalentTabData[GetClassFileName(db.class)]
-	local specName = NONE
+	local specName, specIcon = NONE
 	local higher = 0
+	local points = {}
 	local index = 1
 	for i = 1, #talentData do
-		talentCache[i] = {}
-
 		local pointsSpent = 0
 		for j = 1, talentData[i].numTalents do
 			local point = tonumber(data:sub(index, index)) or 0
@@ -601,14 +599,17 @@ function T:GetRemoteSpec(db)
 		if pointsSpent > higher then
 			higher = pointsSpent
 			specName = talentData[i].name
+			specIcon = talentData[i].icon
 		end
 
-		talentCache[i].name = talentData[i].name
-		talentCache[i].icon = talentData[i].icon
-		talentCache[i].point = pointsSpent
+		points[i] = pointsSpent
 	end
 
-	return T.db["TalentPoints"] and format("%s (%d/%d/%d)", specName, talentCache[1].point, talentCache[2].point, talentCache[3].point) or specName
+	if specIcon and T.db["TalentIcon"] then
+		specName = format("%s %s", P.TextureString(specIcon, ":0:0:0:-2:64:64:5:59:5:59"), specName)
+	end
+
+	return T.db["TalentPoints"] and format("%s (%d/%d/%d)", specName, points[1], points[2], points[3]) or specName
 end
 
 function T:GetRemoteItemLevel(db)
@@ -673,7 +674,7 @@ function T:WaitItemLevel(id, ok)
 	if not next(T.waitingItems) then
 		local name = T:GetFullName(GetUnitName(currentUNIT, true))
 		local db = name and T:BuildCharacterDb(name)
-		if db and db.guid and cache[db.guid] then
+		if db and db.guid and cache[db.guid] and db.equips then
 			local spec = cache[db.guid].spec
 			local level = T:GetRemoteItemLevel(db)
 			cache[db.guid].level = level
@@ -851,23 +852,26 @@ function T:GetUnitSpec(unit)
 	local isInspect = unit ~= "player"
 	local talentGroup = GetActiveTalentGroup(isInspect)
 
-	local specName = NONE
+	local specName, specIcon = NONE
 	local higher = 0
+	local points = {}
 	for i = 1, 3 do
-		talentCache[i] = {}
 		local name, icon, point = GetTalentTabInfo(i, isInspect, false, talentGroup)
 
 		if point > higher then
 			higher = point
 			specName = name
+			specIcon = icon
 		end
 
-		talentCache[i].name = name
-		talentCache[i].icon = icon
-		talentCache[i].point = point
+		points[i] = point
 	end
 
-	return T.db["TalentPoints"] and format("%s (%d/%d/%d)", specName, talentCache[1].point, talentCache[2].point, talentCache[3].point) or specName
+	if specIcon and T.db["TalentIcon"] then
+		specName = format("%s %s", P.TextureString(specIcon, ":0:0:0:-2:64:64:5:59:5:59"), specName)
+	end
+
+	return T.db["TalentPoints"] and format("%s (%d/%d/%d)", specName, points[1], points[2], points[3]) or specName
 end
 
 function T:InspectUnit(unit, forced)

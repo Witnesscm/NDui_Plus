@@ -237,6 +237,7 @@ G.OptionList = { -- type, key, value, name, horizon, data, callback, tooltip, sc
 	[6] = {
 		{1, "Tooltip", "SpecLevel", NewTag..HeaderTag..L["SpecLevel"].."*"},
 		{1, "Tooltip", "TalentPoints", L["TalentPoints"].."*", true, nil, clearInspectCache},
+		{1, "Tooltip", "TalentIcon", L["TalentIcon"].."*", nil, nil, clearInspectCache},
 	},
 	[7] = {
 		{1, "Loot", "Enable", HeaderTag..L["LootEnhancedEnable"], nil, nil, nil, L["LootEnhancedTip"]},

@@ -408,7 +408,7 @@ do
 		return P.RIGHT_MOUSE_BUTTON .. text
 	end
 
-	local t, d = "|T%s%s|t", ""
+	local t, d = "|T%s%s|t", ":0"
 	function P.TextureString(texture, data)
 		return format(t, texture, data or d)
 	end
