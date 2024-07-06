@@ -2,6 +2,10 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 
 P.Changelog = [[
+v3.4.4
+[鼠标提示] 添加天赋图标；修复观察部分对象时可能导致的报错
+[美化] 更新 tdAuction 美化
+
 v3.4.3
 [鼠标提示] 添加天赋和装备等级显示
 [美化] 添加 MountJournalEnhanced 美化
