@@ -9,6 +9,9 @@ local isPending = LFG_LIST_LOADING
 local resetTime, frequency = 900, .5
 local cache, currentUNIT, currentGUID = {}
 
+local ICON_STRING = ":0:0:0:-2:64:64:5:59:5:59"
+local PLAYER_NOT_FOUND_STRING = gsub(ERR_CHAT_PLAYER_NOT_FOUND_S, "%%s", "(.+)")
+
 function T:InspectOnUpdate(elapsed)
 	self.elapsed = (self.elapsed or frequency) + elapsed
 	if self.elapsed > frequency then
@@ -606,7 +609,7 @@ function T:GetRemoteSpec(db)
 	end
 
 	if specIcon and T.db["TalentIcon"] then
-		specName = format("%s %s", P.TextureString(specIcon, ":0:0:0:-2:64:64:5:59:5:59"), specName)
+		specName = format("%s %s", P.TextureString(specIcon, ICON_STRING), specName)
 	end
 
 	return T.db["TalentPoints"] and format("%s (%d/%d/%d)", specName, points[1], points[2], points[3]) or specName
@@ -655,6 +658,7 @@ function T:GetRemoteItemLevel(db)
 		if ilvl > 0 then ilvl = format("%.1f", ilvl) end
 	else
 		ilvl = nil
+		T.waitingUnits[db.name] = true
 	end
 
 	return ilvl
@@ -672,13 +676,17 @@ function T:WaitItemLevel(id, ok)
 	end
 
 	if not next(T.waitingItems) then
-		local name = T:GetFullName(GetUnitName(currentUNIT, true))
-		local db = name and T:BuildCharacterDb(name)
-		if db and db.guid and cache[db.guid] and db.equips then
-			local spec = cache[db.guid].spec
-			local level = T:GetRemoteItemLevel(db)
-			cache[db.guid].level = level
-			T:SetupSpecLevel(spec, level)
+		for name in pairs(T.waitingUnits) do
+			T.waitingUnits[name] = nil
+			local db = T:BuildCharacterDb(name)
+			if db.guid and cache[db.guid] then
+				local spec = cache[db.guid].spec
+				local level = T:GetRemoteItemLevel(db)
+				cache[db.guid].level = level
+				if currentUNIT and T:GetFullName(GetUnitName(currentUNIT, true)) == name then
+					T:SetupSpecLevel(spec, level)
+				end
+			end
 		end
 	end
 end
@@ -706,7 +714,13 @@ function T:CanOurInspect(unit)
 	if not unit then
 		return false
 	end
-	return UnitFactionGroup(unit) == T.myFaction
+	if UnitName(unit) == UNKNOWNOBJECT then
+		return false
+	end
+	if UnitFactionGroup(unit) ~= T.myFaction then
+		return false
+	end
+	return true
 end
 
 function T:GetFullName(name, realm)
@@ -724,7 +738,7 @@ function T:GetFullName(name, realm)
 end
 
 function T:BuildCharacterDb(name)
-	self.userCache[name] = self.userCache[name] or {}
+	self.userCache[name] = self.userCache[name] or { name = name }
 	return self.userCache[name]
 end
 
@@ -868,7 +882,7 @@ function T:GetUnitSpec(unit)
 	end
 
 	if specIcon and T.db["TalentIcon"] then
-		specName = format("%s %s", P.TextureString(specIcon, ":0:0:0:-2:64:64:5:59:5:59"), specName)
+		specName = format("%s %s", P.TextureString(specIcon, ICON_STRING), specName)
 	end
 
 	return T.db["TalentPoints"] and format("%s (%d/%d/%d)", specName, points[1], points[2], points[3]) or specName
@@ -939,11 +953,22 @@ function T:ClearInspectCache()
 	wipe(T.userCache)
 end
 
+function T:ErrorFilter(_, msg)
+	local name = strmatch(msg, PLAYER_NOT_FOUND_STRING)
+	local db = name and T:BuildCharacterDb(name)
+	if db and db.lastTime and GetTime() - db.lastTime < 5 then
+		return true
+	end
+	return false
+end
+
 function T:SpecLevel()
 	T.userCache = {}
 	T.waitingItems = {}
+	T.waitingUnits = {}
 	T.myFaction = UnitFactionGroup("player")
 	P:RegisterComm(ALA_PREFIX, T.OnAlaCommand)
 	B:RegisterEvent("UNIT_INVENTORY_CHANGED", T.GetInspectInfo)
 	B:RegisterEvent("GET_ITEM_INFO_RECEIVED", T.WaitItemLevel)
+	ChatFrame_AddMessageEventFilter("CHAT_MSG_SYSTEM", T.ErrorFilter)
 end
