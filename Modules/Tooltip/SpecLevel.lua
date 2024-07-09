@@ -772,7 +772,9 @@ function T:OnAlaCommand(msg, channel, sender)
 		cache[db.guid].spec = spec
 		cache[db.guid].level = level
 		cache[db.guid].getTime = GetTime()
-		T:SetupSpecLevel(spec, level)
+		if currentUNIT and T:GetFullName(GetUnitName(currentUNIT, true)) == name then
+			T:SetupSpecLevel(spec, level)
+		end
 	end
 end
 
