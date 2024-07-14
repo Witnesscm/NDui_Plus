@@ -64,7 +64,7 @@ function S:WhisperPop()
 
 	local notify = _G.WhisperPopNotifyButton
 	B.Reskin(notify)
-	notify:SetCheckedTexture("")
+	notify:SetCheckedTexture(0)
 	notify.icon:SetDesaturated(false)
 	notify.icon.SetDesaturated = B.Dummy
 	notify.icon:SetSize(12, 12)
