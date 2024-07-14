@@ -72,6 +72,7 @@ local function reskinHeader(header)
 	B.StripTextures(header.Overview)
 	header.Overview.Text:SetTextColor(1, 1, 1)
 	header.Overview.Text.SetTextColor = B.Dummy
+	P.ReskinFont(header.Overview.Text)
 end
 
 local function reskinSummary(summary)
@@ -80,6 +81,7 @@ local function reskinSummary(summary)
 	summary.Title.Text.SetTextColor = B.Dummy
 	summary.Overview.Text:SetTextColor(1, 1, 1)
 	summary.Overview.Text.SetTextColor = B.Dummy
+	P.ReskinFont(summary.Overview.Text)
 end
 
 local function reskinItemButton(self)
@@ -314,7 +316,9 @@ function S:MeetingHorn()
 
 		Encounter.BossTitle:SetTextColor(1, 1, 1)
 		Encounter.Panel1.Overview.Text:SetTextColor(1, 1, 1)
+		P.ReskinFont(Encounter.Panel1.Overview.Text)
 		Encounter.Panel2.Overview.Text:SetTextColor(1, 1, 1)
+		P.ReskinFont(Encounter.Panel2.Overview.Text)
 		B.ReskinInput(Encounter.Panel3.Url)
 
 		for i, tab in ipairs(Encounter.Tabs) do
@@ -516,9 +520,13 @@ function S:MeetingHorn()
 	-- MissionGuidance
 	local MissionGuidance = mainFrame.MissionGuidance
 	if MissionGuidance then
-		B.StripTextures(MissionGuidance)
-		B.CreateBDFrame(MissionGuidance, .25)
-		B.ReskinScroll(MissionGuidance.MissionGuidanceScrollFrame.ScrollBar)
+		for _, region in pairs {MissionGuidance:GetRegions()} do
+			if region:GetObjectType() == "FontString" then
+				local fontFile, fontSize = region:GetFont()
+				region:SetFont(fontFile, fontSize, "")
+				region:SetTextColor(0, 0, 0)
+			end
+		end
 	end
 
 	if IsAddOnLoaded("tdInspect") then  -- Credit: tdUI
