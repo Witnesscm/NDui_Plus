@@ -162,3 +162,30 @@ do
 
 	M:RegisterMisc("FlightMapScale", M.UpdateFlightMapScale)
 end
+
+-- Change the group role automatically when join group
+do
+	local function GetTalentGroupRole(index)
+		assert(index == 1 or index == 2)
+		return M.db["TalentGroupRole"][index]
+	end
+
+	local function UpdateGroupRole()
+		if not IsInGroup() then return end
+
+		local role =  GetTalentGroupRole(GetActiveTalentGroup())
+		if UnitGroupRolesAssigned("player") ~= role then
+			UnitSetRole("player", role)
+		end
+	end
+
+	function M:AutoGroupRole()
+		if not M.db["ExtTalentUI"] then return end
+
+		UpdateGroupRole()
+		B:RegisterEvent("GROUP_JOINED", UpdateGroupRole)
+		B:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED", UpdateGroupRole)
+	end
+
+	M:RegisterMisc("AutoGroupRole", M.AutoGroupRole)
+end

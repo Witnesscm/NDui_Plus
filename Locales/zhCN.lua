@@ -136,3 +136,4 @@ L["FinisherGlowTip"] = "盗贼、德鲁伊终结技满星高亮，仅支持NDui�
 L["SpecLevel"] = "显示天赋和装等"
 L["TalentPoints"] = "显示天赋点"
 L["TalentIcon"] = "显示天赋图标"
+L["TalentSpecTabTip"] = "左键双击快速切换天赋，右键设置预设职责"

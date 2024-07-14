@@ -142,7 +142,7 @@ P.DefaultSettings = {
 		IconSearch = true,
 		FlightMapScale = 1.2,
 		TrainAll = true,
-	},
+	}
 }
 
 P.CharacterSettings = {
@@ -155,6 +155,9 @@ P.CharacterSettings = {
 		TankFilter = 1,
 		TankDirec = 1,
 	},
+	Misc = {
+		TalentGroupRole = {}
+	}
 }
 
 function P:InitialSettings(source, target, fullClean)
