@@ -19,8 +19,8 @@ function S:Myslot()
 		elseif objType == "CheckButton" then
 			B.ReskinCheck(child)
 		elseif objType == "Frame" then
-			if floor(child:GetWidth() - 600) == 0 and floor(child:GetHeight() - 400) == 0 then
-				child:SetBackdrop(nil)
+			if child.backdropInfo and child.backdropInfo.bgFile == "Interface/Tooltips/UI-Tooltip-Background" then
+				B.StripTextures(child)
 				local bg = B.CreateBDFrame(child, 0)
 				bg:SetInside()
 				for _, subChild in pairs {child:GetChildren()} do
