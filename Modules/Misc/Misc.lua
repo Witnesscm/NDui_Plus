@@ -189,3 +189,14 @@ do
 
 	M:RegisterMisc("AutoGroupRole", M.AutoGroupRole)
 end
+
+-- fix the issue of the Blizzard MacroUI automatically scrolling to the top
+do
+	function M:FixMacroUI()
+		_G.MacroFrame:HookScript("OnShow", function(self)
+			self:UnregisterEvent("UPDATE_MACROS")
+		end)
+	end
+
+	P:AddCallbackForAddon("Blizzard_MacroUI", M.FixMacroUI)
+end
