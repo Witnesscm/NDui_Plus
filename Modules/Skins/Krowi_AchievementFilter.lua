@@ -185,25 +185,29 @@ local function SkinAchievementFrame()
 
 	local PrevButton = _G.KrowiAF_AchievementFrameBrowsingHistoryPrevAchievementButton
 	local NextButton = _G.KrowiAF_AchievementFrameBrowsingHistoryNextAchievementButton
-	B.ReskinArrow(PrevButton, "left")
-	B.ReskinArrow(NextButton, "right")
-	PrevButton:ClearAllPoints()
-	PrevButton:SetPoint("LEFT", FilterButton, "RIGHT", 10, 0)
-	NextButton:ClearAllPoints()
-	NextButton:SetPoint("LEFT", PrevButton, "RIGHT", 6, 0)
+	if PrevButton and NextButton then
+		B.ReskinArrow(PrevButton, "left")
+		B.ReskinArrow(NextButton, "right")
+		PrevButton:ClearAllPoints()
+		PrevButton:SetPoint("LEFT", FilterButton, "RIGHT", 10, 0)
+		NextButton:ClearAllPoints()
+		NextButton:SetPoint("LEFT", PrevButton, "RIGHT", 6, 0)
+	end
 
-	local CalendarButton = _G.KrowiAF_AchievementFrameCalendarButton
-	B.Reskin(CalendarButton)
-	CalendarButton:SetSize(24, 24)
-	local CalendarFS = CalendarButton:GetFontString()
-	B.SetFontSize(CalendarFS, 13)
-	CalendarFS:SetTextColor(1, 1, 1)
-	CalendarFS:ClearAllPoints()
-	CalendarFS:SetPoint("CENTER", 1, -1)
-	CalendarButton.Icon = CalendarButton:CreateTexture(nil, "ARTWORK")
-	CalendarButton.Icon:SetInside()
-	CalendarButton.Icon:SetTexture("Interface\\Calendar\\UI-Calendar-Button")
-	CalendarButton.Icon:SetTexCoord(0.11, 0.390625-.11, 2*0.11, 0.78125-2*0.12)
+	local CalendarButton = _G.KrowiAF_AchievementCalendarButton
+	if CalendarButton then
+		B.Reskin(CalendarButton)
+		CalendarButton:SetSize(24, 24)
+		local CalendarFS = CalendarButton:GetFontString()
+		B.SetFontSize(CalendarFS, 13)
+		CalendarFS:SetTextColor(1, 1, 1)
+		CalendarFS:ClearAllPoints()
+		CalendarFS:SetPoint("CENTER", 1, -1)
+		CalendarButton.Icon = CalendarButton:CreateTexture(nil, "ARTWORK")
+		CalendarButton.Icon:SetInside()
+		CalendarButton.Icon:SetTexture("Interface\\Calendar\\UI-Calendar-Button")
+		CalendarButton.Icon:SetTexCoord(0.11, 0.390625-.11, 2*0.11, 0.78125-2*0.12)
+	end
 
 	-- Search Box
 	local SearchBox = _G.KrowiAF_SearchBoxFrame
