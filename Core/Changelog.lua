@@ -2,6 +2,14 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 
 P.Changelog = [[
+v3.4.5
+[动作条] 修复法师动作条施法材料数量更新
+[易用性] 添加自动切换团队职责功能，需要在天赋面板设置预设职责
+[易用性] 尝试修复暴雪宏命令界面异常问题，需要在控制台中启用
+[美化] 更新 MeetingHorn 美化
+[美化] 更新 Myslot 美化
+[美化] 修复 Krowi_AchievementFilter 美化
+
 v3.4.4
 [鼠标提示] 添加天赋图标；修复观察部分对象时可能导致的报错
 [美化] 更新 tdAuction 美化
