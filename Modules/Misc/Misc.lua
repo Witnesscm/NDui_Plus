@@ -193,6 +193,8 @@ end
 -- fix the issue of the Blizzard MacroUI
 do
 	function M:FixMacroUI()
+		if not M.db["FixMacroUI"] then return end
+
 		hooksecurefunc(_G.MacroFrame, "Update", function(self, retainScroll)
 			if retainScroll then
 				self.MacroSelector:ScrollToSelectedIndex()

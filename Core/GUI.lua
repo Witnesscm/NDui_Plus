@@ -262,6 +262,7 @@ G.OptionList = { -- type, key, value, name, horizon, data, callback, tooltip, sc
 		{1, "Misc", "IconSearch", L["IconSearch"], nil, nil, nil, L["IconSearchGUITip"]},
 		{1, "AFK", "Enable", L["AFK Mode"].."*", nil, nil, updateAFKMode},
 		{3, "Misc", "FlightMapScale", L["FlightMap Scale"].."*", true, {1, 2, .1}, updateFlightMapScale},
+		{1, "Misc", "FixMacroUI", L["FixMacroUI"], nil, nil, nil, L["ExtMacroUITip"]},
 	},
 }
 

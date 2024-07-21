@@ -142,6 +142,7 @@ P.DefaultSettings = {
 		IconSearch = true,
 		FlightMapScale = 1.2,
 		TrainAll = true,
+		FixMacroUI = false,
 	}
 }
 
