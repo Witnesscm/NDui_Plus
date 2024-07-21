@@ -178,6 +178,7 @@ function CH:ChatHide()
 
 	-- Chat Background
 	local chatBG = CreateFrame("Frame", "NDui_PlusChatBG", UIParent)
+	chatBG:SetFrameStrata("LOW")
 	chatBG:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", 0, 30)
 	chatBG:SetWidth(C.db["Chat"]["ChatWidth"])
 	chatBG:SetHeight(C.db["Chat"]["ChatHeight"])
@@ -256,9 +257,11 @@ function CH:ChatHide()
 	end)
 
 	-- Misc
-	_G.GeneralDockManager:SetParent(CH.ChatBG)
-	_G.ChatFrameMenuButton:GetParent():SetParent(CH.ChatBG)
-	if copy then copy:SetParent(CH.ChatBG) end
+	local elements = {_G.GeneralDockManager, _G.ChatFrameMenuButton:GetParent(), copy}
+	for _, child in pairs(elements) do
+		child:SetParent(CH.ChatBG)
+		child:SetFrameStrata("MEDIUM")
+	end
 
 	hooksecurefunc(_G.ChatFrame1, "SetPoint", resetChatAnchor)
 	resetChatAnchor(_G.ChatFrame1)
