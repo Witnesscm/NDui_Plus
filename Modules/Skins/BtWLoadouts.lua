@@ -179,6 +179,13 @@ function S:BtWLoadouts()
 		B.ReskinScroll(DFTalents.Scroll.ScrollBar)
 	end
 
+	local HeroTalents = frame.HeroTalents
+	if HeroTalents then
+		B.StripTextures(HeroTalents.Inset)
+		P.ReskinDropDown(HeroTalents.HeroTreeDropDown)
+		B.ReskinInput(HeroTalents.Name)
+	end
+
 	local PvPTalents = frame.PvPTalents
 	if PvPTalents then
 		B.StripTextures(PvPTalents.Inset)
