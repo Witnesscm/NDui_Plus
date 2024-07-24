@@ -598,7 +598,7 @@ function T:GetAchievementInfo(GUID)
 		local faction = race and C_CreatureInfo.GetFactionInfo(race).groupTag
 		if faction then
 			T:UpdateProgression(GUID, faction)
-			_G.GameTooltip:SetUnit(unit)
+			GameTooltip:RefreshData()
 		end
 	end
 
