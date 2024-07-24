@@ -153,7 +153,6 @@ L["ParagonRepRewardsTip"] = "Displays the collection of paragon reputation rewar
 L["ExtVendorUI"] = "Extended Vendor UI"
 L["ExtMacroUI"] = "Extended Macro UI"
 L["ExtMacroUITip"] = "|cffff0000If enabled, it will cause taints that cannot edit macros and pick up macros in combat.|r"
-L["ImprovedStableFrame"] = "Improved Stable Frame"
 L["TrainAll"] = "Train All"
 L["TrainAllCost"] = "%d skills available for %s"
 L["TrainAllTip"] = "Adds a \"Train All\" button to the profession trainer window."

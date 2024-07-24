@@ -131,7 +131,6 @@ P.DefaultSettings = {
 		ShowIllusion = true,
 		IconSearch = true,
 		ParagonRepRewards = true,
-		ImprovedStableFrame = true,
 		GarrisonTabs = true,
 		AuctionEnhanced = true,
 		GuildBankItemLevel = true,

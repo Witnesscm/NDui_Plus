@@ -153,7 +153,6 @@ L["ParagonRepRewardsTip"] = "Affiche la collection de récompenses de réputatio
 L["ExtVendorUI"] = "Interface de vendeur étendue"
 L["ExtMacroUI"] = "Interface étendue pour les macros"
 L["ExtMacroUITip"] = "|cffff0000S'il est activé, il provoquera des altérations qui ne pourront pas modifier les macros et prendre les macros en combat.|r"
-L["ImprovedStableFrame"] = "Cadre d'écurie améliorée"
 L["TrainAll"] = "Tout entrainer"
 L["TrainAllCost"] = "%d compétences disponibles pour  %s"
 L["TrainAllTip"] = "Ajoute un bouton  \"Tout entrainer\" à la fenêtre du formateur de profession."
