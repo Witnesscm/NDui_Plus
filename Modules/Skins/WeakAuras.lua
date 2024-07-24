@@ -54,7 +54,6 @@ local function SkinWeakAurasOptions()
 
 	B.ReskinPortraitFrame(frame)
 	S:Proxy("ReskinInput", frame.filterInput, 18)
-	S:Proxy("Reskin", _G.WASettingsButton)
 
 	-- Minimize, Close Button
 	B.ReskinClose(frame.CloseButton, frame)
@@ -79,79 +78,59 @@ local function SkinWeakAurasOptions()
 		magnetButton:SetPoint("LEFT", lockButton, "RIGHT", 2, 0)
 	end
 
-	-- Child Groups
-	local childGroups = {
-		"texturePicker",
-		"iconPicker",
-		"modelPicker",
-		"importexport",
-		"texteditor",
-		"codereview",
-		"update",
-		"debugLog",
-	}
+	-- Child Groups 
+	-- texteditor, icon, texture, model, update, importexport, codereview, debuglog
+	local childGroups = {}
+	hooksecurefunc(frame, "UpdateFrameVisible", function()
+		if frame.window == "default" then return end
 
-	for _, key in pairs(childGroups) do
-		local group = frame[key]
-		if group then
-			reskinChildButtons(group.frame)
-		end
-	end
+		if not childGroups[frame.window] then
+			for _, child in ipairs({frame:GetChildren()}) do
+				local group = child.obj
+				if group and group.Open and child:IsShown() then
+					for _, child2 in pairs {child:GetChildren()} do
+						local objType = child2:GetObjectType()
+						if objType == "Button" and child2.Text then
+							B.Reskin(child2)
+						elseif objType == "EditBox" then
+							B.ReskinInput(child2)
+						end
+					end
 
-	-- TextEditor
-	local texteditor = frame.texteditor and frame.texteditor.frame
-	if texteditor then
-		for _, child in pairs {texteditor:GetChildren()} do
-			if child.GetObjectType and child:GetObjectType() == "EditBox" then
-				B.ReskinInput(child)
-				break
+					if frame.window == "texteditor" then
+						local snippets = _G.WeakAurasSnippets
+						if snippets then
+							P.ReskinFrame(snippets)
+							reskinChildButtons(snippets)
+						end
+						local apiSearchFrame = _G.WeakAurasAPISearchFrame
+						if apiSearchFrame then
+							P.ReskinFrame(apiSearchFrame)
+						end
+
+						S:Proxy("Reskin", _G.WASettingsButton)
+						S:Proxy("ReskinInput", _G.WeakAurasAPISearchFilterInput)
+					elseif frame.window == "codereview" then
+						local codebox = group.codebox
+						local codeTree = group.codeTree
+						if codebox and codeTree then
+							codebox.frame:ClearAllPoints()
+							codebox.frame:SetPoint("TOPLEFT", codeTree.content, 5, 0)
+							codebox.frame:SetPoint("BOTTOMRIGHT", codeTree.content, -5, 0)
+						end
+					end
+
+					childGroups[frame.window] = group
+					break
+				end
 			end
 		end
-	end
-
-	-- CodeReview
-	local codereview = frame.codereview
-	if codereview then
-		hooksecurefunc(codereview, "Open", function(self)
-			local codebox = self.codebox
-			local codeTree = self.codeTree
-			if codebox and codeTree then
-				codebox.frame:ClearAllPoints()
-				codebox.frame:SetPoint("TOPLEFT", codeTree.content, 5, 0)
-				codebox.frame:SetPoint("BOTTOMRIGHT", codeTree.content, -5, 0)
-			end
-		end)
-	end
-
-	-- IconPicker
-	local iconPicker = frame.iconPicker and frame.iconPicker.frame
-	if iconPicker then
-		for _, child in pairs {iconPicker:GetChildren()} do
-			if child:GetObjectType() == "EditBox" then
-				B.ReskinInput(child, 20)
-			end
-		end
-	end
-
-	-- ModelPicker
-	local modelPicker = frame.modelPicker and frame.modelPicker.frame
-	if modelPicker and modelPicker.filterInput then
-		B.ReskinInput(modelPicker.filterInput, 18)
-	end
+	end)
 
 	-- Right Side Container
 	local container = frame.container and frame.container.content and frame.container.content:GetParent()
 	if container and container.bg then
 		container.bg:Hide()
-	end
-
-	-- WeakAurasSnippets
-	local snippets = _G.WeakAurasSnippets
-	if snippets then
-		B.StripTextures(snippets)
-		B.SetBD(snippets)
-		B.ReskinClose(snippets.CloseButton)
-		reskinChildButtons(snippets)
 	end
 
 	-- MoverSizer
@@ -180,18 +159,21 @@ local function SkinWeakAurasOptions()
 	end
 
 	-- TipPopup
-	for _, child in pairs {frame:GetChildren()} do
-		if child:GetFrameStrata() == "FULLSCREEN" and child.PixelSnapDisabled and child.backdropInfo then
-			B.StripTextures(child)
-			B.SetBD(child)
+	local tipPopup = frame.tipPopup
+	if tipPopup then
+		B.StripTextures(tipPopup)
+		B.SetBD(tipPopup)
 
-			for _, child2 in pairs {child:GetChildren()} do
-				if child2:GetObjectType() == "EditBox" then
-					B.ReskinInput(child2, 18)
-				end
+		for _, child in pairs {tipPopup:GetChildren()} do
+			if child:GetObjectType() == "EditBox" then
+				B.ReskinInput(child, 18)
 			end
-			break
 		end
+	end
+
+	local textCodesFrame = frame.dynamicTextCodesFrame
+	if textCodesFrame then
+		P.ReskinFrame(textCodesFrame)
 	end
 
 	frame.styled = true
@@ -427,6 +409,12 @@ function S:WeakAurasSpinBox(widget)
 	reskinStepper(widget.rightbutton, "right")
 end
 
+function S:WeakAurasSnippetButton(widget)
+	B.ReskinInput(widget.renameEditBox)
+	widget.renameEditBox.__bg:SetPoint("TOPLEFT", -2, 2)
+	widget.renameEditBox.__bg:SetPoint("BOTTOMRIGHT", 0, -2)
+end
+
 function S:WeakAurasTreeGroup(widget)
 	S:Ace3_Frame(widget)
 	widget.treeframe:GetChildren():HideBackdrop()
@@ -444,4 +432,5 @@ S:RegisterAceGUIWidget("WeakAurasLoadedHeaderButton")
 S:RegisterAceGUIWidget("WeakAurasIconButton")
 S:RegisterAceGUIWidget("WeakAurasTextureButton")
 S:RegisterAceGUIWidget("WeakAurasSpinBox")
+S:RegisterAceGUIWidget("WeakAurasSnippetButton")
 S:RegisterAceGUIContainer("WeakAurasTreeGroup")
