@@ -11,7 +11,6 @@ function S:TinyInspect()
 		frame:SetPoint("TOPLEFT", parent, "TOPRIGHT", C.mult*2, 0)
 
 		if not frame.styled then
-			B.StripTextures(frame)
 			frame:SetBackdrop(nil)
 			frame.SetBackdrop = B.Dummy
 			frame:SetBackdropColor(0, 0, 0, 0)
