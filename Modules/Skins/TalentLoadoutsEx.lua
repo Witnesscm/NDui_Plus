@@ -32,8 +32,8 @@ function S:TalentLoadoutsEx()
 		B.StripTextures(frame)
 		B.SetBD(frame, nil, 0, 0, 0, 0)
 		frame:ClearAllPoints()
-		frame:SetPoint("TOPLEFT", _G.ClassTalentFrame, "TOPRIGHT", 1, 0)
-		frame:SetPoint("BOTTOMLEFT", _G.ClassTalentFrame, "BOTTOMRIGHT", 1, 0)
+		frame:SetPoint("TOPLEFT", _G.PlayerSpellsFrame, "TOPRIGHT", 1, 0)
+		frame:SetPoint("BOTTOMLEFT", _G.PlayerSpellsFrame, "BOTTOMRIGHT", 1, 0)
 		S:Proxy("ReskinTrimScroll", frame.ScrollBar)
 
 		for _, key in ipairs({"ImportButton", "ExportButton", "LoadButton", "SaveButton", "EditButton", "DeleteButton", "UpButton", "DownButton"}) do
@@ -79,4 +79,4 @@ function S:TalentLoadoutsEx()
 	end)
 end
 
-P:AddCallbackForAddon("Blizzard_ClassTalentUI", S.TalentLoadoutsEx)
+P:AddCallbackForAddon("Blizzard_PlayerSpells", S.TalentLoadoutsEx)
