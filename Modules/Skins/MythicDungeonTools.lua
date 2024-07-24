@@ -26,8 +26,6 @@ function S:MythicDungeonTools()
 			local frame = MDT.main_frame
 			if not frame then return end
 
-			frame.HelpButton.Ring:Hide()
-
 			local closeButton = frame.closeButton
 			if closeButton then
 				B.ReskinClose(closeButton, frame.sidePanel, -7, -7)
