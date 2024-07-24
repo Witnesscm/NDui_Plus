@@ -1,5 +1,6 @@
 local addonName, ns = ...
 local B, C, L, DB, P = unpack(ns)
+local _, _, NL = unpack(_G.NDui)
 local G = P:RegisterModule("GUI")
 
 local cr, cg, cb = DB.r, DB.g, DB.b
@@ -543,9 +544,12 @@ function P:OpenGUI()
 	toggle:SetPoint("TOPLEFT", 25, -5)
 	B.AddTooltip(toggle, "ANCHOR_RIGHT", "NDui", "info")
 	toggle:SetScript("OnClick", function()
-		if _G.GameMenuFrameNDui then
-			_G.GameMenuFrameNDui:Click()
-			gui:Hide()
+		for button in _G.GameMenuFrame.buttonPool:EnumerateActive() do
+			if button:GetText() == NL["NDui Console"] then
+				button:Click()
+				gui:Hide()
+				break
+			end
 		end
 	end)
 
@@ -598,21 +602,14 @@ function G:SetupToggle()
 end
 
 function G:OnLogin()
-	if P.isNewPatch then
-		local NL = select(3, unpack(_G.NDui))
-		hooksecurefunc(_G.GameMenuFrame, "InitButtons", function(self)
-			for button in self.buttonPool:EnumerateActive() do
-				if button:GetText() == NL["NDui Console"] then
-					button:HookScript("PostClick", G.SetupToggle)
-					break
-				end
+	hooksecurefunc(_G.GameMenuFrame, "InitButtons", function(self)
+		for button in self.buttonPool:EnumerateActive() do
+			if button:GetText() == NL["NDui Console"] then
+				button:HookScript("PostClick", G.SetupToggle)
+				break
 			end
-		end)
-	else
-		local NDuiBtn = _G.GameMenuFrameNDui
-		if not NDuiBtn then return end
-		NDuiBtn:HookScript("PostClick", G.SetupToggle)
-	end
+		end
+	end)
 end
 
 SlashCmdList["NDUI_PLUS"] = function(msg)
