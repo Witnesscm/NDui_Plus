@@ -108,6 +108,7 @@ P.DefaultSettings = {
 		ExtVendor = true,
 		AdiBags = true,
 		BetterBags = true,
+		ShadowDancer = true,
 		HideToggle = false,
 	},
 	Tooltip = {

@@ -20,6 +20,7 @@
 	<Script file="Others.lua"/>
 	<Script file="RareScanner.lua"/>
 	<Script file="Rematch.lua"/>
+	<Script file="ShadowDancer.lua"/>
 	<Script file="StdUi.lua"/>
 	<Script file="TalentLoadoutsEx.lua"/>
 	<Script file="tdBattlePetScript.lua"/>
