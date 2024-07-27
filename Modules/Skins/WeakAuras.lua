@@ -1,9 +1,9 @@
-local _, ns = ...
+local addonName, ns = ...
 local B, C, L, DB, P = unpack(ns)
 local S = P:GetModule("Skins")
 
 local _G = getfenv(0)
-local select, pairs, type = select, pairs, type
+local pairs, type = pairs, type
 local strfind = string.find
 local r, g, b = DB.r, DB.g, DB.b
 
@@ -47,6 +47,51 @@ local function SkinPrintProfile()
 		frame.styled = true
 	end
 end
+
+local function resetUrlBox(self)
+	self:SetText(self.url)
+	self:HighlightText()
+end
+
+local skinTips
+local function WeakAurasSkinTips()
+	if skinTips then skinTips:Show() return end
+
+	skinTips = CreateFrame("Frame", "NDuiPlus_SkinTips", UIParent)
+	tinsert(UISpecialFrames, "NDuiPlus_SkinTips")
+	skinTips:SetPoint("CENTER")
+	skinTips:SetSize(480, 80)
+	skinTips:SetFrameStrata("HIGH")
+	B.CreateMF(skinTips)
+	B.SetBD(skinTips)
+	B.CreateFS(skinTips, 16, L["WeakAuras Skins FAQ"], true, "TOP", 0, -8)
+	local close = B.CreateButton(skinTips, 16, 16, true, DB.closeTex)
+	close:SetPoint("TOPRIGHT", -6, -6)
+	close:SetScript("OnClick", function()
+		skinTips:Hide()
+	end)
+	local box = B.CreateEditBox(skinTips, 460, 24)
+	box:SetPoint("TOP", 0, -32)
+	box.url = "https://github.com/Witnesscm/NDui_Plus/wiki/WeakAuras2%E2%80%90Skins%E2%80%90FAQ"
+	if DB.Client == "zhCN" or DB.Client == "zhTW" then
+		box.url = "https://github.com/Witnesscm/NDui_Plus/wiki/WeakAuras2%E2%80%90%E7%9A%AE%E8%82%A4%E2%80%90%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98"
+	end
+	resetUrlBox(box)
+	box:SetScript("OnTextChanged", resetUrlBox)
+	box:SetScript("OnCursorChanged", resetUrlBox)
+	local fs = B.CreateFS(skinTips, 14, L["Press Ctrl+C to copy the URL"])
+	fs:ClearAllPoints()
+	fs:SetPoint("TOPLEFT", box, "BOTTOMLEFT", 0, -2)
+end
+
+local LINK_ID = "WeakAurasTips"
+
+hooksecurefunc("SetItemRef", function(link)
+	local linkType, arg1, arg2 = strsplit(":", link)
+	if linkType == "addon" and arg1 == addonName and arg2 == LINK_ID then
+		WeakAurasSkinTips()
+	end
+end)
 
 local function SkinWeakAurasOptions()
 	local frame = _G.WeakAurasOptions
@@ -236,6 +281,11 @@ function S:WeakAuras()
 
 	if WeakAuras.PrintProfile then
 		hooksecurefunc(WeakAuras, "PrintProfile", SkinPrintProfile)
+	end
+
+	if C.db["Skins"]["WeakAuras"] and not WeakAuras.regionPrototype then
+		local link = format("|cff99ccff|Haddon:%s:%s|h[%s]|h|r", addonName, LINK_ID, L["Click for details"])
+		P:Print(L["WeakAurasSkinTips"], link)
 	end
 end
 
