@@ -5,6 +5,8 @@ local NT = B:GetModule("Tooltip")
 ---------------------------------
 -- ElvUI_WindTools, by fang2hou
 ---------------------------------
+local MAX_PLAYER_LEVEL = GetMaxLevelForPlayerExpansion()
+
 local cache = {}
 local compareGUID
 
