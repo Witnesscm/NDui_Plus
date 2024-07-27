@@ -139,3 +139,7 @@ L["FinisherGlowTip"] = "Rogue and Druid's finishers glow with full combo points.
 L["EnhancedEngravingUI"] = "Enhanced EngravingUI"
 L["EnhancedEngravingUITip"] = "Highlight the current rune, left-click to engraving runes quickly."
 L["QuickChangeTalents"] = "DoubleClick to change talents"
+L["WeakAurasSkinTips"] = "WeakAuras skin is not working %s"
+L["Click for details"] = "Click for details"
+L["WeakAuras Skins FAQ"] = "WeakAuras Skins FAQ"
+L["Press Ctrl+C to copy the URL"] = "Press Ctrl+C to copy the URL"

@@ -139,3 +139,7 @@ L["FinisherGlowTip"] = "盗贼、德鲁伊终结技满星高亮，仅支持NDui�
 L["EnhancedEngravingUI"] = "符文界面增强"
 L["EnhancedEngravingUITip"] = "高亮显示当前符文、左键点击快速切换符文"
 L["QuickChangeTalents"] = "双击快速切换"
+L["WeakAurasSkinTips"] = "WeakAuras皮肤未生效 %s"
+L["Click for details"] = "点击查看详细信息"
+L["WeakAuras Skins FAQ"] = "WeakAuras 皮肤 FAQ"
+L["Press Ctrl+C to copy the URL"] = "按 Ctrl+C 复制 URL"
