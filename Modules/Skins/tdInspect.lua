@@ -123,10 +123,6 @@ function S:tdInspect()
 			self.iLvlText:SetText("")
 		end
 
-		if self.LevelText then
-			self.LevelText:SetText("")
-		end
-
 		for i = 1, 5 do
 			local texture = self["textureIcon"..i]
 			if texture then
@@ -163,6 +159,10 @@ function S:tdInspect()
 		self.iconbg:SetShown(not not self.RuneIcon and self.RuneIcon:IsShown())
 	end)
 
+	if UISlotItem.UpdateItemLevel then
+		UISlotItem.UpdateItemLevel = B.Dummy
+	end
+
 	local anchored
 	hooksecurefunc(UIInspectFrame, "OnShow", function()
 		if anchored then return end
@@ -176,33 +176,36 @@ function S:tdInspect()
 	-- Inspect iLvl
 	hooksecurefunc(UIPaperDoll, "Update", function()
 		if not M.InspectILvl then return end
+		M.InspectILvl:SetText("")
 
-		local total, level = 0
-		for index = 1, 15 do
-			if index ~= 4 then
-				level = GetItemSlotLevel(Inspect:GetItemLink(index))
-				if level > 0 then
-					total = total + level
+		P:Delay(.5, function()
+			local total, level = 0
+			for index = 1, 15 do
+				if index ~= 4 then
+					level = GetItemSlotLevel(Inspect:GetItemLink(index))
+					if level > 0 then
+						total = total + level
+					end
 				end
 			end
-		end
 
-		local mainhand = GetItemSlotLevel(Inspect:GetItemLink(16))
-		local offhand = GetItemSlotLevel(Inspect:GetItemLink(17))
-		local ranged = GetItemSlotLevel(Inspect:GetItemLink(18))
+			local mainhand = GetItemSlotLevel(Inspect:GetItemLink(16))
+			local offhand = GetItemSlotLevel(Inspect:GetItemLink(17))
+			local ranged = GetItemSlotLevel(Inspect:GetItemLink(18))
 
-		if mainhand > 0 and offhand > 0 then
-			total = total + mainhand + offhand
-		elseif offhand > 0 and ranged > 0 then
-			total = total + offhand + ranged
-		else
-			total = total + max(mainhand, offhand, ranged) * 2
-		end
+			if mainhand > 0 and offhand > 0 then
+				total = total + mainhand + offhand
+			elseif offhand > 0 and ranged > 0 then
+				total = total + offhand + ranged
+			else
+				total = total + max(mainhand, offhand, ranged) * 2
+			end
 
-		local average = B:Round(total/16, 1)
-		M.InspectILvl:SetText(average)
-		M.InspectILvl:SetTextColor(GetILvlTextColor(average))
-		M.InspectILvl:SetFormattedText("iLvl %s", M.InspectILvl:GetText())
+			local average = B:Round(total/16, 1)
+			M.InspectILvl:SetText(average)
+			M.InspectILvl:SetTextColor(GetILvlTextColor(average))
+			M.InspectILvl:SetFormattedText("iLvl %s", M.InspectILvl:GetText())
+		end)
 	end)
 end
 
