@@ -33,36 +33,18 @@ function S:InboxMailBag()
 		bu:SetNormalTexture(0)
 		bu:SetPushedTexture(0)
 		bu:GetHighlightTexture():SetColorTexture(1, 1, 1, .25)
-		bu.SetHighlightTexture = B.Dummy
-		bu.icon:SetTexCoord(unpack(DB.TexCoord))
-		bu.bg = B.CreateBDFrame(bu, .25)
-		bu.qualityOverlay:SetAlpha(0)
+		bu.bg = B.ReskinIcon(bu.icon)
+		B.ReskinIconBorder(bu.qualityOverlay)
+		bu.Count:ClearAllPoints()
+		bu.Count:SetPoint("BOTTOMRIGHT", -1, 2)
+		B.SetFontSize(bu.Count, 13)
+		hooksecurefunc(bu.searchOverlay, "Show", function()
+			bu.bg:SetAlpha(.2)
+		end)
+		hooksecurefunc(bu.searchOverlay, "Hide", function()
+			bu.bg:SetAlpha(1)
+		end)
 	end
-
-	hooksecurefunc("InboxMailbag_Update", function()
-		for i = 1, num do
-			local bu = _G["InboxMailbagFrameItem"..i]
-
-			if bu.qualityOverlay:IsShown() then
-				local r, g, b = bu.qualityOverlay:GetVertexColor()
-				bu.bg:SetBackdropBorderColor(r, g, b)
-			else
-				bu.bg:SetBackdropBorderColor(0, 0, 0)
-			end
-		end
-	end)
-
-	hooksecurefunc("InboxMailbag_UpdateSearchResults", function()
-		for i = 1, num do
-			local bu = _G["InboxMailbagFrameItem"..i]
-
-			if bu.searchOverlay:IsShown() then
-				bu.bg:SetAlpha(0.2)
-			else
-				bu.bg:SetAlpha(1)
-			end
-		end
-	end)
 end
 
 S:RegisterSkin("InboxMailBag", S.InboxMailBag)
