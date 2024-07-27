@@ -178,6 +178,10 @@ function P.IsRetail()
 	return _G.WOW_PROJECT_ID == _G.WOW_PROJECT_MAINLINE
 end
 
+function P.IsCata()
+	return _G.WOW_PROJECT_ID == _G.WOW_PROJECT_CATACLYSM_CLASSIC
+end
+
 function P.IsWrath()
 	return _G.WOW_PROJECT_ID == _G.WOW_PROJECT_WRATH_CLASSIC
 end
