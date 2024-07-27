@@ -2,6 +2,9 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 
 P.Changelog = [[
+v4.4.3
+[美化] 更新部分插件美化
+
 v4.4.2
 [聊天] 修复启用聊天框隐藏时背景层级问题
 [美化] 修复 ReforgeLit 美化
