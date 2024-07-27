@@ -76,8 +76,8 @@ function S:Immersion()
 	B.SetBD(MainFrame)
 	B.ReskinClose(MainFrame.CloseButton)
 	B.StripTextures(MainFrame.Model)
-	local bg = B.CreateBDFrame(MainFrame.Model, 0)
-	bg:SetFrameLevel(MainFrame.Model:GetFrameLevel() + 1)
+	local ModelBG = B.CreateBDFrame(MainFrame.Model, 0)
+	ModelBG:SetFrameLevel(MainFrame.Model:GetFrameLevel() + 1)
 
 	local Indicator = MainFrame.Indicator
 	Indicator:SetScale(1.25)
@@ -89,9 +89,14 @@ function S:Immersion()
 		local button = self.Buttons[index]
 		if button and not button.styled then
 			B.StripTextures(button)
-			B.Reskin(button)
+			B.StripTextures(button.Hilite)
+			local HL = B.CreateBDFrame(button.Hilite, 0)
+			HL:SetAllPoints(button)
+			HL:SetBackdropColor(cr, cg, cb, .25)
+			HL:SetBackdropBorderColor(cr, cg, cb, 1)
+			local bg = B.SetBD(button)
+			bg:SetAllPoints()
 			button.Overlay:Hide()
-			button.Hilite:Hide()
 
 			if index > 1 then
 				button:ClearAllPoints()
