@@ -28,20 +28,79 @@ local function removeBorder(frame)
 	end
 end
 
-local function SkinProfilingWindow(frame)
-	B.ReskinPortraitFrame(frame)
-	S:Proxy("ReskinMinMax", frame.MaxMinButtonFrame)
-	reskinChildButtons(frame)
+local function SkinProfilingLine(line)
+	if not line.styled then
+		P.ReskinFont(line.spike, 12)
+		P.ReskinFont(line.time, 12)
+		P.ReskinFont(line.progressBar.name, 12)
+
+		line.styled = true
+	end
 end
 
-local function SkinPrintProfile()
-	local frame = _G.WeakAurasProfilingReport
-	if frame and not frame.styled then
+local function SkinProfilingFrame(frame)
+	if not frame.styled then
+		B.ReskinPortraitFrame(frame)
+		S:Proxy("ReskinMinMax", frame.MaxMinButtonFrame)
+		S:Proxy("StripTextures", frame.ScrollBox)
+		S:Proxy("ReskinTrimScroll", frame.ScrollBar)
+
+		hooksecurefunc(frame.ScrollBox, "Update", function(self)
+			self:ForEachFrame(SkinProfilingLine)
+		end)
+
+		local buttons = frame.buttons
+		if buttons then
+			S:Proxy("Reskin", buttons.report)
+			S:Proxy("Reskin", buttons.stop)
+			P.ReskinDropDown(buttons.modeDropDown)
+
+			local start = buttons.start
+			if start then
+				B.StripTextures(start)
+				B.Reskin(start)
+				start.Text:SetPoint("CENTER")
+				B.SetupArrow(start.Icon, "right")
+				start.Icon:SetPoint("RIGHT")
+				start.Icon:SetSize(14, 14)
+			end
+		end
+
+		local columnDisplay = frame.ColumnDisplay
+		if columnDisplay and columnDisplay.columnHeaders then
+			B.StripTextures(columnDisplay)
+			for header in columnDisplay.columnHeaders:EnumerateActive() do
+				if header:GetID() == 1 then
+					header:SetPoint("BOTTOMLEFT", 3, 1)
+				end
+
+				B.StripTextures(header)
+				local bg = B.CreateBDFrame(header, .25)
+				bg:SetPoint("TOPLEFT", 4, -2)
+				bg:SetPoint("BOTTOMRIGHT", 0, 2)
+
+				header:SetHighlightTexture(DB.bdTex)
+				local hl = header:GetHighlightTexture()
+				hl:SetVertexColor(DB.r, DB.g, DB.b, .25)
+				hl:SetInside(bg)
+			end
+		end
+
+		frame.styled = true
+	end
+end
+
+local function SkinProfilingReport(frame)
+	if not frame.styled then
 		B.ReskinPortraitFrame(frame)
 
-		local scrollFrame = frame.messageFrame and frame.messageFrame:GetParent()
-		if scrollFrame then
-			S:Proxy("ReskinScroll", scrollFrame.ScrollBar)
+		local scrollBox = frame.ScrollBox
+		if scrollBox then
+			S:Proxy("ReskinTrimScroll", scrollBox.ScrollBar)
+			S:Proxy("StripTextures", scrollBox.messageFrame)
+			local bg = B.CreateBDFrame(scrollBox, .25)
+			bg:SetPoint("TOPLEFT", -1, 2)
+			bg:SetPoint("BOTTOMRIGHT", -22, -4)
 		end
 
 		frame.styled = true
@@ -211,13 +270,14 @@ function S:WeakAuras()
 	local WeakAuras = _G.WeakAuras
 	if not WeakAuras then return end
 
-	local profilingWindow = WeakAuras.RealTimeProfilingWindow
-	if profilingWindow then
-		hooksecurefunc(profilingWindow, "Init", SkinProfilingWindow)
+	local profilingFrame = _G.WeakAurasProfilingFrame
+	if profilingFrame then
+		profilingFrame:HookScript("OnShow", SkinProfilingFrame)
 	end
 
-	if WeakAuras.PrintProfile then
-		hooksecurefunc(WeakAuras, "PrintProfile", SkinPrintProfile)
+	local profilingReport = _G.WeakAurasProfilingReport
+	if profilingReport then
+		profilingReport:HookScript("OnShow", SkinProfilingReport)
 	end
 end
 
