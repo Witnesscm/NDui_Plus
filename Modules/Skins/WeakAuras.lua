@@ -550,6 +550,10 @@ function S:WeakAurasTreeGroup(widget)
 	widget.treeframe:GetChildren():HideBackdrop()
 end
 
+function S:WA_LSM30_StatusbarAtlas(widget)
+	S:Ace3_LibSharedMedia(widget)
+end
+
 S:RegisterSkin("WeakAuras", S.WeakAuras)
 S:RegisterSkin("WeakAurasOptions", S.WeakAurasOptions)
 S:RegisterSkin("WeakAurasTemplates", S.WeakAurasTemplates)
@@ -564,4 +568,5 @@ S:RegisterAceGUIWidget("WeakAurasTextureButton")
 S:RegisterAceGUIWidget("WeakAurasMiniTalent")
 S:RegisterAceGUIWidget("WeakAurasSpinBox")
 S:RegisterAceGUIWidget("WeakAurasSnippetButton")
+S:RegisterAceGUIWidget("WA_LSM30_StatusbarAtlas")
 S:RegisterAceGUIContainer("WeakAurasTreeGroup")
