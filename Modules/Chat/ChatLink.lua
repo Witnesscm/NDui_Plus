@@ -21,7 +21,7 @@ local function AddChatIcon(link, linkType, id)
 
 	local texture
 	if linkType == "spell" or linkType == "enchant" or linkType == "mount" then
-		texture = GetSpellTexture(id)
+		texture = C_Spell.GetSpellTexture(id)
 	elseif linkType == "item" or linkType == "keystone" then
 		texture = C_Item.GetItemIconByID(id)
 	elseif linkType == "talent" then
@@ -42,7 +42,7 @@ local function AddChatIcon(link, linkType, id)
 		texture = info and info.icon
 	elseif linkType == "conduit" then
 		local spell = C_Soulbinds.GetConduitSpellID(id, 1)
-		texture = spell and GetSpellTexture(spell)
+		texture = spell and C_Spell.GetSpellTexture(spell)
 	elseif linkType == "transmogappearance" then
 		texture = select(4, C_TransmogCollection.GetAppearanceSourceInfo(id))
 	elseif linkType == "transmogillusion" then
@@ -59,7 +59,7 @@ local function AddTradeIcon(link, id)
 	if not link then return end
 
 	if not cache[link] then
-		cache[link] = GetHyperlink(link, GetSpellTexture(id))
+		cache[link] = GetHyperlink(link, C_Spell.GetSpellTexture(id))
 	end
 
 	return cache[link]

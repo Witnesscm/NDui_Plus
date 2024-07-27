@@ -130,7 +130,7 @@ function Handler:Control(spellSet)
 	table.wipe(actionMessages)
 	table.wipe(actionResetSpells)
 	for spellID, actionIndex in next, spellSet do
-		actionMessages[(GetSpellInfo(spellID))] = actionIndex
+		actionMessages[(C_Spell.GetSpellName(spellID))] = actionIndex
 		actionResetSpells[spellID] = true
 
 		-- zhCN fix
