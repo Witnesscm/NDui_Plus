@@ -10,6 +10,33 @@ local select, format = select, format
 local min, max, floor, upper = math.min, math.max, math.floor, string.upper
 local GetNumLootItems, GetLootSlotLink, GetLootSlotInfo = GetNumLootItems, GetLootSlotLink, GetLootSlotInfo
 
+local function AnnounceLoot(chn)
+	for i = 1, GetNumLootItems() do
+		local link = GetLootSlotLink(i)
+		local quality = select(5, GetLootSlotInfo(i))
+		if link and quality and quality >= LT.db["AnnounceRarity"] then
+			SendChatMessage(format("- %s", link), chn)
+		end
+	end
+end
+
+local function Announce(chn)
+	local nums = GetNumLootItems()
+	if nums == 0 then return end
+	if LT.db["AnnounceTitle"] then
+		if UnitIsPlayer("target") or not UnitExists("target") then
+			SendChatMessage(format("*** %s ***", L["Loots in chest"]), chn)
+		else
+			SendChatMessage(format("*** %s%s ***", UnitName("target"), L["Loots"]), chn)
+		end
+	end
+	if IsInInstance() or chn ~= "say" then
+		P:Delay(.1, AnnounceLoot, chn)
+	else
+		AnnounceLoot(chn)
+	end
+end
+
 function LT:OnLogin()
 	if not LT.db["Enable"] then return end
 	if not C.db["Skins"]["Loot"] then P:Print(L["LootEnhancedTip"]) return end
@@ -121,25 +148,6 @@ function LT:OnLogin()
 		party = { 2/3, 2/3, 1},
 		raid = { 1, .5, 0},
 	}
-
-	local function Announce(chn)
-		local nums = GetNumLootItems()
-		if(nums == 0) then return end
-		if LT.db["AnnounceTitle"] then
-			if UnitIsPlayer("target") or not UnitExists("target") then
-				SendChatMessage(format("*** %s ***", L["Loots in chest"]), chn)
-			else
-				SendChatMessage(format("*** %s%s ***", UnitName("target"), L["Loots"]), chn)
-			end
-		end
-		for i = 1, GetNumLootItems() do
-			local link = GetLootSlotLink(i)
-			local quality = select(5, GetLootSlotInfo(i))
-			if link and quality and quality >= LT.db["AnnounceRarity"] then
-				SendChatMessage(format("- %s", link), chn)
-			end
-		end
-	end
 
 	LootFrame.announce = {}
 	for i = 1, #chn do
