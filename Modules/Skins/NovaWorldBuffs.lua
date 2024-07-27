@@ -139,8 +139,9 @@ function S:NovaWorldBuffs()
 		end
 	end
 
-	hooksecurefunc(NWB, "createShowStatsButton", function()
+	hooksecurefunc(NWB, "createBuffsListExtraButtons", function()
 		reskinCheck(NWB, {"showStatsButton", "showStatsAllButton"})
+		S:Proxy("ReskinSlider", NWB.charsMinLevelSlider)
 	end)
 
 	hooksecurefunc(NWB, "createCopyFormatButton", function()
@@ -180,9 +181,19 @@ function S:NovaWorldBuffs()
 	--reskinMarker(_G.nefWorldMapNoLayerFrame)
 
 	hooksecurefunc(NWB, "refreshWorldbuffMarkers", function()
-		for layer, _ in NWB:pairsByKeys(NWB.data.layers) do
-			for k, _ in pairs(NWB.worldBuffMapMarkerTypes) do
-				local mark = _G[k..layer.."NWBWorldMap"]
+		if NWB.isLayered then
+			for layer in NWB:pairsByKeys(NWB.data.layers) do
+				for k in pairs(NWB.worldBuffMapMarkerTypes) do
+					local mark = _G[k..layer.."NWBWorldMap"]
+					if mark and not mark.styled then
+						reskinMarker(mark)
+						mark.styled = true
+					end
+				end
+			end
+		else
+			for k in pairs(NWB.worldBuffMapMarkerTypes) do
+				local mark = _G[k.."NWBWorldMap"]
 				if mark and not mark.styled then
 					reskinMarker(mark)
 					mark.styled = true
