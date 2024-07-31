@@ -31,7 +31,7 @@ local function Announce(chn)
 		end
 	end
 	if IsInInstance() or chn ~= "say" then
-		P:Delay(.1, AnnounceLoot, chn)
+		P:Delay(.5, AnnounceLoot, chn)
 	else
 		AnnounceLoot(chn)
 	end
