@@ -517,18 +517,44 @@ local PARAGON_DATA = {
 		[66156] = { -- Dragonscale Expedition
 			factionID = 2507,
 			cache = 199472,
-		}, 
+		},
+		[76425] = { -- Dream Wardens
+			factionID = 2574,
+			cache = 210992,
+		},
 		[66511] = { -- Iskaara Tuskarr
 			factionID = 2511,
 			cache = 199473,
-		}, 
+		},
+		[75290] = { -- Loamm Niffen
+			factionID = 2564,
+			cache = 204712,
+		},
 		[65606] = { -- Maruuk Centaur
 			factionID = 2503,
 			cache = 199474,
-		}, 
+		},
 		[71023] = { -- Valdrakken Accord
 			factionID = 2510,
 			cache = 199475,
+		},
+
+	--War Within
+		[79219] = { -- Council of Dornogal
+			factionID = 2590,
+			cache = 225239,
+		},
+		[79218] = { -- Hallowfall Arathi
+			factionID = 2570,
+			cache = 225246,
+		},
+		[79220] = { -- The Assembly of the Deep
+			factionID = 2594,
+			cache = 225245,
+		},
+		[79196] = { -- The Severed Threads
+			factionID = 2600,
+			cache = 225247,
 		},
 }
 
@@ -549,6 +575,7 @@ function M:AddParagonRewards()
 	local rewards = rewardQuestID and PARAGON_DATA[rewardQuestID] and PARAGON_DATA[rewardQuestID].rewards
 	if not rewards then return end
 
+	local needRefresh
 	for _, data in ipairs(rewards) do
 		local collected
 		local name, _, quality, _, _, _, _, _, _, icon = C_Item.GetItemInfo(data.itemID)
@@ -564,20 +591,31 @@ function M:AddParagonRewards()
 			collected = C_QuestLog.IsQuestFlaggedCompleted(data.questID)
 		end
 		if name then
-			GameTooltip:AddLine(format("|T%s:14|t |T%d:0:0:0:0:64:64:5:59:5:59|t %s |cffffffff(%s)|r", collected and "Interface\\RAIDFRAME\\ReadyCheck-Ready" or "Interface\\RAIDFRAME\\ReadyCheck-NotReady", icon, name, data.covenant or data.type), ITEM_QUALITY_COLORS[quality].r, ITEM_QUALITY_COLORS[quality].g, ITEM_QUALITY_COLORS[quality].b)
+			EmbeddedItemTooltip:AddLine(format("|T%s:14|t |T%d:0:0:0:0:64:64:5:59:5:59|t %s |cffffffff(%s)|r", collected and "Interface\\RAIDFRAME\\ReadyCheck-Ready" or "Interface\\RAIDFRAME\\ReadyCheck-NotReady", icon, name, data.covenant or data.type), ITEM_QUALITY_COLORS[quality].r, ITEM_QUALITY_COLORS[quality].g, ITEM_QUALITY_COLORS[quality].b)
 		else
-			GameTooltip:AddLine(ERR_TRAVEL_PASS_NO_INFO, 1, 0, 0)
+			EmbeddedItemTooltip:AddLine(ERR_TRAVEL_PASS_NO_INFO, 1, 0, 0)
+			needRefresh = true
 		end
 	end
 
-	GameTooltip:AddLine(" ")
-	GameTooltip:Show()
+	EmbeddedItemTooltip:AddLine(" ")
+	EmbeddedItemTooltip:Show()
+
+	if needRefresh then
+		P:Delay(.5, M.ParagonRepRewards_Refresh, self)
+	end
+end
+
+function M:ParagonRepRewards_Refresh()
+	if self:IsMouseOver() and EmbeddedItemTooltip:GetOwner() == self then
+		self:ShowParagonRewardsTooltip()
+	end
 end
 
 function M:ParagonRepRewards()
 	if not M.db["ParagonRepRewards"] then return end
 
-	hooksecurefunc("ReputationParagonFrame_SetupParagonTooltip", M.AddParagonRewards)
+	hooksecurefunc(_G.ReputationEntryMixin, "ShowParagonRewardsTooltip", M.AddParagonRewards)
 end
 
 M:RegisterMisc("ParagonRepRewards", M.ParagonRepRewards)
