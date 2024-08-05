@@ -125,7 +125,7 @@ function G:SetupChangelog(parent)
 	fs:SetPoint("TOPLEFT", 10, -10)
 	fs:SetPoint("TOPRIGHT", -10, -10)
 	fs:SetJustifyH("LEFT")
-	fs:SetSpacing(10) 
+	fs:SetSpacing(10)
 	fs:SetText(P.Changelog)
 end
 
