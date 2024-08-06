@@ -84,6 +84,13 @@ local function reskinSummary(summary)
 	P.ReskinFont(summary.Overview.Text)
 end
 
+local function replaceTextColor(self, text)
+	if self.isReplacing then return end
+	self.isReplacing = true
+	self:SetText(gsub(text, "^|c%x%x%x%x%x%x%x%x", "|cffffffff"))
+	self.isReplacing = nil
+end
+
 local function reskinItemButton(self)
 	self:SetSize(34, 34)
 	B.StripTextures(self, 0)
@@ -316,9 +323,13 @@ function S:MeetingHorn()
 
 		Encounter.BossTitle:SetTextColor(1, 1, 1)
 		Encounter.Panel1.Overview.Text:SetTextColor(1, 1, 1)
+		Encounter.Panel1.Overview.Text.SetTextColor = B.Dummy
 		P.ReskinFont(Encounter.Panel1.Overview.Text)
+		hooksecurefunc(Encounter.Panel1.Overview.Text, "SetText", replaceTextColor)
 		Encounter.Panel2.Overview.Text:SetTextColor(1, 1, 1)
+		Encounter.Panel2.Overview.Text.SetTextColor = B.Dummy
 		P.ReskinFont(Encounter.Panel2.Overview.Text)
+		hooksecurefunc(Encounter.Panel2.Overview.Text, "SetText", replaceTextColor)
 		B.ReskinInput(Encounter.Panel3.Url)
 
 		for i, tab in ipairs(Encounter.Tabs) do
