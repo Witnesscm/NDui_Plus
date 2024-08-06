@@ -15,6 +15,7 @@
 	<Script file="LibUIDropDownMenu.lua"/>
 	<Script file="ls_Toasts.lua"/>
 	<Script file="MeetingStone.lua"/>
+	<Script file="MountsJournal.lua"/>
 	<Script file="Myslot.lua"/>
 	<Script file="MythicDungeonTools.lua"/>
 	<Script file="Others.lua"/>
