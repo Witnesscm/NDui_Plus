@@ -399,6 +399,22 @@ function S:LibQTip()
 	end
 end
 
+local function reskinExtraTip(self, tooltip)
+	local reg = self.tooltipRegistry[tooltip]
+	if reg and reg.extraTip then
+		P.ReskinTooltip(reg.extraTip)
+		reg.extraTip.bg:SetFrameLevel(0)
+	end
+end
+
+function S:LibExtraTip()
+	local LibExtraTip = _G.LibStub and _G.LibStub("LibExtraTip-1", true)
+	if not LibExtraTip then return end
+
+	hooksecurefunc(LibExtraTip, "AddLine", reskinExtraTip)
+	hooksecurefunc(LibExtraTip, "AddDoubleLine", reskinExtraTip)
+end
+
 S:RegisterSkin("HandyNotes_NPCs (Classic)", S.HandyNotes_NPCs)
 S:RegisterSkin("HandyNotes_NPCs (Burning Crusade Classic)", S.HandyNotes_NPCs)
 S:RegisterSkin("BattleInfo", S.BattleInfo)
@@ -414,6 +430,7 @@ S:RegisterSkin("BigWigs_Options", S.BigWigs_Options)
 S:RegisterSkin("Restocker", S.Restocker)
 S:RegisterSkin("RaidLedger", S.RaidLedger)
 S:RegisterSkin("LibQTip")
+S:RegisterSkin("LibExtraTip")
 
 -- Hide Toggle Button
 S.ToggleFrames = {}
