@@ -85,7 +85,6 @@ function S:ls_Toasts()
 	LE:RegisterSkin("ndui", style)
 	LE:RegisterCallback("ToastCreated", SkinToast)
 	LC.db.profile.skin = "ndui"
-	LC.options.args.general.args.skin.disabled = true
 end
 
 function S:LSPreviewBoxCurrency(widget)
