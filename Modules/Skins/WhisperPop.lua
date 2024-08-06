@@ -35,26 +35,22 @@ end
 function S:WhisperPop()
 	if not S.db["WhisperPop"] then return end
 
-	local cr, cg, cb = DB.r, DB.g, DB.b
+	reskinFrame(_G.WhisperPopFrame)
+	reskinFrame(_G.WhisperPopMessageFrame)
+	reskinArrow(_G.WhisperPopScrollingMessageFrameButtonUp, "Up")
+	reskinArrow(_G.WhisperPopScrollingMessageFrameButtonDown, "Down")
+	reskinArrow(_G.WhisperPopScrollingMessageFrameButtonEnd, "End")
+	S:Proxy("ReskinScroll", _G.WhisperPopFrameListScrollBar)
+	S:Proxy("ReskinCheck", _G.WhisperPopMessageFrameProtectCheck)
+	S:Proxy("ReskinClose", _G.WhisperPopFrameTopCloseButton)
+	S:Proxy("ReskinClose", _G.WhisperPopMessageFrameTopCloseButton)
+	S:Proxy("ReskinClose", _G.WhisperPopFrameListDelete, nil, nil, nil, true)
+	_G.WhisperPopFrameList:HookScript("OnShow", reskinListFont)
+	_G.WhisperPopFrameList:HookScript("OnSizeChanged", reskinListFont)
 
-	reskinFrame(WhisperPopFrame)
-	reskinFrame(WhisperPopMessageFrame)
-	reskinArrow(WhisperPopScrollingMessageFrameButtonUp, "Up")
-	reskinArrow(WhisperPopScrollingMessageFrameButtonDown, "Down")
-	reskinArrow(WhisperPopScrollingMessageFrameButtonEnd, "End")
-	B.ReskinScroll(WhisperPopFrameListScrollBar)
-	if WhisperPopMessageFrameProtectCheck then
-		B.ReskinCheck(WhisperPopMessageFrameProtectCheck)
-	end
-
-	local listHL = WhisperPopFrameListHighlightTexture
-	listHL:SetTexture(DB.bdTex)
-	listHL:SetVertexColor(cr, cg, cb, .25)
-
-	local lists = {WhisperPopFrameListDelete, WhisperPopFrameTopCloseButton, WhisperPopMessageFrameTopCloseButton}
-	for _, list in pairs(lists) do
-		B.ReskinClose(list)
-	end
+	local HL = _G.WhisperPopFrameListHighlightTexture
+	HL:SetTexture(DB.bdTex)
+	HL:SetVertexColor(DB.r, DB.g, DB.b, .25)
 
 	local config = _G.WhisperPopFrameConfig
 	config:SetNormalTexture(0)
@@ -69,9 +65,6 @@ function S:WhisperPop()
 	notify.icon.SetDesaturated = B.Dummy
 	notify.icon:SetSize(12, 12)
 	notify.icon:SetTexture("Interface\\Buttons\\UI-GuildButton-MOTD-Up")
-
-	WhisperPopFrameList:HookScript("OnShow", reskinListFont)
-	WhisperPopFrameList:HookScript("OnSizeChanged", reskinListFont)
 end
 
 S:RegisterSkin("WhisperPop", S.WhisperPop)
