@@ -72,9 +72,9 @@ local function WeakAurasSkinTips()
 	end)
 	local box = B.CreateEditBox(skinTips, 460, 24)
 	box:SetPoint("TOP", 0, -32)
-	box.url = "https://github.com/Witnesscm/NDui_Plus/wiki/WeakAuras2%E2%80%90Skins%E2%80%90FAQ"
+	box.url = "https://github.com/Witnesscm/NDui_Plus/wiki/WeakAuras2%E2%80%90Skins%E2%80%90FAQ/9d0b0f8d3a7ecf5d270a07c3e9251c38d0554816"
 	if DB.Client == "zhCN" or DB.Client == "zhTW" then
-		box.url = "https://github.com/Witnesscm/NDui_Plus/wiki/WeakAuras2%E2%80%90%E7%9A%AE%E8%82%A4%E2%80%90%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98"
+		box.url = "https://github.com/Witnesscm/NDui_Plus/wiki/WeakAuras2%E2%80%90%E7%9A%AE%E8%82%A4%E2%80%90%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98/893a20848c410a6410fc3f9220c0512478734c0e"
 	end
 	resetUrlBox(box)
 	box:SetScript("OnTextChanged", resetUrlBox)
