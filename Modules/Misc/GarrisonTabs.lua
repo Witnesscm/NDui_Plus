@@ -31,12 +31,21 @@ local function GarrisonLandingPage_UpdateTabs(self)
 	end
 end
 
+local function GarrisonTab_OnEnter(self)
+	GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+	GameTooltip:SetText(self.tooltip)
+	GameTooltip:Show()
+end
+
 function M:GarrisonTabs_Create()
 	for index, data in pairs(garrisonData) do
-		local tab = CreateFrame("CheckButton", nil, _G.GarrisonLandingPage, "SpellBookSkillLineTabTemplate")
+		local tab = CreateFrame("CheckButton", nil, _G.GarrisonLandingPage)
+		tab:SetSize(32, 32)
 		tab.__owner = _G.GarrisonLandingPage
 		tab:SetNormalTexture(data[3])
 		tab:SetScript("OnClick", ToggleLandingPage)
+		tab:SetScript("OnEnter", GarrisonTab_OnEnter)
+		tab:SetScript("OnLeave", B.HideTooltip)
 		tab:Show()
 
 		if index == 1 then
@@ -47,8 +56,8 @@ function M:GarrisonTabs_Create()
 
 		if C.db["Skins"]["BlizzardSkins"] then
 			tab:GetNormalTexture():SetTexCoord(unpack(DB.TexCoord))
-			tab:GetRegions():Hide()
 			tab:SetCheckedTexture(DB.pushedTex)
+			tab:SetHighlightTexture(DB.bdTex)
 			tab:GetHighlightTexture():SetColorTexture(1, 1, 1, .25)
 			B.CreateBDFrame(tab)
 		end
@@ -114,6 +123,28 @@ function M:FixOldExpansionPage()
 			self.AbilitiesFrame:Layout()
 		end
 	end)
+
+	local FleetTab = _G.GarrisonLandingPage.FleetTab
+	if FleetTab then
+		FleetTab:SetScript("OnEnter", function(self)
+			if self.isDisabled then
+				GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+				GameTooltip:SetText(GARRISON_SHIPYARD_NO_SHIPS_TOOLTIP, nil, nil, nil, nil, true)
+				GameTooltip:Show()
+			else
+				self.LeftHighlight:Show()
+				self.MiddleHighlight:Show()
+				self.RightHighlight:Show()
+			end
+		end)
+
+		FleetTab:SetScript("OnLeave", function(self)
+			self.LeftHighlight:Hide()
+			self.MiddleHighlight:Hide()
+			self.RightHighlight:Hide()
+			GameTooltip_Hide(self)
+		end)
+	end
 end
 
 function M:GarrisonTabs()
