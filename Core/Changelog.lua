@@ -2,6 +2,13 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 
 P.Changelog = [[
+v11.0.2
+[|cffFF1414主要|r] 需要NDui v8.0.0 以上版本
+[美化] 更新 WeakAuras 美化提醒
+[美化] 更新部分插件美化
+[易用性] 修复巅峰声望奖励
+[易用性] 修复随从报告面板标签
+
 v11.0.1
 [主要] 适配11.0.2 API改动
 [美化] 添加 WeakAuras 美化提醒
