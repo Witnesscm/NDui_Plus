@@ -59,18 +59,30 @@ local function SetTip(button)
 	GameTooltip:Show()
 end
 
-local function SetItemTip(button, event)
-	if not button.link or (event == "MODIFIER_STATE_CHANGED" and not button:IsMouseOver()) then return end
+local function ItemButton_OnEnter(self)
+	if not self.link then return end
 
-	GameTooltip:SetOwner(button, "ANCHOR_TOPLEFT")
-	GameTooltip:SetHyperlink(button.link)
+	GameTooltip:SetOwner(self, "ANCHOR_TOPLEFT")
+	GameTooltip:SetHyperlink(self.link)
 
-	if IsShiftKeyDown() then GameTooltip_ShowCompareItem() end
+	self:RegisterEvent("MODIFIER_STATE_CHANGED")
 end
 
-local function LootClick(button)
-	if IsModifiedClick() then
-		_G.HandleModifiedItemClick(button.link)
+local function ItemButton_OnLeave(self)
+	GameTooltip_Hide()
+	self:UnregisterEvent("MODIFIER_STATE_CHANGED")
+end
+
+local function ItemButton_OnClick(self)
+	if self.link and IsModifiedClick() then
+		_G.HandleModifiedItemClick(self.link)
+	end
+end
+
+local function ItemButton_OnEvent(self, _, key)
+	if (key == "LSHIFT" or key == "RSHIFT") and self:IsMouseOver() and GameTooltip:GetOwner() == self then
+		GameTooltip:SetOwner(self, "ANCHOR_TOPLEFT")
+		GameTooltip:SetHyperlink(self.link)
 	end
 end
 
@@ -190,11 +202,10 @@ function LR:CreateRollBar(name)
 	local button = CreateFrame("Button", nil, bar)
 	button:SetPoint("RIGHT", bar, "LEFT", - (C.mult*2), 0)
 	button:SetSize(bar:GetHeight() - (C.mult*2), bar:GetHeight() - (C.mult*2))
-	button:SetScript("OnEnter", SetItemTip)
-	button:SetScript("OnLeave", GameTooltip_Hide)
-	button:SetScript("OnClick", LootClick)
-	button:SetScript("OnEvent", SetItemTip)
-	button:RegisterEvent("MODIFIER_STATE_CHANGED")
+	button:SetScript("OnEnter", ItemButton_OnEnter)
+	button:SetScript("OnLeave", ItemButton_OnLeave)
+	button:SetScript("OnClick", ItemButton_OnClick)
+	button:SetScript("OnEvent", ItemButton_OnEvent)
 	bar.button = button
 
 	button.icon = button:CreateTexture(nil, "OVERLAY")
@@ -451,34 +462,34 @@ function LR:LootRollTest()
 	local itemID = 17103
 	local bop = 1
 	local canTransmog = true
-	local name, link, quality, itemLevel, _, _, _, _, _, icon = C_Item.GetItemInfo(itemID)
-	if not name then
-		name, link, quality, itemLevel, icon = "碧空之歌", "|cffa335ee|Hitem:17103::::::::17:::::::|h[碧空之歌]|h|r", 4, 29, 135349
-	end
-	local color = ITEM_QUALITY_COLORS[quality]
-	testFrame.button.icon:SetTexture(icon)
-	testFrame.button.link = link
-	testFrame.fsloot:SetText(name)
-	testFrame.fsbind:SetText(bop and "BoP" or "BoE")
-	testFrame.fsbind:SetVertexColor(bop and 1 or .3, bop and .3 or 1, bop and .1 or .3)
+	local item = Item:CreateFromItemID(itemID)
+	item:ContinueOnItemLoad(function()
+		local name, link, quality, itemLevel, _, _, _, _, _, icon = C_Item.GetItemInfo(itemID)
+		local color = ITEM_QUALITY_COLORS[quality]
+		testFrame.button.icon:SetTexture(icon)
+		testFrame.button.link = link
+		testFrame.fsloot:SetText(name)
+		testFrame.fsbind:SetText(bop and "BoP" or "BoE")
+		testFrame.fsbind:SetVertexColor(bop and 1 or .3, bop and .3 or 1, bop and .1 or .3)
 
-	testFrame.transmog:SetShown(not not canTransmog)
-	testFrame.greed:SetShown(not canTransmog)
+		testFrame.transmog:SetShown(not not canTransmog)
+		testFrame.greed:SetShown(not canTransmog)
 
-	testFrame.status:SetStatusBarColor(color.r, color.g, color.b, .7)
-	testFrame.status:SetMinMaxValues(0, 100)
-	testFrame.status:SetValue(80)
+		testFrame.status:SetStatusBarColor(color.r, color.g, color.b, .7)
+		testFrame.status:SetMinMaxValues(0, 100)
+		testFrame.status:SetValue(80)
 
-	testFrame.button.itemLevel = itemLevel
-	testFrame.button.color = color
-	testFrame.button.ilvl:SetText(LR.db["ItemLevel"] and itemLevel or "")
-	testFrame.button.ilvl:SetTextColor(color.r, color.g, color.b)
+		testFrame.button.itemLevel = itemLevel
+		testFrame.button.color = color
+		testFrame.button.ilvl:SetText(LR.db["ItemLevel"] and itemLevel or "")
+		testFrame.button.ilvl:SetTextColor(color.r, color.g, color.b)
 
-	if LR.db["ItemQuality"] then
-		testFrame.button.bg:SetBackdropBorderColor(color.r, color.g, color.b)
-	else
-		testFrame.button.bg:SetBackdropBorderColor(0, 0, 0)
-	end
+		if LR.db["ItemQuality"] then
+			testFrame.button.bg:SetBackdropBorderColor(color.r, color.g, color.b)
+		else
+			testFrame.button.bg:SetBackdropBorderColor(0, 0, 0)
+		end
+	end)
 end
 
 function LR:UpdateLootRollTest()
