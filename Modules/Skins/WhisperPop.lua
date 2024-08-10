@@ -63,7 +63,7 @@ function S:WhisperPop()
 	notify:SetCheckedTexture(0)
 	notify.icon:SetDesaturated(false)
 	notify.icon.SetDesaturated = B.Dummy
-	notify.icon:SetSize(13, 13)
+	notify.icon:SetSize(14, 14)
 	notify.icon:SetTexture("Interface\\Buttons\\UI-GuildButton-MOTD-Up")
 end
 
