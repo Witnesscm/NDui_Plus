@@ -82,4 +82,4 @@ function M:ExtVendorUI()
 	hooksecurefunc("MerchantFrame_UpdateBuybackInfo", M.ExtVendor_UpdateBuybackPositions)
 end
 
-M:RegisterMisc("ExtVendorUI", M.ExtVendorUI)
+M:RegisterPreload("ExtVendorUI", M.ExtVendorUI)

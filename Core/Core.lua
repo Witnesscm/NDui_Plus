@@ -358,6 +358,12 @@ loader:SetScript("OnEvent", function(self, event, addon)
 			end
 		end
 
+		for _, module in next, initQueue do
+			if module.OnInitialize then
+				xpcall(module.OnInitialize, P.ThrowError, module)
+			end
+		end
+
 		for addonName, object in pairs(addonsToLoadEarly) do
 			local isLoaded, isFinished = C_AddOns.IsAddOnLoaded(addonName)
 			if isLoaded and isFinished then

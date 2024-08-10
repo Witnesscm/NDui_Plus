@@ -5,16 +5,25 @@ local M = P:RegisterModule("Misc")
 local _G = getfenv(0)
 local format, select = string.format, select
 
-M.MiscList = {}
+M.load = {}
+M.preload = {}
+
+function M:RegisterPreload(name, func)
+	self.preload[name] = func or self[name]
+end
 
 function M:RegisterMisc(name, func)
-	if not M.MiscList[name] then
-		M.MiscList[name] = func
+	self.load[name] = func or self[name]
+end
+
+function M:OnInitialize()
+	for name, func in next, self.preload do
+		xpcall(func, P.ThrowError)
 	end
 end
 
 function M:OnLogin()
-	for name, func in next, M.MiscList do
+	for name, func in next, self.load do
 		xpcall(func, P.ThrowError)
 	end
 end
