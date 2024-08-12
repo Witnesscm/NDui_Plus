@@ -30,6 +30,7 @@
 	<Script file="TradeLog.lua"/>
 	<Script file="WeakAuras.lua"/>
 	<Script file="WhisperPop.lua"/>
+	<Script file="WIM.lua"/>
 	<Script file="WorldQuestTab.lua"/>
 	<Script file="WowLua.lua"/>
 </Ui>

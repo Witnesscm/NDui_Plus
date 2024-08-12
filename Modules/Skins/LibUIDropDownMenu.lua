@@ -5,18 +5,19 @@ local r, g, b = DB.r, DB.g, DB.b
 
 local _G = getfenv(0)
 
-local function reskinDropDownMenu(level, isQuestie)
-	if not level then level = 1 end
-
-	local listFrameName = isQuestie and "L_DropDownListQuestie"..level or "L_DropDownList"..level
-	local listFrame = _G[listFrameName]
+function S:SkinDropDownMenu(frameName)
+	local listFrame = _G[frameName]
+	if not listFrame then
+		P.Developer_ThrowError(format("%s is nil", frameName))
+		return
+	end
 
 	if not listFrame.__bg then
 		listFrame.__bg = B.SetBD(listFrame, .7)
 	end
 
 	for _, key in pairs({"Backdrop", "MenuBackdrop", "Border"}) do
-		local backdrop = listFrame[key] or _G[listFrameName..key]
+		local backdrop = listFrame[key] or _G[frameName..key]
 		if backdrop and not backdrop.__styled then
 			backdrop:Hide()
 			backdrop.Show = B.Dummy
@@ -25,15 +26,15 @@ local function reskinDropDownMenu(level, isQuestie)
 		end
 	end
 
-	local maxButtons = isQuestie and _G.L_UIDROPDOWNMENUQUESTIE_MAXBUTTONS or _G.L_UIDROPDOWNMENU_MAXBUTTONS
+	local maxButtons = _G.L_UIDROPDOWNMENU_MAXBUTTONS
 	for i = 1, maxButtons do
-		local bu = _G[listFrameName.."Button"..i]
+		local bu = _G[frameName.."Button"..i]
 		local _, _, _, x = bu:GetPoint()
 		if bu:IsShown() and x then
-			local check = _G[listFrameName.."Button"..i.."Check"]
-			local uncheck = _G[listFrameName.."Button"..i.."UnCheck"]
-			local hl = _G[listFrameName.."Button"..i.."Highlight"]
-			local arrow = _G[listFrameName.."Button"..i.."ExpandArrow"]
+			local check = _G[frameName.."Button"..i.."Check"]
+			local uncheck = _G[frameName.."Button"..i.."UnCheck"]
+			local hl = _G[frameName.."Button"..i.."Highlight"]
+			local arrow = _G[frameName.."Button"..i.."ExpandArrow"]
 
 			if not bu.bg then
 				bu.bg = B.CreateBDFrame(bu)
@@ -42,8 +43,9 @@ local function reskinDropDownMenu(level, isQuestie)
 				bu.bg:SetSize(12, 12)
 				hl:SetColorTexture(r, g, b, .25)
 
-				if arrow then
-					B.SetupArrow(arrow:GetNormalTexture(), "right")
+				local arrowTex = arrow:GetNormalTexture() or arrow:GetRegions()
+				if arrow and arrowTex then
+					B.SetupArrow(arrowTex, "right")
 					arrow:SetSize(14, 14)
 				end
 			end
@@ -131,27 +133,30 @@ local function reskinDropDown(self)
 end
 
 function S:LibUIDropDownMenu()
-	local LibDropMenu = LibStub("LibUIDropDownMenu-4.0", true)
-	if LibDropMenu then
-		hooksecurefunc(LibDropMenu, "ToggleDropDownMenu", function(self, level, ...)
-			reskinDropDownMenu(level)
-		end)
-	end
-
-	local LibDropMenuQuestie = LibStub("LibUIDropDownMenuQuestie-4.0", true)
-	if LibDropMenuQuestie then
-		hooksecurefunc(LibDropMenuQuestie, "ToggleDropDownMenu", function(self, level, ...)
-			reskinDropDownMenu(level, true)
+	-- LibUIDropDownMenu-4.0
+	local LibUIDropDownMenu = LibStub("LibUIDropDownMenu-4.0", true)
+	if LibUIDropDownMenu then
+		hooksecurefunc(LibUIDropDownMenu, "ToggleDropDownMenu", function(_, level)
+			S:SkinDropDownMenu("L_DropDownList"..(level or 1))
 		end)
 	end
 
 	-- LibUIDropDownMenu-2.0
 	if _G.L_ToggleDropDownMenu then
-		hooksecurefunc(_G, "L_ToggleDropDownMenu", function(level, ...)
-			reskinDropDownMenu(level)
+		hooksecurefunc(_G, "L_ToggleDropDownMenu", function(level)
+			S:SkinDropDownMenu("L_DropDownList"..(level or 1))
 		end)
 	end
 
+	-- LibDropDownMenu
+	local LibDropDownMenu = LibStub("LibDropDownMenu", true)
+	if LibDropDownMenu then
+		hooksecurefunc(LibDropDownMenu, "ToggleDropDownMenu", function(_, level)
+			S:SkinDropDownMenu("LibDropDownMenu_List"..(level or 1))
+		end)
+	end
+
+	-- LibDropDown
 	local LibDropDown = LibStub("LibDropDown", true)
 	if LibDropDown then
 		hooksecurefunc(LibDropDown, "CloseAll", function(self)
