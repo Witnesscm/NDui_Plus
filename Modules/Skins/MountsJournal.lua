@@ -51,6 +51,19 @@ local function handledFilterButton(button)
 	handledDropDown(button)
 end
 
+local function handleCombobox(self)
+	if not self then
+		P.Developer_ThrowError("combobox is nil")
+		return
+	end
+
+	P.ReskinDropDown(self)
+	self.Button:SetPoint("RIGHT", -6, 1)
+	self.Button:SetSize(20, 20)
+	self.bg:SetPoint("LEFT", 5, 0)
+	handledDropDown(self)
+end
+
 local function updateVisibility(show)
 	for _, key in ipairs({"bg", "CloseButton", "TitleContainer"}) do
 		local element = _G.CollectionsJournal[key]
@@ -177,11 +190,13 @@ function S:MountsJournal()
 	P.ReskinTooltip(_G.MJTooltipModel)
 
 	local MountsJournalFrame = _G.MountsJournalFrame
-	hooksecurefunc(MountsJournalFrame, "ADDON_LOADED", function(self, addonName)
-		if addonName == "Blizzard_Collections" then
+	if MountsJournalFrame.ADDON_LOADED then
+		hooksecurefunc(MountsJournalFrame, "ADDON_LOADED", function(self, addonName)
 			S:Proxy("ReskinCheck", self.useMountsJournalButton)
-		end
-	end)
+		end)
+	else
+		S:Proxy("ReskinCheck", self.useMountsJournalButton)
+	end
 
 	hooksecurefunc(MountsJournalFrame, "init", function(self)
 		local bgFrame = self.bgFrame
@@ -214,8 +229,25 @@ function S:MountsJournal()
 				handleSummonButton(bgFrame[key])
 			end
 
-			for _, tab in ipairs(bgFrame.Tabs) do
+			for i, tab in ipairs(bgFrame.Tabs) do
 				B.ReskinTab(tab)
+				if i > 1 then
+					tab:ClearAllPoints()
+					tab:SetPoint("RIGHT", bgFrame.Tabs[i-1], "LEFT", 15, 0)
+				end
+			end
+
+			local settingsBackground = bgFrame.settingsBackground
+			if settingsBackground then
+				B.StripTextures(settingsBackground)
+				B.CreateBDFrame(settingsBackground, .25)
+				for i, tab in ipairs(settingsBackground.Tabs) do
+					B.ReskinTab(tab)
+					if i > 1 then
+						tab:ClearAllPoints()
+						tab:SetPoint("TOPLEFT", settingsBackground.Tabs[i-1], "TOPRIGHT", -10, 0)
+					end
+				end
 			end
 
 			hooksecurefunc(bgFrame, "StopMovingOrSizing", function()
@@ -362,13 +394,7 @@ function S:MountsJournal()
 
 		local modelScene = self.modelScene
 		if modelScene then
-			local animationsCombobox = modelScene.animationsCombobox
-			if animationsCombobox then
-				P.ReskinDropDown(animationsCombobox)
-				animationsCombobox.Button:SetPoint("RIGHT", -6, 0)
-				handledDropDown(animationsCombobox)
-			end
-
+			handleCombobox(modelScene.animationsCombobox)
 			local modelControl = modelScene.modelControl
 			if modelControl then
 				B.StripTextures(modelControl)
@@ -403,6 +429,112 @@ function S:MountsJournal()
 		B.ReskinCheck(check)
 		return check
 	end
+
+	local config = _G.MountsJournalConfig
+	config:HookScript("OnShow", function(self)
+		if not self.styled then
+			S:Proxy("ReskinTrimScroll", self.rightPanelScroll and self.rightPanelScroll.ScrollBar)
+
+			for _, key in ipairs({
+				"leftPanel", "rightPanel", "herbGroup", "repairGroup",
+				"magicBroomGroup", "underlightAnglerGroup", "petGroup"
+			}) do
+				S:Proxy("StripTextures", self[key])
+				S:Proxy("CreateBDFrame", self[key], .25)
+			end
+
+			for _, key in ipairs({
+				"waterJump", "useHerbMounts", "useRepairMounts", "freeSlots", "useMagicBroom",
+				"useUnderlightAngler", "summonPetEvery", "noPetInRaid", "noPetInGroup",
+				"copyMountTarget", "coloredMountNames", "arrowButtons", "openLinks", "showWowheadLink"
+			}) do
+				S:Proxy("ReskinCheck", self[key])
+			end
+
+			for _, key in ipairs({"bindMount", "bindSecondMount", "resetHelp", "cancelBtn", "applyBtn"}) do
+				S:Proxy("Reskin", self[key])
+			end
+
+			for _, key in ipairs({"modifierCombobox", "repairMountsCombobox", "magicBroomCombobox"}) do
+				handleCombobox(self[key])
+			end
+
+			for _, key in ipairs({"repairPercent", "repairFlyablePercent", "freeSlotsNum", "summonPetEveryN"}) do
+				local editbox = self[key]
+				if editbox then
+					editbox:SetBackdrop(nil)
+					B.ReskinInput(editbox)
+				end
+			end
+
+			self.styled = true
+		end
+	end)
+
+	local classConfig = _G.MountsJournalConfigClasses
+	classConfig:HookScript("OnShow", function(self)
+		if not self.styled then
+			S:Proxy("ReskinTrimScroll", self.rightPanelScroll and self.rightPanelScroll.ScrollBar)
+			S:Proxy("ReskinCheck", self.charCheck)
+
+			for _, key in ipairs({"leftPanel", "rightPanel"}) do
+				local panel = self[key]
+				if panel then
+					B.StripTextures(panel)
+					local bg = B.CreateBDFrame(panel, .25)
+					bg:SetAllPoints()
+				end
+			end
+
+			for _, bu in ipairs({self.leftPanel:GetChildren()}) do
+				if bu.key then
+					B.ReskinIcon(bu.icon)
+					B.ClassIconTexCoord(bu.icon, bu.key)
+				end
+			end
+
+			for _, key in ipairs({"moveFallMF", "combatMF"}) do
+				local editbox = self[key]
+				if editbox then
+					S:Proxy("Reskin", editbox.defaultBtn)
+					S:Proxy("Reskin", editbox.cancelBtn)
+					S:Proxy("Reskin", editbox.saveBtn)
+					S:Proxy("ReskinCheck", editbox.enable)
+					S:Proxy("ReskinTrimScroll", editbox.scrollBar)
+
+					local background = editbox.background
+					if background then
+						B.StripTextures(background)
+						local bg = B.CreateBDFrame(editbox.background, .25)
+						bg:SetInside(editbox.background)
+					end
+				end
+			end
+
+			self.styled = true
+		end
+	end)
+
+	hooksecurefunc(classConfig, "showClassSettings", function(self)
+		if self.sliderPool then
+			for frame in self.sliderPool:EnumerateActive() do
+				if frame.slider and frame.edit and not frame.styled then
+					B.ReskinSlider(frame.slider)
+					frame.edit:SetBackdrop(nil)
+					B.ReskinInput(frame.edit)
+
+					frame.styled = true
+				end
+			end
+		end
+
+		for check in self.checkPool:EnumerateActive() do
+			if not check.styled then
+				B.ReskinCheck(check)
+				check.styled = true
+			end
+		end
+	end)
 end
 
 S:RegisterSkin("MountsJournal", S.MountsJournal)
