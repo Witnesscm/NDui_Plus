@@ -191,11 +191,13 @@ function S:MountsJournal()
 
 	local MountsJournalFrame = _G.MountsJournalFrame
 	if MountsJournalFrame.ADDON_LOADED then
-		hooksecurefunc(MountsJournalFrame, "ADDON_LOADED", function(self, addonName)
-			S:Proxy("ReskinCheck", self.useMountsJournalButton)
+		hooksecurefunc(MountsJournalFrame, "ADDON_LOADED", function(self)
+			if self.useMountsJournalButton then
+				B.ReskinCheck(self.useMountsJournalButton)
+			end
 		end)
 	else
-		S:Proxy("ReskinCheck", self.useMountsJournalButton)
+		S:Proxy("ReskinCheck", MountsJournalFrame.useMountsJournalButton)
 	end
 
 	hooksecurefunc(MountsJournalFrame, "init", function(self)
