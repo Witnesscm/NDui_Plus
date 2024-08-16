@@ -447,6 +447,9 @@ function S:WeakAurasPendingUpdateButton(widget)
 	widget.icon:SetPoint("LEFT", button, "LEFT", 1, 0)
 	button.iconBG = B.CreateBDFrame(widget.icon, 0)
 	button.iconBG:SetAllPoints(widget.icon)
+
+	hooksecurefunc(widget, "SetIcon", S.WeakAuras_SkinIcon)
+	hooksecurefunc(widget, "UpdateThumbnail", S.WeakAuras_UpdateIcon)
 end
 
 function S:WeakAurasMultiLineEditBox(widget)
