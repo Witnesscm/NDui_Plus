@@ -145,9 +145,7 @@ local function CreateCheckbox(parent, offset, id, spec, type)
 	box.spec = spec
 	box:SetScript("OnClick", function(self)
 		for _, bu in pairs(parent.buttons) do
-			if bu ~= self then
-				bu:SetChecked(false)
-			end
+			bu:SetChecked(bu == self)
 		end
 		LSM:SetSpecSetting(type, id, spec)
 	end)
