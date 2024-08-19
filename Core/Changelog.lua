@@ -2,6 +2,11 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 
 P.Changelog = [[
+v3.4.7
+[易用性] 提前加载商人面板扩展，以兼容其他插件
+[美化] 更新 WeakAuras 美化提示
+[美化] 更新 WeakAurasOptions 美化
+
 v3.4.6
 [易用性] 修复按下shift键时Roll点物品鼠标提示仍会显示的问题
 [易用性] 调整拾取通告延迟
