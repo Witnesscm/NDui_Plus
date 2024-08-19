@@ -110,6 +110,7 @@ end
 local function resetUrlBox(self)
 	self:SetText(self.url)
 	self:HighlightText()
+	self:SetFocus()
 end
 
 local skinTips
@@ -119,7 +120,7 @@ local function WeakAurasSkinTips()
 	skinTips = CreateFrame("Frame", "NDuiPlus_SkinTips", UIParent)
 	tinsert(UISpecialFrames, "NDuiPlus_SkinTips")
 	skinTips:SetPoint("CENTER")
-	skinTips:SetSize(480, 80)
+	skinTips:SetSize(480, 200)
 	skinTips:SetFrameStrata("HIGH")
 	B.CreateMF(skinTips)
 	B.SetBD(skinTips)
@@ -129,18 +130,31 @@ local function WeakAurasSkinTips()
 	close:SetScript("OnClick", function()
 		skinTips:Hide()
 	end)
-	local box = B.CreateEditBox(skinTips, 460, 24)
-	box:SetPoint("TOP", 0, -32)
-	box.url = "https://github.com/Witnesscm/NDui_Plus/wiki/WeakAuras2%E2%80%90Skins%E2%80%90FAQ/9d0b0f8d3a7ecf5d270a07c3e9251c38d0554816"
+	local msg = strjoin(
+		"\n",
+		L["You are using Official WeakAuras, the skin of WeakAuras will not be loaded due to the limitation."],
+		L["If you want to use WeakAuras skin, please install |cff99ccffWeakAurasPatched|r or change the code manually."],
+		L["You can disable this alert via disabling WeakAuras Skin in |cff99ccffNDui|r Console."]
+	)
+	local fs = B.CreateFS(skinTips, 14, msg)
+	fs:SetWordWrap(true)
+	fs:SetJustifyH("LEFT")
+	fs:SetSpacing(8)
+	fs:ClearAllPoints()
+	fs:SetPoint("TOPLEFT", 12, -40)
+	fs:SetPoint("TOPRIGHT", -12, -40)
+	local box = B.CreateEditBox(skinTips, 450, 22)
+	box:SetPoint("BOTTOM", skinTips, "BOTTOM", 0, 22)
+	box.url = "https://github.com/Witnesscm/NDui_Plus/wiki/WeakAuras2%E2%80%90Skins%E2%80%90FAQ"
 	if DB.Client == "zhCN" or DB.Client == "zhTW" then
-		box.url = "https://github.com/Witnesscm/NDui_Plus/wiki/WeakAuras2%E2%80%90%E7%9A%AE%E8%82%A4%E2%80%90%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98/893a20848c410a6410fc3f9220c0512478734c0e"
+		box.url = "https://github.com/Witnesscm/NDui_Plus/wiki/WeakAuras2%E2%80%90%E7%9A%AE%E8%82%A4%E2%80%90%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98"
 	end
 	resetUrlBox(box)
 	box:SetScript("OnTextChanged", resetUrlBox)
 	box:SetScript("OnCursorChanged", resetUrlBox)
-	local fs = B.CreateFS(skinTips, 14, L["Press Ctrl+C to copy the URL"])
-	fs:ClearAllPoints()
-	fs:SetPoint("TOPLEFT", box, "BOTTOMLEFT", 0, -2)
+	local copy = B.CreateFS(skinTips, 12, L["Press Ctrl+C to copy the URL"])
+	copy:ClearAllPoints()
+	copy:SetPoint("TOPLEFT", box, "BOTTOMLEFT", 0, -2)
 end
 
 local LINK_ID = "WeakAurasTips"
@@ -325,7 +339,7 @@ function S:WeakAuras()
 		profilingReport:HookScript("OnShow", SkinProfilingReport)
 	end
 
-	if C.db["Skins"]["WeakAuras"] and not WeakAuras.regionPrototype then
+	if C.db["Skins"]["WeakAuras"] and not WeakAuras.Private then
 		local link = format("|cff99ccff|Haddon:%s:%s|h[%s]|h|r", addonName, LINK_ID, L["Click for details"])
 		P:Print(L["WeakAurasSkinTips"], link)
 	end
@@ -433,6 +447,9 @@ function S:WeakAurasPendingUpdateButton(widget)
 	widget.icon:SetPoint("LEFT", button, "LEFT", 1, 0)
 	button.iconBG = B.CreateBDFrame(widget.icon, 0)
 	button.iconBG:SetAllPoints(widget.icon)
+
+	hooksecurefunc(widget, "SetIcon", S.WeakAuras_SkinIcon)
+	hooksecurefunc(widget, "UpdateThumbnail", S.WeakAuras_UpdateIcon)
 end
 
 function S:WeakAurasMultiLineEditBox(widget)
@@ -481,26 +498,6 @@ function S:WeakAurasTextureButton(widget)
 	local hl = button:GetHighlightTexture()
 	hl:SetVertexColor(r, g, b, .25)
 	hl:SetInside()
-end
-
-local function TalentButton_Red(self)
-	self.bg:SetBackdropBorderColor(1, 0, 0)
-end
-
-local function TalentButton_Clear(self)
-	self.bg:SetBackdropBorderColor(0, 0, 0)
-end
-
-function S:WeakAurasMiniTalent(widget)
-	for _, button in pairs(widget.buttons) do
-		button:SetNormalTexture(0)
-		button.bg = B.ReskinIcon(button:GetNormalTexture())
-		button:GetHighlightTexture():SetColorTexture(1, 1, 1, .25)
-		button.cover:SetTexture("")
-		hooksecurefunc(button, "Yellow", TalentButton_Clear)
-		hooksecurefunc(button, "Red", TalentButton_Red)
-		hooksecurefunc(button, "Clear", TalentButton_Clear)
-	end
 end
 
 local function reskinStepper(stepper, direction)
@@ -565,7 +562,6 @@ S:RegisterAceGUIWidget("WeakAuras-MultiLineEditBoxWithEnter", S.WeakAurasMultiLi
 S:RegisterAceGUIWidget("WeakAurasLoadedHeaderButton")
 S:RegisterAceGUIWidget("WeakAurasIconButton")
 S:RegisterAceGUIWidget("WeakAurasTextureButton")
-S:RegisterAceGUIWidget("WeakAurasMiniTalent")
 S:RegisterAceGUIWidget("WeakAurasSpinBox")
 S:RegisterAceGUIWidget("WeakAurasSnippetButton")
 S:RegisterAceGUIWidget("WA_LSM30_StatusbarAtlas")
