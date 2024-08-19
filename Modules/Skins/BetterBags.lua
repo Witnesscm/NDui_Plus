@@ -123,6 +123,15 @@ local function SkinSectionConfig(self)
 	end
 end
 
+local function SkinSearchCategoryConfig(self)
+	S:Proxy("ReskinInput", self.nameBox)
+	S:Proxy("ReskinInput", self.queryBox)
+	S:Proxy("ReskinTrimScroll", self.queryBox and self.queryBox.ScrollBar)
+	S:Proxy("ReskinInput", self.priorityBox)
+	S:Proxy("Reskin", self.saveButton)
+	S:Proxy("Reskin", self.cancelButton)
+end
+
 function S:BetterBags()
 	if not S.db["BetterBags"] then return end
 
@@ -131,8 +140,9 @@ function S:BetterBags()
 
 	local ItemFrame = BetterBags:GetModule("ItemFrame")
 	local Themes = BetterBags:GetModule("Themes")
-	local Search = BetterBags:GetModule("Search")
+	local SearchBox = BetterBags:GetModule("SearchBox")
 	local Database = BetterBags:GetModule("Database")
+	local SearchCategoryConfig = BetterBags:GetModule("SearchCategoryConfig")
 
 	local function hook(name, method, func)
 		local module = BetterBags:GetModule(name)
@@ -148,7 +158,7 @@ function S:BetterBags()
 		end
 	end
 
-	hook("Search", "Create", SkinSearchFrame)
+	hook("SearchBox", "Create", SkinSearchFrame)
 	hook("BagButton", "Create", SkinBagButton)
 	hook("ItemFrame", "Create", SkinContainerButton)
 	hook("Currency", "Create", SkinCurrencyFrame)
@@ -156,6 +166,10 @@ function S:BetterBags()
 	hook("Question", "_OnCreate", SkinQuestion)
 	hook("List", "Create", SkinList)
 	hook("SectionConfig", "Create", SkinSectionConfig)
+
+	if SearchCategoryConfig then
+		P:Delay(.5, SkinSearchCategoryConfig, SearchCategoryConfig)
+	end
 
 	-- tooltip
 	hooksecurefunc(ItemFrame, "OnEnable", function(self)
@@ -176,11 +190,13 @@ function S:BetterBags()
 	-- register theme
 	local decoratorFrames = {}
 	local itemButtons = {}
+	local tabs = {}
 
 	local theme = {
 		Name = "NDui",
 		Description = "NDui Theme for BetterBags",
 		Available = true,
+		DisableMasque = true,
 		Portrait = function(frame)
 			local decoration = decoratorFrames[frame:GetName()]
 			if not decoration then
@@ -196,9 +212,9 @@ function S:BetterBags()
 				decoration.CloseButton:SetFrameLevel(1001)
 				B.ReskinClose(decoration.CloseButton)
 
-				local searchBox = Search:CreateBox(frame.Owner.kind, decoration)
-				searchBox.frame:SetPoint("TOP", decoration, "TOP", 0, -14)
-				searchBox.frame:SetSize(150, 20)
+				local searchBox = SearchBox:CreateBox(frame.Owner.kind, decoration)
+				searchBox.frame:SetPoint("TOPLEFT", decoration, "TOPLEFT", 12, -40)
+				searchBox.frame:SetPoint("BOTTOMRIGHT", decoration, "TOPRIGHT", -12, -60)
 				S:Proxy("ReskinInput", searchBox.textBox)
 				decoration.search = searchBox
 
@@ -280,6 +296,9 @@ function S:BetterBags()
 			for _, button in pairs(itemButtons) do
 				button:Hide()
 			end
+			for _, tab in pairs(tabs) do
+				tab:Hide()
+			end
 		end,
 		SectionFont = function(font)
 			font:SetFontObject("GameFontNormal")
@@ -294,11 +313,6 @@ function S:BetterBags()
 			local decoration = decoratorFrames[frame:GetName()]
 			if decoration then
 				decoration.search:SetShown(shown)
-				if shown then
-					decoration.title:Hide()
-				else
-					decoration.title:Show()
-				end
 			end
 		end,
 		ItemButton = function(item)
@@ -324,6 +338,18 @@ function S:BetterBags()
 			end
 			itemButtons[buttonName] = button
 			return button
+		end,
+		Tab = function(tab)
+			local tabName = tab:GetName()
+			local decoration = tabs[tabName]
+			if decoration then
+				decoration:Show()
+				return decoration
+			end
+			decoration = Themes.CreateDefaultTabDecoration(tab)
+			B.ReskinTab(decoration)
+			tabs[tabName] = decoration
+			return decoration
 		end
 	}
 	Themes:RegisterTheme("ndui", theme)
