@@ -314,26 +314,26 @@ function LR:LootRoll_Start(rollID, rollTime)
 		bar.button.bg:SetBackdropBorderColor(0, 0, 0)
 	end
 
-	bar.need.text:SetText(0)
+	bar.need.text:SetText("")
 	bar.need:SetEnabled(canNeed)
 	bar.need.tiptext = canNeed and NEED or _G["LOOT_ROLL_INELIGIBLE_REASON"..reasonNeed]
 
-	bar.transmog.text:SetText(0)
+	bar.transmog.text:SetText("")
 	bar.transmog:SetShown(not not canTransmog)
 	bar.transmog:SetEnabled(canTransmog)
 
-	bar.greed.text:SetText(0)
+	bar.greed.text:SetText("")
 	bar.greed:SetShown(not canTransmog)
 	bar.greed:SetEnabled(canGreed)
 	bar.greed.tiptext = canGreed and GREED or _G["LOOT_ROLL_INELIGIBLE_REASON"..reasonGreed]
 
 	if bar.disenchant then
-		bar.disenchant.text:SetText(0)
+		bar.disenchant.text:SetText("")
 		bar.disenchant:SetEnabled(canDisenchant)
 		bar.disenchant.tiptext = canDisenchant and ROLL_DISENCHANT or format(_G["LOOT_ROLL_INELIGIBLE_REASON"..reasonDisenchant], deSkillRequired)
 	end
 
-	bar.pass.text:SetText(0)
+	bar.pass.text:SetText("")
 
 	bar.fsbind:SetText(bop and "BoP" or "BoE")
 	bar.fsbind:SetVertexColor(bop and 1 or .3, bop and .3 or 1, bop and .1 or .3)
@@ -423,7 +423,7 @@ function LR:OnLogin()
 	B.Mover(parentFrame, L["teksLoot LootRoll"], "teksLoot", {"TOP", UIParent, 0, -200})
 	fontSize = LR.db["Height"] / 2
 
-	B:RegisterEvent("LOOT_HISTORY_UPDATE_DROP", self.LootRoll_UpdateDrops)
+	-- B:RegisterEvent("LOOT_HISTORY_UPDATE_DROP", self.LootRoll_UpdateDrops)
 	B:RegisterEvent("ENCOUNTER_END", self.LootRoll_EncounterEnd)
 	B:RegisterEvent("START_LOOT_ROLL", self.LootRoll_Start)
 
