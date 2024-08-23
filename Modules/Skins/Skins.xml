@@ -7,11 +7,11 @@
 	<Script file="BetterBags.lua"/>
 	<Script file="BtWLoadouts.lua"/>
 	<Script file="ButtonForge.lua"/>
-	<Script file="ExtVendorUI.lua"/>
 	<Script file="Immersion.lua"/>
 	<Script file="ImprovedAddonList.lua"/>
 	<Script file="InboxMailBag.lua"/>
 	<Script file="Journalator.lua"/>
+	<Script file="Krowi_ExtVendorUI.lua"/>
 	<Script file="LibUIDropDownMenu.lua"/>
 	<Script file="ls_Toasts.lua"/>
 	<Script file="MeetingStone.lua"/>

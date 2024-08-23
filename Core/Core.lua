@@ -105,7 +105,6 @@ P.DefaultSettings = {
 		tdBattlePetScript = true,
 		RareScanner = true,
 		WorldQuestTab = true,
-		ExtVendor = true,
 		AdiBags = true,
 		BetterBags = true,
 		ShadowDancer = true,
