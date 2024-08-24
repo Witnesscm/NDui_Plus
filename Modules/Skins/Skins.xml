@@ -5,6 +5,7 @@
 	<Script file="Auctionator.lua"/>
 	<Script file="BagSync.lua"/>
 	<Script file="BetterBags.lua"/>
+	<Script file="BetterWardrobe.lua"/>
 	<Script file="BtWLoadouts.lua"/>
 	<Script file="ButtonForge.lua"/>
 	<Script file="Immersion.lua"/>
