@@ -2,6 +2,22 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 
 P.Changelog = [[
+v11.0.3
+[主要] 更新版本号至11.0.2
+[控制台] 修复控制台切换按钮
+[美化] 添加 MountsJournal 美化
+[美化] 添加 ToyBoxEnhanced 美化
+[美化] 添加 SimpleAddonManager 美化
+[美化] 添加 BetterWardrobe 美化
+[美化] 添加 Krowi_ExtVendorUI 美化
+[美化] 添加 CompactVendor 美化
+[美化] 添加 WIM 美化
+[美化] 修复 BetterBags 美化
+[美化] 更新 TinyInspect 美化
+[易用性] 提前加载商人面板扩展，以兼容其他插件
+[易用性] 受API限制，不再显示Roll点增强按钮人数统计
+[易用性] 修复按下shift键时Roll点物品鼠标提示仍会显示的问题
+
 v11.0.2
 [|cffFF1414主要|r] 需要NDui v8.0.0 以上版本
 [美化] 更新 WeakAuras 美化提醒
