@@ -8,6 +8,7 @@
 	<Script file="BetterWardrobe.lua"/>
 	<Script file="BtWLoadouts.lua"/>
 	<Script file="ButtonForge.lua"/>
+	<Script file="CompactVendor.lua"/>
 	<Script file="Immersion.lua"/>
 	<Script file="ImprovedAddonList.lua"/>
 	<Script file="InboxMailBag.lua"/>
