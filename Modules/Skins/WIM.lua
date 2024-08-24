@@ -107,7 +107,7 @@ function S:WIM()
 	hooksecurefunc(WIM, "CreateW2WWindow", HandleWindow)
 	hooksecurefunc(WIM, "ShowDemoWindow", HandleWindow)
 	hooksecurefunc(WIM, "PopContextMenu", function()
-		S:SkinDropDownMenu("LibDropDownMenu_List1")
+		S:SkinDropDownMenu("LibDropDownMenu_List")
 	end)
 end
 

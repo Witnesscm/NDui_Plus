@@ -5,7 +5,8 @@ local r, g, b = DB.r, DB.g, DB.b
 
 local _G = getfenv(0)
 
-function S:SkinDropDownMenu(frameName)
+function S:SkinDropDownMenu(prefix, level, maxButtons)
+	local frameName = prefix..(level or 1)
 	local listFrame = _G[frameName]
 	if not listFrame then
 		P.Developer_ThrowError(format("%s is nil", frameName))
@@ -26,7 +27,7 @@ function S:SkinDropDownMenu(frameName)
 		end
 	end
 
-	local maxButtons = _G.L_UIDROPDOWNMENU_MAXBUTTONS
+	maxButtons = maxButtons or _G.L_UIDROPDOWNMENU_MAXBUTTONS
 	for i = 1, maxButtons do
 		local bu = _G[frameName.."Button"..i]
 		local _, _, _, x = bu:GetPoint()
@@ -137,14 +138,14 @@ function S:LibUIDropDownMenu()
 	local LibUIDropDownMenu = LibStub("LibUIDropDownMenu-4.0", true)
 	if LibUIDropDownMenu then
 		hooksecurefunc(LibUIDropDownMenu, "ToggleDropDownMenu", function(_, level)
-			S:SkinDropDownMenu("L_DropDownList"..(level or 1))
+			S:SkinDropDownMenu("L_DropDownList", level)
 		end)
 	end
 
 	-- LibUIDropDownMenu-2.0
 	if _G.L_ToggleDropDownMenu then
 		hooksecurefunc(_G, "L_ToggleDropDownMenu", function(level)
-			S:SkinDropDownMenu("L_DropDownList"..(level or 1))
+			S:SkinDropDownMenu("L_DropDownList", level)
 		end)
 	end
 
@@ -152,7 +153,14 @@ function S:LibUIDropDownMenu()
 	local LibDropDownMenu = LibStub("LibDropDownMenu", true)
 	if LibDropDownMenu then
 		hooksecurefunc(LibDropDownMenu, "ToggleDropDownMenu", function(_, level)
-			S:SkinDropDownMenu("LibDropDownMenu_List"..(level or 1))
+			S:SkinDropDownMenu("LibDropDownMenu_List", level)
+		end)
+	end
+
+	local ElioteDropDownMenu = LibStub("ElioteDropDownMenu-1.0", true)
+	if ElioteDropDownMenu then
+		hooksecurefunc(ElioteDropDownMenu, "ToggleDropDownMenu", function(level)
+			S:SkinDropDownMenu("ElioteDDM_DropDownList", level, ElioteDropDownMenu.UIDROPDOWNMENU_MAXBUTTONS)
 		end)
 	end
 
