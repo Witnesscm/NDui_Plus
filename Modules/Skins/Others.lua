@@ -137,6 +137,17 @@ function S:BuyEmAll()
 	B.CreateMF(_G.BuyEmAllFrame)
 end
 
+function S:CompactVendor()
+	local CompactVendorFrame = _G.CompactVendorFrame
+	B.ReskinTrimScroll(CompactVendorFrame.ScrollBar)
+	B.ReskinInput(CompactVendorFrame.Search, 22)
+	local FilterButton = _G.CompactVendorFilterButton
+	B.ReskinArrow(FilterButton, "down")
+	FilterButton:SetScale(1)
+	FilterButton:ClearAllPoints()
+	FilterButton:SetPoint("RIGHT", _G.MerchantFrameCloseButton, "LEFT", -2, 0)
+end
+
 S:RegisterSkin("WorldQuestsList", S.WorldQuestsList)
 S:RegisterSkin("PremadeGroupsFilter", S.PremadeGroupsFilter)
 S:RegisterSkin("MogPartialSets", S.MogPartialSets)
@@ -145,6 +156,7 @@ S:RegisterSkin("LibQTip")
 S:RegisterSkin("SavedInstances", S.SavedInstances)
 S:RegisterSkin("HandyNotes_Dragonflight", S.HandyNotes_Dragonflight)
 S:RegisterSkin("BuyEmAll", S.BuyEmAll)
+S:RegisterSkin("CompactVendor", S.CompactVendor)
 
 -- Hide Toggle Button
 S.ToggleFrames = {}
