@@ -125,3 +125,19 @@ do
 
 	P:AddCallbackForAddon("Blizzard_DebugTools", M.Blizzard_TableInspector)
 end
+
+do
+	local function resetPanelWidth()
+		SetUIPanelAttribute(_G.ProfessionsFrame, "width", 0)
+	end
+
+	function M:ModifyProfessionsWidth()
+		resetPanelWidth()
+		_G.ProfessionsFrame.CraftingPage.CraftingOutputLog:HookScript("OnShow", resetPanelWidth)
+		_G.ProfessionsFrame.CraftingPage.CraftingOutputLog:HookScript("OnHide", resetPanelWidth)
+		_G.ProfessionsFrame.OrdersPage.OrderView.CraftingOutputLog:HookScript("OnShow", resetPanelWidth)
+		_G.ProfessionsFrame.OrdersPage.OrderView.CraftingOutputLog:HookScript("OnHide", resetPanelWidth)
+	end
+
+	P:AddCallbackForAddon("Blizzard_Professions", M.ModifyProfessionsWidth)
+end
