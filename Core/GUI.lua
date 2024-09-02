@@ -85,12 +85,7 @@ local function updateAFKMode()
 end
 
 local function toggleLootSpecManager()
-	local LSM = P:GetModule("LootSpecManager")
-	if LSM.GUI then
-		B:TogglePanel(LSM.GUI)
-	else
-		LSM:CreateGUI()
-	end
+	P:GetModule("LootSpecManager"):TogglePanel()
 end
 
 local function setupTexStyle()

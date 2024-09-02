@@ -24,6 +24,19 @@ LSM.DiffNames = {
 local SPACING = 24
 local IGNORE = -1
 
+local function GetExpansionEJTier(expansion)
+	local tier = ExpansionEnumToEJTierDataTableId and ExpansionEnumToEJTierDataTableId[expansion]
+	if tier then
+		return tier
+	end
+
+	for i = 1, EJ_GetNumTiers() do
+		if EJ_GetTierInfo(i) == _G["EXPANSION_NAME"..expansion] then
+			return i
+		end
+	end
+end
+
 local function GetEncounterList(instanceID)
 	local list = { }
 	local name, _, _, _, _, _, encounterID = EJ_GetEncounterInfoByIndex(1, instanceID)
@@ -35,12 +48,10 @@ local function GetEncounterList(instanceID)
 end
 
 function LSM:UpdateRaidData()
-	local currentTier = EJ_GetCurrentTier()
-	local maxTier = EJ_GetNumTiers() - 1 -- 10.0.2 add Mythic+ Dungeons tier
-	if currentTier ~= maxTier then
-		EJ_SelectTier(maxTier)
-		LSM.CurrentTier = currentTier
-	end
+	LSM.CurrentTier = EJ_GetCurrentTier()
+
+	local maxTier = GetExpansionEJTier(GetExpansionLevel()) or EJ_GetNumTiers()
+	EJ_SelectTier(maxTier)
 
 	local index = 2
 	local raidInstID, name = EJ_GetInstanceByIndex(index, true)
@@ -314,7 +325,7 @@ function LSM:UpdateData()
 		B:UnregisterEvent("UPDATE_INSTANCE_INFO", LSM.UpdateData)
 
 		if LSM.CurrentTier then
-			EJ_SelectTier(LSM.CurrentTier)
+			P:Delay(1, EJ_SelectTier, LSM.CurrentTier)
 		end
 
 		return
@@ -327,18 +338,37 @@ function LSM:UpdateData()
 	LSM:UpdateMythicPlusData()
 end
 
-function LSM:CreateEJButton()
-	local filter = _G.EncounterJournalEncounterFrameInfoFilterToggle
-	local btn = P.CreateButton(filter, 75, 28, L["Loot Spec"])
-	btn:SetPoint("BOTTOM", filter, "TOP", 0, 5)
-	btn.Text:SetFont(DB.Font[1], 15, DB.Font[3])
-	btn.Text:SetWidth(75)
-	btn:SetScript("OnClick", function()
-		if LSM.GUI then
-			B:TogglePanel(LSM.GUI)
-		else
-			LSM:CreateGUI()
+function LSM:TogglePanel()
+	if LSM.GUI then
+		B:TogglePanel(LSM.GUI)
+	else
+		LSM:CreateGUI()
+	end
+end
+
+local function IsMythicPlusDifficulty(difficultyID)
+	return difficultyID == 8
+end
+
+local function IsCurrentExpansionRaid(instanceID)
+	for _, instance in ipairs(LSM.Data.Raid) do
+		if instance.id == instanceID then
+			return true
 		end
+	end
+	return false
+end
+
+function LSM:CreateEJButton()
+	local parent = _G.EncounterJournalEncounterFrameInfo and _G.EncounterJournalEncounterFrameInfo.LootContainer
+	if not parent then return end
+
+	local bu = B.CreateGear(parent)
+	bu:SetPoint("RIGHT", parent.filter, "LEFT", -4, 0)
+	bu:SetScript("OnClick", LSM.TogglePanel)
+
+	hooksecurefunc("EncounterJournal_SetTab", function()
+		bu:SetShown(IsMythicPlusDifficulty(EJ_GetDifficulty()) or IsCurrentExpansionRaid(_G.EncounterJournal.instanceID))
 	end)
 end
 

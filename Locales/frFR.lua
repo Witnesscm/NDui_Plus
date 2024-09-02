@@ -67,7 +67,6 @@ L["LootSpecManagerEnable"] = "Activer le gestionnaire de spécialisation de buti
 L["LootSpecManager"] = "Gestionnaire de spécialisation de butin"
 L["LootSpecManagerTip"] = "Changer automatiquement votre spécification de butin. Commande : /lsm"
 L["LootSpecManagerTips"] = "|nBasé sur le gestionnaire de spécialisation de butin, change automatiquement votre spécialisation de butin entre les bosses, supporte Raid et M+."
-L["Loot Spec"] = "Spécialisation du butin"
 L["Mythic+"] = "Mythique+"
 L["LootSpecManagerRaidStart"] = "Boss engagé. La spécification a été modifiée."
 L["LootSpecManagerM+Start"] = "M+ démarré, la spécialisation de butin a changé."
