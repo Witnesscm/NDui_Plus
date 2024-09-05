@@ -512,7 +512,8 @@ function LR:UpdateLootRollTest()
 	testFrame.pass:SetSize(height-4, height-4)
 	testFrame.status:SetPoint("TOPLEFT", C.mult, -(LR.db["Style"] == 2 and testFrame:GetHeight() / 1.6 or C.mult))
 
-	local itemLevel, color = testFrame.button.itemLevel, testFrame.button.color
+	local itemLevel = testFrame.button.itemLevel or 29
+	local color = testFrame.button.color or DB.QualityColors[Enum.ItemQuality.Epic]
 	testFrame.button.ilvl:SetText(LR.db["ItemLevel"] and itemLevel or "")
 	testFrame.button.ilvl:SetFont(DB.Font[1], height / 2 - 2, DB.Font[3])
 
