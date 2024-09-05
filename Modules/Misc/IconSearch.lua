@@ -109,7 +109,7 @@ function M:IconSearch_Setup()
 		local resultFrame = CreateFrame("Frame", nil, self)
 		resultFrame:SetFrameStrata("HIGH")
 		resultFrame:SetSize(494, 375)
-		resultFrame:SetPoint("TOPLEFT", 21, -84)
+		resultFrame:SetPoint("TOPLEFT", self.IconSelector, "TOPLEFT")
 		resultFrame:Hide()
 		self.SearchResults = resultFrame
 
