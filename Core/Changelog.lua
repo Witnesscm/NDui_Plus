@@ -2,6 +2,15 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 
 P.Changelog = [[
+v11.0.4
+[鼠标提示] PvE进度更新地心之战数据
+[美化] 更新 HandyNotes_TheWarWithin 美化
+[美化] 更新 WorldQuestTab 美化
+[美化] 更新 Immersion 美化
+[易用性] 允许专业面板和拍卖行等其他面板共存
+[易用性] 修复拾取专精管理手册按钮
+[易用性] 删除一键学习驭龙术天赋
+
 v11.0.3
 [主要] 更新版本号至11.0.2
 [控制台] 修复控制台切换按钮
