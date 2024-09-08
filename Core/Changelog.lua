@@ -2,6 +2,9 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 
 P.Changelog = [[
+v3.4.8
+[美化] 更新 tdInspect 美化
+
 v3.4.7
 [易用性] 提前加载商人面板扩展，以兼容其他插件
 [美化] 更新 WeakAuras 美化提示
