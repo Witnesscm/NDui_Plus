@@ -17,7 +17,7 @@ jobs:
 
     steps:
       - name: Clone project
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
@@ -25,7 +25,7 @@ jobs:
         uses: BigWigsMods/packager@v2
 
       - name: Upload Github Actions
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: NDui_Plus
           path: .release/*.zip
