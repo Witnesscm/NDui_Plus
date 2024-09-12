@@ -145,10 +145,9 @@ end
 -- fix C_MountJournal.GetMountLink
 do
 	local GetMountLink = C_MountJournal.GetMountLink
-	C_MountJournal.GetMountLink = function(...)
-		local link = GetMountLink(...)
-		local spellID = strmatch(link, "|Hmount:(%d+):%d+:.-|h.-|h")
-		local mountID = spellID and C_MountJournal.GetMountFromSpell(spellID)
+	C_MountJournal.GetMountLink = function(spellID)
+		local link = GetMountLink(spellID)
+		local mountID = C_MountJournal.GetMountFromSpell(spellID)
 		local mountTypeID = mountID and select(5, C_MountJournal.GetMountInfoExtraByID(mountID))
 		if mountTypeID and mountTypeID == 402 then
 			return link
