@@ -500,6 +500,26 @@ function S:WeakAurasTextureButton(widget)
 	hl:SetInside()
 end
 
+local function TalentButton_Red(self)
+	self.bg:SetBackdropBorderColor(1, 0, 0)
+end
+
+local function TalentButton_Clear(self)
+	self.bg:SetBackdropBorderColor(0, 0, 0)
+end
+
+function S:WeakAurasMiniTalent(widget)
+	for _, button in pairs(widget.buttons) do
+		button:SetNormalTexture(0)
+		button.bg = B.ReskinIcon(button:GetNormalTexture())
+		button:GetHighlightTexture():SetColorTexture(1, 1, 1, .25)
+		button.cover:SetTexture("")
+		hooksecurefunc(button, "Yellow", TalentButton_Clear)
+		hooksecurefunc(button, "Red", TalentButton_Red)
+		hooksecurefunc(button, "Clear", TalentButton_Clear)
+	end
+end
+
 local function reskinStepper(stepper, direction)
 	B.StripTextures(stepper)
 	stepper:SetWidth(19)
@@ -562,6 +582,7 @@ S:RegisterAceGUIWidget("WeakAuras-MultiLineEditBoxWithEnter", S.WeakAurasMultiLi
 S:RegisterAceGUIWidget("WeakAurasLoadedHeaderButton")
 S:RegisterAceGUIWidget("WeakAurasIconButton")
 S:RegisterAceGUIWidget("WeakAurasTextureButton")
+S:RegisterAceGUIWidget("WeakAurasMiniTalent")
 S:RegisterAceGUIWidget("WeakAurasSpinBox")
 S:RegisterAceGUIWidget("WeakAurasSnippetButton")
 S:RegisterAceGUIWidget("WA_LSM30_StatusbarAtlas")
