@@ -3,7 +3,7 @@ local B, C, L, DB, P = unpack(ns)
 
 P.Version = C_AddOns.GetAddOnMetadata(addonName, "Version")
 P.SupportVersion = "1.46.2"
-P.isNewPatch = select(4, GetBuildInfo()) >= 11503 -- 1.15.3
+P.isNewPatch = select(4, GetBuildInfo()) >= 11504 -- 1.15.4
 
 -- Colors
 P.InfoColors = {r = .6, g = .8, b = 1}
