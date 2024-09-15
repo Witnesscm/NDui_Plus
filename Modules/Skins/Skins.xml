@@ -13,6 +13,7 @@
 	<Script file="ImprovedAddonList.lua"/>
 	<Script file="InboxMailBag.lua"/>
 	<Script file="Journalator.lua"/>
+	<Script file="KeystoneLoot.lua"/>
 	<Script file="Krowi_ExtVendorUI.lua"/>
 	<Script file="LibUIDropDownMenu.lua"/>
 	<Script file="ls_Toasts.lua"/>
