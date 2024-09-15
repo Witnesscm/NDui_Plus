@@ -2,15 +2,27 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 local M = P:GetModule("Misc")
 
-local WormholeNPC = 81205
-
-local WormholeZones = {
-	[1] = 542,
-	[2] = 535,
-	[3] = 539,
-	[4] = 550,
-	[5] = 543,
-	[6] = 525,
+local WormholeGossipData = {
+	-- Wormhole Centrifuge (Draenor)
+	[81205] = {
+		[42586] = 542,
+		[42587] = 535,
+		[42588] = 539,
+		[42589] = 550,
+		[42590] = 543,
+		[42591] = 525,
+	},
+	-- Wyrmhole Generator
+	[195667] = {
+		[63907] = 1978,
+		[63911] = 2022,
+		[63910] = 2023,
+		[63909] = 2024,
+		[63908] = 2025,
+		[108016] = 2151,
+		[109715] = 2133,
+		[114080] = 2200,
+	}
 }
 
 local mapIDToName = {}
@@ -28,11 +40,12 @@ function M:WormholeHelper()
 
 	hooksecurefunc(_G.GossipFrame, "Update", function(self)
 		local npcID = B.GetNPCID(UnitGUID("npc"))
-		if npcID ~= WormholeNPC then return end
+		local gossipData = WormholeGossipData[npcID]
+		if not gossipData then return end
 
 		for _, button in self.GreetingPanel.ScrollBox:EnumerateFrames() do
 			local data = button.GetElementData and button:GetElementData()
-			local id = data and data.index and WormholeZones[data.index]
+			local id = data and data.info and gossipData[data.info.gossipOptionID]
 			if id then
 				button:SetText(GetMapNameByID(id))
 			end
@@ -42,13 +55,15 @@ function M:WormholeHelper()
 	if not C_AddOns.IsAddOnLoaded("Immersion") then return end
 
 	local Titles = _G.ImmersionFrame.TitleButtons
-	hooksecurefunc(Titles, "UpdateGossipOptions", function(self)
+	hooksecurefunc(Titles, "UpdateGossipOptions", function(self, data)
 		local npcID = B.GetNPCID(UnitGUID("npc"))
-		if npcID ~= WormholeNPC then return end
+		local gossipData = WormholeGossipData[npcID]
+		if not gossipData then return end
 
-		for i, id in ipairs(WormholeZones) do
-			local button = self.Buttons[self.idx - #WormholeZones - 1 + i]
-			if button then
+		for i, info in ipairs(data) do
+			local button = self.Buttons[self.idx - #data - 1 + i]
+			local id = gossipData[info.gossipOptionID]
+			if button and id then
 				button:SetText(GetMapNameByID(id))
 			end
 		end
