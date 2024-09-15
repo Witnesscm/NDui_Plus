@@ -2,6 +2,14 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 
 P.Changelog = [[
+v11.0.5
+[鼠标提示] 修复PvE进度显示异常
+[美化] 添加 KeystoneLoot 美化
+[美化] 添加 OmniCD 边框阴影
+[易用性] 修复拍卖行装备额外绿字
+[易用性] 修复默认客户端中坐骑链接无法发送的问题
+[易用性] 虫洞助手支持巨龙群岛虫洞
+
 v11.0.4
 [鼠标提示] PvE进度更新地心之战数据
 [美化] 更新 HandyNotes_TheWarWithin 美化
