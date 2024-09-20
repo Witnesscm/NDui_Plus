@@ -176,17 +176,6 @@ function S:BetterBags()
 		P.ReskinTooltip(self.emptyItemTooltip)
 	end)
 
-	-- [BetterBags fix] update quest tag when accept/abandon
-	B:RegisterEvent("UNIT_QUEST_LOG_CHANGED", function()
-		for item in ItemFrame._pool:EnumerateActive() do
-			if item.kind and item.data then
-				local button = Themes:GetItemButton(item)
-				local questInfo = C_Container.GetContainerItemQuestInfo(item.data.bagid, item.data.slotid)
-				button:UpdateQuestItem(questInfo.isQuestItem, questInfo.questID, questInfo.isActive)
-			end
-		end
-	end)
-
 	-- register theme
 	local decoratorFrames = {}
 	local itemButtons = {}
@@ -356,6 +345,22 @@ function S:BetterBags()
 
 	-- load theme
 	Database:SetTheme("ndui")
+
+	-- [BetterBags fix] update quest tag when accept/abandon
+	B:RegisterEvent("UNIT_QUEST_LOG_CHANGED", function()
+		for _, bag in pairs(BetterBags.Bags) do
+			local view = bag.views and bag.views[Database:GetBagView(bag.kind)]
+			if view then
+				for _, item in pairs(view.itemsByBagAndSlot) do
+					if item.kind and item.data then
+						local button = Themes:GetItemButton(nil, item)
+						local questInfo = C_Container.GetContainerItemQuestInfo(item.data.bagid, item.data.slotid)
+						button:UpdateQuestItem(questInfo.isQuestItem, questInfo.questID, questInfo.isActive)
+					end
+				end
+			end
+		end
+	end)
 end
 
 S:RegisterSkin("BetterBags", S.BetterBags, true)
