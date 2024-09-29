@@ -5,6 +5,10 @@ local S = P:GetModule("Skins")
 local function HandleItemButton(self)
 	self.bg = B.ReskinIcon(self.Icon, true)
 	B.ReskinIconBorder(self.IconBorder, true)
+
+	if self.bg.__shadow then
+		self.bg.__shadow:SetFrameLevel(self:GetFrameLevel())
+	end
 end
 
 local function ReskinCatalystFrame(frame)
@@ -24,6 +28,38 @@ local function ReskinCatalystFrame(frame)
 	end
 end
 
+local function ReskinTooltipFrame(frame)
+	for _, child in pairs {frame:GetChildren()} do
+		local objType = child:GetObjectType()
+		if objType == "Button" and child.Ticksquare and child.Checkmark then
+			local Ticksquare = child.Ticksquare
+			local Checkmark = child.Checkmark
+			local Background = child.Background
+
+			if not child.bg then
+				child.bg = B.CreateBDFrame(Ticksquare)
+				child.bg:SetAllPoints(Ticksquare)
+				Ticksquare:SetTexture("")
+
+				Checkmark:SetAtlas("checkmark-minimal")
+				Checkmark:SetVertexColor(DB.r, DB.g, DB.b)
+				Checkmark:SetSize(20, 20)
+				Checkmark:SetDesaturated(true)
+				Checkmark:ClearAllPoints()
+				Checkmark:SetPoint("CENTER", Ticksquare)
+
+				Background:SetTexture(DB.bdTex)
+				Background:SetVertexColor(DB.r, DB.g, DB.b, .25)
+				Background:ClearAllPoints()
+				Background:SetPoint("TOPLEFT", -15 + 2*C.mult, 0)
+				Background:SetPoint("BOTTOMRIGHT", 15 - 2*C.mult, 0)
+			end
+
+			child.bg:SetShown(Ticksquare:IsShown() and Ticksquare:GetAlpha() == 1)
+		end
+	end
+end
+
 local function HandleDungeon(self)
 	B.StripTextures(self, 0)
 	self.Bg:SetAlpha(1)
@@ -31,7 +67,6 @@ local function HandleDungeon(self)
 
 	for _, button in ipairs(self.itemFrames) do
 		HandleItemButton(button)
-		button.bg.__shadow:SetFrameLevel(2)
 	end
 
 	local button = self.TeleportButton
@@ -86,7 +121,6 @@ local function HandleRaid(self)
 
 	for _, button in ipairs(self.itemFrames) do
 		HandleItemButton(button)
-		button.bg.__shadow:SetFrameLevel(2)
 	end
 
 	updateBackdropColor(self, self.BgTexture:IsDesaturated())
@@ -163,6 +197,7 @@ function S:KeystoneLoot()
 	local TooltipFrame = frame.TooltipFrame
 	if TooltipFrame then
 		P.ReskinTooltip(TooltipFrame)
+		TooltipFrame:HookScript("OnShow", ReskinTooltipFrame)
 	end
 
 	for i, tab in ipairs(frame.Tabs) do
