@@ -7,6 +7,7 @@
 	<Script file="BetterBags.lua"/>
 	<Script file="BetterWardrobe.lua"/>
 	<Script file="BtWLoadouts.lua"/>
+	<Script file="BtWQuests.lua"/>
 	<Script file="ButtonForge.lua"/>
 	<Script file="CompactVendor.lua"/>
 	<Script file="Immersion.lua"/>
