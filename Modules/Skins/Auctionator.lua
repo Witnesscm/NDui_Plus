@@ -206,6 +206,8 @@ local function reskinPopoutEntry(self)
 end
 
 function S:Auctionator()
+	if not S.db["Auctionator"] then return end
+
 	local Auctionator = _G.Auctionator
 	if not Auctionator or not _G.AuctionatorInitalizeMainlineFrame or not _G.AuctionatorInitalizeMainlineFrame.AuctionHouseShown then return end
 

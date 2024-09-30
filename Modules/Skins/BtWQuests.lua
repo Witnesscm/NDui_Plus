@@ -139,6 +139,8 @@ local function ReskinSearchResults(self)
 end
 
 function S:BtWQuests()
+	if not S.db["BtWQuests"] then return end
+
 	local frame = _G.BtWQuestsFrame
 	if not frame then return end
 

@@ -106,6 +106,8 @@ local function reskinConduitList(self)
 end
 
 function S:BtWLoadouts()
+	if not S.db["BtWLoadouts"] then return end
+
 	local frame = _G.BtWLoadoutsFrame
 	if not frame then return end
 

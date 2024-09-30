@@ -87,6 +87,8 @@ local function ReskinModules(frame)
 end
 
 function S:SimpleAddonManager()
+	if not S.db["SimpleAddonManager"] then return end
+
 	local SimpleAddonManager = _G.SimpleAddonManager
 	if not SimpleAddonManager then return end
 
