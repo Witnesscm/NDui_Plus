@@ -10,6 +10,11 @@ local select, pairs = select, pairs
 local mainFrame
 
 local function reskinDropDown(dropdown)
+	if not dropdown or not dropdown.MenuButton then
+		P.Developer_ThrowError("dropdown is nil")
+		return
+	end
+
 	B.StripTextures(dropdown)
 	local down = dropdown.MenuButton
 	down:ClearAllPoints()
@@ -141,7 +146,6 @@ function S:MeetingHorn()
 		"Browser.Quick",
 		"Manage.Creator.Activity",
 		"Manage.Creator.Mode",
-		"Recent.Instance",
 		"Encounter.Instance",
 		"Challenge.Left.Groups",
 	}
