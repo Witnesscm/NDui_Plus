@@ -1,4 +1,4 @@
-## Interface: 110002
+## Interface: 110005
 ## Title: |cff0080ffNDui|r Plus
 ## Author: Witness
 ## Notes: NDui Plugin
