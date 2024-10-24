@@ -336,6 +336,13 @@ function S:Auctionator()
 						reskinButtons(BuyDialog, {"Buy", "Cancel"})
 						reskinIconAndName(BuyDialog.IconAndName)
 					end
+
+					local WarningDialog = buyFrame.WidePriceRangeWarningDialog
+					if WarningDialog then
+						B.StripTextures(WarningDialog)
+						B.SetBD(WarningDialog)
+						reskinButtons(WarningDialog, {"ContinueButton", "CancelButton"})
+					end
 				end
 			end
 		end
