@@ -79,7 +79,7 @@ end
 function LSM:GetSpecIcons()
 	local classID = select(3, UnitClass("player"))
 	local specs = {}
-	for i = 1, GetNumSpecializationsForClassID(classID) do
+	for i = 1, C_SpecializationInfo.GetNumSpecializationsForClassID(classID) do
 		local id, _, _, icon = GetSpecializationInfoForClassID(classID, i)
 		if not id then break end
 
