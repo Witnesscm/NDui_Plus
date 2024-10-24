@@ -2,6 +2,12 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 
 P.Changelog = [[
+v11.0.6
+[主要] 适配11.0.5 API改动
+[美化] 添加 BtWQuests 美化
+[美化] 更新 KeystoneLoot 美化
+[美化] 修复 BetterBags 美化
+
 v11.0.5
 [鼠标提示] 修复PvE进度显示异常
 [美化] 添加 KeystoneLoot 美化
