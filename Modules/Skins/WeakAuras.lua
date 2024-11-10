@@ -325,6 +325,14 @@ local function RemoveOptionsBorder(Private)
 	end
 end
 
+local function SkinLibAPIAutoComplete(lib)
+	if not lib.styled then
+		S:Proxy("CreateBDFrame", lib.scrollBox, 0)
+		S:Proxy("ReskinTrimScroll", lib.scrollBar)
+		lib.styled = true
+	end
+end
+
 function S:WeakAuras()
 	local WeakAuras = _G.WeakAuras
 	if not WeakAuras then return end
@@ -365,6 +373,11 @@ function S:WeakAurasOptions()
 
 			return origToggleOptions(...)
 		end
+	end
+
+	local LAAC = LibStub("LibAPIAutoComplete-1.0", true)
+	if LAAC and LAAC.enable then
+		hooksecurefunc(LAAC, "enable", SkinLibAPIAutoComplete)
 	end
 end
 
