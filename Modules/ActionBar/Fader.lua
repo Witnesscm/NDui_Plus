@@ -70,14 +70,25 @@ function AB:FlyoutButton_OnLeave()
 	if anchor then AB.Button_OnLeave(anchor) end
 end
 
-function AB:FadeParent_OnEvent(event)
+local function CanGlide()
+	local isGliding, canGlide = C_PlayerInfo.GetGlidingInfo()
+	return isGliding or canGlide
+end
+
+local canGlide = false
+function AB:FadeParent_OnEvent(event, arg)
+	if event == "PLAYER_CAN_GLIDE_CHANGED" then
+		canGlide = arg
+	end
+
 	if
 		(event == "ACTIONBAR_SHOWGRID") or
 		(AB.db["Combat"] and UnitAffectingCombat("player")) or
 		(AB.db["Target"] and UnitExists("target")) or
 		(AB.db["Casting"] and (UnitCastingInfo("player") or UnitChannelInfo("player"))) or
 		(AB.db["Health"] and (UnitHealth("player") ~= UnitHealthMax("player"))) or
-		(AB.db["Vehicle"] and UnitHasVehicleUI("player"))
+		(AB.db["Vehicle"] and UnitHasVehicleUI("player")) or
+		(AB.db["DynamicFlight"] and (canGlide or CanGlide()))
 	then
 		self.mouseLock = true
 		ClearTimers(AB.fadeParent)
@@ -128,6 +139,12 @@ local options = {
 		end,
 		events = {"UNIT_ENTERED_VEHICLE", "UNIT_EXITED_VEHICLE", "VEHICLE_UPDATE"}
 	},
+	DynamicFlight = {
+		enable = function(self)
+			self:RegisterEvent("PLAYER_CAN_GLIDE_CHANGED")
+		end,
+		events = {"PLAYER_CAN_GLIDE_CHANGED"}
+	}
 }
 
 function AB:UpdateFaderSettings()
@@ -144,6 +161,8 @@ function AB:UpdateFaderSettings()
 			end
 		end
 	end
+
+	AB.FadeParent_OnEvent(AB.fadeParent)
 end
 
 local NDui_ActionBar = {

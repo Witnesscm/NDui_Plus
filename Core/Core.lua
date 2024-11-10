@@ -31,6 +31,7 @@ P.DefaultSettings = {
 		Casting = true,
 		Health = true,
 		Vehicle = true,
+		DynamicFlight = true,
 		Bar1 = false,
 		Bar2 = false,
 		Bar3 = false,

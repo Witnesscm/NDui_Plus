@@ -141,7 +141,6 @@ local function updateABFaderSettings()
 	if not AB.fadeParent then return end
 
 	AB:UpdateFaderSettings()
-	AB.fadeParent:SetAlpha(AB.db["Alpha"])
 end
 
 function G:SetupABFader(parent)
@@ -165,6 +164,7 @@ function G:SetupABFader(parent)
 		[3] = {"Health", L["Health"]},
 		[4] = {"Vehicle", L["Vehicle"]},
 		[5] = {"Casting", L["Casting"]},
+		[6] = {"DynamicFlight", L["DynamicFlight"]},
 	}
 
 	offset = offset + 40
