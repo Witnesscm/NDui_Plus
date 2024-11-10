@@ -64,7 +64,7 @@ local function ReskinDropMenu(self)
 		end
 	end
 
-    for bu in self.buttonPool:EnumerateActive() do
+	for bu in self.buttonPool:EnumerateActive() do
 		local _, _, _, x = bu:GetPoint()
 		if bu:IsShown() and x then
 			local check = bu.Check
@@ -101,7 +101,7 @@ local function ReskinDropMenu(self)
 				bu.bg:Show()
 			end
 		end
-    end
+	end
 end
 
 local function HandledDropDown(button)
