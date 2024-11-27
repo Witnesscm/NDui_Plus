@@ -486,6 +486,16 @@ local function UpdateAllBags(current)
 	end
 end
 
+local function EasyMenu_Initialize(frame, level, menuList)
+	for index = 1, #menuList do
+		local value = menuList[index]
+		if (value.text) then
+			value.index = index
+			UIDropDownMenu_AddButton(value, level)
+		end
+	end
+end
+
 local function CreateDropMenu()
 	if not SelectorDropMenu then
 		local frame = CreateFrame("Frame", "NDui_Plus_SelectorDropMenu", UIParent, "UIDropDownMenuTemplate")
