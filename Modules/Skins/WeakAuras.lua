@@ -325,6 +325,14 @@ local function RemoveOptionsBorder(Private)
 	end
 end
 
+local function SkinLibAPIAutoComplete(lib)
+	if not lib.styled then
+		S:Proxy("CreateBDFrame", lib.scrollBox, 0)
+		S:Proxy("ReskinTrimScroll", lib.scrollBar)
+		lib.styled = true
+	end
+end
+
 function S:WeakAuras()
 	local WeakAuras = _G.WeakAuras
 	if not WeakAuras then return end
@@ -365,6 +373,11 @@ function S:WeakAurasOptions()
 
 			return origToggleOptions(...)
 		end
+	end
+
+	local LAAC = LibStub("LibAPIAutoComplete-1.0", true)
+	if LAAC and LAAC.enable then
+		hooksecurefunc(LAAC, "enable", SkinLibAPIAutoComplete)
 	end
 end
 
@@ -500,26 +513,6 @@ function S:WeakAurasTextureButton(widget)
 	hl:SetInside()
 end
 
-local function TalentButton_Red(self)
-	self.bg:SetBackdropBorderColor(1, 0, 0)
-end
-
-local function TalentButton_Clear(self)
-	self.bg:SetBackdropBorderColor(0, 0, 0)
-end
-
-function S:WeakAurasMiniTalent(widget)
-	for _, button in pairs(widget.buttons) do
-		button:SetNormalTexture(0)
-		button.bg = B.ReskinIcon(button:GetNormalTexture())
-		button:GetHighlightTexture():SetColorTexture(1, 1, 1, .25)
-		button.cover:SetTexture("")
-		hooksecurefunc(button, "Yellow", TalentButton_Clear)
-		hooksecurefunc(button, "Red", TalentButton_Red)
-		hooksecurefunc(button, "Clear", TalentButton_Clear)
-	end
-end
-
 local function reskinStepper(stepper, direction)
 	B.StripTextures(stepper)
 	stepper:SetWidth(19)
@@ -558,8 +551,8 @@ end
 
 function S:WeakAurasSnippetButton(widget)
 	B.ReskinInput(widget.renameEditBox)
-	widget.renameEditBox.__bg:SetPoint("TOPLEFT", -2, 2)
-	widget.renameEditBox.__bg:SetPoint("BOTTOMRIGHT", 0, -2)
+	widget.renameEditBox.bg:SetPoint("TOPLEFT", -2, 2)
+	widget.renameEditBox.bg:SetPoint("BOTTOMRIGHT", 0, -2)
 end
 
 function S:WeakAurasTreeGroup(widget)
@@ -582,7 +575,6 @@ S:RegisterAceGUIWidget("WeakAuras-MultiLineEditBoxWithEnter", S.WeakAurasMultiLi
 S:RegisterAceGUIWidget("WeakAurasLoadedHeaderButton")
 S:RegisterAceGUIWidget("WeakAurasIconButton")
 S:RegisterAceGUIWidget("WeakAurasTextureButton")
-S:RegisterAceGUIWidget("WeakAurasMiniTalent")
 S:RegisterAceGUIWidget("WeakAurasSpinBox")
 S:RegisterAceGUIWidget("WeakAurasSnippetButton")
 S:RegisterAceGUIWidget("WA_LSM30_StatusbarAtlas")
