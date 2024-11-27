@@ -90,8 +90,8 @@ function M:ExtTrainerUI()
 	ClassTrainerCancelButton:ClearAllPoints()
 	ClassTrainerCancelButton:SetPoint("BOTTOMRIGHT", ClassTrainerFrame, "BOTTOMRIGHT", -42, 54)
 
-	ClassTrainerFrameFilterDropDown:ClearAllPoints()
-	ClassTrainerFrameFilterDropDown:SetPoint("TOPLEFT", ClassTrainerFrame, "TOPLEFT", 501, -40)
+	ClassTrainerFrame.FilterDropdown:ClearAllPoints()
+	ClassTrainerFrame.FilterDropdown:SetPoint("TOPRIGHT", -66, -35)
 
 	ClassTrainerMoneyFrame:ClearAllPoints()
 	ClassTrainerMoneyFrame:SetPoint("TOPLEFT", ClassTrainerFrame, "TOPLEFT", 143, -49)
