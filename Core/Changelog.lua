@@ -2,6 +2,9 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 
 P.Changelog = [[
+v1.15.9
+[美化] 更新部分插件美化
+
 v1.15.8
 [主要] 更新支持 1.15.5
 [背包] 修复离线背包角色切换
