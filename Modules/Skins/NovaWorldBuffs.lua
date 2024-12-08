@@ -68,7 +68,7 @@ local function reskinMarker(frame, isTower)
 end
 
 local function reskinMarkers(tbl)
-	for k, _ in pairs(tbl) do
+	for k in pairs(tbl) do
 		local mark = _G[k.."NWB"]
 		if mark then
 			reskinMarker(mark)
@@ -173,9 +173,18 @@ function S:NovaWorldBuffs()
 		end
 	end
 
-	reskinMarkers(NWB.songFlowers)
-	reskinMarkers(NWB.tubers)
-	reskinMarkers(NWB.dragons)
+	hooksecurefunc(NWB, "createSongflowerMarkers", function()
+		reskinMarkers(NWB.songFlowers)
+	end)
+
+	hooksecurefunc(NWB, "createTuberMarkers", function()
+		reskinMarkers(NWB.tubers)
+	end)
+
+	hooksecurefunc(NWB, "createDragonMarkers", function()
+		reskinMarkers(NWB.dragons)
+	end)
+
 	reskinMarker(_G.NWBDMF)
 	reskinMarker(_G.NWBDMFContinent)
 	--reskinMarker(_G.nefWorldMapNoLayerFrame)

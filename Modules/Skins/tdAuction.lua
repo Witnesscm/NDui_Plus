@@ -10,8 +10,7 @@ function S:tdAuction()
 	if not S.db["tdAuction"] then return end
 
 	local tdAuction = _G.LibStub("AceAddon-3.0"):GetAddon("tdAuction")
-
-	local function reskinFunc()
+	hooksecurefunc(tdAuction, "SetupUI", function()
 		-- Browse
 		local Browse = tdAuction.Browse
 		B.Reskin(Browse.ResetButton)
@@ -41,14 +40,6 @@ function S:tdAuction()
 			B.ReskinCheck(ExactCheckButton)
 		end
 
-		--BrowseDropDown
-		for i = 1, _G.BrowseDropDown:GetNumChildren() do
-			local child = select(i, _G.BrowseDropDown:GetChildren())
-			if child:GetObjectType() == "Frame" and child.backdropInfo then
-				child:SetPoint("BOTTOMRIGHT", _G.BrowseDropDown.Button, "BOTTOMRIGHT")
-			end
-		end
-
 		-- FullScan
 		local FullScan = tdAuction.FullScan
 		B.StripTextures(FullScan)
@@ -59,7 +50,7 @@ function S:tdAuction()
 
 		-- Sell
 		local Sell = tdAuction.Sell
-		P.ReskinDropDown(Sell.DurationDropDown)
+		B.ReskinDropDown(Sell.DurationDropDown)
 		B.ReskinArrow(Sell.PriceListButton, "right")
 		Sell.StackSizeEntry:SetHeight(21)
 		Sell.NumStacksEntry:SetHeight(21)
@@ -71,19 +62,21 @@ function S:tdAuction()
 		B.ReskinClose(Sell.PriceList.Close)
 		B.ReskinScroll(Sell.PriceList.ScrollFrame.scrollBar)
 
-		for _, region in pairs {_G.AuctionsItemButton:GetRegions()} do
-			if region:GetObjectType() == "Texture" then
-				local texture = region.GetTextureFilePath and region:GetTextureFilePath()
-				if texture and type(texture) == "string" and strfing(texture, "ItemSlot") then
-					region:SetTexture("")
-				end
+		local ItemButton = _G.AuctionsItemButton
+		B.StripTextures(ItemButton)
+		for _, child in pairs {ItemButton:GetChildren()} do
+			if child.backdropInfo and child.backdropInfo.bgFile == DB.bdTex then
+				child:SetAllPoints()
+				break
 			end
 		end
+		local hl = _G.AuctionsItemButton:GetHighlightTexture()
+		hl:SetColorTexture(1, 1, 1, .25)
+		hl:SetInside()
 
 		B.Reskin(tdAuction.Features.FullScanButton)
 		B.Reskin(tdAuction.Features.OptionButton)
-	end
-	hooksecurefunc(tdAuction, "SetupUI", reskinFunc)
+	end)
 end
 
 S:RegisterSkin("tdAuction", S.tdAuction)

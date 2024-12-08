@@ -10,6 +10,11 @@ local select, pairs = select, pairs
 local mainFrame
 
 local function reskinDropDown(dropdown)
+	if not dropdown or not dropdown.MenuButton then
+		P.Developer_ThrowError("dropdown is nil")
+		return
+	end
+
 	B.StripTextures(dropdown)
 	local down = dropdown.MenuButton
 	down:ClearAllPoints()
@@ -24,17 +29,27 @@ local function reskinDropDown(dropdown)
 end
 
 local function reskinQRTooltip(self)
-	B.StripTextures(self)
-	B.SetBD(self, .7)
+	B.StripTextures(self, 0)
+	self.bg = B.SetBD(self, .7)
 	B.ReskinClose(self.Close)
 	self.Close:SetHitRectInsets(0, 0, 0, 0)
+
+	if self.Image then
+		self.Image:SetAlpha(1)
+		self.bg:SetFrameLevel(self:GetFrameLevel())
+	end
 end
 
-local function reskinLeaderQRTooltip(self)
-	local tooltip = self.QRApplyLeaderTooltip or mainFrame.Browser and mainFrame.Browser.ApplyLeaderBtn and mainFrame.Browser.ApplyLeaderBtn.QRApplyLeaderTooltip
-	if tooltip and not tooltip.styled then
-		reskinQRTooltip(tooltip)
-		tooltip.styled = true
+local imageFrameStyled
+local function reskinImageFrame(self)
+	if imageFrameStyled then return end
+
+	for _, child in pairs {self:GetChildren()} do
+		if child:GetObjectType() == "Frame" and child.Image and child.Close then
+			reskinQRTooltip(child)
+			imageFrameStyled = true
+			break
+		end
 	end
 end
 
@@ -50,7 +65,7 @@ local function reskinHeader(header)
 	for i = 4, 18 do
 		select(i, header.Button:GetRegions()):SetTexture("")
 	end
-	B.Reskin(header.Button) 
+	B.Reskin(header.Button)
 	header.Button.Title:SetTextColor(1, 1, 1)
 	header.Button.Title.SetTextColor = B.Dummy
 	header.Button.ExpandedIcon:SetWidth(20)
@@ -62,6 +77,7 @@ local function reskinHeader(header)
 	B.StripTextures(header.Overview)
 	header.Overview.Text:SetTextColor(1, 1, 1)
 	header.Overview.Text.SetTextColor = B.Dummy
+	P.ReskinFont(header.Overview.Text)
 end
 
 local function reskinSummary(summary)
@@ -70,6 +86,14 @@ local function reskinSummary(summary)
 	summary.Title.Text.SetTextColor = B.Dummy
 	summary.Overview.Text:SetTextColor(1, 1, 1)
 	summary.Overview.Text.SetTextColor = B.Dummy
+	P.ReskinFont(summary.Overview.Text)
+end
+
+local function replaceTextColor(self, text)
+	if self.isReplacing then return end
+	self.isReplacing = true
+	self:SetText(gsub(text, "^|c%x%x%x%x%x%x%x%x", "|cffffffff"))
+	self.isReplacing = nil
 end
 
 local function reskinItemButton(self)
@@ -77,12 +101,12 @@ local function reskinItemButton(self)
 	B.StripTextures(self, 0)
 	self.icon:SetAlpha(1)
 	self.bg = B.ReskinIcon(self.icon)
-	B.ReskinIconBorder(self.IconBorder)
+	B.ReskinIconBorder(self.IconBorder, true)
 end
 
 local function strToPath(str)
 	local path = {}
-	for v in string.gmatch(str, "([^%.]+)") do 
+	for v in string.gmatch(str, "([^%.]+)") do
 		table.insert(path, v)
 	end
 	return path
@@ -122,7 +146,6 @@ function S:MeetingHorn()
 		"Browser.Quick",
 		"Manage.Creator.Activity",
 		"Manage.Creator.Mode",
-		"Recent.Instance",
 		"Encounter.Instance",
 		"Challenge.Left.Groups",
 	}
@@ -158,6 +181,8 @@ function S:MeetingHorn()
 	local Buttons = {
 		"Browser.Reset",
 		"Browser.Refresh",
+		"Browser.ApplyLeaderBtn",
+		"Browser.RechargeBtn",
 		"Manage.Creator.CreateButton",
 		"Manage.Creator.CloseButton",
 		"Manage.Creator.RecruitButton",
@@ -275,8 +300,7 @@ function S:MeetingHorn()
 		for _, key in ipairs({"ApplyLeaderBtn", "RechargeBtn",}) do
 			local bu = Browser[key]
 			if bu then
-				B.Reskin(bu)
-				bu:HookScript("PostClick", reskinLeaderQRTooltip)
+				bu:HookScript("PostClick", reskinImageFrame)
 			end
 		end
 
@@ -303,15 +327,21 @@ function S:MeetingHorn()
 
 		Encounter.BossTitle:SetTextColor(1, 1, 1)
 		Encounter.Panel1.Overview.Text:SetTextColor(1, 1, 1)
+		Encounter.Panel1.Overview.Text.SetTextColor = B.Dummy
+		P.ReskinFont(Encounter.Panel1.Overview.Text)
+		hooksecurefunc(Encounter.Panel1.Overview.Text, "SetText", replaceTextColor)
 		Encounter.Panel2.Overview.Text:SetTextColor(1, 1, 1)
+		Encounter.Panel2.Overview.Text.SetTextColor = B.Dummy
+		P.ReskinFont(Encounter.Panel2.Overview.Text)
+		hooksecurefunc(Encounter.Panel2.Overview.Text, "SetText", replaceTextColor)
 		B.ReskinInput(Encounter.Panel3.Url)
 
 		for i, tab in ipairs(Encounter.Tabs) do
 			local bg = B.SetBD(tab)
 			bg:SetInside(tab, 2, 2)
-			tab:SetNormalTexture("")
-			tab:SetPushedTexture("")
-			tab:SetDisabledTexture("")
+			tab:SetNormalTexture(0)
+			tab:SetPushedTexture(0)
+			tab:SetDisabledTexture(0)
 			local hl = tab:GetHighlightTexture()
 			hl:SetColorTexture(DB.r, DB.g, DB.b, .2)
 			hl:SetInside(bg)
@@ -325,7 +355,7 @@ function S:MeetingHorn()
 
 		local LookFall = Encounter.LookFall
 		if LookFall then
-			LookFall:HookScript("PostClick", reskinLeaderQRTooltip)
+			LookFall:HookScript("PostClick", reskinImageFrame)
 		end
 	end
 
@@ -447,7 +477,7 @@ function S:MeetingHorn()
 					local ApplyLeaderBtn = subFrame.ApplyLeaderBtn
 					if ApplyLeaderBtn then
 						B.Reskin(ApplyLeaderBtn)
-						ApplyLeaderBtn:HookScript("PostClick", reskinLeaderQRTooltip)
+						ApplyLeaderBtn:HookScript("PostClick", reskinImageFrame)
 					end
 				end
 			end
@@ -456,9 +486,8 @@ function S:MeetingHorn()
 		local instances = GoodLeader.Result.Raids.instances
 		if instances then
 			for _, button in ipairs(instances) do
-				button.Mask:Hide()
-				B.CreateBD(button)
-				button.Image:SetInside()
+				button:HideBackdrop()
+				B.CreateBDFrame(button.Image, 0)
 			end
 		end
 	end
@@ -506,12 +535,16 @@ function S:MeetingHorn()
 	-- MissionGuidance
 	local MissionGuidance = mainFrame.MissionGuidance
 	if MissionGuidance then
-		B.StripTextures(MissionGuidance)
-		B.CreateBDFrame(MissionGuidance, .25)
-		B.ReskinScroll(MissionGuidance.MissionGuidanceScrollFrame.ScrollBar)
+		for _, region in pairs {MissionGuidance:GetRegions()} do
+			if region:GetObjectType() == "FontString" then
+				local fontFile, fontSize = region:GetFont()
+				region:SetFont(fontFile, fontSize, "")
+				region:SetTextColor(0, 0, 0)
+			end
+		end
 	end
 
-	if C_AddOns.IsAddOnLoaded("tdInspect") then  -- Credit: tdUI
+	if IsAddOnLoaded("tdInspect") then  -- Credit: tdUI
 		local tdInspect = LibStub("AceAddon-3.0"):GetAddon("tdInspect")
 		local Browser = MeetingHorn:GetClass("UI.Browser")
 		local Inspect = tdInspect:GetModule("Inspect")
