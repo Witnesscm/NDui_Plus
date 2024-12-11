@@ -78,11 +78,13 @@ local function getInfo(itemData)
 		data.icon = C_Item.GetItemIconByID(data.id)
 		data.timeout = tonumber(timeout)
 
-		local name, itemLink, quality = C_Item.GetItemInfo(data.link)
+		local name, itemLink, quality, level, _, _, _, _, _, _, _, classID  = C_Item.GetItemInfo(data.link)
 		if name then
 			data.name = name
 			data.link = itemLink
 			data.quality = quality
+			data.level = level
+			data.classID = classID
 		else
 			data.noCache = true
 		end
@@ -166,23 +168,28 @@ end
 
 local function ItemButton_LoadInfo(self, itemData)
 	self.info = getInfo(itemData)
-end
-
-local function ItemButton_UpdateItem(self)
 	if not self.info then return end
 
 	self.Icon:SetTexture(self.info.icon)
 
 	if self.info.count and self.info.count > 1 then
-		self.Count:SetText(self.info.count)
-		self.Count:Show()
+		self.Count:SetText(self.info.count > 1e3 and "*" or self.info.count)
 	else
-		self.Count:Hide()
+		self.Count:SetText("")
 	end
 end
 
-local function ItemButton_UpdateBorder(self)
-	if not self.info then return end
+local iLvlClassIDs = {
+	[Enum.ItemClass.Armor] = true,
+	[Enum.ItemClass.Weapon] = true,
+}
+
+local function IsItemHasLevel(info)
+	return info.quality and info.quality > 1 and info.classID and iLvlClassIDs[info.classID]
+end
+
+local function ItemButton_UpdateItem(self)
+	if not self.info or self.info.noCache then return end
 
 	if self.info.quality and self.info.quality > -1 then
 		local color = DB.QualityColors[self.info.quality]
@@ -190,27 +197,38 @@ local function ItemButton_UpdateBorder(self)
 	else
 		self:SetBackdropBorderColor(0, 0, 0)
 	end
+
+	self.iLvl:SetText("")
+	if C.db["Bags"]["BagsiLvl"] and IsItemHasLevel(self.info) then
+		local level = self.info.level
+		if level and level > C.db["Bags"]["iLvlToShow"] then
+			local color = DB.QualityColors[self.info.quality]
+			self.iLvl:SetText(level)
+			self.iLvl:SetTextColor(color.r, color.g, color.b)
+		end
+	end
 end
 
 local function ItemButton_UpdateInfo(self)
 	if not self.info.noCache then return end
 
-	local name, link, quality = C_Item.GetItemInfo(self.info.link)
+	local name, link, quality, level, _, _, _, _, _, _, _, classID = C_Item.GetItemInfo(self.info.link)
 	if name then
 		self.info.name = name
 		self.info.link = link
 		self.info.quality = quality
+		self.info.level = level
+		self.info.classID = classID
 		self.info.noCache = nil
 		P:Debug(name)
 	end
 
-	ItemButton_UpdateBorder(self)
+	ItemButton_UpdateItem(self)
 end
 
 local function ItemButton_Update(self, itemData)
 	ItemButton_LoadInfo(self, itemData)
 	ItemButton_UpdateItem(self)
-	ItemButton_UpdateBorder(self)
 end
 
 local function ItemButton_Free(self)
@@ -218,7 +236,7 @@ local function ItemButton_Free(self)
 	self.Icon:SetTexture(nil)
 	self.info = nil
 	self.Count:SetText("")
-	self.Count:Hide()
+	self.iLvl:SetText("")
 	self:SetBackdropBorderColor(0, 0, 0)
 end
 
@@ -250,7 +268,8 @@ local function CreateItemButton(bag, slot)
 	button.Icon:SetTexCoord(unpack(DB.TexCoord))
 	button.Count = _G[name.."Count"]
 	button.Count:SetPoint("BOTTOMRIGHT", -1, 2)
-	button.Count:SetFont(unpack(DB.Font))
+	B.SetFontSize(button.Count, C.db["Bags"]["FontSize"])
+	button.iLvl = B.CreateFS(button, C.db["Bags"]["FontSize"], "", false, "BOTTOMLEFT", 1, 2)
 	button.bagID = bag
 	button.slotID = slot
 
