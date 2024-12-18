@@ -4,7 +4,6 @@ local S = P:GetModule("Skins")
 local M = B:GetModule("Misc")
 
 local _G = getfenv(0)
-local strfing = string.find
 
 function S:tdAuction()
 	if not S.db["tdAuction"] then return end
@@ -17,14 +16,6 @@ function S:tdAuction()
 		Browse.PrevPageButton:SetPoint("TOPLEFT", 660, -60)
 		Browse.NextPageButton:SetPoint("TOPRIGHT", 65, -60)
 		B.ReskinScroll(Browse.ScrollFrame.scrollBar)
-
-		for i = 1, Browse.QualityDropDown:GetNumChildren() do
-			local child = select(i, Browse.QualityDropDown:GetChildren())
-			if child:GetObjectType() == "Frame" and child.pixelBorders then
-				child:SetPoint("BOTTOMRIGHT", BrowseDropDownButton, "BOTTOMRIGHT")
-				break
-			end
-		end
 
 		for _, tab in ipairs(Browse.sortButtons) do
 			tab:DisableDrawLayer("BACKGROUND")
@@ -51,6 +42,7 @@ function S:tdAuction()
 		-- Sell
 		local Sell = tdAuction.Sell
 		B.ReskinDropDown(Sell.DurationDropDown)
+		B.ReskinDropDown(Sell.PriceDropDown)
 		B.ReskinArrow(Sell.PriceListButton, "right")
 		Sell.StackSizeEntry:SetHeight(21)
 		Sell.NumStacksEntry:SetHeight(21)
