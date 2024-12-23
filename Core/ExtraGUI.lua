@@ -179,6 +179,10 @@ function G:SetupABFader(parent)
 
 		offset = offset + 35
 	end
+
+	local blank = CreateFrame("Frame", nil, frame)
+	blank:SetSize(20, 20)
+	blank:SetPoint("TOPLEFT", 20, -offset)
 end
 
 local function updateUFsFader()
