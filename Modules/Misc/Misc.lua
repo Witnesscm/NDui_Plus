@@ -147,6 +147,7 @@ do
 	local GetMountLink = C_MountJournal.GetMountLink
 	C_MountJournal.GetMountLink = function(spellID)
 		local link = GetMountLink(spellID)
+		if not link then return end
 		local mountID = C_MountJournal.GetMountFromSpell(spellID)
 		local mountTypeID = mountID and select(5, C_MountJournal.GetMountInfoExtraByID(mountID))
 		if mountTypeID and mountTypeID == 402 then
