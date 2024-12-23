@@ -2,6 +2,12 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 
 P.Changelog = [[
+v11.0.7
+[主要] 更新版本号至11.0.7
+[动作条] 添加动态飞行渐隐条件
+[美化] 更新 WeakAurasOptions 美化
+[易用性] 修复坐骑链接报错
+
 v11.0.6
 [主要] 适配11.0.5 API改动
 [美化] 添加 BtWQuests 美化
