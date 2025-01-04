@@ -102,6 +102,8 @@ local function ReskinSmallRole(icon, role)
 end
 
 B:RegisterEvent("PLAYER_LOGIN", function()
+	if not NDuiPlusDB["RoleStyle"]["Enable"] then return end
+
 	for _, data in ipairs(roleCache) do
 		ReskinSmallRole(unpack(data))
 	end
