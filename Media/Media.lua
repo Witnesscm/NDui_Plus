@@ -91,7 +91,7 @@ end
 local roleCache = {}
 do
 	hooksecurefunc(B, "ReskinSmallRole", function(icon, role)
-		tinsert(roleCache, {icon, role})
+		roleCache[icon] = role
 	end)
 end
 
@@ -104,8 +104,8 @@ end
 B:RegisterEvent("PLAYER_LOGIN", function()
 	if not NDuiPlusDB["RoleStyle"]["Enable"] then return end
 
-	for _, data in ipairs(roleCache) do
-		ReskinSmallRole(unpack(data))
+	for icon, role in pairs(roleCache) do
+		ReskinSmallRole(icon, role)
 	end
 
 	B.ReskinSmallRole = ReskinSmallRole
