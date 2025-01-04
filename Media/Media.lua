@@ -59,10 +59,20 @@ P.RoleList = {
 		DAMAGER = Texture.."ElvUI\\DPS",
 	},
 	[3] = {
-		TANK = Texture.."ToxiUI\\Tank",
-		HEALER = Texture.."ToxiUI\\Healer",
-		DAMAGER = Texture.."ToxiUI\\DPS",
+		TANK = Texture.."ToxiUI\\WhiteTank",
+		HEALER = Texture.."ToxiUI\\WhiteHeal",
+		DAMAGER = Texture.."ToxiUI\\WhiteDPS",
 	},
+	[4] = {
+		TANK = Texture.."ToxiUI\\NewTank",
+		HEALER = Texture.."ToxiUI\\NewHeal",
+		DAMAGER = Texture.."ToxiUI\\NewDPS",
+	},
+	[5] = {
+		TANK = Texture.."ToxiUI\\StylizedTank",
+		HEALER = Texture.."ToxiUI\\StylizedHeal",
+		DAMAGER = Texture.."ToxiUI\\StylizedDPS",
+	}
 }
 
 function P:BuildRoleTable()
@@ -78,21 +88,23 @@ function P:BuildRoleTable()
 	return roleTable
 end
 
-do -- RaidTool
-	local Misc = B:GetModule("Misc")
-	hooksecurefunc(Misc, "RaidTool_RoleCount", function(self, frame)
-		if not NDuiPlusDB["RoleStyle"]["Enable"] then return end
-
-		if frame.roleFrame then
-			local tank, _, healer, _, damager = frame.roleFrame:GetRegions()
-			local roleList = P.RoleList[NDuiPlusDB["RoleStyle"]["Index"]]
-
-			tank:SetTexCoord(0, 1, 0, 1)
-			tank:SetTexture(roleList.TANK)
-			healer:SetTexCoord(0, 1, 0, 1)
-			healer:SetTexture(roleList.HEALER)
-			damager:SetTexCoord(0, 1, 0, 1)
-			damager:SetTexture(roleList.DAMAGER)
-		end
+local roleCache = {}
+do
+	hooksecurefunc(B, "ReskinSmallRole", function(icon, role)
+		tinsert(roleCache, {icon, role})
 	end)
 end
+
+local function ReskinSmallRole(icon, role)
+	if role == "DPS" then role = "DAMAGER" end
+	icon:SetTexCoord(0, 1, 0, 1)
+	icon:SetTexture(P.RoleList[NDuiPlusDB["RoleStyle"]["Index"]][role])
+end
+
+B:RegisterEvent("PLAYER_LOGIN", function()
+	for _, data in ipairs(roleCache) do
+		ReskinSmallRole(unpack(data))
+	end
+
+	B.ReskinSmallRole = ReskinSmallRole
+end)
