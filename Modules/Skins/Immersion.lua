@@ -82,7 +82,7 @@ function S:Immersion()
 	B.CreateBDFrame(ReputationBar, .25)
 
 	for i = 1, 4 do
-		local notch = _G["ImmersionFrameNotch"..i]
+		local notch = ReputationBar["Notch"..i]
 		if notch then
 			notch:SetColorTexture(0, 0, 0)
 			notch:SetSize(C.mult, 16)
