@@ -13,18 +13,6 @@ local textureList = {
 
 P.TextureTable = {}
 
-LSM.RegisterCallback(P, "LibSharedMedia_Registered", function(_, mediatype, key)
-	if mediatype == "statusbar" then
-		local path = LSM:Fetch(mediatype, key)
-		if path and key ~= "normTex" then
-			if not P.Initialized then -- SharedMedia
-				P:BuildTextureTable()
-				P:ReplaceTexture()
-			end
-		end
-	end
-end)
-
 function P:BuildTextureTable()
 	wipe(P.TextureTable)
 
@@ -44,6 +32,16 @@ function P:ReplaceTexture()
 	if path then
 		DB.normTex = path
 	end
+end
+
+do
+	-- Before NDui module loaded
+	hooksecurefunc(B, "SetSmoothingAmount", function()
+		if not P.Initialized then
+			P:BuildTextureTable()
+			P:ReplaceTexture()
+		end
+	end)
 end
 
 -- Role
