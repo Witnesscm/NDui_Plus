@@ -2,6 +2,11 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 
 P.Changelog = [[
+v11.0.8
+[材质] 重构职责图标替换，添加新图标
+[美化] 添加 MountJournalEnhanced 美化
+[美化] 更新部分插件美化
+
 v11.0.7
 [主要] 更新版本号至11.0.7
 [动作条] 添加动态飞行渐隐条件
