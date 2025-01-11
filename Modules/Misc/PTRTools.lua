@@ -6,7 +6,7 @@ if C_CVar.GetCVar("portal") ~= "test" then return end -- PTR/Beta
 
 -- One-click learning all profession specializations
 do
-	local function Purchase(configID, nodeID)
+	local function PurchaseRank(configID, nodeID)
 		local nodeInfo = C_Traits.GetNodeInfo(configID, nodeID)
 		if nodeInfo then
 			for i = nodeInfo.ranksPurchased, nodeInfo.maxRanks do
@@ -14,7 +14,7 @@ do
 			end
 
 			for _, edgeInfo in ipairs(nodeInfo.visibleEdges) do
-				Purchase(configID, edgeInfo.targetNode)
+				PurchaseRank(configID, edgeInfo.targetNode)
 			end
 		end
 	end
@@ -28,7 +28,7 @@ do
 		for _, treeID in ipairs(treeIDs) do
 			local tabInfo = C_ProfSpecs.GetTabInfo(treeID)
 			if tabInfo then
-				Purchase(configID, tabInfo.rootNodeID)
+				PurchaseRank(configID, tabInfo.rootNodeID)
 			end
 		end
 
