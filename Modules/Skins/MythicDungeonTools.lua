@@ -22,21 +22,23 @@ function S:MythicDungeonTools()
 	hooksecurefunc(MDT, "Async", function(_, _, name)
 		if name ~= "showInterface" or styled then return end
 
-		P:Delay(1, function()
+		P.WaitFor(function()
+			return not not (MDT.tooltip and MDT.pullTooltip)
+		end, function()
 			local frame = MDT.main_frame
 			if not frame then return end
 
 			local closeButton = frame.closeButton
 			if closeButton then
 				B.ReskinClose(closeButton, frame.sidePanel, -7, -7)
-				closeButton:SetSize(20, 20)
+				closeButton:SetSize(18, 18)
 			end
 
 			local maximize = frame.maximizeButton
 			if maximize then
 				B.ReskinMinMax(maximize)
-				maximize.MaximizeButton:SetSize(20, 20)
-				maximize.MinimizeButton:SetSize(20, 20)
+				maximize.MaximizeButton:SetSize(18, 18)
+				maximize.MinimizeButton:SetSize(18, 18)
 			end
 
 			for _, key in pairs(Buttons) do
@@ -64,9 +66,9 @@ function S:MythicDungeonTools()
 
 			P.ReskinTooltip(MDT.tooltip)
 			P.ReskinTooltip(MDT.pullTooltip)
-
-			styled = true
 		end)
+
+		styled = true
 	end)
 
 	local enemyStyled

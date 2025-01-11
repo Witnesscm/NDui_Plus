@@ -25,10 +25,10 @@ local function SkinListButton(self)
 end
 
 function S:TalentLoadoutsEx()
-	P:Delay(.1, function()
+	P.WaitFor(function()
+		return not not _G.TalentLoadoutExMainFrame
+	end, function()
 		local frame = _G.TalentLoadoutExMainFrame
-		if not frame then return end
-
 		B.StripTextures(frame)
 		B.SetBD(frame, nil, 0, 0, 0, 0)
 		frame:ClearAllPoints()

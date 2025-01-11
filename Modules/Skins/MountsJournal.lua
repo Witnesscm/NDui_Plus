@@ -57,10 +57,7 @@ local function handleCombobox(self)
 		return
 	end
 
-	P.ReskinDropDown(self)
-	self.Button:SetPoint("RIGHT", -6, 1)
-	self.Button:SetSize(20, 20)
-	self.bg:SetPoint("LEFT", 5, 0)
+	S:Proxy("ReskinDropDown", self)
 	handledDropDown(self)
 end
 
@@ -448,12 +445,16 @@ function S:MountsJournal()
 			for _, key in ipairs({
 				"waterJump", "useHerbMounts", "useRepairMounts", "freeSlots", "useMagicBroom",
 				"useUnderlightAngler", "summonPetEvery", "noPetInRaid", "noPetInGroup",
-				"copyMountTarget", "coloredMountNames", "arrowButtons", "openLinks", "showWowheadLink"
+				"copyMountTarget", "coloredMountNames", "arrowButtons", "openLinks", "showWowheadLink",
+				"statisticCollection"
 			}) do
 				S:Proxy("ReskinCheck", self[key])
 			end
 
-			for _, key in ipairs({"bindMount", "bindSecondMount", "resetHelp", "cancelBtn", "applyBtn"}) do
+			for _, key in ipairs({
+				"bindSummon1Key1", "bindSummon1Key2", "bindSummon2Key1", "bindSummon2Key2",
+				"resetHelp", "cancelBtn", "applyBtn"
+			}) do
 				S:Proxy("Reskin", self[key])
 			end
 
@@ -535,6 +536,19 @@ function S:MountsJournal()
 				B.ReskinCheck(check)
 				check.styled = true
 			end
+		end
+	end)
+
+	local ruleConfig = _G.MountsJournalConfigRules
+	ruleConfig:HookScript("OnShow", function(self)
+		if not self.styled then
+			handledFilterButton(self.ruleSets)
+			handleCombobox(self.summons)
+			S:Proxy("Reskin", self.addRuleBtn)
+			S:Proxy("ReskinInput", self.searchBox)
+			S:Proxy("Reskin", self.resetRulesBtn)
+
+			self.styled = true
 		end
 	end)
 end

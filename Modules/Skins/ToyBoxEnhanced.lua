@@ -83,6 +83,8 @@ local function HandleToyBoxEnhanced()
 			child:SetPushedTexture(DB.pushedTex)
 			child:GetHighlightTexture():SetColorTexture(1, 1, 1, .25)
 			child:GetHighlightTexture():SetInside(child.bg)
+		elseif objType == "Button" and child.ResetButton and not child.__bg then
+			B.ReskinFilterButton(child)
 		end
 	end
 
@@ -90,6 +92,7 @@ local function HandleToyBoxEnhanced()
 end
 
 function S:ToyBoxEnhanced()
+	if not C.db["Skins"]["BlizzardSkins"] then return end
 	if not C_AddOns.IsAddOnLoaded("ToyBoxEnhanced") then return end
 
 	_G.ToyBox:HookScript("OnShow", HandleToyBoxEnhanced)

@@ -47,6 +47,22 @@ do
 
 		return true
 	end
+
+	function P.WaitFor(condition, callback, interval, leftTimes)
+		leftTimes = (leftTimes or 10) - 1
+		interval = interval or 0.1
+
+		if condition() then
+			callback()
+			return
+		end
+
+		if leftTimes and leftTimes <= 0 then
+			return
+		end
+
+		P:Delay(interval, P.WaitFor, condition, callback, interval, leftTimes)
+	end
 end
 
 -- UI widgets
