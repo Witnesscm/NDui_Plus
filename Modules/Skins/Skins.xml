@@ -27,6 +27,7 @@
 	<Script file="NovaWorldBuffs.lua"/>
 	<Script file="Others.lua"/>
 	<Script file="PallyPower.lua"/>
+	<Script file="RareScanner.lua"/>
 	<Script file="ShadowDancer.lua"/>
 	<Script file="SimpleAddonManager.lua"/>
 	<Script file="Skillet.lua"/>
