@@ -313,6 +313,10 @@ function S:LibQTip()
 	end
 end
 
+function S:NovaSpellRankChecker()
+	S:Proxy("Reskin", _G.SpellBookFrameButton)
+end
+
 S:RegisterSkin("HandyNotes_NPCs (Classic)", S.HandyNotes_NPCs)
 S:RegisterSkin("HandyNotes_NPCs (Burning Crusade Classic)", S.HandyNotes_NPCs)
 S:RegisterSkin("BattleInfo", S.BattleInfo)
@@ -326,6 +330,7 @@ S:RegisterSkin("BigWigs_Options", S.BigWigs_Options)
 S:RegisterSkin("RestockerTBC", S.RestockerTBC)
 S:RegisterSkin("RaidLedger", S.RaidLedger)
 S:RegisterSkin("LibQTip")
+S:RegisterSkin("NovaSpellRankChecker", S.NovaSpellRankChecker)
 
 -- Hide Toggle Button
 S.ToggleFrames = {}
