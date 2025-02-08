@@ -146,3 +146,5 @@ L["You are using Official WeakAuras, the skin of WeakAuras will not be loaded du
 L["If you want to use WeakAuras skin, please install |cff99ccffWeakAurasPatched|r or change the code manually."] = "If you want to use WeakAuras skin, please install |cff99ccffWeakAurasPatched|r or change the code manually."
 L["You can disable this alert via disabling WeakAuras Skin in |cff99ccffNDui|r Console."] = "You can disable this alert via disabling WeakAuras Skin in |cff99ccffNDui|r Console."
 L["Press Ctrl+C to copy the URL"] = "Press Ctrl+C to copy the URL"
+L["GearAppearanceToggle"] = "Gear Appearance Toggle"
+L["GearAppearanceToggleTip"] = "Adds checkboxes to the character panel to quickly show or hide the appearance of the helm and cloak."

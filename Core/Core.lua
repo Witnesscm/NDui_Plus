@@ -138,6 +138,7 @@ P.DefaultSettings = {
 		FlightMapScale = 1.2,
 		TrainAll = true,
 		EngravingUI = true,
+		GearAppearanceToggle = true,
 	},
 }
 

@@ -135,3 +135,75 @@ do
 
 	M:RegisterMisc("FlightMapScale", M.UpdateFlightMapScale)
 end
+
+-- Show/Hide Helm and Cloak
+do
+	local Settings = {
+		[1] = {
+			Point = {"BOTTOMLEFT", _G.CharacterHeadSlot, "BOTTOMRIGHT", 4, -2},
+			GetValue = function()
+				return ShowingHelm()
+			end,
+			SetValue = function(value)
+				ShowHelm(value)
+			end,
+			Tooltip = SHOW_HELM
+		},
+		[2] = {
+			Point = {"BOTTOMLEFT", _G.CharacterBackSlot, "BOTTOMRIGHT", 4, -2},
+			GetValue = function()
+				return ShowingCloak()
+			end,
+			SetValue = function(value)
+				ShowCloak(value)
+			end,
+			Tooltip = SHOW_CLOAK
+		}
+	}
+
+	local CheckBoxes = {}
+	local function IsMouseOverAnyBox()
+		for _, box in ipairs(CheckBoxes) do
+			if box:IsMouseOver() then
+				return true
+			end
+		end
+		return false
+	end
+
+	local function Model_OnEnter()
+		for _, box in ipairs(CheckBoxes) do
+			P:UIFrameFadeIn(box, 0.5, box:GetAlpha(), 1)
+		end
+	end
+
+	local function Model_OnLeave()
+		if not IsMouseOverAnyBox() then
+			for _, box in ipairs(CheckBoxes) do
+				P:UIFrameFadeOut(box, 0.5, box:GetAlpha(), 0)
+			end
+		end
+	end
+
+	function M:GearAppearanceToggle()
+		if not M.db["GearAppearanceToggle"] then return end
+
+		for _, setting in ipairs(Settings) do
+			local box = B.CreateCheckBox(_G.PaperDollItemsFrame)
+			box:SetSize(22, 22)
+			box:SetPoint(unpack(setting.Point))
+			box:SetChecked(setting.GetValue())
+			box:SetScript("OnClick", function(self)
+				setting.SetValue(self:GetChecked())
+			end)
+			B.AddTooltip(box, "ANCHOR_RIGHT", setting.Tooltip, "info")
+			box:SetAlpha(0)
+			tinsert(CheckBoxes, box)
+		end
+
+		_G.CharacterModelFrame:HookScript("OnEnter", Model_OnEnter)
+		_G.CharacterModelFrame:HookScript("OnLeave", Model_OnLeave)
+	end
+
+	M:RegisterMisc("GearAppearanceToggle", M.GearAppearanceToggle)
+end

@@ -146,3 +146,5 @@ L["You are using Official WeakAuras, the skin of WeakAuras will not be loaded du
 L["If you want to use WeakAuras skin, please install |cff99ccffWeakAurasPatched|r or change the code manually."] = "如果你想使用 WeakAuras 皮肤, 请安装 |cff99ccffWeakAurasPatched|r 或手动修改代码."
 L["You can disable this alert via disabling WeakAuras Skin in |cff99ccffNDui|r Console."] = "你可以通过禁用 |cff99ccffNDui|r 控制面板中的 WeakAuras 皮肤来禁用此提醒."
 L["Press Ctrl+C to copy the URL"] = "按 Ctrl+C 复制 URL"
+L["GearAppearanceToggle"] = "装备外观切换"
+L["GearAppearanceToggleTip"] = "在角色面板添加复选框，快速显示或隐藏头盔和披风的外观。"
