@@ -28,6 +28,7 @@
 	<Script file="Others.lua"/>
 	<Script file="PallyPower.lua"/>
 	<Script file="ShadowDancer.lua"/>
+	<Script file="SimpleAddonManager.lua"/>
 	<Script file="Skillet.lua"/>
 	<Script file="Spy.lua"/>
 	<Script file="tdGUI.lua"/>
