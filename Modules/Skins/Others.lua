@@ -317,6 +317,24 @@ function S:NovaSpellRankChecker()
 	S:Proxy("Reskin", _G.SpellBookFrameButton)
 end
 
+function S:OmniCD_HandleIcon(barFrame, iconIndex)
+	local icon = barFrame.icons[iconIndex]
+	if not icon.__shadow then
+		icon.__shadow = B.CreateSD(icon)
+	end
+	icon.icon:SetTexCoord(unpack(DB.TexCoord))
+end
+
+function S:OmniCD()
+	local OmniCD = _G.OmniCD
+	if not OmniCD then return end
+
+	local Party = OmniCD[1].Party
+	if Party.AcquireIcon then
+		hooksecurefunc(Party, "AcquireIcon", S.OmniCD_HandleIcon)
+	end
+end
+
 S:RegisterSkin("HandyNotes_NPCs (Classic)", S.HandyNotes_NPCs)
 S:RegisterSkin("HandyNotes_NPCs (Burning Crusade Classic)", S.HandyNotes_NPCs)
 S:RegisterSkin("BattleInfo", S.BattleInfo)
@@ -331,6 +349,7 @@ S:RegisterSkin("RestockerTBC", S.RestockerTBC)
 S:RegisterSkin("RaidLedger", S.RaidLedger)
 S:RegisterSkin("LibQTip")
 S:RegisterSkin("NovaSpellRankChecker", S.NovaSpellRankChecker)
+S:RegisterSkin("OmniCD", S.OmniCD)
 
 -- Hide Toggle Button
 S.ToggleFrames = {}
