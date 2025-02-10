@@ -34,6 +34,14 @@ function S:RareScanner()
 	end
 
 	S:Proxy("ReskinArrow", button.FilterEntityButton, "down")
+	local filterButton = button.FilterEntityButton
+	if filterButton then
+		B.ReskinArrow(filterButton, "down")
+		filterButton:HookScript("OnEnter", function(self)
+			P.ReskinTooltip(self.tooltip)
+		end)
+	end
+
 	P.ReskinFont(button.Title)
 	P.ReskinFont(button.Description_text)
 
