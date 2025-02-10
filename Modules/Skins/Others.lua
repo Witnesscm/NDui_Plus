@@ -135,7 +135,8 @@ function S:BuyEmAll()
 	B.CreateMF(_G.BuyEmAllFrame)
 end
 
-function S:OmniCD_HandleIcon(icon)
+function S:OmniCD_HandleIcon(barFrame, iconIndex)
+	local icon = barFrame.icons[iconIndex]
 	if not icon.__shadow then
 		icon.__shadow = B.CreateSD(icon)
 	end
@@ -147,8 +148,8 @@ function S:OmniCD()
 	if not OmniCD then return end
 
 	local Party = OmniCD[1].Party
-	if Party.SetBorder then
-		hooksecurefunc(Party, "SetBorder", S.OmniCD_HandleIcon)
+	if Party.AcquireIcon then
+		hooksecurefunc(Party, "AcquireIcon", S.OmniCD_HandleIcon)
 	end
 end
 

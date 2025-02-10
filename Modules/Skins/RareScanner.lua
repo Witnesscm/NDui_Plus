@@ -4,37 +4,45 @@ local S = P:GetModule("Skins")
 
 local _G = getfenv(0)
 
+local function Button_OnEnter(self)
+	self.bg:SetBackdropBorderColor(DB.r, DB.g, DB.b)
+end
+
+local function Button_OnLeave(self)
+	self.bg:SetBackdropBorderColor(0, 0, 0)
+end
+
 function S:RareScanner()
 	if not S.db["RareScanner"] then return end
 
 	-- Scanner Button
-	local button = _G.scanner_button
+	local button = _G.RARESCANNER_BUTTON
 	if not button then return end
 
 	B.StripTextures(button)
-	B.Reskin(button)
+	button.bg = B.SetBD(button)
+	button:SetScript("OnEnter", Button_OnEnter)
+	button:SetScript("OnLeave", Button_OnLeave)
 
 	local close = button.CloseButton
 	if close then
-		B.ReskinClose(close)
+		B.ReskinClose(close, nil, nil, nil, true)
 		close:SetHitRectInsets(0, 0, 0, 0)
 		close:SetScale(1)
 		close:ClearAllPoints()
 		close:SetPoint("BOTTOMRIGHT",-5, 5)
 	end
 
-	if button.FilterEntityButton and button.UnfilterEnabledButton then
-		B.ReskinArrow(button.FilterEntityButton, "down")
-		B.ReskinArrow(button.UnfilterEnabledButton, "up")
-	end
+	S:Proxy("ReskinArrow", button.FilterEntityButton, "down")
+	P.ReskinFont(button.Title)
+	P.ReskinFont(button.Description_text)
 
 	-- LootBar
 	local LootBar = button.LootBar
 	if LootBar then
-		for _, key in ipairs({"LootBarToolTipComp1", "LootBarToolTipComp2"}) do
+		for _, key in ipairs({"LootBarToolTip", "LootBarToolTipComp1", "LootBarToolTipComp2"}) do
 			local tip = LootBar[key]
 			if tip then
-				P.ReskinTooltip(tip)
 				P.ReskinTooltip(tip)
 			end
 		end
