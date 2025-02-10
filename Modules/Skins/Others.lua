@@ -163,32 +163,27 @@ function S:Hemlock()
 	local Hemlock = _G.Hemlock
 	if not Hemlock then return end
 
-	local function reskinButton(button)
-		B.ReskinIcon(button:GetNormalTexture())
-		button:GetNormalTexture():SetInside()
-		button:SetHighlightTexture(DB.bdTex)
-		button:GetHighlightTexture():SetVertexColor(1, 1, 1, .25)
-		button:GetHighlightTexture():SetInside()
+	local frame = _G.HemlockFrame
+	if frame then
+		B.StripTextures(frame)
+		frame:ClearAllPoints()
+		frame:SetPoint("LEFT", _G.MerchantFrame, "RIGHT", -2, 0)
 	end
 
-	B.StripTextures(_G.HemlockFrame)
-	_G.HemlockFrame:SetPoint("LEFT", MerchantFrameCloseButton, "RIGHT", 0, 0)
-	hooksecurefunc(Hemlock, "MakeFrame", function(self)
-		for _, button in ipairs(self.frames) do
-			if not button.styled then
-				reskinButton(button)
-				button.styled = true
+	if Hemlock.InitFrames then
+		hooksecurefunc(Hemlock, "InitFrames", function(self)
+			for _, button in ipairs(self.frames) do
+				if not button.styled then
+					B.ReskinIcon(button:GetNormalTexture(), true)
+					button:GetNormalTexture():SetInside()
+					button:SetHighlightTexture(DB.bdTex)
+					button:GetHighlightTexture():SetVertexColor(1, 1, 1,.25)
+					button:GetHighlightTexture():SetInside()
+					button.styled = true
+				end
 			end
-		end
-	end)
-
-	hooksecurefunc(Hemlock, "MakeScanFrame", function(self)
-		local button = _G.HemlockPoisonButtonOpen
-		if button and not button.styled then
-			reskinButton(button)
-			button.styled = true
-		end
-	end)
+		end)
+	end
 end
 
 function S:TotemTimers()
