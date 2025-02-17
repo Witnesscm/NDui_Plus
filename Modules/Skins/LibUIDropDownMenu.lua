@@ -140,6 +140,15 @@ function S:LibUIDropDownMenu()
 		hooksecurefunc(LibUIDropDownMenu, "ToggleDropDownMenu", function(_, level)
 			S:SkinDropDownMenu("L_DropDownList", level)
 		end)
+
+		if LibUIDropDownMenu.Create_UIDropDownMenu then
+			local Create_UIDropDownMenu = LibUIDropDownMenu.Create_UIDropDownMenu
+			LibUIDropDownMenu.Create_UIDropDownMenu = function(...)
+				local dropdown = Create_UIDropDownMenu(...)
+				P.ReskinDropDown(dropdown)
+				return dropdown
+			end
+		end
 	end
 
 	-- LibUIDropDownMenuQuestie-4.0

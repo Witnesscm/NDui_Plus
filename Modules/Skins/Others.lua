@@ -330,6 +330,19 @@ function S:OmniCD()
 	end
 end
 
+function S:Ranker()
+	local Ranker = _G.Ranker
+	if Ranker and Ranker.CreateUserInterface then
+		hooksecurefunc(Ranker, "CreateUserInterface", function()
+			P.ReskinFrame(Ranker.MainFrame)
+			S:Proxy("ReskinScroll", Ranker.MainFrame.ScrollFrame.ScrollBar)
+			S:Proxy("ReskinInput", Ranker.WhatIfRankProgressBox)
+			S:Proxy("Reskin", Ranker.ToggleButton)
+			S:Proxy("Reskin", Ranker.WhatIfButton)
+		end)
+	end
+end
+
 S:RegisterSkin("HandyNotes_NPCs (Classic)", S.HandyNotes_NPCs)
 S:RegisterSkin("HandyNotes_NPCs (Burning Crusade Classic)", S.HandyNotes_NPCs)
 S:RegisterSkin("BattleInfo", S.BattleInfo)
@@ -345,6 +358,7 @@ S:RegisterSkin("RaidLedger", S.RaidLedger)
 S:RegisterSkin("LibQTip")
 S:RegisterSkin("NovaSpellRankChecker", S.NovaSpellRankChecker)
 S:RegisterSkin("OmniCD", S.OmniCD)
+S:RegisterSkin("Ranker", S.Ranker)
 
 -- Hide Toggle Button
 S.ToggleFrames = {}
