@@ -2,6 +2,14 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 
 P.Changelog = [[
+v1.15.11
+[主要] 更新版本号至1.15.6
+[易用性] 快速切换头盔和披风外观
+[美化] 添加 SimpleAddonManager 美化
+[美化] 添加 RareScanner 美化
+[美化] 添加 Ranker 美化
+[美化] 更新部分插件美化
+
 v1.15.10
 [动作条] 修复法师动作条状态更新
 [背包] 离线背包添加装备等级显示
