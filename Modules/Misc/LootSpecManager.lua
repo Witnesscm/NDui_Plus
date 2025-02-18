@@ -384,9 +384,8 @@ function LSM:OnLogin()
 	P:AddCallbackForAddon("Blizzard_EncounterJournal", LSM.CreateEJButton)
 end
 
-SlashCmdList["NDUI_PLUS_LSM"] = function()
+P:AddCommand("LSM", "/lsm", function()
 	if not NDuiPlusDB["Misc"]["LootSpecManager"] then return end
 
 	LSM:CreateGUI()
-end
-SLASH_NDUI_PLUS_LSM1 = "/lsm"
+end)

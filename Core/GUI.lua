@@ -609,21 +609,3 @@ function G:OnLogin()
 		end
 	end)
 end
-
-SlashCmdList["NDUI_PLUS"] = function(msg)
-	local status = P:VersionCheck_Compare(DB.Version, P.SupportVersion)
-	if status == "IsOld" then
-		P:Print(format(L["Version Check"], P.SupportVersion))
-		return
-	end
-
-	if msg:lower() == "debug" then
-		NDuiPlusDB["Debug"] = not NDuiPlusDB["Debug"]
-		_G.DEFAULT_CHAT_FRAME:AddMessage("|cFF70B8FFNDui_Plus:|r Debug " .. format(NDuiPlusDB["Debug"] and "on" or "off"))
-	else
-		P:OpenGUI()
-		PlaySound(SOUNDKIT.IG_MAINMENU_OPTION)
-	end
-end
-SLASH_NDUI_PLUS1 = "/ndp"
-SLASH_NDUI_PLUS2 = "/nduiplus"

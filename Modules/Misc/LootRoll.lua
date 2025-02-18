@@ -524,7 +524,6 @@ function LR:UpdateLootRollTest()
 	end
 end
 
-SlashCmdList["NDUI_TEKS"] = function()
+P:AddCommand("TEKSLOOT", "/teks", function()
 	LR:LootRollTest()
-end
-SLASH_NDUI_TEKS1 = "/teks"
+end)

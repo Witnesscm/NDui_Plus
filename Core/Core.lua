@@ -307,6 +307,44 @@ function P:GetModule(name)
 	return modules[name]
 end
 
+-- Command
+function P:AddCommand(name, keys, func)
+	if not SlashCmdList["NDUI_PLUS_" .. name] then
+		SlashCmdList["NDUI_PLUS_" .. name] = func
+
+		if type(keys) == "table" then
+			for i, key in next, keys do
+				if strsub(key, 1, 1) ~= "/" then
+					key = "/" .. key
+				end
+				_G["SLASH_NDUI_PLUS_" .. name .. i] = key
+			end
+		else
+			if strsub(keys, 1, 1) ~= "/" then
+				keys = "/" .. keys
+			end
+			_G["SLASH_NDUI_PLUS_" .. name .. "1"] = keys
+		end
+	end
+end
+
+SlashCmdList["NDUI_PLUS"] = function(msg)
+	local status = P:VersionCheck_Compare(DB.Version, P.SupportVersion)
+	if status == "IsOld" then
+		P:Print(format(L["Version Check"], P.SupportVersion))
+		return
+	end
+
+	if msg and strlen(msg) > 0 then
+		P:Developer_Command(msg:lower())
+	else
+		P:OpenGUI()
+		PlaySound(SOUNDKIT.IG_MAINMENU_OPTION)
+	end
+end
+SLASH_NDUI_PLUS1 = "/ndp"
+SLASH_NDUI_PLUS2 = "/nduiplus"
+
 function P:Initialize()
 	local status = P:VersionCheck_Compare(DB.Version, P.SupportVersion)
 	if status == "IsOld" then
