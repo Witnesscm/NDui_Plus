@@ -174,8 +174,9 @@ local function ItemButton_LoadInfo(self, itemData)
 
 	if self.info.count and self.info.count > 1 then
 		self.Count:SetText(self.info.count > 1e3 and "*" or self.info.count)
+		self.Count:Show()
 	else
-		self.Count:SetText("")
+		self.Count:Hide()
 	end
 end
 
