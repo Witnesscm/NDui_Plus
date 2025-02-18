@@ -40,7 +40,7 @@ P.DefaultSettings = {
 		AspectBar = false,
 	},
 	Bags = {
-		OfflineBag = false,
+		OfflineBag = true,
 		BagsWidth = 12,
 		IconSize = 34,
 	},
