@@ -50,7 +50,7 @@ P.DefaultSettings = {
 		RuneBarSize = 34,
 	},
 	Bags = {
-		OfflineBag = false,
+		OfflineBag = true,
 		BagsWidth = 12,
 		IconSize = 34,
 	},
