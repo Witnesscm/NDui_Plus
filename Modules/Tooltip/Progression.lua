@@ -19,13 +19,28 @@ T.RaidData = {
 			{ 40269, 40273, 40277, 40281, 40285, 40289, 40293, 40297 },
 			{ 40270, 40274, 40278, 40282, 40286, 40290, 40294, 40298 }
 		}
+	},
+	[2] = {
+		abbr = L["[ABBR] Liberation of Undermine"],
+		achievements = {
+			{ 41299, 41303, 41307, 41311, 41315, 41319, 41323, 41327 },
+			{ 41300, 41304, 41308, 41312, 41316, 41320, 41324, 41328 },
+			{ 41301, 41305, 41309, 41313, 41317, 41321, 41325, 41329 },
+			{ 41302, 41306, 41310, 41314, 41318, 41322, 41326, 41330 }
+		}
 	}
 }
 
+-- https://wago.tools/db2/Achievement?filter[Title_lang]=The%20War%20Within%20Keystone&page=1
 T.MythicPlusAchievementData = {
 	[1] = {
 		{ id = 20526, abbr = L["[ABBR] The War Within Keystone Hero: Season One"] },
 		{ id = 20525, abbr = L["[ABBR] The War Within Keystone Master: Season One"] }
+	},
+	[2] = {
+		{ id = 40951, abbr = L["[ABBR] The War Within Keystone Legend: Season Two"] },
+		{ id = 40952, abbr = L["[ABBR] The War Within Keystone Hero: Season Two"] },
+		{ id = 41533, abbr = L["[ABBR] The War Within Keystone Master: Season Two"] }
 	}
 }
 
@@ -34,18 +49,42 @@ T.MythicPlusMapData = {
 	[2] = L["[ABBR] Temple of the Jade Serpent"],
 	[165] = L["[ABBR] Shadowmoon Burial Grounds"],
 	[168] = L["[ABBR] The Everbloom"],
+	[169] = L["[ABBR] Iron Docks"],
+	[197] = L["[ABBR] Eye of Azshara"],
 	[198] = L["[ABBR] Darkheart Thicket"],
 	[199] = L["[ABBR] Black Rook Hold"],
 	[200] = L["[ABBR] Halls of Valor"],
 	[206] = L["[ABBR] Neltharion's Lair"],
+	[207] = L["[ABBR] Vault of the Wardens"],
+	[208] = L["[ABBR] Maw of Souls"],
+	[209] = L["[ABBR] The Arcway"],
 	[210] = L["[ABBR] Court of Stars"],
+	[227] = L["[ABBR] Return to Karazhan: Lower"],
+	[233] = L["[ABBR] Cathedral of Eternal Night"],
+	[234] = L["[ABBR] Return to Karazhan: Upper"],
+	[239] = L["[ABBR] Seat of the Triumvirate"],
 	[244] = L["[ABBR] Atal'Dazar"],
 	[245] = L["[ABBR] Freehold"],
+	[246] = L["[ABBR] Tol Dagor"],
+	[247] = L["[ABBR] The MOTHERLODE!!"],
 	[248] = L["[ABBR] Waycrest Manor"],
+	[249] = L["[ABBR] Kings' Rest"],
+	[250] = L["[ABBR] Temple of Sethraliss"],
 	[251] = L["[ABBR] The Underrot"],
+	[252] = L["[ABBR] Shrine of the Storm"],
 	[353] = L["[ABBR] Siege of Boralus"],
+	[369] = L["[ABBR] Operation: Mechagon - Junkyard"],
+	[370] = L["[ABBR] Operation: Mechagon - Workshop"],
 	[375] = L["[ABBR] Mists of Tirna Scithe"],
 	[376] = L["[ABBR] The Necrotic Wake"],
+	[377] = L["[ABBR] De Other Side"],
+	[378] = L["[ABBR] Halls of Atonement"],
+	[379] = L["[ABBR] Plaguefall"],
+	[380] = L["[ABBR] Sanguine Depths"],
+	[381] = L["[ABBR] Spires of Ascension"],
+	[382] = L["[ABBR] Theater of Pain"],
+	[391] = L["[ABBR] Tazavesh: Streets of Wonder"],
+	[392] = L["[ABBR] Tazavesh: So'leah's Gambit"],
 	[399] = L["[ABBR] Ruby Life Pools"],
 	[400] = L["[ABBR] The Nokhud Offensive"],
 	[401] = L["[ABBR] The Azure Vault"],
@@ -66,7 +105,8 @@ T.MythicPlusMapData = {
 	[504] = L["[ABBR] Darkflame Cleft"],
 	[505] = L["[ABBR] The Dawnbreaker"],
 	[506] = L["[ABBR] Cinderbrew Meadery"],
-	[507] = L["[ABBR] Grim Batol"]
+	[507] = L["[ABBR] Grim Batol"],
+	[525] = L["[ABBR] Operation: Floodgate"]
 }
 
 local difficulties = {
