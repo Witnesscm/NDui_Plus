@@ -2,6 +2,12 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 
 P.Changelog = [[
+v11.1.0
+[主要] 更新版本号至11.1.0
+[单位框体] 修复职责图标尺寸
+[鼠标提示] PvE进度更新地心之战S2数据
+[美化] 更新部分插件美化
+
 v11.0.8
 [材质] 重构职责图标替换，添加新图标
 [美化] 添加 MountJournalEnhanced 美化
