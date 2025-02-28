@@ -208,28 +208,28 @@ G.OptionList = { -- type, key, value, name, horizon, data, callback, tooltip, sc
 		{4, "TexStyle", "Index", L["Texture Style"], nil, {}, toggleTexStyle},
 		{L["Addon Skin"]},
 		{1, "Skins", "Ace3", "AceGUI-3.0"},
-		{1, "Skins", "InboxMailBag", "Inbox MailBag", true},
-		{1, "Skins", "MerInspect", "MerInspect"},
-		{1, "Skins", "alaGearMan", "alaGearMan", true},
-		{1, "Skins", "ClassicThreatMeter", "ThreatClassic2"},
-		{1, "Skins", "Spy", "Spy", true},
-		{1, "Skins", "ButtonForge", "Button Forge"},
-		{1, "Skins", "MeetingHorn", "MeetingHorn", true},
-		{1, "Skins", "GearMenu", "GearMenu"},
 		{1, "Skins", "alaCalendar", "alaCalendar", true},
-		{1, "Skins", "ls_Toasts", "ls_Toasts"},
-		{1, "Skins", "WIM", "WIM", true},
-		{1, "Skins", "ItemRack", "ItemRack"},
-		{1, "Skins", "WhisperPop", "WhisperPop", true},
-		{1, "Skins", "AutoBar", "AutoBar"},
+		{1, "Skins", "alaGearMan", "alaGearMan"},
 		{1, "Skins", "AtlasLootClassic", "AtlasLootClassic", true},
-		{1, "Skins", "Immersion", "Immersion"},
-		{1, "Skins", "Skillet", "Skillet", true},
-		{1, "Skins", "tdInspect", "tdInspect"},
-		{1, "Skins", "tdAuction", "tdAuction", true},
 		{1, "Skins", "Auctionator", "Auctionator"},
+		{1, "Skins", "AutoBar", "AutoBar", true},
+		{1, "Skins", "ButtonForge", "Button Forge"},
+		{1, "Skins", "GearMenu", "GearMenu", true},
+		{1, "Skins", "Immersion", "Immersion"},
+		{1, "Skins", "InboxMailBag", "Inbox MailBag", true},
+		{1, "Skins", "ItemRack", "ItemRack"},
+		{1, "Skins", "Krowi_AchievementFilter", "Krowi_AchievementFilter", true},
+		{1, "Skins", "ls_Toasts", "ls_Toasts"},
+		{1, "Skins", "MeetingHorn", "MeetingHorn", true},
+		{1, "Skins", "MerInspect", "MerInspect"},
 		{1, "Skins", "ShadowDancer", "ShadowDancer", true},
-		{1, "Skins", "Krowi_AchievementFilter", "Krowi_AchievementFilter"},
+		{1, "Skins", "Skillet", "Skillet", true},
+		{1, "Skins", "Spy", "Spy"},
+		{1, "Skins", "tdAuction", "tdAuction", true},
+		{1, "Skins", "tdInspect", "tdInspect"},
+		{1, "Skins", "ClassicThreatMeter", "ThreatClassic2", true},
+		{1, "Skins", "WhisperPop", "WhisperPop"},
+		{1, "Skins", "WIM", "WIM", true},
 		{},
 		{1, "Skins", "HideToggle", L["HideToggle"].."*", nil, nil, updateToggleVisible},
 		{1, "Skins", "CategoryArrow", L["CategoryArrow"].."*", true, nil, updateArrowVisible},
@@ -295,7 +295,7 @@ end
 local function SelectTab(i)
 	for num = 1, #G.TabList do
 		if num == i then
-			guiTab[num]:SetBackdropColor(cr, cg, cb, .25)
+			guiTab[num]:SetBackdropColor(DB.r, DB.g, DB.b, .25)
 			guiTab[num].checked = true
 			guiPage[num]:Show()
 		else
@@ -313,7 +313,7 @@ end
 
 local function tabOnEnter(self)
 	if self.checked then return end
-	self:SetBackdropColor(cr, cg, cb, .25)
+	self:SetBackdropColor(DB.r, DB.g, DB.b, .25)
 end
 
 local function tabOnLeave(self)
