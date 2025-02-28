@@ -2,7 +2,6 @@ local addonName, ns = ...
 local B, C, L, DB, P = unpack(ns)
 local G = P:RegisterModule("GUI")
 
-local cr, cg, cb = DB.r, DB.g, DB.b
 local guiTab, guiPage, gui = {}, {}
 
 G.TextureList = {}
@@ -169,7 +168,7 @@ G.OptionList = { -- type, key, value, name, horizon, data, callback, tooltip, sc
 		{1, "ActionBar", "AspectBar", L["AspectBar"].."*", nil, nil, updateABFaderState},
 		{1, "ActionBar", "MageBarFade", L["MageBar"].."*", true, nil, updateABFaderState},
 		{},
-		{1, "ActionBar", "MageBar", HeaderTag..L["MageBar"].."*", nil, setupMageBar, toggleMageBar, L["MageBarTip"].."|n"..format(REQUIRES_GUILD_FACTION, SHOW_ALL_SPELL_RANKS)},
+		{1, "ActionBar", "MageBar", HeaderTag..L["MageBar"].."*", nil, setupMageBar, toggleMageBar, L["MageBarTip"]},
 		{1, "ActionBar", "MageBarVertical", L["MageBarVertical"].."*", nil, nil, updateMageBar},
 		{3, "ActionBar", "MageBarSize", L["MageBarSize"].."*", true, {24, 60, 1}, updateMageBarSize},
 	},
