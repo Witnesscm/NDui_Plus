@@ -30,8 +30,8 @@ local function ReskinCategory(category)
 			B.ReskinDropDown(setting.Dropdown)
 		end
 
-		if setting.Slider then
-			B.ReskinSlider(setting.Slider)
+		if setting.SettingSlider then
+			B.ReskinStepperSlider(setting.SettingSlider)
 		end
 
 		if setting.TextBox then
@@ -83,27 +83,6 @@ function S:WorldQuestTab()
 		S:Proxy("StripTextures", Blocker.BorderFrame)
 	end
 
-	for _, key in ipairs({"WQT_TabNormal", "WQT_TabWorld"}) do
-		local tab = _G[key]
-		B.StripTextures(tab, 2)
-		B.Reskin(tab)
-		tab:SetSize(33, 30)
-
-		local icon = tab.Icon
-		icon:ClearAllPoints()
-		icon:SetPoint("CENTER")
-
-		tab.Selected = tab:CreateTexture(nil, "ARTWORK")
-		tab.Selected:SetTexture(DB.bdTex)
-		tab.Selected:SetVertexColor(DB.r, DB.g, DB.b, .25)
-		tab.Selected:SetInside()
-	end
-
-	hooksecurefunc(frame, "SelectTab", function(self, tab)
-		_G.WQT_TabNormal.Selected:SetShown(not self:IsShown())
-		_G.WQT_TabWorld.Selected:SetShown(self:IsShown())
-	end)
-
 	if _G.WQT_ListButtonMixin then
 		hooksecurefunc(_G.WQT_ListButtonMixin, "OnLoad", function(self)
 			HandleRewards(self)
@@ -149,17 +128,6 @@ function S:WorldQuestTab()
 
 	if _G.WQT_VersionFrame then
 		S:Proxy("ReskinTrimScroll", _G.WQT_VersionFrame.ScrollBar)
-	end
-
-	local ADDT = LibStub("AddonDropDownTemplates-2.0", true)
-	if ADDT then
-		local origGetFrame = ADDT.GetFrame
-		ADDT.GetFrame = function(...)
-			local f = origGetFrame(...)
-			B.StripTextures(f)
-			P.ReskinTooltip(f)
-			return f
-		end
 	end
 end
 
