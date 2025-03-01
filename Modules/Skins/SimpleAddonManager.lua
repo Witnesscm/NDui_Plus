@@ -64,7 +64,7 @@ local function ReskinModules(frame)
 	S:Proxy("ReskinArrow", frame.ResultOptionsButton, "down")
 
 	-- AddonListFrame
-	S:Proxy("ReskinScroll", frame.ScrollFrame.ScrollBar)
+	S:Proxy("ReskinScroll", frame.AddonListFrame.ScrollFrame.ScrollBar)
 
 	-- CategoryFrame
 	S:Proxy("Reskin", frame.CategoryFrame.NewButton)
@@ -84,7 +84,7 @@ local function ReskinModules(frame)
 
 	-- Misc
 	hooksecurefunc("HybridScrollFrame_CreateButtons", ReskinScrollFrameItems)
-	ReskinScrollFrameItems(frame.ScrollFrame, "SimpleAddonManagerAddonItem")
+	ReskinScrollFrameItems(frame.AddonListFrame.ScrollFrame, "SimpleAddonManagerAddonItem")
 	ReskinScrollFrameItems(frame.CategoryFrame.ScrollFrame, "SimpleAddonManagerCategoryItem")
 
 	frame.styled = true
@@ -99,6 +99,7 @@ function S:SimpleAddonManager()
 	B.StripTextures(SimpleAddonManager)
 	B.SetBD(SimpleAddonManager)
 	S:Proxy("ReskinClose", SimpleAddonManager.CloseButton)
+	P.ReskinTooltip(_G.SAM_ADDON_LIST_TOOLTIP)
 	hooksecurefunc(SimpleAddonManager, "Initialize", ReskinModules)
 end
 
