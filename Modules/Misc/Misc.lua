@@ -156,3 +156,15 @@ do
 		return gsub(link, "(|Hmount:%d+:%d+:).-(|h.-|h)", "%1%2")
 	end
 end
+
+-- remove <Right click for Frame Settings>
+do
+	function UnitFrame_UpdateTooltip(self)
+		GameTooltip_SetDefaultAnchor(GameTooltip, self)
+		if GameTooltip:SetUnit(self.unit, self.hideStatusOnTooltip) then
+			self.UpdateTooltip = UnitFrame_UpdateTooltip
+		else
+			self.UpdateTooltip = nil
+		end
+	end
+end
