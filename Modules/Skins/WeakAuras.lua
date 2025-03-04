@@ -555,13 +555,17 @@ function S:WeakAurasSnippetButton(widget)
 	widget.renameEditBox.__bg:SetPoint("BOTTOMRIGHT", 0, -2)
 end
 
-function S:WeakAurasTreeGroup(widget)
-	S:Ace3_Frame(widget)
-	widget.treeframe:GetChildren():HideBackdrop()
+function S:WeakAurasScrollArea(widget)
+	B.ReskinScroll(widget.scrollbar)
 end
 
 function S:WA_LSM30_StatusbarAtlas(widget)
 	S:Ace3_LibSharedMedia(widget)
+end
+
+function S:WeakAurasTreeGroup(widget)
+	S:Ace3_Frame(widget)
+	widget.treeframe:GetChildren():HideBackdrop()
 end
 
 S:RegisterSkin("WeakAuras", S.WeakAuras)
@@ -577,5 +581,6 @@ S:RegisterAceGUIWidget("WeakAurasIconButton")
 S:RegisterAceGUIWidget("WeakAurasTextureButton")
 S:RegisterAceGUIWidget("WeakAurasSpinBox")
 S:RegisterAceGUIWidget("WeakAurasSnippetButton")
+S:RegisterAceGUIWidget("WeakAurasScrollArea")
 S:RegisterAceGUIWidget("WA_LSM30_StatusbarAtlas")
 S:RegisterAceGUIContainer("WeakAurasTreeGroup")
