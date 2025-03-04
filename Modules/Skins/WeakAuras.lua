@@ -379,6 +379,13 @@ function S:WeakAurasOptions()
 	if LAAC and LAAC.enable then
 		hooksecurefunc(LAAC, "enable", SkinLibAPIAutoComplete)
 	end
+
+	local LibDD, LibMinor = LibStub("LibUIDropDownMenu-4.0", true)
+	if LibDD and (not LibDD.oldminor or LibDD.oldminor < LibMinor) then
+		hooksecurefunc(LibDD, "ToggleDropDownMenu", function(_, level)
+			S:SkinDropDownMenu("L_DropDownList", level)
+		end)
+	end
 end
 
 function S:WeakAurasTemplates()
