@@ -14,6 +14,16 @@ local Buttons = {
 	"MDIButton",
 }
 
+local function HandleDungeonButton(self)
+	self.texture:SetInside()
+	self.bg = B.ReskinIcon(self.texture)
+	local hl = self:GetHighlightTexture()
+	hl:SetColorTexture(1, 1, 1, .25)
+	hl:SetInside(self.bg)
+	self.selectedTexture:SetColorTexture(1, .8, 0, .5)
+	self.selectedTexture:SetInside(self.bg)
+end
+
 function S:MythicDungeonTools()
 	local MDT = _G.MDT
 	if not MDT then return end
@@ -94,6 +104,16 @@ function S:MythicDungeonTools()
 		end
 
 		enemyStyled = true
+	end)
+
+	local dungeonIndex = 1
+	hooksecurefunc(MDT, "UpdateDungeonDropDown", function()
+		local button = _G["MDTDungeonButton"..dungeonIndex]
+		while button do
+			HandleDungeonButton(button)
+			dungeonIndex = dungeonIndex + 1
+			button = _G["MDTDungeonButton"..dungeonIndex]
+		end
 	end)
 end
 
