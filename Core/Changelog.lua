@@ -2,6 +2,11 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 
 P.Changelog = [[
+v11.1.1
+[其他] 屏蔽默认单位框体中的右键提示
+[美化] 添加 PatronOffers 美化
+[美化] 更新部分插件美化
+
 v11.1.0
 [主要] 更新版本号至11.1.0
 [单位框体] 修复职责图标尺寸
