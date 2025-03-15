@@ -24,6 +24,7 @@
 	<Script file="Myslot.lua"/>
 	<Script file="MythicDungeonTools.lua"/>
 	<Script file="Others.lua"/>
+	<Script file="PatronOffers.lua"/>
 	<Script file="RareScanner.lua"/>
 	<Script file="Rematch.lua"/>
 	<Script file="ShadowDancer.lua"/>
