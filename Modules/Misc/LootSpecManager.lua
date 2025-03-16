@@ -346,8 +346,8 @@ function LSM:TogglePanel()
 	end
 end
 
-local function IsMythicPlusDifficulty(difficultyID)
-	return difficultyID == 8
+local function IsMythicPlusDungeon()
+	return (EJ_GetCurrentTier() == EJ_GetNumTiers()) and not EJ_InstanceIsRaid()
 end
 
 local function IsCurrentExpansionRaid(instanceID)
@@ -368,7 +368,7 @@ function LSM:CreateEJButton()
 	bu:SetScript("OnClick", LSM.TogglePanel)
 
 	hooksecurefunc("EncounterJournal_SetTab", function()
-		bu:SetShown(IsMythicPlusDifficulty(EJ_GetDifficulty()) or IsCurrentExpansionRaid(_G.EncounterJournal.instanceID))
+		bu:SetShown(IsMythicPlusDungeon() or IsCurrentExpansionRaid(_G.EncounterJournal.instanceID))
 	end)
 end
 
