@@ -2,17 +2,44 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 local S = P:GetModule("Skins")
 
-local function handleSummonButton(button)
+local function handleActionButton(button)
+	if not button then
+		P.Developer_ThrowError("button is nil")
+		return
+	end
+
+	button:SetNormalTexture(0)
+	button:SetPushedTexture(DB.pushedTex)
+	button:GetHighlightTexture():SetColorTexture(1, 1, 1, .25)
+	button:GetHighlightTexture():SetInside()
+	if button.IconMask then button.IconMask:Hide() end
+	button.icon = button.icon or select(4, button:GetRegions())
+	button.icon:SetInside()
+	B.ReskinIcon(button.icon, true)
+end
+
+local function handleIconButton(button)
 	if not button then
 		P.Developer_ThrowError("button is nil")
 		return
 	end
 
 	button.border:SetAlpha(0)
+	button:SetPushedTexture(DB.pushedTex)
 	button:GetHighlightTexture():SetColorTexture(1, 1, 1, .25)
 	button:GetHighlightTexture():SetInside()
 	button.icon:SetInside()
-	B.ReskinIcon(button.icon, true)
+	button.bg = B.ReskinIcon(button.icon, true)
+end
+
+local function handleIconDataButton(button)
+	if not button.styled then
+		handleIconButton(button)
+		button.selectedTexture:SetColorTexture(1, .8, 0, .5)
+		button.selectedTexture:SetInside(button.bg)
+
+		button.styled = true
+	end
 end
 
 local function toggleDropDownMenu(_, level)
@@ -145,7 +172,7 @@ local function handleMountButton(self)
 		self.name:SetPoint("LEFT", 10, 0)
 
 		local dragButton = self.dragButton
-		dragButton.icon:SetSize(dragButton:GetSize())
+		dragButton.icon:SetInside(nil, 3, 3)
 		dragButton.bg = B.ReskinIcon(dragButton.icon)
 		B.ReskinIconBorder(dragButton.qualityBorder, true)
 		dragButton.activeTexture:SetAlpha(0)
@@ -168,6 +195,7 @@ end
 local function handleGridMountButton(self)
 	for _, bu in ipairs(self.mounts) do
 		if not bu.bg then
+			bu.icon:SetInside()
 			bu.bg = B.ReskinIcon(bu.icon)
 			B.ReskinIconBorder(bu.qualityBorder, true)
 			bu.selectedTexture:SetColorTexture(1, .8, 0, .4)
@@ -206,26 +234,18 @@ function S:MountsJournal()
 			S:Proxy("StripTextures", bgFrame.rightInset)
 			S:Proxy("ReskinTrimScroll", bgFrame.leftInset and bgFrame.leftInset.scrollBar)
 			handledFilterButton(bgFrame.profilesMenu)
+			handledDropDown(bgFrame.summonPanelSettings)
 
 			for _, key in ipairs({"mountSpecial", "summonButton"}) do
 				S:Proxy("Reskin", bgFrame[key])
 			end
 
-			for _, key in ipairs({"DynamicFlightModeButton", "OpenDynamicFlightSkillTreeButton"}) do
-				local button = bgFrame[key]
-				if button then
-					button:SetNormalTexture(0)
-					button:SetPushedTexture(DB.pushedTex)
-					button:GetHighlightTexture():SetColorTexture(1, 1, 1, .25)
-					button:GetHighlightTexture():SetInside()
-					button.texture = button.texture or select(4, button:GetRegions())
-					button.texture:SetInside()
-					B.ReskinIcon(button.texture, true)
-				end
+			for _, key in ipairs({"DynamicFlightModeButton", "OpenDynamicFlightSkillTreeButton", "targetMount"}) do
+				handleActionButton(bgFrame[key])
 			end
 
 			for _, key in ipairs({"summon1", "summon2"}) do
-				handleSummonButton(bgFrame[key])
+				handleIconButton(bgFrame[key])
 			end
 
 			for i, tab in ipairs(bgFrame.Tabs) do
@@ -268,6 +288,7 @@ function S:MountsJournal()
 		S:Proxy("ReskinNavBar", self.navBar)
 		handledFilterButton(self.filtersButton)
 		handledDropDown(self.tags and self.tags.mountOptionsMenu)
+		P.ReskinTooltip(_G.MountsJournalTooltip)
 
 		local worldMap = self.worldMap
 		if worldMap then
@@ -408,17 +429,14 @@ function S:MountsJournal()
 		handleMountButton(button)
 	end)
 
-	hooksecurefunc(MountsJournalFrame, "grid3InitMountButton", function(self, button)
+	hooksecurefunc(MountsJournalFrame, "gridInitMountButton", function(self, button)
 		handleGridMountButton(button)
 	end)
 
-	local summonPanel = MountsJournal.summonPanel
+	local summonPanel = MountsJournalFrame.summonPanel
 	if summonPanel then
-		B.StripTextures(summonPanel)
-		B.SetBD(summonPanel)
-		handleSummonButton(summonPanel.summon1)
-		handleSummonButton(summonPanel.summon2)
-		handledDropDown(summonPanel.contextMenu)
+		handleActionButton(summonPanel.summon1)
+		handleActionButton(summonPanel.summon2)
 	end
 
 	local util = _G.MountsJournalUtil
@@ -427,6 +445,14 @@ function S:MountsJournal()
 		local check = origcreateCheckbox(...)
 		B.ReskinCheck(check)
 		return check
+	end
+
+	local origcreateCancelOk = util.createCancelOk
+	util.createCancelOk = function(...)
+		local cancel, ok = origcreateCancelOk(...)
+		B.Reskin(cancel)
+		B.Reskin(ok)
+		return cancel, ok
 	end
 
 	local config = _G.MountsJournalConfig
@@ -442,33 +468,43 @@ function S:MountsJournal()
 				S:Proxy("CreateBDFrame", self[key], .25)
 			end
 
-			for _, key in ipairs({
-				"waterJump", "useHerbMounts", "useRepairMounts", "freeSlots", "useMagicBroom",
-				"useUnderlightAngler", "summonPetEvery", "noPetInRaid", "noPetInGroup",
-				"copyMountTarget", "coloredMountNames", "arrowButtons", "openLinks", "showWowheadLink",
-				"statisticCollection"
-			}) do
-				S:Proxy("ReskinCheck", self[key])
-			end
-
-			for _, key in ipairs({
-				"bindSummon1Key1", "bindSummon1Key2", "bindSummon2Key1", "bindSummon2Key2",
-				"resetHelp", "cancelBtn", "applyBtn"
-			}) do
-				S:Proxy("Reskin", self[key])
-			end
-
-			for _, key in ipairs({"modifierCombobox", "repairMountsCombobox", "magicBroomCombobox"}) do
-				handleCombobox(self[key])
-			end
-
-			for _, key in ipairs({"repairPercent", "repairFlyablePercent", "freeSlotsNum", "summonPetEveryN"}) do
-				local editbox = self[key]
-				if editbox then
-					editbox:SetBackdrop(nil)
-					B.ReskinInput(editbox)
+			for _, child in pairs(self) do
+				local objType = type(child) == "table" and child.GetObjectType and child:GetObjectType()
+				if objType == "Button" then
+					if child.Left and child.Middle and child.Right and child.Text then
+						B.Reskin(child)
+					elseif child.index and child.command then
+						B.Reskin(child)
+					elseif child.Arrow and child.Icon and child.Mask then
+						handleCombobox(child)
+					end
+				elseif objType == "CheckButton" and child.Text then
+					B.ReskinCheck(child)
+				elseif objType == "EditBox" then
+					child:SetBackdrop(nil)
+					B.ReskinInput(child)
 				end
 			end
+
+			for _, key in ipairs({"summon1Icon", "summon2Icon"}) do
+				handleIconButton(self[key])
+			end
+
+			self.styled = true
+		end
+	end)
+
+	config.iconData:HookScript("OnShow", function(self)
+		if not self.styled then
+			B.StripTextures(self)
+			B.SetBD(self)
+			handleIconButton(self.selectedIconBtn)
+			B.ReskinInput(self.searchBox)
+			handledFilterButton(self.filtersButton)
+			B.ReskinTrimScroll(self.scrollBar)
+			hooksecurefunc(self.scrollBox, "Update", function(self)
+				self:ForEachFrame(handleIconDataButton)
+			end)
 
 			self.styled = true
 		end
@@ -545,8 +581,40 @@ function S:MountsJournal()
 			handledFilterButton(self.ruleSets)
 			handleCombobox(self.summons)
 			S:Proxy("Reskin", self.addRuleBtn)
-			S:Proxy("ReskinInput", self.searchBox)
+			S:Proxy("Reskin", self.importRuleBtn)
 			S:Proxy("Reskin", self.resetRulesBtn)
+			S:Proxy("ReskinInput", self.searchBox)
+			S:Proxy("ReskinFilterButton", self.snippetToggle)
+			S:Proxy("ReskinCheck", self.altMode)
+
+			self.styled = true
+		end
+	end)
+
+	local ruleEditor = ruleConfig.ruleEditor
+	ruleEditor:HookScript("OnShow", function(self)
+		if not self.styled then
+			S:Proxy("StripTextures", self.bg)
+			S:Proxy("StripTextures", self.panel)
+			S:Proxy("SetBD", self.panel)
+
+			self.styled = true
+		end
+	end)
+
+	local snippets = _G.MountsJournalSnippets
+	snippets:HookScript("OnShow", function(self)
+		if not self.styled then
+			B.StripTextures(self)
+			B.SetBD(self, nil, 0, 0, 0, 0)
+			self:ClearAllPoints()
+			self:SetPoint("TOPLEFT", MountsJournalFrame.bgFrame, "TOPRIGHT", 1, 0)
+			self:SetPoint("BOTTOMLEFT", MountsJournalFrame.bgFrame, "BOTTOMRIGHT", 1, 0)
+			S:Proxy("Reskin", self.addSnipBtn)
+			S:Proxy("Reskin", self.importBtn)
+			S:Proxy("ReskinInput", self.searchBox)
+			S:Proxy("StripTextures", self.bg)
+			S:Proxy("ReskinTrimScroll", self.scrollBar)
 
 			self.styled = true
 		end
