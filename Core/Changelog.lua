@@ -2,6 +2,9 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 
 P.Changelog = [[
+v3.4.10
+[主要] 更新支持3.4.4版本
+
 v3.4.9
 [动作条] 修复法师动作条
 [背包] 离线背包显示装备等级
