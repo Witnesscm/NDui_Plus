@@ -156,7 +156,7 @@ end
 function M:GlyphUI_UpdateSlot()
 	local id = self:GetID()
 	local talentGroup = M.TalentUI.talentGroup
-	local enabled, glyphType, glyphSpell, iconFile = GetGlyphSocketInfo(id, talentGroup)
+	local enabled, glyphType, _, glyphSpell, iconFile = GetGlyphSocketInfo(id, talentGroup)
 
 	self.enabled = enabled
 	self.glyphType = glyphType

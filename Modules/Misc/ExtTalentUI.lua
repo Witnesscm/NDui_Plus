@@ -246,6 +246,16 @@ local menuList = {
 
 local RoleDropDown
 
+local function EasyMenu_Initialize(frame, level, menuList)
+	for index = 1, #menuList do
+		local value = menuList[index]
+		if (value.text) then
+			value.index = index
+			UIDropDownMenu_AddButton(value, level)
+		end
+	end
+end
+
 local function TalentSpecTab_OnClick(self, btn)
 	PlaySound(SOUNDKIT.IG_CHARACTER_INFO_TAB)
 
@@ -453,7 +463,7 @@ function M.TalentUI_UpdateSpecInfoCache(cache, inspect, pet, talentGroup)
 	for i = 1, MAX_TALENT_TABS do
 		cache[i] = cache[i] or {}
 		if i <= numTabs then
-			local name, icon, pointsSpent, _, previewPointsSpent = GetTalentTabInfo(i, inspect, pet, talentGroup)
+			local _, name, _, icon, pointsSpent, _, previewPointsSpent = GetTalentTabInfo(i, inspect, pet, talentGroup)
 			local displayPointsSpent = pointsSpent + previewPointsSpent
 
 			cache[i].name = name
@@ -501,19 +511,19 @@ end
 
 local function TalentButton_OnClick(self, button)
 	if IsModifiedClick("CHATLINK") then
-		local link = GetTalentLink(self.__owner.talentTree, self:GetID(), false, M.TalentUI.pet, M.TalentUI.talentGroup, GetCVarBool("previewTalents"))
+		local link = GetTalentLink(self.__owner.talentTree, self:GetID(), false, M.TalentUI.pet, M.TalentUI.talentGroup, GetCVarBool("previewTalentsOption"))
 		if link then
 			ChatEdit_InsertLink(link)
 		end
 	elseif selectedSpec and (activeSpec == selectedSpec or specs[selectedSpec].pet) then
 		if button == "LeftButton" then
-			if GetCVarBool("previewTalents") then
+			if GetCVarBool("previewTalentsOption") then
 				AddPreviewTalentPoints(self.__owner.talentTree, self:GetID(), 1, M.TalentUI.pet, M.TalentUI.talentGroup)
 			else
 				LearnTalent(self.__owner.talentTree, self:GetID(), M.TalentUI.pet, M.TalentUI.talentGroup)
 			end
 		elseif button == "RightButton" then
-			if GetCVarBool("previewTalents") then
+			if GetCVarBool("previewTalentsOption") then
 				AddPreviewTalentPoints(self.__owner.talentTree, self:GetID(), -1, M.TalentUI.pet, M.TalentUI.talentGroup)
 			end
 		end
@@ -523,12 +533,12 @@ end
 local function TalentButton_OnEnter(self)
 	GameTooltip:ClearLines()
 	GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-	GameTooltip:SetTalent(self.__owner.talentTree, self:GetID(), false, M.TalentUI.pet, M.TalentUI.talentGroup, GetCVarBool("previewTalents"))
+	GameTooltip:SetTalent(self.__owner.talentTree, self:GetID(), false, M.TalentUI.pet, M.TalentUI.talentGroup, GetCVarBool("previewTalentsOption"))
 end
 
 local function TalentButton_OnEvent(self, event, ...)
 	if GameTooltip:IsOwned(self) then
-		GameTooltip:SetTalent(self.__owner.talentTree, self:GetID(), false, M.TalentUI.pet, M.TalentUI.talentGroup, GetCVarBool("previewTalents"))
+		GameTooltip:SetTalent(self.__owner.talentTree, self:GetID(), false, M.TalentUI.pet, M.TalentUI.talentGroup, GetCVarBool("previewTalentsOption"))
 	end
 end
 
@@ -794,11 +804,11 @@ function M:TalentUI_UpdateTalentPoints()
 end
 
 function M:TalentUI_Update()
-	local preview = GetCVarBool("previewTalents")
+	local preview = GetCVarBool("previewTalentsOption")
 	local isActiveTalentGroup = M.TalentUI.talentGroup == GetActiveTalentGroup(false, M.TalentUI.pet)
 
 	local base
-	local name, _, pointsSpent, background, previewPointsSpent = GetTalentTabInfo(self.talentTree, false, M.TalentUI.pet, M.TalentUI.talentGroup)
+	local _, name, _, _, pointsSpent, background, previewPointsSpent = GetTalentTabInfo(self.talentTree, false, M.TalentUI.pet, M.TalentUI.talentGroup)
 	if name then
 		base = "Interface\\TalentFrame\\"..background.."-"
 	else
@@ -830,8 +840,8 @@ function M:TalentUI_Update()
 	for i = 1, MAX_NUM_TALENTS do
 		local button = M.TalentUI_GetButton(self, i)
 		if i <= numTalents then
-			local name, iconTexture, tier, column, rank, maxRank, _, meetsPrereq, previewRank, meetsPreviewPrereq = GetTalentInfo(self.talentTree, i, false, M.TalentUI.pet, M.TalentUI.talentGroup)
-			if name then
+			local talentName, iconTexture, tier, column, rank, maxRank, meetsPrereq, previewRank, meetsPreviewPrereq = GetTalentInfo(self.talentTree, i, false, M.TalentUI.pet, M.TalentUI.talentGroup)
+			if talentName then
 				local displayRank
 				if preview then
 					displayRank = previewRank
@@ -1029,7 +1039,7 @@ end
 function M.TalentUI_UpdateControls()
 	local spec = selectedSpec and specs[selectedSpec]
 	local isActiveSpec = selectedSpec == activeSpec
-	local preview = GetCVarBool("previewTalents")
+	local preview = GetCVarBool("previewTalentsOption")
 
 	local talentPoints = GetUnspentTalentPoints(false, spec.pet, spec.talentGroup)
 	if (spec.pet or isActiveSpec) and talentPoints > 0 then
@@ -1141,7 +1151,7 @@ function M:TalentUI_UpdatePortrait(unit)
 end
 
 function M:TalentUI_Toggle(expand)
-	if not IsAddOnLoaded("Blizzard_TalentUI") then TalentFrame_LoadUI() end
+	if not C_AddOns.IsAddOnLoaded("Blizzard_TalentUI") then UIParentLoadAddOn("Blizzard_TalentUI") end
 
 	if expand then
 		M.TalentUI:Show()
@@ -1220,7 +1230,7 @@ function M:TalentUI_Init()
 	local PreviewButton = P.CreateButton(frame, 80, 20, PREVIEW)
 	PreviewButton:SetPoint("BOTTOMRIGHT", -16, 6)
 	PreviewButton:SetScript("OnClick", function()
-		SetCVar("previewTalents", 1)
+		SetCVar("previewTalentsOption", 1)
 		M.TalentUI_UpdateControls()
 	end)
 	P.AddTooltip(PreviewButton, "ANCHOR_RIGHT", OPTION_PREVIEW_TALENT_CHANGES_DESCRIPTION, "info")

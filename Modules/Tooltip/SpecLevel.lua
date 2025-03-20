@@ -872,7 +872,7 @@ function T:GetUnitSpec(unit)
 	local higher = 0
 	local points = {}
 	for i = 1, 3 do
-		local name, icon, point = GetTalentTabInfo(i, isInspect, false, talentGroup)
+		local _, name, _, icon, point = GetTalentTabInfo(i, isInspect, false, talentGroup)
 
 		if point > higher then
 			higher = point

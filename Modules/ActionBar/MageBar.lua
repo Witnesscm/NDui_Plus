@@ -4,7 +4,6 @@ local AB = P:GetModule("ActionBar")
 
 local ipairs, tinsert, tremove, sort  = ipairs, table.insert, table.remove, table.sort
 local CooldownFrame_Set = CooldownFrame_Set
-local GetMouseFocus = GetMouseFocus
 local GetSpellInfo, GetSpellCount, GetSpellCooldown, IsUsableSpell = GetSpellInfo, GetSpellCount, GetSpellCooldown, IsUsableSpell
 
 local margin, padding = C.Bars.margin, C.Bars.padding
@@ -109,7 +108,8 @@ function AB:MageButton_UpdateFlyout()
 	if not self.FlyoutArrow then return end
 
 	local arrowDistance
-	if GetMouseFocus() == self then
+	local mouseFoci = GetMouseFoci()
+	if mouseFoci and mouseFoci[1] == self then
 		self.FlyoutBorder:Show()
 		self.FlyoutBorderShadow:Show()
 		arrowDistance = 5

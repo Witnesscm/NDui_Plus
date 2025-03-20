@@ -10,7 +10,6 @@ local pairs, unpack, next = pairs, unpack, next
 local wipe, tinsert, format = wipe, tinsert, format
 --WoW API / Variables
 local CreateFrame = CreateFrame
-local GetItemInfo = GetItemInfo
 local GameTooltip = GameTooltip
 local GetLootRollItemInfo = GetLootRollItemInfo
 local GetLootRollItemLink = GetLootRollItemLink
@@ -275,7 +274,7 @@ local function GetFrame()
 end
 
 local function GetItemLevel(link)
-	local name, _, rarity, level, _, _, _, _, _, _, _, classID = GetItemInfo(link)
+	local name, _, rarity, level, _, _, _, _, _, _, _, classID = C_Item.GetItemInfo(link)
 	if name and level and rarity > 1 and (classID == Enum.ItemClass.Weapon or classID == Enum.ItemClass.Armor) then
 		return level
 	end
@@ -428,7 +427,7 @@ function LR:LootRollTest()
 	local bop = 1
 	local item = Item:CreateFromItemID(itemID)
 	item:ContinueOnItemLoad(function()
-		local name, link, quality, itemLevel, _, _, _, _, _, icon = GetItemInfo(itemID)
+		local name, link, quality, itemLevel, _, _, _, _, _, icon = C_Item.GetItemInfo(itemID)
 		local color = ITEM_QUALITY_COLORS[quality]
 		testFrame.button.icon:SetTexture(icon)
 		testFrame.button.link = link

@@ -75,10 +75,10 @@ local function getInfo(itemData)
 		data.link = "item:" .. link
 		data.count = tonumber(count)
 		data.id = tonumber(link:match("^(%d+)"))
-		data.icon = GetItemIcon(data.id)
+		data.icon = C_Item.GetItemIconByID(data.id)
 		data.timeout = tonumber(timeout)
 
-		local name, itemLink, quality, level, _, _, _, _, _, _, _, classID  = GetItemInfo(data.link)
+		local name, itemLink, quality, level, _, _, _, _, _, _, _, classID  = C_Item.GetItemInfo(data.link)
 		if name then
 			data.name = name
 			data.link = itemLink
@@ -213,7 +213,7 @@ end
 local function ItemButton_UpdateInfo(self)
 	if not self.info.noCache then return end
 
-	local name, link, quality, level, _, _, _, _, _, _, _, classID = GetItemInfo(self.info.link)
+	local name, link, quality, level, _, _, _, _, _, _, _, classID = C_Item.GetItemInfo(self.info.link)
 	if name then
 		self.info.name = name
 		self.info.link = link
@@ -503,6 +503,16 @@ local function UpdateAllBags(current)
 	local text = search and search:GetText()
 	if text and text ~= "" then
 		DoSearch(search, text)
+	end
+end
+
+local function EasyMenu_Initialize(frame, level, menuList)
+	for index = 1, #menuList do
+		local value = menuList[index]
+		if (value.text) then
+			value.index = index
+			UIDropDownMenu_AddButton(value, level)
+		end
 	end
 end
 
