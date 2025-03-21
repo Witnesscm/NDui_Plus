@@ -44,14 +44,22 @@ function S:MerInspect()
 		end
 
 		local frameName = parent:GetName()
-		if frameName == "PaperDollFrame" then
-			frame.bg:SetPoint("TOPLEFT", -5, C.mult)
-		elseif frameName == "InspectFrame" then
-			frame:SetPoint("TOPLEFT", parent, "TOPRIGHT", -33, -15-C.mult)
+		if frameName == "PaperDollFrame" or frameName == "InspectFrame" then
+			local x = frameName == "PaperDollFrame" and _G.EngravingFrame and _G.EngravingFrame:IsVisible() and -180 or 33
+			frame:SetPoint("TOPLEFT", parent, "TOPRIGHT", -x, -16)
 		else
-			frame:SetPoint("TOPLEFT", parent, "TOPRIGHT", C.mult, 0)
+			frame:SetPoint("TOPLEFT", parent, "TOPRIGHT", 1, 0)
 		end
 	end)
+
+	if C_Engraving and C_Engraving.IsEngravingEnabled() then
+		hooksecurefunc("ToggleEngravingFrame", function()
+			local frame = _G.PaperDollFrame.inspectFrame
+			if not frame then return end
+			local x = _G.EngravingFrame and _G.EngravingFrame:IsVisible() and -180 or 33
+			frame:SetPoint("TOPLEFT", _G.PaperDollFrame, "TOPRIGHT", -x, -16)
+		end)
+	end
 
 	if not _G.ClassicStatsFrameTemplate_OnShow then return end
 
@@ -74,6 +82,11 @@ function S:MerInspect()
 			end
 
 			self.styled = true
+		end
+
+		if self.EnhancementsCategory and self.SuitCategory and self.EnhancementsCategory:IsShown() then
+			local a1, p, a2, x, y = self.SuitCategory:GetPoint(1)
+			self.SuitCategory:SetPoint(a1, p, a2, x, y+C.mult)
 		end
 	end)
 end

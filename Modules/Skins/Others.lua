@@ -159,77 +159,6 @@ function S:BuyEmAllClassic()
 	B.CreateMF(BuyEmAllFrame)
 end
 
-function S:xCT()
-	local styled
-	InterfaceOptionsCombatPanel:HookScript("OnShow", function(self)
-		if styled then return end
-
-		for i = 1, self:GetNumChildren() do
-			local child = select(i, self:GetChildren())
-			if child:GetObjectType() == "Button" and child:GetText() then
-				B.Reskin(child)
-			end
-		end
-
-		styled = true
-	end)
-end
-
-function S:Elephant()
-	local Elephant = _G.Elephant
-
-	B.StripTextures(ElephantFrame)
-	B.SetBD(ElephantFrame)
-	B.StripTextures(ElephantFrameScrollingMessageTextureFrame)
-
-	local bg = B.CreateBDFrame(ElephantFrameScrollingMessageTextureFrame, .25)
-	bg:SetPoint("TOPLEFT", 0, -2)
-	bg:SetPoint("BOTTOMRIGHT", -2, 0)
-
-	local Buttons = {
-		"ElephantFrameDeleteButton",
-		"ElephantFrameEnableButton",
-		"ElephantFrameEmptyButton",
-		"ElephantFrameCopyButton",
-		"ElephantFrameCloseButton",
-	}
-
-	for _, button in pairs(Buttons) do
-		local bu = _G[button]
-		if bu then
-			B.Reskin(bu)
-		end
-	end
-
-	hooksecurefunc(Elephant, "ShowCopyWindow", function()
-		local frame = _G.ElephantCopyFrame
-		if frame and not frame.styled then
-			B.StripTextures(frame)
-			B.SetBD(frame)
-			B.CreateMF(frame)
-
-			B.StripTextures(ElephantCopyFrameScrollTextureFrame)
-			local bg = B.CreateBDFrame(ElephantCopyFrameScrollTextureFrame, .25)
-			bg:SetPoint("TOPLEFT", 0, -2)
-			bg:SetPoint("BOTTOMRIGHT", -2, 0)
-
-			for _, button in pairs({
-				"ElephantCopyFrameBackButton",
-				"ElephantCopyFrameHideButton",
-				"ElephantCopyFrameBBCodeButton",}) do
-				local bu = _G[button]
-				if bu then
-					B.Reskin(bu)
-				end
-			end
-
-			B.ReskinCheck(ElephantCopyFrameUseTimestampsButton)
-
-			frame.styled = true
-		end
-	end)
-end
-
 function S:Hemlock()
 	local Hemlock = _G.Hemlock
 	if not Hemlock then return end
@@ -422,8 +351,6 @@ S:RegisterSkin("Accountant_Classic", S.Accountant)
 S:RegisterSkin("FeatureFrame", S.FeatureFrame)
 S:RegisterSkin("BuffomatClassicTBC", S.buffOmat)
 S:RegisterSkin("BuyEmAllClassic", S.BuyEmAllClassic)
-S:RegisterSkin("xCT+", S.xCT)
--- S:RegisterSkin("Elephant", S.Elephant)
 S:RegisterSkin("Hemlock", S.Hemlock)
 S:RegisterSkin("TotemTimers", S.TotemTimers)
 S:RegisterSkin("BigWigs_Options", S.BigWigs_Options)
