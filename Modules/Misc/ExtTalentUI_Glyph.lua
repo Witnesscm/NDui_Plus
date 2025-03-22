@@ -327,8 +327,8 @@ function M:GlyphUI_Init()
 				M.GlyphUI:Show()
 			end
 		else
-			if not IsAddOnLoaded("Blizzard_TalentUI") then TalentFrame_LoadUI() end
-			if not IsAddOnLoaded("Blizzard_GlyphUI") then GlyphFrame_LoadUI() end
+			if not C_AddOns.IsAddOnLoaded("Blizzard_TalentUI") then TalentFrame_LoadUI() end
+			if not C_AddOns.IsAddOnLoaded("Blizzard_GlyphUI") then GlyphFrame_LoadUI() end
 
 			if GlyphFrame_Toggle then
 				GlyphFrame_Toggle()

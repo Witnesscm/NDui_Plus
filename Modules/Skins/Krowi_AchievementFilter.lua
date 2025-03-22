@@ -406,7 +406,7 @@ function S:Krowi_AchievementFilter()
 
 	hooksecurefunc(_G.KrowiAF_TextFrameMixin, "OnLoad", SkinTextFrame)
 
-	if IsAddOnLoaded("Blizzard_AchievementUI") then
+	if C_AddOns.IsAddOnLoaded("Blizzard_AchievementUI") then
 		SkinAchievementFrame()
 	else
 		P:AddCallbackForAddon("Blizzard_AchievementUI", function()

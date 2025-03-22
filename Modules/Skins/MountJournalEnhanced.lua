@@ -3,7 +3,7 @@ local B, C, L, DB, P = unpack(ns)
 local S = P:GetModule("Skins")
 
 function S:MountJournalEnhanced()
-	if not IsAddOnLoaded("MountJournalEnhanced") then return end
+	if not C_AddOns.IsAddOnLoaded("MountJournalEnhanced") then return end
 
 	P:Delay(.1, function()
 		for _, child in pairs({_G.MountJournal:GetChildren()}) do
