@@ -701,6 +701,9 @@ function T:CanBlizzardInspect(unit)
 	if UnitIsDeadOrGhost(unit) then
 		return false
 	end
+	if InCombatLockdown() then
+		return false
+	end
 	if not CheckInteractDistance(unit, 1) then
 		return false
 	end
@@ -712,6 +715,9 @@ end
 
 function T:CanOurInspect(unit)
 	if not unit then
+		return false
+	end
+	if InCombatLockdown() then
 		return false
 	end
 	if UnitName(unit) == UNKNOWNOBJECT then
@@ -957,8 +963,8 @@ end
 
 function T:ErrorFilter(_, msg)
 	local name = strmatch(msg, PLAYER_NOT_FOUND_STRING)
-	local db = name and T:BuildCharacterDb(name)
-	if db and db.lastTime and GetTime() - db.lastTime < 5 then
+	local db = name and T:BuildCharacterDb(T:GetFullName(name))
+	if db and db.lastTime and GetTime() - db.lastTime < 10 then
 		return true
 	end
 	return false
@@ -973,4 +979,11 @@ function T:SpecLevel()
 	B:RegisterEvent("UNIT_INVENTORY_CHANGED", T.GetInspectInfo)
 	B:RegisterEvent("GET_ITEM_INFO_RECEIVED", T.WaitItemLevel)
 	ChatFrame_AddMessageEventFilter("CHAT_MSG_SYSTEM", T.ErrorFilter)
+
+	local InspectUnitItemLevel = NT.InspectUnitItemLevel
+	NT.InspectUnitItemLevel = function(...)
+		if not T.db["SpecLevel"] then
+			return InspectUnitItemLevel(...)
+		end
+	end
 end
