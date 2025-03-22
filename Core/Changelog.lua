@@ -2,6 +2,9 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 
 P.Changelog = [[
+v3.4.11
+[美化] 更新部分插件美化
+
 v3.4.10
 [主要] 更新支持3.4.4版本
 
