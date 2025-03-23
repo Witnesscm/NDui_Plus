@@ -55,8 +55,14 @@ local function ToggleAlpha(self, element, endAlpha)
 
 	if element.Smooth then
 		P:UIFrameFadeOut(self, element.Smooth, self:GetAlpha(), endAlpha)
+		if self.Portrait then
+			P:UIFrameFadeOut(self.Portrait, element.Smooth, self.Portrait:GetAlpha(), endAlpha == 0 and 0 or .2)
+		end
 	else
 		self:SetAlpha(endAlpha)
+		if self.Portrait then
+			self.Portrait:SetAlpha(endAlpha == 0 and 0 or .2)
+		end
 	end
 end
 
