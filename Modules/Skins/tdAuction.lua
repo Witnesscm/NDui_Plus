@@ -1,10 +1,6 @@
 local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 local S = P:GetModule("Skins")
-local M = B:GetModule("Misc")
-
-local _G = getfenv(0)
-local strfing = string.find
 
 function S:tdAuction()
 	if not S.db["tdAuction"] then return end
@@ -17,14 +13,6 @@ function S:tdAuction()
 		Browse.PrevPageButton:SetPoint("TOPLEFT", 660, -60)
 		Browse.NextPageButton:SetPoint("TOPRIGHT", 65, -60)
 		B.ReskinScroll(Browse.ScrollFrame.scrollBar)
-
-		for i = 1, Browse.QualityDropDown:GetNumChildren() do
-			local child = select(i, Browse.QualityDropDown:GetChildren())
-			if child:GetObjectType() == "Frame" and child.pixelBorders then
-				child:SetPoint("BOTTOMRIGHT", BrowseDropDownButton, "BOTTOMRIGHT")
-				break
-			end
-		end
 
 		for _, tab in ipairs(Browse.sortButtons) do
 			tab:DisableDrawLayer("BACKGROUND")
@@ -40,14 +28,6 @@ function S:tdAuction()
 			B.ReskinCheck(ExactCheckButton)
 		end
 
-		--BrowseDropDown
-		for i = 1, _G.BrowseDropDown:GetNumChildren() do
-			local child = select(i, _G.BrowseDropDown:GetChildren())
-			if child:GetObjectType() == "Frame" and child.backdropInfo then
-				child:SetPoint("BOTTOMRIGHT", _G.BrowseDropDown.Button, "BOTTOMRIGHT")
-			end
-		end
-
 		-- FullScan
 		local FullScan = tdAuction.FullScan
 		B.StripTextures(FullScan)
@@ -58,7 +38,8 @@ function S:tdAuction()
 
 		-- Sell
 		local Sell = tdAuction.Sell
-		P.ReskinDropDown(Sell.DurationDropDown)
+		B.ReskinDropDown(Sell.DurationDropDown)
+		B.ReskinDropDown(Sell.PriceDropDown)
 		B.ReskinArrow(Sell.PriceListButton, "right")
 		Sell.StackSizeEntry:SetHeight(21)
 		Sell.NumStacksEntry:SetHeight(21)
