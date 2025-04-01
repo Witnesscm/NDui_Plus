@@ -2,19 +2,34 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 local S = P:GetModule("Skins")
 
-local function reskinFilterButton(self)
+local function handleFilterButton(self)
 	if not self then P:Debug("Unknown: FilterButton") return end
 
 	B.StripTextures(self)
 	B.Reskin(self)
-	if self.Text then
-		self.Text:SetPoint("CENTER")
-	end
-	if self.Icon then
-		B.SetupArrow(self.Icon, "right")
-		self.Icon:SetPoint("RIGHT")
-		self.Icon:SetSize(14, 14)
-	end
+	self.__bg:SetPoint("TOPLEFT", -C.mult,  -C.mult)
+	self.__bg:SetPoint("BOTTOMRIGHT", C.mult, -C.mult)
+	B.SetupArrow(self.Icon, "right")
+	self.Icon:SetPoint("RIGHT")
+	self.Icon:SetSize(14, 14)
+end
+
+local function handleDropDown(self)
+	if not self then P:Debug("DropDown is nil") return end
+
+	B.StripTextures(self)
+	if self.Arrow then self.Arrow:SetAlpha(0) end
+
+	local bg = B.CreateBDFrame(self, 0, true)
+	bg:SetAllPoints()
+	local tex = self:CreateTexture(nil, "ARTWORK")
+	tex:SetPoint("RIGHT", bg, -3, 0)
+	tex:SetSize(18, 18)
+	B.SetupArrow(tex, "down")
+	self.__texture = tex
+
+	self:HookScript("OnEnter", B.Texture_OnEnter)
+	self:HookScript("OnLeave", B.Texture_OnLeave)
 end
 
 local function reskinTabbedView(self)
@@ -101,10 +116,10 @@ function S:Journalator()
 		local Filters = frame.Filters
 		if Filters then
 			S:Proxy("ReskinInput", Filters.SearchFilter)
-			reskinFilterButton(Filters.RealmDropDown)
-			reskinFilterButton(Filters.CharacterDropDown)
-			P.ReskinDropDown(Filters.FactionDropDown.DropDown)
-			P.ReskinDropDown(Filters.TimePeriodDropDown.DropDown)
+			handleFilterButton(Filters.RealmDropDown)
+			handleFilterButton(Filters.CharacterDropDown)
+			handleDropDown(Filters.FactionDropDown.DropDown)
+			handleDropDown(Filters.TimePeriodDropDown.DropDown)
 		end
 
 		local ExportCSV = _G.JournalatorExportCSVTextFrame
