@@ -42,7 +42,7 @@ function M:Auction_ItemStats()
 	hooksecurefunc(_G.AuctionHouseTableExtraInfoMixin, "Populate", function(self, rowData)
 		if not self.stats then
 			self.stats = CreateStatsText(self)
-			self.stats:SetPoint("LEFT", self, "RIGHT")
+			self.stats:SetPoint("RIGHT", self, "LEFT")
 		end
 
 		local itemLink = rowData and rowData.itemLink
