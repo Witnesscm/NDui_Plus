@@ -8,6 +8,24 @@ local _G = _G
 local hooksecurefunc = hooksecurefunc
 local pairs = pairs
 
+local function ReplaceIconString(self, text)
+	if not text then text = self:GetText() end
+	if not text or text == "" then return end
+	if _G.SimpleAddonManager:GetDb().config.hideIcons then return end
+
+	if strfind(text, "NDui") or strfind(text, "BaudErrorFrame") then
+		local newText, count = gsub(text, "|T([^:]-):[%d+:]+|t", "|T"..DB.chatLogo..":12:24|t")
+		if count > 0 then
+			self:SetFormattedText("%s", newText)
+		else
+			self:SetFormattedText("|T"..DB.chatLogo..":12:24|t %s", text)
+		end
+	else
+		local newText, count = gsub(text, "|T([^:]-):[%d+:]+|t", "|T%1:14:14:0:0:64:64:5:59:5:59|t")
+		if count > 0 then self:SetFormattedText("%s", newText) end
+	end
+end
+
 local function ReskinScrollFrameItems(frame, template)
 	if template == "SimpleAddonManagerAddonItem" or template == "SimpleAddonManagerCategoryItem" then
 		for _, btn in pairs(frame.buttons) do
@@ -16,6 +34,8 @@ local function ReskinScrollFrameItems(frame, template)
 				if btn.ExpandOrCollapseButton then
 					B.ReskinCollapse(btn.ExpandOrCollapseButton)
 				end
+				ReplaceIconString(btn.Name)
+				hooksecurefunc(btn.Name, "SetText", ReplaceIconString)
 				btn.styled = true
 			end
 		end
