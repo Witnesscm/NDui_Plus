@@ -9,14 +9,14 @@ local select, pairs, ipairs = select, pairs, ipairs
 -- Credit: AddOnSkins_MeetingStone by hokohuang
 local function strToPath(str)
 	local path = {}
-	for v in string.gmatch(str, "([^%.]+)") do 
+	for v in string.gmatch(str, "([^%.]+)") do
 		table.insert(path, v)
 	end
 	return path
 end
 
 local function getValue(pathStr, tbl)
-	local keys = strToPath(pathStr) 
+	local keys = strToPath(pathStr)
 	local value
 	for _, key in pairs(keys) do
 		value = value and value[key] or tbl[key]
@@ -45,6 +45,8 @@ local function reskinStretchButton(bu)
 end
 
 local function reskinMSInput(input)
+	if not input then return end
+
 	input:DisableDrawLayer("BACKGROUND")
 	P.ReskinInput(input)
 	input.bg:SetPoint("TOPLEFT", 3, 0)
@@ -125,8 +127,8 @@ function S:MeetingStone()
 		"CreatePanel.DisbandButton",
 		"BrowsePanel.NoResultBlocker.Button",
 		"RecentPanel.BatchDeleteButton",
-		"BrowsePanel.RefreshFilterButton",
-		"BrowsePanel.ResetFilterButton",
+		-- "BrowsePanel.RefreshFilterButton",
+		-- "BrowsePanel.ResetFilterButton",
 		"MallPanel.PurchaseButton",
 	}
 
@@ -182,12 +184,16 @@ function S:MeetingStone()
 
 		local AdvFilterPanel = BrowsePanel.AdvFilterPanel
 		if AdvFilterPanel then
+			AdvFilterPanel:ClearAllPoints()
 			AdvFilterPanel:SetPoint("TOPLEFT", MSEnv.MainPanel, "TOPRIGHT", 3, -30)
 
 			for _, child in pairs {AdvFilterPanel:GetChildren()} do
-				if child:IsObjectType("Button") and not child:GetText() then
-					B.ReskinClose(child)
-					break
+				if child:IsObjectType("Button") then
+					if child.Left and child.Middle and child.Right and child.Text then
+						B.Reskin(child)
+					else
+						B.ReskinClose(child)
+					end
 				end
 			end
 		end
@@ -614,57 +620,50 @@ function S:MeetingStone()
 	end
 
 	-- MeetingStoneEX
-	if C_AddOns.IsAddOnLoaded("MeetingStoneEX") then
-		if BrowsePanel then
-			local ExSearchButton = BrowsePanel.ExSearchButton
-			if ExSearchButton then
-				reskinStretchButton(ExSearchButton)
-			end
+	if BrowsePanel then
+		local ExSearchButton = BrowsePanel.ExSearchButton
+		if ExSearchButton then
+			reskinStretchButton(ExSearchButton)
+		end
 
-			local ExSearchPanel = BrowsePanel.ExSearchPanel
-			if ExSearchPanel then
-				ExSearchPanel:SetPoint("TOPLEFT", MSEnv.MainPanel, "TOPRIGHT", 3, -30)
+		local ExSearchPanel = BrowsePanel.ExSearchPanel
+		if ExSearchPanel then
+			ExSearchPanel:ClearAllPoints()
+			ExSearchPanel:SetPoint("TOPLEFT", MSEnv.MainPanel, "TOPRIGHT", 3, 0)
 
-				for _, child in pairs {ExSearchPanel:GetChildren()} do
-					if child:GetObjectType() == "Button" then
-						if child:GetText() then
-							B.Reskin(child)
-						else
-							B.ReskinClose(child)
-						end
+			for _, child in pairs {ExSearchPanel:GetChildren()} do
+				if child:GetObjectType() == "Button" then
+					if child:GetText() then
+						B.Reskin(child)
+					else
+						B.ReskinClose(child)
 					end
-				end
-			end
-
-			local dungeons = BrowsePanel.MD
-			if dungeons then
-				for _, box in ipairs(dungeons) do
-					B.ReskinCheck(box.Check)
 				end
 			end
 		end
 
-		local IgnoreListPanel = MS:GetModule("IgnoreListPanel", true)
-		if IgnoreListPanel then
-			local IgnoreList = IgnoreListPanel.IgnoreList
-			if IgnoreList then
-				reskinGridView(IgnoreList)
-			end
-
-			for _, child in pairs {IgnoreListPanel:GetChildren()} do
-				if child:GetObjectType() == "Button" and child.Text then
-					B.Reskin(child)
-				end
+		local dungeons = BrowsePanel.MD
+		if dungeons then
+			for _, box in ipairs(dungeons) do
+				B.ReskinCheck(box.Check)
+				reskinMSInput(box.MaxBox)
+				reskinMSInput(box.MinBox)
 			end
 		end
 	end
 
-	-- Handle group roles
-	local MemberDisplay = MSEnv.MemberDisplay
-	local origSetActivity = MemberDisplay.SetActivity
-	MemberDisplay.SetActivity = function(self, activity)
-		self.resultID = activity and activity.GetID and activity:GetID()
-		origSetActivity(self, activity)
+	local IgnoreListPanel = MS:GetModule("IgnoreListPanel", true)
+	if IgnoreListPanel then
+		local IgnoreList = IgnoreListPanel.IgnoreList
+		if IgnoreList then
+			reskinGridView(IgnoreList)
+		end
+
+		for _, child in pairs {IgnoreListPanel:GetChildren()} do
+			if child:GetObjectType() == "Button" and child.Text then
+				B.Reskin(child)
+			end
+		end
 	end
 end
 
