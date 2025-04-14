@@ -9,6 +9,7 @@
 	<Script file="BtWLoadouts.lua"/>
 	<Script file="BtWQuests.lua"/>
 	<Script file="ButtonForge.lua"/>
+	<Script file="Collectionator.lua"/>
 	<Script file="CompactVendor.lua"/>
 	<Script file="Immersion.lua"/>
 	<Script file="ImprovedAddonList.lua"/>
