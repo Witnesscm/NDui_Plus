@@ -2,6 +2,12 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 
 P.Changelog = [[
+v11.1.2
+[美化] 添加 Collectionator 美化
+[美化] 更新部分插件美化
+[易用性] 修复地下城手册拾取专精管理按钮
+[易用性] 调整拍卖行装备额外绿字位置
+
 v11.1.1
 [其他] 屏蔽默认单位框体中的右键提示
 [美化] 添加 PatronOffers 美化
