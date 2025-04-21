@@ -154,15 +154,16 @@ function S:OmniCD()
 end
 
 function S:WarpDeplete_HandleBar(object)
-	if not object.SetLayout then return end
-
 	local bar = object.bar
 	local frame = object.frame
+
 	B.StripTextures(frame)
-	B.SetBD(frame)
-	bar:SetStatusBarTexture(DB.normTex)
+	B.SetBD(frame, nil, 0, 0, 0, 0)
 	frame.SetBackdrop = B.Dummy
+	bar:SetStatusBarTexture(DB.normTex)
 	bar.SetStatusBarTexture = B.Dummy
+	bar:SetInside()
+	bar.SetPoint = B.Dummy
 end
 
 function S:WarpDeplete()
