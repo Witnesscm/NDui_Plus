@@ -153,6 +153,32 @@ function S:OmniCD()
 	end
 end
 
+function S:WarpDeplete_HandleBar(object)
+	if not object.SetLayout then return end
+
+	local bar = object.bar
+	local frame = object.frame
+	B.StripTextures(frame)
+	B.SetBD(frame)
+	bar:SetStatusBarTexture(DB.normTex)
+	frame.SetBackdrop = B.Dummy
+	bar.SetStatusBarTexture = B.Dummy
+end
+
+function S:WarpDeplete()
+	local WarpDeplete = _G.WarpDeplete
+	if not WarpDeplete then return end
+
+	P.WaitFor(function()
+		return not not (WarpDeplete.bars and WarpDeplete.forces)
+	end, function()
+		for _, barFrame in pairs(WarpDeplete.bars) do
+			S:WarpDeplete_HandleBar(barFrame)
+		end
+		S:WarpDeplete_HandleBar(WarpDeplete.forces)
+	end)
+end
+
 S:RegisterSkin("WorldQuestsList", S.WorldQuestsList)
 S:RegisterSkin("PremadeGroupsFilter", S.PremadeGroupsFilter)
 S:RegisterSkin("MogPartialSets", S.MogPartialSets)
@@ -162,6 +188,7 @@ S:RegisterSkin("SavedInstances", S.SavedInstances)
 S:RegisterSkin("Krowi_WorldMapButtons")
 S:RegisterSkin("BuyEmAll", S.BuyEmAll)
 S:RegisterSkin("OmniCD", S.OmniCD)
+S:RegisterSkin("WarpDeplete", S.WarpDeplete)
 
 -- Hide Toggle Button
 S.ToggleFrames = {}
