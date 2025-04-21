@@ -39,7 +39,9 @@ local GenerateName = P.NameGenerator(addonName.."_LootRoll")
 local rolltypes = {[1] = "need", [2] = "greed", [3] = "disenchant", [4] = "transmog", [0] = "pass"}
 
 local function ClickRoll(button)
-	RollOnLoot(button.parent.rollID, button.rolltype)
+	if button.parent.rollID and button.rolltype then
+		RollOnLoot(button.parent.rollID, button.rolltype)
+	end
 end
 
 local function SetTip(button)
