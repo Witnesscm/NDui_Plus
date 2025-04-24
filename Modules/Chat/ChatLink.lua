@@ -67,8 +67,9 @@ end
 
 function CH:ChatLinkfilter(_, msg, ...)
 	if CH.db["Icon"] then
-		msg = gsub(msg, "(|c%x%x%x%x%x%x%x%x|H(%a+):(%d+).-|h.-|h.-|r)", AddChatIcon)
-		msg = gsub(msg, "(|c%x%x%x%x%x%x%x%x|Htrade:[^:]-:(%d+).-|h.-|h.-|r)", AddTradeIcon)
+		msg = gsub(msg, "(|c%x%x%x%x%x%x%x%x|H(%a+):(%d+).-|h.-|h|r)", AddChatIcon)
+		msg = gsub(msg, "(|cnIQ%d:|H(%a+):(%d+).-|h.-|h|r)", AddChatIcon)
+		msg = gsub(msg, "(|c%x%x%x%x%x%x%x%x|Htrade:[^:]-:(%d+).-|h.-|h|r)", AddTradeIcon)
 	end
 
 	return false, msg, ...
