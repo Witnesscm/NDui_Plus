@@ -2,6 +2,11 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 
 P.Changelog = [[
+v11.1.3
+[聊天] 修复聊天框物品链接图标
+[美化] 添加 WarpDeplete 美化
+[易用性] 修复Roll点增强报错
+
 v11.1.2
 [美化] 添加 Collectionator 美化
 [美化] 更新部分插件美化
