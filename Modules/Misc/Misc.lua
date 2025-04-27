@@ -143,7 +143,7 @@ do
 end
 
 -- fix C_MountJournal.GetMountLink
-do
+--[[do
 	local GetMountLink = C_MountJournal.GetMountLink
 	C_MountJournal.GetMountLink = function(spellID)
 		local link = GetMountLink(spellID)
@@ -155,7 +155,7 @@ do
 		end
 		return gsub(link, "(|Hmount:%d+:%d+:).-(|h.-|h)", "%1%2")
 	end
-end
+end]]
 
 -- remove <Right click for Frame Settings>
 do
