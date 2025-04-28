@@ -153,3 +153,20 @@ do
 		end
 	end
 end
+
+-- Temporary fix for pet link in BN whisper
+do
+	local function ReplaceColorString(quality, link)
+		local colorData = ITEM_QUALITY_COLORS[tonumber(quality)]
+		if colorData then
+			return colorData.color:WrapTextInColorCode(link)
+		end
+	end
+
+	local GetBattlePetLink = C_PetJournal.GetBattlePetLink
+	C_PetJournal.GetBattlePetLink = function(id)
+		local link = GetBattlePetLink(id)
+		if not link then return end
+		return gsub(link, "|cnIQ(%d):(|Hbattlepet:.-|h.-|h)|r", ReplaceColorString)
+	end
+end
