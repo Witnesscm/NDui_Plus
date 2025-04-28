@@ -142,21 +142,6 @@ do
 	P:AddCallbackForAddon("Blizzard_Professions", M.ModifyProfessionsWidth)
 end
 
--- fix C_MountJournal.GetMountLink
-do
-	local GetMountLink = C_MountJournal.GetMountLink
-	C_MountJournal.GetMountLink = function(spellID)
-		local link = GetMountLink(spellID)
-		if not link then return end
-		local mountID = C_MountJournal.GetMountFromSpell(spellID)
-		local mountTypeID = mountID and select(5, C_MountJournal.GetMountInfoExtraByID(mountID))
-		if mountTypeID and mountTypeID == 402 then
-			return link
-		end
-		return gsub(link, "(|Hmount:%d+:%d+:).-(|h.-|h)", "%1%2")
-	end
-end
-
 -- remove <Right click for Frame Settings>
 do
 	function UnitFrame_UpdateTooltip(self)
