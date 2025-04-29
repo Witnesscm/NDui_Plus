@@ -154,7 +154,7 @@ do
 	end
 end
 
--- Temporary fix for pet link in BN whisper
+-- Temporary fix for hyperlinks in BN whisper
 do
 	local function ReplaceColorString(quality, link)
 		local colorData = ITEM_QUALITY_COLORS[tonumber(quality)]
@@ -163,10 +163,14 @@ do
 		end
 	end
 
-	local GetBattlePetLink = C_PetJournal.GetBattlePetLink
-	C_PetJournal.GetBattlePetLink = function(id)
-		local link = GetBattlePetLink(id)
-		if not link then return end
-		return gsub(link, "|cnIQ(%d):(|Hbattlepet:.-|h.-|h)|r", ReplaceColorString)
-	end
+	hooksecurefunc("ChatEdit_InsertLink", function(link)
+		local editBox = ChatEdit_GetActiveWindow()
+		if editBox and editBox:GetAttribute("chatType") == "BN_WHISPER" then
+			local text = editBox:GetText()
+			local newText, count = gsub(text, "|cnIQ(%d):(|H%a+:.-|h.-|h)|r", ReplaceColorString)
+			if count > 0 then
+				editBox:SetText(newText)
+			end
+		end
+	end)
 end
