@@ -6,7 +6,6 @@ externals:
   Libs/AceTimer-3.0: https://repos.curseforge.com/wow/ace3/trunk/AceTimer-3.0
   Libs/AceComm-3.0: https://repos.curseforge.com/wow/ace3/trunk/AceComm-3.0
   Libs/LibSharedMedia-3.0: https://repos.curseforge.com/wow/libsharedmedia-3-0/trunk/LibSharedMedia-3.0
-  Libs/LibShowUIPanel-1.0: https://github.com/DengSir/LibShowUIPanel-1.0
 
 ignore:
   - .gitignore

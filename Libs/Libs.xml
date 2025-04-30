@@ -5,6 +5,5 @@
 	<Include file="AceTimer-3.0\AceTimer-3.0.xml"/>
 	<Include file="AceComm-3.0\AceComm-3.0.xml"/>
 	<Script file="LibAnim\LibAnim.lua"/>
-	<Script file="LibShowUIPanel-1.0\LibShowUIPanel-1.0.lua"/>
 	<Script file="LibDeflate\LibDeflate.lua"/>
 </Ui>
