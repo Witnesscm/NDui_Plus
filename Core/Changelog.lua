@@ -2,6 +2,12 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 
 P.Changelog = [[
+v3.4.12
+[单位框体] 修复3D头像渐隐
+[易用性] 修复拾取框增强染色异常
+[易用性] 修复Roll点增强报错
+[美化] 更新 tdAuction 美化
+
 v3.4.11
 [美化] 更新部分插件美化
 
