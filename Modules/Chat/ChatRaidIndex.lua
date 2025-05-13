@@ -45,9 +45,9 @@ end
 function CH:ChatRaidIndex()
 	local roleList = P.RoleList[NDuiPlusDB["RoleStyle"]["Index"]]
 	CH.RolePaths = {
-		TANK = P.TextureString(roleList.TANK, ":16:16"),
-		HEALER = P.TextureString(roleList.HEALER, ":16:16"),
-		DAMAGER = P.TextureString(roleList.DAMAGER, ":16:16")
+		TANK = P.TextureString(roleList.TANK),
+		HEALER = P.TextureString(roleList.HEALER),
+		DAMAGER = P.TextureString(roleList.DAMAGER)
 	}
 
 	local eventList = {

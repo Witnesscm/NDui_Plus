@@ -365,6 +365,7 @@ function LSM:CreateEJButton()
 
 	local bu = B.CreateGear(parent)
 	bu:SetPoint("RIGHT", parent.filter, "LEFT", -4, 0)
+	B.AddTooltip(bu, "ANCHOR_RIGHT", L["LootSpecManager"], "info")
 	bu:SetScript("OnClick", LSM.TogglePanel)
 
 	hooksecurefunc("EncounterJournal_SetTab", function()
