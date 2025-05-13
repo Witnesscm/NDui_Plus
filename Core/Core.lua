@@ -88,8 +88,8 @@ P.DefaultSettings = {
 		Height = 28,
 		Style = 2,
 		Direction = 2,
-		ItemLevel = false,
-		ItemQuality = false,
+		ItemLevel = true,
+		ItemQuality = true,
 	},
 	AFK = {
 		Enable = true,
@@ -143,6 +143,7 @@ P.DefaultSettings = {
 		ExtMacroUI =  false,
 		WormholeHelper = true,
 		TrainAll = true,
+		AutoRoll = 3,
 	},
 }
 
