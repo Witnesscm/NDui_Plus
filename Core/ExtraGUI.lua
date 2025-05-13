@@ -285,3 +285,40 @@ function G:SetupChatAutoShow(parent)
 		offset = offset + 35
 	end
 end
+
+local function updateLootRoll()
+	P:GetModule("LootRoll"):UpdateLootRollTest()
+end
+
+function G:SetupLootRoll(parent)
+	local guiName = "NDuiPlusGUI_LootRoll"
+	toggleExtraGUI(guiName)
+	if extraGUIs[guiName] then return end
+
+	local panel = createExtraGUI(parent, guiName, L["Loot Roll Settings"], true)
+	local frame = panel.scroll.child
+
+	local offset = 20
+
+	local options = {
+		[1] = {"ItemLevel", L["Item Level"].."*"},
+		[2] = {"ItemQuality", L["Item Quality"].."*"},
+	}
+
+	for _, option in ipairs(options) do
+		local value, text = unpack(option)
+		local box = createOptionCheck(frame, offset, text)
+		box:SetChecked(G.Variable("LootRoll", value))
+		box:SetScript("OnClick", function()
+			G.Variable("LootRoll", value, box:GetChecked())
+			updateLootRoll()
+		end)
+
+		offset = offset + 35
+	end
+
+	createOptionDropDown(frame, -offset-30, L["Style"], "LootRoll", "Style", {L["Style 1"], L["Style 2"]}, updateLootRoll)
+	createOptionDropDown(frame, -offset-90, L["Growth Direction"], "LootRoll", "Direction", {L["Up"], L["Down"]}, updateLootRoll)
+	createOptionSlider(frame, L["Frame Width"], 200, 500, 1, 20, -offset-160, "LootRoll", "Width", updateLootRoll)
+	createOptionSlider(frame, L["Frame Height"], 20, 50, 1, 20, -offset-230, "LootRoll", "Height", updateLootRoll)
+end
