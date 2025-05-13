@@ -64,6 +64,19 @@ function S:TinyInspect()
 			frame.portrait.Border:SetVertexColor(B.ClassColor(UnitClassBase(unit)))
 		end
 	end)
+
+	hooksecurefunc("ShowInspectItemStatsFrame", function(parent)
+		local frame = parent.statsFrame
+		if frame and not frame.styled then
+			B.StripTextures(frame)
+			B.SetBD(frame, nil, 0, 0, 0, 0)
+			frame:ClearAllPoints()
+			frame:SetPoint("TOPLEFT", parent, "TOPRIGHT", C.mult, 0)
+			frame.SetPoint = B.Dummy
+
+			frame.styled = true
+		end
+	end)
 end
 
 S:RegisterSkin("TinyInspect", S.TinyInspect)
