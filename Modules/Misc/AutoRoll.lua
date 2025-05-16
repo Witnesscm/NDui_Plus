@@ -13,6 +13,14 @@ local function ProcessNextRoll()
 	end
 end
 
+local ROLL_TYPES = {
+	PASS = 0,
+	NEED = 1,
+	GREED = 2,
+	DISENCHANT = 3,
+	TRANSMOG = 4,
+}
+
 function M:AutoRoll_OnEvent(rollID)
 	local autoRoll = M.db["AutoRoll"]
 	if autoRoll == 3 then return end
@@ -20,15 +28,9 @@ function M:AutoRoll_OnEvent(rollID)
 	local _, name, _, _, _, canNeed, canGreed, _, _, _, _, _, canTransmog = GetLootRollItemInfo(rollID)
 	if not name then return end
 
-	local rollType = 0
+	local rollType = ROLL_TYPES.PASS
 	if autoRoll == 1 then
-		if canNeed then
-			rollType = 1
-		elseif canTransmog then
-			rollType = 4
-		elseif canGreed then
-			rollType = 2
-		end
+		rollType = canNeed and ROLL_TYPES.NEED or canTransmog and ROLL_TYPES.TRANSMOG or canGreed and ROLL_TYPES.GREED or ROLL_TYPES.PASS
 	end
 
 	if not next(rollQueue) then
