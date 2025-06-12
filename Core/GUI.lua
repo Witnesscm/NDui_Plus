@@ -206,29 +206,6 @@ G.OptionList = { -- type, key, value, name, horizon, data, callback, tooltip, sc
 		{1, "TexStyle", "Enable", HeaderTag..L["ReplaceTexture"], nil, nil, nil, L["ReplaceTextureTip"]},
 		{4, "TexStyle", "Index", L["Texture Style"], nil, {}, toggleTexStyle},
 		{L["Addon Skin"]},
-		{1, "Skins", "Ace3", "AceGUI-3.0"},
-		{1, "Skins", "alaCalendar", "alaCalendar", true},
-		{1, "Skins", "alaGearMan", "alaGearMan"},
-		{1, "Skins", "AtlasLootClassic", "AtlasLootClassic", true},
-		{1, "Skins", "Auctionator", "Auctionator"},
-		{1, "Skins", "AutoBar", "AutoBar", true},
-		{1, "Skins", "ButtonForge", "Button Forge"},
-		{1, "Skins", "GearMenu", "GearMenu", true},
-		{1, "Skins", "Immersion", "Immersion"},
-		{1, "Skins", "InboxMailBag", "Inbox MailBag", true},
-		{1, "Skins", "ItemRack", "ItemRack"},
-		{1, "Skins", "Krowi_AchievementFilter", "Krowi_AchievementFilter", true},
-		{1, "Skins", "ls_Toasts", "ls_Toasts"},
-		{1, "Skins", "MeetingHorn", "MeetingHorn", true},
-		{1, "Skins", "MerInspect", "MerInspect"},
-		{1, "Skins", "ShadowDancer", "ShadowDancer", true},
-		{1, "Skins", "Skillet", "Skillet", true},
-		{1, "Skins", "Spy", "Spy"},
-		{1, "Skins", "tdAuction", "tdAuction", true},
-		{1, "Skins", "tdInspect", "tdInspect"},
-		{1, "Skins", "ClassicThreatMeter", "ThreatClassic2", true},
-		{1, "Skins", "WhisperPop", "WhisperPop"},
-		{1, "Skins", "WIM", "WIM", true},
 		{},
 		{1, "Skins", "HideToggle", L["HideToggle"].."*", nil, nil, updateToggleVisible},
 		{1, "Skins", "CategoryArrow", L["CategoryArrow"].."*", true, nil, updateArrowVisible},
@@ -264,6 +241,38 @@ G.OptionList = { -- type, key, value, name, horizon, data, callback, tooltip, sc
 		{1, "Misc", "FixMacroUI", L["FixMacroUI"], nil, nil, nil, L["ExtMacroUITip"]},
 	},
 }
+
+local AddonSkins = {
+	{"Ace3", "AceGUI-3.0"},
+	{"alaCalendar", "alaCalendar"},
+	{"alaGearMan", "alaGearMan"},
+	{"AtlasLootClassic", "AtlasLootClassic"},
+	{"Auctionator", "Auctionator"},
+	{"AutoBar", "AutoBar"},
+	{"ButtonForge", "Button Forge"},
+	{"GearMenu", "GearMenu"},
+	{"Immersion", "Immersion"},
+	{"InboxMailBag", "Inbox MailBag"},
+	{"ItemRack", "ItemRack"},
+	{"Krowi_AchievementFilter", "Krowi_AchievementFilter"},
+	{"ls_Toasts", "ls_Toasts"},
+	{"MeetingHorn", "MeetingHorn"},
+	{"MerInspect", "MerInspect"},
+	{"ShadowDancer", "ShadowDancer"},
+	{"Skillet", "Skillet"},
+	{"Spy", "Spy"},
+	{"tdAuction", "tdAuction"},
+	{"tdInspect", "tdInspect"},
+	{"ClassicThreatMeter", "ThreatClassic2"},
+	{"WeakAurasOptions", "WeakAurasOptions"},
+	{"WhisperPop", "WhisperPop"},
+	{"WIM", "WIM"}
+}
+
+for i, value in ipairs(AddonSkins) do
+	local key, name = unpack(value)
+	tinsert(G.OptionList[5], 3 + i, {1, "Skins", key, name, (i % 2 == 0) and true})
+end
 
 function G.Variable(key, value, newValue)
 	local header, charKey = strsplit(":", key)
