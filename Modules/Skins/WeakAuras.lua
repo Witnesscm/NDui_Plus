@@ -11,7 +11,7 @@ local function reskinChildButtons(frame)
 	if not frame then return end
 
 	for _, child in pairs {frame:GetChildren()} do
-		if child:GetObjectType() == "Button" and child.Text then
+		if child:GetObjectType() == "Button" and child.Left and child.Middle and child.Right and child.Text then
 			B.Reskin(child)
 		end
 	end
@@ -334,6 +334,8 @@ local function SkinLibAPIAutoComplete(lib)
 end
 
 function S:WeakAuras()
+	if not S.db["WeakAurasOptions"] then return end
+
 	local WeakAuras = _G.WeakAuras
 	if not WeakAuras then return end
 
@@ -354,6 +356,8 @@ function S:WeakAuras()
 end
 
 function S:WeakAurasOptions()
+	if not S.db["WeakAurasOptions"] then return end
+
 	local WeakAuras = _G.WeakAuras
 	if not WeakAuras then return end
 
@@ -389,6 +393,8 @@ function S:WeakAurasOptions()
 end
 
 function S:WeakAurasTemplates()
+	if not S.db["WeakAurasOptions"] then return end
+
 	local WeakAuras = _G.WeakAuras
 	if not WeakAuras or not WeakAuras.CreateTemplateView then return end
 
