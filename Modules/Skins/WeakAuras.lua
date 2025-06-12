@@ -11,7 +11,7 @@ local function reskinChildButtons(frame)
 	if not frame then return end
 
 	for _, child in pairs {frame:GetChildren()} do
-		if child:GetObjectType() == "Button" and child.Text then
+		if child:GetObjectType() == "Button" and child.Left and child.Middle and child.Right and child.Text then
 			B.Reskin(child)
 		end
 	end
@@ -344,6 +344,8 @@ local function RemoveOptionsBorder(Private)
 end
 
 function S:WeakAuras()
+	if not S.db["WeakAurasOptions"] then return end
+
 	local WeakAuras = _G.WeakAuras
 	if not WeakAuras then return end
 
@@ -364,6 +366,8 @@ function S:WeakAuras()
 end
 
 function S:WeakAurasOptions()
+	if not S.db["WeakAurasOptions"] then return end
+
 	local WeakAuras = _G.WeakAuras
 	if not WeakAuras then return end
 
@@ -387,6 +391,8 @@ function S:WeakAurasOptions()
 end
 
 function S:WeakAurasTemplates()
+	if not S.db["WeakAurasOptions"] then return end
+
 	local WeakAuras = _G.WeakAuras
 	if not WeakAuras or not WeakAuras.CreateTemplateView then return end
 
@@ -576,17 +582,21 @@ end
 
 function S:WeakAurasSnippetButton(widget)
 	B.ReskinInput(widget.renameEditBox)
-	widget.renameEditBox.__bg:SetPoint("TOPLEFT", -2, 2)
-	widget.renameEditBox.__bg:SetPoint("BOTTOMRIGHT", 0, -2)
+	widget.renameEditBox.bg:SetPoint("TOPLEFT", -2, 2)
+	widget.renameEditBox.bg:SetPoint("BOTTOMRIGHT", 0, -2)
+end
+
+function S:WeakAurasScrollArea(widget)
+	B.ReskinScroll(widget.scrollbar)
+end
+
+function S:WA_LSM30_StatusbarAtlas(widget)
+	S:Ace3_LibSharedMedia(widget)
 end
 
 function S:WeakAurasTreeGroup(widget)
 	S:Ace3_Frame(widget)
 	widget.treeframe:GetChildren():HideBackdrop()
-end
-
-function S:WA_LSM30_StatusbarAtlas(widget)
-	S:Ace3_LibSharedMedia(widget)
 end
 
 S:RegisterSkin("WeakAuras", S.WeakAuras)
@@ -603,5 +613,6 @@ S:RegisterAceGUIWidget("WeakAurasTextureButton")
 S:RegisterAceGUIWidget("WeakAurasMiniTalent")
 S:RegisterAceGUIWidget("WeakAurasSpinBox")
 S:RegisterAceGUIWidget("WeakAurasSnippetButton")
+S:RegisterAceGUIWidget("WeakAurasScrollArea")
 S:RegisterAceGUIWidget("WA_LSM30_StatusbarAtlas")
 S:RegisterAceGUIContainer("WeakAurasTreeGroup")
