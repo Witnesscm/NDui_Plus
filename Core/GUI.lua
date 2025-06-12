@@ -170,24 +170,6 @@ G.OptionList = { -- type, key, value, name, horizon, data, callback, tooltip, sc
 		{1, "RoleStyle", "Enable", HeaderTag..L["ReplaceRoleTexture"]},
 		{4, "RoleStyle", "Index", L["Role Style"], nil, {}},
 		{L["Addon Skin"]},
-		{1, "Skins", "Ace3", "AceGUI-3.0"},
-		{1, "Skins", "AdiBags", "AdiBags", true},
-		{1, "Skins", "Auctionator", "Auctionator"},
-		{1, "Skins", "BetterBags", "BetterBags", true},
-		{1, "Skins", "BtWLoadouts", "BtWLoadouts"},
-		{1, "Skins", "BtWQuests", "BtWQuests", true},
-		{1, "Skins", "ButtonForge", "Button Forge"},
-		{1, "Skins", "Immersion", "Immersion", true},
-		{1, "Skins", "InboxMailBag", "Inbox MailBag"},
-		{1, "Skins", "ls_Toasts", "ls_Toasts", true},
-		{1, "Skins", "MeetingStone", "MeetingStone"},
-		{1, "Skins", "RareScanner", "RareScanner", true},
-		{1, "Skins", "ShadowDancer", "ShadowDancer"},
-		{1, "Skins", "SimpleAddonManager", "SimpleAddonManager", true},
-		{1, "Skins", "tdBattlePetScript", "tdBattlePetScript"},
-		{1, "Skins", "TinyInspect", "TinyInspect", true},
-		{1, "Skins", "WhisperPop", "WhisperPop"},
-		{1, "Skins", "WorldQuestTab", "WorldQuestTab", true},
 		{},
 		{1, "Skins", "HideToggle", L["HideToggle"].."*", nil, nil, updateToggleVisible},
 	},
@@ -231,6 +213,33 @@ G.OptionList = { -- type, key, value, name, horizon, data, callback, tooltip, sc
 		{1, "Misc", "ShowIllusion", L["ShowIllusion"].."*", true},
 	},
 }
+
+local AddonSkins = {
+	{"Ace3", "AceGUI-3.0"},
+	{"AdiBags", "AdiBags"},
+	{"Auctionator", "Auctionator"},
+	{"BetterBags", "BetterBags"},
+	{"BtWLoadouts", "BtWLoadouts"},
+	{"BtWQuests", "BtWQuests"},
+	{"ButtonForge", "Button Forge"},
+	{"Immersion", "Immersion"},
+	{"InboxMailBag", "Inbox MailBag"},
+	{"ls_Toasts", "ls_Toasts"},
+	{"MeetingStone", "MeetingStone"},
+	{"RareScanner", "RareScanner"},
+	{"ShadowDancer", "ShadowDancer"},
+	{"SimpleAddonManager", "SimpleAddonManager"},
+	{"tdBattlePetScript", "tdBattlePetScript"},
+	{"TinyInspect", "TinyInspect"},
+	{"WeakAurasOptions", "WeakAurasOptions"},
+	{"WhisperPop", "WhisperPop"},
+	{"WorldQuestTab", "WorldQuestTab"},
+}
+
+for i, value in ipairs(AddonSkins) do
+	local key, name = unpack(value)
+	tinsert(G.OptionList[4], 6 + i, {1, "Skins", key, name, (i % 2 == 0) and true})
+end
 
 function G.Variable(key, value, newValue)
 	local header, charKey = strsplit(":", key)
