@@ -143,6 +143,7 @@ function S:MeetingHorn()
 		"Browser.Activity",
 		"Browser.Mode",
 		"Browser.Quick",
+		"Browser.SortMode",
 		"Manage.Creator.Activity",
 		"Manage.Creator.Mode",
 		"Encounter.Instance",
