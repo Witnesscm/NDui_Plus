@@ -112,7 +112,7 @@ end
 
 function S:Krowi_WorldMapButtons()
 	local Krowi_WMB = _G.LibStub and _G.LibStub("Krowi_WorldMapButtons-1.4", true)
-	if not Krowi_WMB then return end
+	if not Krowi_WMB or not Krowi_WMB.Buttons then return end
 
 	for _, button in ipairs(Krowi_WMB.Buttons) do
 		if button.AlphaOption and button.ScaleOption then
