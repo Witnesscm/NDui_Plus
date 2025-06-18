@@ -2,6 +2,13 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 
 P.Changelog = [[
+v11.1.6
+[主要] 更新版本号至11.1.7
+[易用性] 虫洞助手支持 DialogueUI 插件
+[美化] 修复 TinyInspect 面板重叠
+[美化] 修复 WeakAurasOptions 代码片段
+[美化] 修复 Immersion 奖励边框染色
+
 v11.1.5
 [易用性] 添加自动Roll点功能
 [易用性] 更新巅峰声望宝箱数据
