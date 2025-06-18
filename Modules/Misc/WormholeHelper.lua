@@ -52,22 +52,38 @@ function M:WormholeHelper()
 		end
 	end)
 
-	if not C_AddOns.IsAddOnLoaded("Immersion") then return end
+	if C_AddOns.IsAddOnLoaded("Immersion") then
+		local Titles = _G.ImmersionFrame.TitleButtons
+		hooksecurefunc(Titles, "UpdateGossipOptions", function(self, data)
+			local npcID = B.GetNPCID(UnitGUID("npc"))
+			local gossipData = WormholeGossipData[npcID]
+			if not gossipData then return end
 
-	local Titles = _G.ImmersionFrame.TitleButtons
-	hooksecurefunc(Titles, "UpdateGossipOptions", function(self, data)
-		local npcID = B.GetNPCID(UnitGUID("npc"))
-		local gossipData = WormholeGossipData[npcID]
-		if not gossipData then return end
-
-		for i, info in ipairs(data) do
-			local button = self.Buttons[self.idx - #data - 1 + i]
-			local id = gossipData[info.gossipOptionID]
-			if button and id then
-				button:SetText(GetMapNameByID(id))
+			for i, info in ipairs(data) do
+				local button = self.Buttons[self.idx - #data - 1 + i]
+				local id = gossipData[info.gossipOptionID]
+				if button and id then
+					button:SetText(GetMapNameByID(id))
+				end
 			end
-		end
-	end)
+		end)
+	end
+
+	if C_AddOns.IsAddOnLoaded("DialogueUI") then
+		local DUIQuestFrame = _G.DUIQuestFrame
+		hooksecurefunc(DUIQuestFrame, "HandleGossip", function(self)
+			local npcID = B.GetNPCID(UnitGUID("npc"))
+			local gossipData = WormholeGossipData[npcID]
+			if not gossipData then return end
+
+			for _, button in self.optionButtonPool:EnumerateActive() do
+				local id = gossipData[button.gossipOptionID]
+				if id then
+					button:SetButtonText(GetMapNameByID(id), false)
+				end
+			end
+		end)
+	end
 end
 
 M:RegisterMisc("WormholeHelper", M.WormholeHelper)

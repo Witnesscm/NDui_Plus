@@ -205,7 +205,7 @@ G.OptionList = { -- type, key, value, name, horizon, data, callback, tooltip, sc
 		{1, "Misc", "ExtVendorUI", L["ExtVendorUI"]},
 		{1, "Misc", "ExtMacroUI", L["ExtMacroUI"], true, nil, nil ,L["ExtMacroUITip"]},
 		{1, "Misc", "GuildBankItemLevel", L["GuildBankItemLevel"]},
-		{1, "Misc", "WormholeHelper", L["Wormhole Helper"], true},
+		{1, "Misc", "WormholeHelper", L["WormholeHelper"], true, nil, nil, L["WormholeHelperTip"]},
 		{1, "Misc", "TrainAll", L["TrainAll"], nil, nil, nil, L["TrainAllTip"]},
 		{},
 		{1, "Misc", "CopyMog", HeaderTag..L["CopyMogEnable"], nil, nil, nil, L["CopyMogTip"]},
