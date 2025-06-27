@@ -2,6 +2,14 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 local S = P:GetModule("Skins")
 
+local function buttonOnEnter(self)
+	self.bg:SetBackdropBorderColor(DB.r, DB.g, DB.b)
+end
+
+local function buttonOnLeave(self)
+	self.bg:SetBackdropBorderColor(0, 0, 0)
+end
+
 local function handleActionButton(button)
 	if not button then
 		P.Developer_ThrowError("button is nil")
@@ -42,6 +50,17 @@ local function handleIconDataButton(button)
 	end
 end
 
+local function handleMJSlider(self)
+	if not self or not self.slider or not self.edit then
+		P.Developer_ThrowError("slider is nil")
+		return
+	end
+
+	B.ReskinSlider(self.slider)
+	self.edit:HideBackdrop()
+	B.ReskinInput(self.edit)
+end
+
 local function toggleDropDownMenu(_, level)
 	local LibSFDropDown = LibStub("LibSFDropDown-1.5", true)
 	if not LibSFDropDown then return end
@@ -57,7 +76,7 @@ local function toggleDropDownMenu(_, level)
 	end
 end
 
-local function handledDropDown(button)
+local function handleDropMenu(button)
 	if not button or not button.ddToggle then
 		P.Developer_ThrowError("dropdown menu is nil")
 		return
@@ -66,7 +85,39 @@ local function handledDropDown(button)
 	hooksecurefunc(button, "ddToggle", toggleDropDownMenu)
 end
 
-local function handledFilterButton(button)
+local function handleMJDropDown(self)
+	if not self then
+		P.Developer_ThrowError("dropdown is nil")
+		return
+	end
+
+	B.StripTextures(self)
+	self.arrow:SetAlpha(0)
+	local bg = B.CreateBDFrame(self, 0, true)
+	bg:SetPoint("TOPLEFT", 0, -2)
+	bg:SetPoint("BOTTOMRIGHT", 0, 2)
+	local tex = self:CreateTexture(nil, "ARTWORK")
+	tex:SetPoint("RIGHT", bg, -3, 0)
+	tex:SetSize(18, 18)
+	B.SetupArrow(tex, "down")
+	self.__texture = tex
+
+	self:HookScript("OnEnter", B.Texture_OnEnter)
+	self:HookScript("OnLeave", B.Texture_OnLeave)
+end
+
+local function handleMJMacro(self)
+	if not self then
+		P.Developer_ThrowError("MJMacro is nil")
+		return
+	end
+
+	B.StripTextures(self)
+	S:Proxy("CreateBDFrame", self, 0, true)
+	S:Proxy("ReskinTrimScroll", self.scrollBar)
+end
+
+local function handleFilterButton(button)
 	if not button then
 		P.Developer_ThrowError("filter button is nil")
 		return
@@ -75,7 +126,7 @@ local function handledFilterButton(button)
 	B.ReskinFilterButton(button)
 	button.__bg:SetPoint("TOPLEFT", 1, 0)
 	button.__bg:SetPoint("BOTTOMRIGHT", -1, 0)
-	handledDropDown(button)
+	handleDropMenu(button)
 end
 
 local function handleCombobox(self)
@@ -85,7 +136,7 @@ local function handleCombobox(self)
 	end
 
 	S:Proxy("ReskinDropDown", self)
-	handledDropDown(self)
+	handleDropMenu(self)
 end
 
 local function updateVisibility(show)
@@ -104,7 +155,7 @@ local function handlePetIcon(self)
 end
 
 local function handlePetButton(self)
-	if not self.styled then
+	if not self.bg then
 		self.background:SetAlpha(0)
 		self.bg = B.CreateBDFrame(self.background, .25)
 		self.bg:SetInside(self.background)
@@ -114,8 +165,17 @@ local function handlePetButton(self)
 		self.selectedTexture:SetColorTexture(DB.r, DB.g, DB.b, .25)
 		self.selectedTexture:SetInside(self.bg)
 		handlePetIcon(self.infoFrame)
+	end
+end
 
-		self.styled = true
+local function handlePetModelButton(self)
+	if not self.bg then
+		self:HideBackdrop()
+		self.bg = B.CreateBDFrame(self, .25)
+		self.bg:SetInside()
+		self.levelBG:SetAlpha(0)
+		self:HookScript("OnEnter", buttonOnEnter)
+		self:HookScript("OnLeave", buttonOnLeave)
 	end
 end
 
@@ -123,10 +183,11 @@ local function handlePetList(self)
 	local list = self.petSelectionList
 	if list and not list.styled then
 		B.StripTextures(list)
-		B.SetBD(list)
+		B.SetBD(list, nil, 0, 0, 0, 0)
 		S:Proxy("ReskinClose", list.closeButton)
 		S:Proxy("StripTextures", list.controlPanel)
 		S:Proxy("ReskinInput", list.searchBox)
+		S:Proxy("Reskin", list.viewToggle)
 		S:Proxy("StripTextures", list.filtersPanel)
 		S:Proxy("StripTextures", list.controlButtons)
 		S:Proxy("StripTextures", list.petListFrame)
@@ -151,13 +212,33 @@ local function handlePetList(self)
 		local petListFrame = list.petListFrame
 		if petListFrame then
 			S:Proxy("ReskinTrimScroll", petListFrame.scrollBar)
-			hooksecurefunc(petListFrame.scrollBox, "Update", function(self)
-				self:ForEachFrame(handlePetButton)
+
+			hooksecurefunc(list, "initButton", function(_, button)
+				handlePetButton(button)
+			end)
+
+			hooksecurefunc(list, "initModelButton", function(_, button)
+				handlePetModelButton(button)
 			end)
 		end
 
 		list.styled = true
 	end
+end
+
+local function handlePetSelectionBtn(self)
+	if not self then
+		P.Developer_ThrowError("pet selection button is nil")
+		return
+	end
+
+	B.StripTextures(self)
+	local bg = B.CreateBDFrame(self, 0, true)
+	bg:SetAllPoints()
+	self.highlight:SetColorTexture(1, 1, 1, .25)
+	self.highlight:SetInside(bg)
+	handlePetIcon(self.infoFrame)
+	self:HookScript("OnClick", handlePetList)
 end
 
 local function handleMountButton(self)
@@ -193,16 +274,54 @@ local function handleMountButton(self)
 end
 
 local function handleGridMountButton(self)
-	for _, bu in ipairs(self.mounts) do
-		if not bu.bg then
-			bu.icon:SetInside()
-			bu.bg = B.ReskinIcon(bu.icon)
-			B.ReskinIconBorder(bu.qualityBorder, true)
-			bu.selectedTexture:SetColorTexture(1, .8, 0, .4)
-			local hl = bu.highlight
-			hl:SetColorTexture(1, 1, 1, .25)
-			hl:SetInside(bu.bg)
+	if not self.bg then
+		self.icon:SetInside()
+		self.bg = B.ReskinIcon(self.icon)
+		B.ReskinIconBorder(self.qualityBorder, true)
+		self.selectedTexture:SetColorTexture(1, .8, 0, .4)
+		local hl = self.highlight
+		hl:SetColorTexture(1, 1, 1, .25)
+		hl:SetInside(self.bg)
+	end
+end
+
+local function handleGridModelScene(self)
+	if not self.bg then
+		self:HideBackdrop()
+		self.bg = B.CreateBDFrame(self, .25)
+		self.bg:SetInside()
+		self:HookScript("OnEnter", buttonOnEnter)
+		self:HookScript("OnLeave", buttonOnLeave)
+
+		local dragButton = self.dragButton
+		dragButton.icon:SetInside(nil, 3, 3)
+		dragButton.bg = B.ReskinIcon(dragButton.icon)
+		B.ReskinIconBorder(dragButton.qualityBorder, true)
+		dragButton.selectedTexture:SetAlpha(0)
+		handlePetSelectionBtn(self.petSelectionBtn)
+	end
+
+	if self.dragButton.selectedTexture:IsShown() then
+		self.dragButton.bg:SetBackdropBorderColor(1, .8, 0)
+	end
+end
+
+local function handleConditionOption(self)
+	if not self then
+		return
+	end
+
+	if not self.styled then
+		local objType = self.GetObjectType and self:GetObjectType()
+		if objType == "Button" and self.LibSFDropDownNoGMEvent and self.arrow then
+			handleMJDropDown(self)
+		elseif objType == "EditBox" and self.border then
+			self:HideBackdrop()
+			B.ReskinInput(self)
+			B.StripTextures(self.border)
 		end
+
+		self.styled = true
 	end
 end
 
@@ -233,8 +352,9 @@ function S:MountsJournal()
 			S:Proxy("StripTextures", bgFrame.leftInset)
 			S:Proxy("StripTextures", bgFrame.rightInset)
 			S:Proxy("ReskinTrimScroll", bgFrame.leftInset and bgFrame.leftInset.scrollBar)
-			handledFilterButton(bgFrame.profilesMenu)
-			handledDropDown(bgFrame.summonPanelSettings)
+			handleFilterButton(bgFrame.profilesMenu)
+			handleDropMenu(bgFrame.summonPanelSettings)
+			handleMJSlider(bgFrame.percentSlider)
 
 			for _, key in ipairs({"mountSpecial", "summonButton"}) do
 				S:Proxy("Reskin", bgFrame[key])
@@ -286,8 +406,9 @@ function S:MountsJournal()
 		S:Proxy("StripTextures", self.mountCount)
 		S:Proxy("CreateBDFrame", self.mountCount, .25)
 		S:Proxy("ReskinNavBar", self.navBar)
-		handledFilterButton(self.filtersButton)
-		handledDropDown(self.tags and self.tags.mountOptionsMenu)
+		handleFilterButton(self.filtersButton)
+		handleDropMenu(self.tags and self.tags.mountOptionsMenu)
+		handleCombobox(self.gridModelAnimation)
 		P.ReskinTooltip(_G.MountsJournalTooltip)
 
 		local worldMap = self.worldMap
@@ -304,10 +425,10 @@ function S:MountsJournal()
 			S:Proxy("Reskin", mapSettings.CurrentMap)
 			S:Proxy("Reskin", mapSettings.existingListsToggle)
 			S:Proxy("ReskinCheck", mapSettings.Flags)
-			handledFilterButton(mapSettings.listFromMap)
+			handleFilterButton(mapSettings.listFromMap)
 			S:Proxy("StripTextures", mapSettings.relationMap)
 			S:Proxy("CreateBDFrame", mapSettings.relationMap, 0)
-			handledFilterButton(mapSettings.dnr)
+			handleFilterButton(mapSettings.dnr)
 		end
 
 		local existingLists = self.existingLists
@@ -339,24 +460,15 @@ function S:MountsJournal()
 			local info = mountDisplay.info
 			if info then
 				S:Proxy("ReskinIcon", info.icon)
-				handledDropDown(info.linkLang)
-				handledDropDown(info.modelSceneSettingsButton)
+				handleDropMenu(info.linkLang)
+				handleDropMenu(info.modelSceneSettingsButton)
+				handlePetSelectionBtn(info.petSelectionBtn)
 
 				local mountDescriptionToggle = info.mountDescriptionToggle
 				if mountDescriptionToggle then
 					B.Reskin(mountDescriptionToggle)
 					mountDescriptionToggle.__bg:SetPoint("TOPLEFT", 2, 0)
 					mountDescriptionToggle.__bg:SetPoint("BOTTOMRIGHT", -2, 0)
-				end
-
-				local petSelectionBtn = info.petSelectionBtn
-				if petSelectionBtn then
-					B.StripTextures(petSelectionBtn)
-					local bg = B.CreateBDFrame(petSelectionBtn, .25)
-					petSelectionBtn.highlight:SetColorTexture(1, 1, 1, .25)
-					petSelectionBtn.highlight:SetInside(bg)
-					handlePetIcon(petSelectionBtn.infoFrame)
-					petSelectionBtn:HookScript("OnClick", handlePetList)
 				end
 			end
 		end
@@ -412,6 +524,11 @@ function S:MountsJournal()
 			end
 		end
 
+		local gridModelSettings = self.gridModelSettings
+		if gridModelSettings then
+			handleMJSlider(gridModelSettings.strideSlider)
+		end
+
 		local modelScene = self.modelScene
 		if modelScene then
 			handleCombobox(modelScene.animationsCombobox)
@@ -421,6 +538,21 @@ function S:MountsJournal()
 				for _, bu in pairs({modelControl:GetChildren()}) do
 					bu.bg:SetAlpha(0)
 				end
+			end
+		end
+
+		local summonPanel = self.summonPanel
+		if summonPanel then
+			handleActionButton(summonPanel.summon1)
+			handleActionButton(summonPanel.summon2)
+			handleMJSlider(summonPanel.fade)
+			handleMJSlider(summonPanel.resize)
+		end
+
+		for _, key in ipairs({"xInitialAcceleration", "xAcceleration", "xMinSpeed", "yInitialAcceleration", "yAcceleration", "yMinSpeed"}) do
+			local slider = self[key]
+			if slider then
+				handleMJSlider(slider)
 			end
 		end
 	end)
@@ -433,11 +565,9 @@ function S:MountsJournal()
 		handleGridMountButton(button)
 	end)
 
-	local summonPanel = MountsJournalFrame.summonPanel
-	if summonPanel then
-		handleActionButton(summonPanel.summon1)
-		handleActionButton(summonPanel.summon2)
-	end
+	hooksecurefunc(MountsJournalFrame, "gridModelSceneInit", function(self, button)
+		handleGridModelScene(button)
+	end)
 
 	local util = _G.MountsJournalUtil
 	local origcreateCheckbox = util.createCheckboxChild
@@ -460,14 +590,6 @@ function S:MountsJournal()
 		if not self.styled then
 			S:Proxy("ReskinTrimScroll", self.rightPanelScroll and self.rightPanelScroll.ScrollBar)
 
-			for _, key in ipairs({
-				"leftPanel", "rightPanel", "herbGroup", "repairGroup",
-				"magicBroomGroup", "underlightAnglerGroup", "petGroup"
-			}) do
-				S:Proxy("StripTextures", self[key])
-				S:Proxy("CreateBDFrame", self[key], .25)
-			end
-
 			for _, child in pairs(self) do
 				local objType = type(child) == "table" and child.GetObjectType and child:GetObjectType()
 				if objType == "Button" then
@@ -483,6 +605,12 @@ function S:MountsJournal()
 				elseif objType == "EditBox" then
 					child:SetBackdrop(nil)
 					B.ReskinInput(child)
+				elseif objType == "Frame" then
+					if child.backdropInfo and child.backdropInfo == _G.MountsJournalUtil.optionsPanelBackdrop then
+						B.StripTextures(child)
+						local bg = B.CreateBDFrame(child, .25)
+						bg:SetAllPoints()
+					end
 				end
 			end
 
@@ -500,7 +628,7 @@ function S:MountsJournal()
 			B.SetBD(self)
 			handleIconButton(self.selectedIconBtn)
 			B.ReskinInput(self.searchBox)
-			handledFilterButton(self.filtersButton)
+			handleFilterButton(self.filtersButton)
 			B.ReskinTrimScroll(self.scrollBar)
 			hooksecurefunc(self.scrollBox, "Update", function(self)
 				self:ForEachFrame(handleIconDataButton)
@@ -544,7 +672,7 @@ function S:MountsJournal()
 					local background = editbox.background
 					if background then
 						B.StripTextures(background)
-						local bg = B.CreateBDFrame(editbox.background, .25)
+						local bg = B.CreateBDFrame(editbox.background, 0, true)
 						bg:SetInside(editbox.background)
 					end
 				end
@@ -555,15 +683,10 @@ function S:MountsJournal()
 	end)
 
 	hooksecurefunc(classConfig, "showClassSettings", function(self)
-		if self.sliderPool then
-			for frame in self.sliderPool:EnumerateActive() do
-				if frame.slider and frame.edit and not frame.styled then
-					B.ReskinSlider(frame.slider)
-					frame.edit:SetBackdrop(nil)
-					B.ReskinInput(frame.edit)
-
-					frame.styled = true
-				end
+		for slider in self.sliderPool:EnumerateActive() do
+			if not slider.styled then
+				handleMJSlider(slider)
+				slider.styled = true
 			end
 		end
 
@@ -578,7 +701,7 @@ function S:MountsJournal()
 	local ruleConfig = _G.MountsJournalConfigRules
 	ruleConfig:HookScript("OnShow", function(self)
 		if not self.styled then
-			handledFilterButton(self.ruleSets)
+			handleFilterButton(self.ruleSets)
 			handleCombobox(self.summons)
 			S:Proxy("Reskin", self.addRuleBtn)
 			S:Proxy("Reskin", self.importRuleBtn)
@@ -594,12 +717,42 @@ function S:MountsJournal()
 	local ruleEditor = ruleConfig.ruleEditor
 	ruleEditor:HookScript("OnShow", function(self)
 		if not self.styled then
-			S:Proxy("StripTextures", self.bg)
+			self.bg:SetAlpha(0)
 			S:Proxy("StripTextures", self.panel)
 			S:Proxy("SetBD", self.panel)
+			S:Proxy("ReskinTrimScroll", self.scrollBar)
+			handleDropMenu(self.menu)
+			S:Proxy("StripTextures", self.mapSelect)
+			S:Proxy("SetBD", self.mapSelect)
+			S:Proxy("StripTextures", self.mountSelect)
+			S:Proxy("SetBD", self.mountSelect)
+			S:Proxy("ReskinClose", self.mountSelect and self.mountSelect.close)
+
+			local actionPanel = self.actionPanel
+			if actionPanel then
+				handleMJDropDown(actionPanel.optionType)
+				handleMJMacro(actionPanel.macro)
+			end
 
 			self.styled = true
 		end
+	end)
+
+	hooksecurefunc(ruleEditor, "conditionButtonInit", function(_, panel)
+		if not panel.styled then
+			S:Proxy("ReskinCheck", panel.notCheck)
+			handleMJDropDown(panel.optionType)
+
+			panel.styled = true
+		end
+	end)
+
+	hooksecurefunc(ruleEditor, "setCondValueOption", function(_, panel)
+		handleConditionOption(panel.optionValue)
+	end)
+
+	hooksecurefunc(ruleEditor, "setActionValueOption", function(self)
+		handleConditionOption(self.actionPanel.optionValue)
 	end)
 
 	local snippets = _G.MountsJournalSnippets
@@ -618,6 +771,37 @@ function S:MountsJournal()
 
 			self.styled = true
 		end
+	end)
+
+	local dataDialog = _G.MountsJournalDataDialog
+	dataDialog:HookScript("OnShow", function(self)
+		if not self.styled then
+			B.StripTextures(self)
+			B.SetBD(self, nil, 0, 0, 0, 0)
+			S:Proxy("ReskinInput", self.nameEdit)
+			S:Proxy("StripTextures", self.codeBtn)
+			S:Proxy("CreateBDFrame", self.codeBtn, 0, true)
+			S:Proxy("ReskinTrimScroll", self.scrollBar)
+			S:Proxy("Reskin", self.btn1)
+			S:Proxy("Reskin", self.btn2)
+
+			self.styled = true
+		end
+	end)
+
+	local codeEdit = _G.MountsJournalCodeEdit
+	codeEdit:HookScript("OnShow", function(self)
+		B.StripTextures(self)
+		B.SetBD(self, nil, 0, 0, 0, 0)
+		S:Proxy("ReskinInput", self.nameEdit)
+		S:Proxy("ReskinInput", self.line)
+		handleFilterButton(self.settings)
+		handleFilterButton(self.examples)
+		S:Proxy("Reskin", self.cancelBtn)
+		S:Proxy("Reskin", self.completeBtn)
+		S:Proxy("StripTextures", self.codeBtn)
+		S:Proxy("CreateBDFrame", self.codeBtn, .8)
+		S:Proxy("ReskinTrimScroll", self.scrollBar)
 	end)
 end
 
