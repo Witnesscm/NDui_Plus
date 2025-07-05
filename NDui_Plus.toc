@@ -1,5 +1,5 @@
-## Interface: 40401
-## Title: |cff0080ffNDui|r |cffc79c6ePlus|r
+## Interface: 50500
+## Title: |cff0080ffNDui|r |cff00ff96Plus|r
 ## Author: Witness
 ## Notes: NDui Plugin
 ## RequiredDeps: NDui
