@@ -157,22 +157,6 @@ do
 	P:AddCallbackForAddon("Blizzard_DebugTools", M.Blizzard_TableInspector)
 end
 
--- Scale FlightMap
-do
-	function M:UpdateFlightMapScale()
-		if not C.db["Skins"]["BlizzardSkins"] then return end
-
-		local scale = M.db["FlightMapScale"]
-		_G.TAXI_MAP_WIDTH = 316*scale
-		_G.TAXI_MAP_HEIGHT = 352*scale
-		_G.TaxiFrame:SetSize(384 + (scale - 1)*316, 512 + (scale - 1)*352)
-		_G.TaxiMap:SetSize(_G.TAXI_MAP_WIDTH, _G.TAXI_MAP_HEIGHT)
-		_G.TaxiRouteMap:SetSize(_G.TAXI_MAP_WIDTH, _G.TAXI_MAP_HEIGHT)
-	end
-
-	M:RegisterMisc("FlightMapScale", M.UpdateFlightMapScale)
-end
-
 -- DoubleClick to change talents
 do
 	local specs = {
@@ -202,28 +186,4 @@ do
 	end
 
 	P:AddCallbackForAddon("Blizzard_TalentUI", M.QuickChangeTalents)
-end
-
--- fix Blizz CharacterFrame auto expand, because CVar 'characterFrameCollapsed' is not implemented
-do
-	local function ExpandCharacterFrame()
-		if M.db["CharacterFrameCollapsed"] then
-			CharacterFrame:Expand()
-		else
-			CharacterFrame:Collapse()
-		end
-	end
-
-	function M:FixCharacterFrameExpand()
-		if C_CVar.GetCVar("characterFrameCollapsed") then return end
-
-		_G.CharacterFrameExpandButton:HookScript("OnClick", function()
-			M.db["CharacterFrameCollapsed"] = not not _G.CharacterFrame.Expanded
-		end)
-
-		_G.PaperDollFrame:HookScript("OnShow", ExpandCharacterFrame)
-		_G.PetPaperDollFrame:HookScript("OnShow", ExpandCharacterFrame)
-	end
-
-	P:AddCallbackForAddon("Blizzard_CharacterFrame", M.FixCharacterFrameExpand)
 end

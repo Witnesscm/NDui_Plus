@@ -107,7 +107,6 @@ L["ExtMacroUITip"] = "|cffff0000启用后, 会引起无法避免的污染问题,
 L["TrainAll"] = "训练全部"
 L["TrainAllCost"] = "学习全部 %d 个技能需要：%s"
 L["TrainAllTip"] = "训练师面板添加按钮用于学习所有可用技能。"
-L["FlightMap Scale"] = "飞行地图缩放"
 L["Message Type"] = "消息类型"
 L["Whisper"] = "密语"
 L["Group"] = "团队"

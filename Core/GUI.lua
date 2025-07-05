@@ -2,7 +2,6 @@ local addonName, ns = ...
 local B, C, L, DB, P = unpack(ns)
 local G = P:RegisterModule("GUI")
 
-local cr, cg, cb = DB.r, DB.g, DB.b
 local guiTab, guiPage, gui = {}, {}
 
 G.TextureList = {}
@@ -84,10 +83,6 @@ local function updateAFKMode()
 	P:GetModule("AFK"):Toggle()
 end
 
-local function updateFlightMapScale()
-	P:GetModule("Misc"):UpdateFlightMapScale()
-end
-
 local function setupTexStyle()
 	NDuiPlusDB["TexStyle"]["Index"] = 0
 
@@ -112,7 +107,7 @@ end
 
 -- Config
 local HeaderTag = "|cff00cc4c"
-local NewFeatureTag = "|TInterface\\OptionsFrame\\UI-OptionsFrame-NewFeatureIcon:0|t"
+local NewTag = "|TInterface\\OptionsFrame\\UI-OptionsFrame-NewFeatureIcon:0|t"
 
 G.TabList = {
 	L["Actionbar"],
@@ -174,29 +169,6 @@ G.OptionList = { -- type, key, value, name, horizon, data, callback, tooltip, sc
 		{1, "TexStyle", "Enable", HeaderTag..L["ReplaceTexture"], nil, nil, nil, L["ReplaceTextureTip"]},
 		{4, "TexStyle", "Index", L["Texture Style"], nil, {}, toggleTexStyle},
 		{L["Addon Skin"]},
-		{1, "Skins", "Ace3", "AceGUI-3.0"},
-		{1, "Skins", "InboxMailBag", "Inbox MailBag", true},
-		{1, "Skins", "MerInspect", "MerInspect"},
-		{1, "Skins", "alaGearMan", "alaGearMan", true},
-		{1, "Skins", "ClassicThreatMeter", "ThreatClassic2"},
-		{1, "Skins", "Spy", "Spy", true},
-		{1, "Skins", "ButtonForge", "Button Forge"},
-		{1, "Skins", "MeetingHorn", "MeetingHorn", true},
-		{1, "Skins", "GearMenu", "GearMenu"},
-		{1, "Skins", "alaCalendar", "alaCalendar", true},
-		{1, "Skins", "ls_Toasts", "ls_Toasts"},
-		{1, "Skins", "WIM", "WIM", true},
-		{1, "Skins", "ItemRack", "ItemRack"},
-		{1, "Skins", "WhisperPop", "WhisperPop", true},
-		{1, "Skins", "AutoBar", "AutoBar"},
-		{1, "Skins", "AtlasLootClassic", "AtlasLootClassic", true},
-		{1, "Skins", "Immersion", "Immersion"},
-		{1, "Skins", "Skillet", "Skillet", true},
-		{1, "Skins", "tdInspect", "tdInspect"},
-		{1, "Skins", "tdAuction", "tdAuction", true},
-		{1, "Skins", "Auctionator", "Auctionator"},
-		{1, "Skins", "ShadowDancer", "ShadowDancer", true},
-		{1, "Skins", "Krowi_AchievementFilter", "Krowi_AchievementFilter"},
 		{},
 		{1, "Skins", "HideToggle", L["HideToggle"].."*", nil, nil, updateToggleVisible},
 		{1, "Skins", "CategoryArrow", L["CategoryArrow"].."*", true, nil, updateArrowVisible},
@@ -220,11 +192,42 @@ G.OptionList = { -- type, key, value, name, horizon, data, callback, tooltip, sc
 		{1, "Misc", "ExtVendorUI", L["ExtVendorUI"]},
 		{1, "Misc", "ImprovedStableFrame", L["ImprovedStableFrame"], true},
 		{1, "Misc", "ExtMacroUI", L["ExtMacroUI"], nil, nil, nil ,L["ExtMacroUITip"]},
-		{1, "Misc", "IconSearch", L["IconSearch"], nil, nil, nil, L["IconSearchGUITip"]},
+		{1, "Misc", "IconSearch", L["IconSearch"], true, nil, nil, L["IconSearchGUITip"]},
 		{1, "AFK", "Enable", L["AFK Mode"].."*", nil, nil, updateAFKMode},
-		{3, "Misc", "FlightMapScale", L["FlightMap Scale"].."*", true, {1, 2, .1}, updateFlightMapScale},
 	},
 }
+
+local AddonSkins = {
+	{"Ace3", "AceGUI-3.0"},
+	{"alaCalendar", "alaCalendar"},
+	{"alaGearMan", "alaGearMan"},
+	{"AtlasLootClassic", "AtlasLootClassic"},
+	{"Auctionator", "Auctionator"},
+	{"AutoBar", "AutoBar"},
+	{"ButtonForge", "Button Forge"},
+	{"GearMenu", "GearMenu"},
+	{"Immersion", "Immersion"},
+	{"InboxMailBag", "Inbox MailBag"},
+	{"ItemRack", "ItemRack"},
+	{"Krowi_AchievementFilter", "Krowi_AchievementFilter"},
+	{"ls_Toasts", "ls_Toasts"},
+	{"MeetingHorn", "MeetingHorn"},
+	{"MerInspect", "MerInspect"},
+	{"ShadowDancer", "ShadowDancer"},
+	{"Skillet", "Skillet"},
+	{"Spy", "Spy"},
+	{"tdAuction", "tdAuction"},
+	{"tdInspect", "tdInspect"},
+	{"ClassicThreatMeter", "ThreatClassic2"},
+	{"WeakAurasOptions", "WeakAurasOptions"},
+	{"WhisperPop", "WhisperPop"},
+	{"WIM", "WIM"}
+}
+
+for i, value in ipairs(AddonSkins) do
+	local key, name = unpack(value)
+	tinsert(G.OptionList[5], 3 + i, {1, "Skins", key, name, (i % 2 == 0) and true})
+end
 
 function G.Variable(key, value, newValue)
 	local header, charKey = strsplit(":", key)
@@ -255,7 +258,7 @@ end
 local function SelectTab(i)
 	for num = 1, #G.TabList do
 		if num == i then
-			guiTab[num]:SetBackdropColor(cr, cg, cb, .25)
+			guiTab[num]:SetBackdropColor(DB.r, DB.g, DB.b, .25)
 			guiTab[num].checked = true
 			guiPage[num]:Show()
 		else
@@ -273,7 +276,7 @@ end
 
 local function tabOnEnter(self)
 	if self.checked then return end
-	self:SetBackdropColor(cr, cg, cb, .25)
+	self:SetBackdropColor(DB.r, DB.g, DB.b, .25)
 end
 
 local function tabOnLeave(self)

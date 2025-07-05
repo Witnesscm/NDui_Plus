@@ -107,7 +107,6 @@ L["ExtMacroUITip"] = "|cffff0000If enabled, it will cause taints that cannot edi
 L["TrainAll"] = "Train All"
 L["TrainAllCost"] = "%d skills available for %s"
 L["TrainAllTip"] = "Adds a \"Train All\" button to the profession trainer window."
-L["FlightMap Scale"] = "FlightMap Scale"
 L["Message Type"] = "Message Type"
 L["Whisper"] = "Whisper"
 L["Group"] = "Group"
