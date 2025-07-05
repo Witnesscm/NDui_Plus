@@ -23,7 +23,7 @@ jobs:
       - name: Create Mainline Package
         uses: BigWigsMods/packager@v2
         with:
-          args: -g cata
+          args: -g mists
 
       - name: Upload Github Actions
         uses: actions/upload-artifact@v4
