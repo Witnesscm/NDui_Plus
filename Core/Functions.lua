@@ -349,6 +349,15 @@ do
 			end
 		end
 	end
+
+	-- Temporary fix
+	do
+		hooksecurefunc(B, "ReskinPortraitFrame", function(self)
+			if self.PortraitContainer then
+				self.PortraitContainer:SetAlpha(0)
+			end
+		end)
+	end
 end
 
 -- Misc
