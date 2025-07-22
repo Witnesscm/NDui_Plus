@@ -182,20 +182,6 @@ local function SkinWeakAurasOptions()
 	frame.MaxMinButtonFrame.MaximizeButton:SetSize(18, 18)
 	frame.MaxMinButtonFrame.MinimizeButton:SetSize(18, 18)
 
-	-- ToolbarContainer
-	local toolbarContainer = frame.toolbarContainer
-	if toolbarContainer then
-		local importButton, newButton, magnetButton, lockButton = toolbarContainer:GetChildren()
-		newButton:ClearAllPoints()
-		newButton:SetPoint("BOTTOMLEFT", frame.filterInput, "TOPLEFT", 0, 10)
-		importButton:ClearAllPoints()
-		importButton:SetPoint("LEFT", newButton, "RIGHT", 2, 0)
-		lockButton:ClearAllPoints()
-		lockButton:SetPoint("LEFT", importButton, "RIGHT", 2, 0)
-		magnetButton:ClearAllPoints()
-		magnetButton:SetPoint("LEFT", lockButton, "RIGHT", 2, 0)
-	end
-
 	-- Child Groups 
 	-- texteditor, icon, texture, model, update, importexport, codereview, debuglog
 	local childGroups = {}
