@@ -7,8 +7,6 @@ local select, pairs = select, pairs
 ----------------------------
 -- Credit: AddOnSkins_MeetingStone by hokohuang
 ----------------------------
-local mainFrame
-
 local function reskinDropDown(dropdown)
 	if not dropdown or not dropdown.MenuButton then
 		P.Developer_ThrowError("dropdown is nil")
@@ -113,7 +111,7 @@ local function strToPath(str)
 end
 
 local function getValue(pathStr, tbl)
-	local keys = strToPath(pathStr) 
+	local keys = strToPath(pathStr)
 	local value
 	for _, key in pairs(keys) do
 		value = value and value[key] or tbl[key]
@@ -127,8 +125,9 @@ function S:MeetingHorn()
 	local MeetingHorn = LibStub("AceAddon-3.0"):GetAddon("MeetingHorn", true)
 	if not MeetingHorn then return end
 
-	mainFrame = _G.MeetingHornMainPanel or MeetingHorn.MainPanel
+	local mainFrame = MeetingHorn.MainPanel
 	if not mainFrame then return end
+
 	B.ReskinPortraitFrame(mainFrame)
 	mainFrame.PortraitFrame:SetAlpha(0)
 
@@ -157,6 +156,7 @@ function S:MeetingHorn()
 
 	local ScrollBars = {
 		"Browser.ActivityList.scrollBar",
+		"Browser.VoiceActivityList.scrollBar",
 		"Manage.Applicant.ApplicantList.scrollBar",
 		"Options.Filters.FilterList.scrollBar",
 		"FeedBack.EditBox.ScrollFrame.ScrollBar",
@@ -176,13 +176,16 @@ function S:MeetingHorn()
 		"Options.Filters",
 		"Recent.Left",
 		"Recent.Right",
+		"PracticalTool.Present",
+		"PracticalTool.QRCodeExhibition",
+		"PracticalTool.Toolbar"
 	}
 
 	local Buttons = {
-		"Browser.Reset",
-		"Browser.Refresh",
-		"Browser.ApplyLeaderBtn",
-		"Browser.RechargeBtn",
+		-- "Browser.Reset",
+		-- "Browser.Refresh",
+		-- "Browser.ApplyLeaderBtn",
+		-- "Browser.RechargeBtn",
 		"Manage.Creator.CreateButton",
 		"Manage.Creator.CloseButton",
 		"Manage.Creator.RecruitButton",
@@ -230,8 +233,7 @@ function S:MeetingHorn()
 	for _, v in pairs(Panels) do
 		local panel = getValue(v, mainFrame)
 		if panel then
-			panel:DisableDrawLayer("BACKGROUND")
-			panel:DisableDrawLayer("BORDER")
+			B.StripTextures(panel)
 			local bg = B.CreateBDFrame(panel, .25)
 			bg:SetPoint("TOPLEFT", 0, 0)
 			bg:SetPoint("BOTTOMRIGHT", 0, 0)
@@ -302,6 +304,22 @@ function S:MeetingHorn()
 			if bu then
 				bu:HookScript("PostClick", reskinImageFrame)
 			end
+		end
+
+		for _, child in pairs {Browser:GetChildren()} do
+			local objType = child:GetObjectType()
+			if objType == "Button" and child.Left and child.Right and child.Middle and child.Text then
+				B.Reskin(child)
+			end
+		end
+
+		if Browser.OpenVoiceRoom then
+			hooksecurefunc(Browser, "OpenVoiceRoom", function(self)
+				if self.QRTooltip and not self.QRTooltip.styled then
+					reskinQRTooltip(self.QRTooltip)
+					self.QRTooltip.styled = true
+				end
+			end)
 		end
 
 		local progressBar = Browser.ProgressBar
@@ -544,7 +562,7 @@ function S:MeetingHorn()
 		end
 	end
 
-	if IsAddOnLoaded("tdInspect") then  -- Credit: tdUI
+	if C_AddOns.IsAddOnLoaded("tdInspect") then  -- Credit: tdUI
 		local tdInspect = LibStub("AceAddon-3.0"):GetAddon("tdInspect")
 		local Browser = MeetingHorn:GetClass("UI.Browser")
 		local Inspect = tdInspect:GetModule("Inspect")

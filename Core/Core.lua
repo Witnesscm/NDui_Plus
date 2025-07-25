@@ -121,6 +121,7 @@ P.DefaultSettings = {
 		Spy = true,
 		tdAuction = true,
 		tdInspect = true,
+		WeakAurasOptions = true,
 		WhisperPop = true,
 		WIM = true,
 		HideToggle = false,

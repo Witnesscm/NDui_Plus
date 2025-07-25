@@ -11,7 +11,7 @@ local function reskinChildButtons(frame)
 	if not frame then return end
 
 	for _, child in pairs {frame:GetChildren()} do
-		if child:GetObjectType() == "Button" and child.Text then
+		if child:GetObjectType() == "Button" and child.Left and child.Middle and child.Right and child.Text then
 			B.Reskin(child)
 		end
 	end
@@ -182,20 +182,6 @@ local function SkinWeakAurasOptions()
 	frame.MaxMinButtonFrame.MaximizeButton:SetSize(18, 18)
 	frame.MaxMinButtonFrame.MinimizeButton:SetSize(18, 18)
 
-	-- ToolbarContainer
-	local toolbarContainer = frame.toolbarContainer
-	if toolbarContainer then
-		local importButton, newButton, magnetButton, lockButton = toolbarContainer:GetChildren()
-		newButton:ClearAllPoints()
-		newButton:SetPoint("BOTTOMLEFT", frame.filterInput, "TOPLEFT", 0, 10)
-		importButton:ClearAllPoints()
-		importButton:SetPoint("LEFT", newButton, "RIGHT", 2, 0)
-		lockButton:ClearAllPoints()
-		lockButton:SetPoint("LEFT", importButton, "RIGHT", 2, 0)
-		magnetButton:ClearAllPoints()
-		magnetButton:SetPoint("LEFT", lockButton, "RIGHT", 2, 0)
-	end
-
 	-- Child Groups 
 	-- texteditor, icon, texture, model, update, importexport, codereview, debuglog
 	local childGroups = {}
@@ -334,6 +320,8 @@ local function SkinLibAPIAutoComplete(lib)
 end
 
 function S:WeakAuras()
+	if not S.db["WeakAurasOptions"] then return end
+
 	local WeakAuras = _G.WeakAuras
 	if not WeakAuras then return end
 
@@ -354,6 +342,8 @@ function S:WeakAuras()
 end
 
 function S:WeakAurasOptions()
+	if not S.db["WeakAurasOptions"] then return end
+
 	local WeakAuras = _G.WeakAuras
 	if not WeakAuras then return end
 
@@ -379,9 +369,18 @@ function S:WeakAurasOptions()
 	if LAAC and LAAC.enable then
 		hooksecurefunc(LAAC, "enable", SkinLibAPIAutoComplete)
 	end
+
+	local LibDD, LibMinor = LibStub("LibUIDropDownMenu-4.0", true)
+	if LibDD and (not LibDD.oldminor or LibDD.oldminor < LibMinor) then
+		hooksecurefunc(LibDD, "ToggleDropDownMenu", function(_, level)
+			S:SkinDropDownMenu("L_DropDownList", level)
+		end)
+	end
 end
 
 function S:WeakAurasTemplates()
+	if not S.db["WeakAurasOptions"] then return end
+
 	local WeakAuras = _G.WeakAuras
 	if not WeakAuras or not WeakAuras.CreateTemplateView then return end
 
@@ -555,13 +554,17 @@ function S:WeakAurasSnippetButton(widget)
 	widget.renameEditBox.bg:SetPoint("BOTTOMRIGHT", 0, -2)
 end
 
-function S:WeakAurasTreeGroup(widget)
-	S:Ace3_Frame(widget)
-	widget.treeframe:GetChildren():HideBackdrop()
+function S:WeakAurasScrollArea(widget)
+	B.ReskinScroll(widget.scrollbar)
 end
 
 function S:WA_LSM30_StatusbarAtlas(widget)
 	S:Ace3_LibSharedMedia(widget)
+end
+
+function S:WeakAurasTreeGroup(widget)
+	S:Ace3_Frame(widget)
+	widget.treeframe:GetChildren():HideBackdrop()
 end
 
 S:RegisterSkin("WeakAuras", S.WeakAuras)
@@ -577,5 +580,6 @@ S:RegisterAceGUIWidget("WeakAurasIconButton")
 S:RegisterAceGUIWidget("WeakAurasTextureButton")
 S:RegisterAceGUIWidget("WeakAurasSpinBox")
 S:RegisterAceGUIWidget("WeakAurasSnippetButton")
+S:RegisterAceGUIWidget("WeakAurasScrollArea")
 S:RegisterAceGUIWidget("WA_LSM30_StatusbarAtlas")
 S:RegisterAceGUIContainer("WeakAurasTreeGroup")

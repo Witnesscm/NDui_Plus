@@ -20,4 +20,3 @@ function S:AutoBar()
 end
 
 S:RegisterSkin("AutoBarClassic", S.AutoBar)
-S:RegisterSkin("AutoBarBCC", S.AutoBar)

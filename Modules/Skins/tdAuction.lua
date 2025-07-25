@@ -1,9 +1,6 @@
 local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 local S = P:GetModule("Skins")
-local M = B:GetModule("Misc")
-
-local _G = getfenv(0)
 
 function S:tdAuction()
 	if not S.db["tdAuction"] then return end

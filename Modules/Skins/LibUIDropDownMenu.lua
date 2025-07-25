@@ -135,20 +135,12 @@ end
 
 function S:LibUIDropDownMenu()
 	-- LibUIDropDownMenu-4.0
-	local LibUIDropDownMenu = LibStub("LibUIDropDownMenu-4.0", true)
+	local LibUIDropDownMenu, LibMinor = LibStub("LibUIDropDownMenu-4.0", true)
 	if LibUIDropDownMenu then
 		hooksecurefunc(LibUIDropDownMenu, "ToggleDropDownMenu", function(_, level)
 			S:SkinDropDownMenu("L_DropDownList", level)
 		end)
-
-		if LibUIDropDownMenu.Create_UIDropDownMenu then
-			local Create_UIDropDownMenu = LibUIDropDownMenu.Create_UIDropDownMenu
-			LibUIDropDownMenu.Create_UIDropDownMenu = function(...)
-				local dropdown = Create_UIDropDownMenu(...)
-				P.ReskinDropDown(dropdown)
-				return dropdown
-			end
-		end
+		LibUIDropDownMenu.oldminor = LibMinor
 	end
 
 	-- LibUIDropDownMenuQuestie-4.0

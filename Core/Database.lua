@@ -43,5 +43,5 @@ P.SlotIDtoName = {
 }
 
 -- Bindings
-BINDING_HEADER_NDUIPLUS = addonName
+BINDING_HEADER_NDUIPLUS = C_AddOns.GetAddOnMetadata(addonName, "Title")
 BINDING_NAME_NDUIPLUSTOGGLEBAG = L["Toggle OfflineBag"]
