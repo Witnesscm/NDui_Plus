@@ -46,6 +46,11 @@ local function reskinCheck(self, tbl)
 end
 
 local function reskinMarker(frame, isTower)
+	if not frame then
+		P.Developer_ThrowError("Unknown NWB Marker")
+		return
+	end
+
 	local icon = frame.texture
 	local tooltip = frame.tooltip
 
@@ -139,26 +144,14 @@ function S:NovaWorldBuffs()
 		end
 	end
 
-	if NWB.createShowStatsButton then
-		hooksecurefunc(NWB, "createShowStatsButton", function()
-			reskinCheck(NWB, {"showStatsButton", "showStatsAllButton"})
-		end)
-	elseif NWB.createBuffsListExtraButtons then
-		hooksecurefunc(NWB, "createBuffsListExtraButtons", function()
-			reskinCheck(NWB, {"showStatsButton", "showStatsAllButton"})
-			S:Proxy("ReskinSlider", NWB.charsMinLevelSlider)
-		end)
-	end
+	hooksecurefunc(NWB, "createBuffsListExtraButtons", function()
+		reskinCheck(NWB, {"showStatsButton", "showStatsAllButton"})
+		S:Proxy("ReskinSlider", NWB.charsMinLevelSlider)
+	end)
 
 	hooksecurefunc(NWB, "createCopyFormatButton", function()
 		reskinCheck(NWB, {"copyDiscordButton"})
 	end)
-
-	if NWB.createDmfHelperButtons then
-		hooksecurefunc(NWB, "createDmfHelperButtons", function()
-			reskinCheck(NWB, {"dmfChatCountdown", "dmfAutoResButton"})
-		end)
-	end
 
 	hooksecurefunc(NWB, "createTimerLogCheckboxes", function()
 		reskinCheck(NWB, {"timerLogShowRendButton", "timerLogShowOnyButton", "timerLogShowNefButton"})
@@ -179,25 +172,18 @@ function S:NovaWorldBuffs()
 		end
 	end
 
-	if NWB.createFelwoodMarkers then
-		hooksecurefunc(NWB, "createSongflowerMarkers", function()
-			reskinMarkers(NWB.songFlowers)
-		end)
-		hooksecurefunc(NWB, "createTuberMarkers", function()
-			reskinMarkers(NWB.tubers)
-		end)
-		hooksecurefunc(NWB, "createDragonMarkers", function()
-			reskinMarkers(NWB.dragons)
-		end)
-	else
+	hooksecurefunc(NWB, "createSongflowerMarkers", function()
 		reskinMarkers(NWB.songFlowers)
+	end)
+	hooksecurefunc(NWB, "createTuberMarkers", function()
 		reskinMarkers(NWB.tubers)
+	end)
+	hooksecurefunc(NWB, "createDragonMarkers", function()
 		reskinMarkers(NWB.dragons)
-	end
+	end)
 
 	reskinMarker(_G.NWBDMF)
 	reskinMarker(_G.NWBDMFContinent)
-	reskinMarker(_G.NWBNaxxMarker)
 	--reskinMarker(_G.nefWorldMapNoLayerFrame)
 
 	hooksecurefunc(NWB, "refreshWorldbuffMarkers", function()
