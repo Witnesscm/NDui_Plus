@@ -53,7 +53,7 @@ function AB:MageButton_UpdateSize()
 end
 
 function AB:MageButton_UpdateSpell(spellID)
-	local texture = GetSpellTexture(spellID)
+	local texture = C_Spell.GetSpellTexture(spellID)
 	self.icon:SetTexture(texture)
 	self:SetAttribute("type", "spell")
 	self.spellID = spellID
