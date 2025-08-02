@@ -13,7 +13,6 @@
 	<Script file="BagSync.lua"/>
 	<Script file="ButtonForge.lua"/>
 	<Script file="CChatNotifier.lua"/>
-	<Script file="CharacterPanel.lua"/>
 	<Script file="ExtVendorUI.lua"/>
 	<Script file="Immersion.lua"/>
 	<Script file="ImprovedAddonList.lua"/>
@@ -29,8 +28,10 @@
 	<Script file="NovaWorldBuffs.lua"/>
 	<Script file="Others.lua"/>
 	<Script file="PallyPower.lua"/>
+	<Script file="RareScanner.lua"/>
 	<Script file="ReforgeLite.lua"/>
 	<Script file="ShadowDancer.lua"/>
+	<Script file="SimpleAddonManager.lua"/>
 	<Script file="Skillet.lua"/>
 	<Script file="Spy.lua"/>
 	<Script file="tdGUI.lua"/>

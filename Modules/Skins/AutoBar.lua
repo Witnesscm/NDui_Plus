@@ -20,6 +20,3 @@ function S:AutoBar()
 end
 
 S:RegisterSkin("AutoBarClassic", S.AutoBar)
-S:RegisterSkin("AutoBarBCC", S.AutoBar)
-S:RegisterSkin("AutoBarWrath", S.AutoBar)
-S:RegisterSkin("AutoBarCata", S.AutoBar)

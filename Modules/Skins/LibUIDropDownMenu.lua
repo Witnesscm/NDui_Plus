@@ -143,6 +143,14 @@ function S:LibUIDropDownMenu()
 		LibUIDropDownMenu.oldminor = LibMinor
 	end
 
+	-- LibUIDropDownMenuQuestie-4.0
+	local LibDropMenuQuestie = LibStub("LibUIDropDownMenuQuestie-4.0", true)
+	if LibDropMenuQuestie then
+		hooksecurefunc(LibDropMenuQuestie, "ToggleDropDownMenu", function(_, level)
+			S:SkinDropDownMenu("L_DropDownListQuestie", level, _G.L_UIDROPDOWNMENUQUESTIE_MAXBUTTONS)
+		end)
+	end
+
 	-- LibUIDropDownMenu-2.0
 	if _G.L_ToggleDropDownMenu then
 		hooksecurefunc(_G, "L_ToggleDropDownMenu", function(level)
