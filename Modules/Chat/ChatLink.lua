@@ -21,36 +21,37 @@ local function GetTalentIconByID(id)
 
 	local _, spell = tip:GetSpell()
 	if spell then
-		return GetSpellTexture(spell)
+		return C_Spell.GetSpellTexture(spell)
 	end
 end
+
+local TEXTURE_GETTERS = {
+	spell = C_Spell.GetSpellTexture,
+	enchant = C_Spell.GetSpellTexture,
+	item = C_Item.GetItemIconByID,
+	talent = GetTalentIconByID
+}
 
 local cache = {}
 
 local function AddChatIcon(link, linkType, id)
 	if not link then return end
 
-	if cache[link] then return cache[link] end
-
-	local texture
-	if linkType == "spell" or linkType == "enchant" then
-		texture = GetSpellTexture(id)
-	elseif linkType == "item" then
-		texture = C_Item.GetItemIconByID(id)
-	elseif linkType == "talent" then
-		texture = GetTalentIconByID(id)
+	if not cache[link] then
+		local texture = TEXTURE_GETTERS[linkType] and TEXTURE_GETTERS[linkType](tonumber(id))
+		if texture then
+			cache[link] = GetHyperlink(link, texture)
+		end
 	end
 
-	cache[link] = GetHyperlink(link, texture)
-
-	return cache[link]
+	return cache[link] or link
 end
 
 local function AddTradeIcon(link, id)
 	if not link then return end
 
 	if not cache[link] then
-		cache[link] = GetHyperlink(link, GetSpellTexture(id))
+		cache[link] = GetHyperlink(link, C_Spell.GetSpellTexture(id))
 	end
 
 	return cache[link]
@@ -59,6 +60,7 @@ end
 function CH:ChatLinkfilter(_, msg, ...)
 	if CH.db["Icon"] then
 		msg = gsub(msg, "(|c%x%x%x%x%x%x%x%x|H(%a+):(%d+).-|h.-|h.-|r)", AddChatIcon)
+		msg = gsub(msg, "(|cnIQ%d:|H(%a+):(%d+).-|h.-|h.-|r)", AddChatIcon)
 		msg = gsub(msg, "(|c%x%x%x%x%x%x%x%x|Htrade:[^:]-:(%d+).-|h.-|h.-|r)", AddTradeIcon)
 	end
 
