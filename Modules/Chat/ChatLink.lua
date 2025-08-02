@@ -12,61 +12,41 @@ local function GetHyperlink(hyperlink, texture)
 	end
 end
 
-local tip = B.ScanTip
-local talentLink = "talent:%d:0"
-
-local function GetTalentIconByID(id)
-	tip:SetOwner(UIParent, "ANCHOR_NONE")
-	tip:SetHyperlink(format(talentLink, id))
-
-	local _, spell = tip:GetSpell()
-	if spell then
-		return GetSpellTexture(spell)
-	end
-end
-
-local honorTextures = {
-	[136998] = "Interface\\PVPFrame\\PVP-Currency-Alliance",
-	[137000] = "Interface\\PVPFrame\\PVP-Currency-Horde",
+local TEXTURE_GETTERS = {
+	spell = C_Spell.GetSpellTexture,
+	enchant = C_Spell.GetSpellTexture,
+	mount = C_Spell.GetSpellTexture,
+	item = C_Item.GetItemIconByID,
+	talent = function(id) return select(3, GetTalentInfoByID(id)) end,
+	achievement = function(id) return select(10, GetAchievementInfo(id)) end,
+	currency = function(id)
+		local info = C_CurrencyInfo.GetCurrencyInfo(id)
+		return info and info.iconFileID
+	end,
+	battlepet = function(id) return select(2, C_PetJournal.GetPetInfoBySpeciesID(id)) end,
+	battlePetAbil = function(id) return select(3, C_PetBattles.GetAbilityInfoByID(id)) end,
 }
-
-local function GetCurrencyIconByID(id)
-	local info = C_CurrencyInfo.GetCurrencyInfo(id)
-	local icon = info and info.iconFileID
-
-	return honorTextures[icon] or icon
-end
 
 local cache = {}
 
 local function AddChatIcon(link, linkType, id)
 	if not link then return end
 
-	if cache[link] then return cache[link] end
-
-	local texture
-	if linkType == "spell" or linkType == "enchant" then
-		texture = GetSpellTexture(id)
-	elseif linkType == "item" then
-		texture = C_Item.GetItemIconByID(id)
-	elseif linkType == "talent" then
-		texture = GetTalentIconByID(id)
-	elseif linkType == "achievement" then
-		texture = select(10, GetAchievementInfo(id))
-	elseif linkType == "currency" then
-		texture = GetCurrencyIconByID(id)
+	if not cache[link] then
+		local texture = TEXTURE_GETTERS[linkType] and TEXTURE_GETTERS[linkType](tonumber(id))
+		if texture then
+			cache[link] = GetHyperlink(link, texture)
+		end
 	end
 
-	cache[link] = GetHyperlink(link, texture)
-
-	return cache[link]
+	return cache[link] or link
 end
 
 local function AddTradeIcon(link, id)
 	if not link then return end
 
 	if not cache[link] then
-		cache[link] = GetHyperlink(link, GetSpellTexture(id))
+		cache[link] = GetHyperlink(link, C_Spell.GetSpellTexture(id))
 	end
 
 	return cache[link]
@@ -75,6 +55,7 @@ end
 function CH:ChatLinkfilter(_, msg, ...)
 	if CH.db["Icon"] then
 		msg = gsub(msg, "(|c%x%x%x%x%x%x%x%x|H(%a+):(%d+).-|h.-|h.-|r)", AddChatIcon)
+		msg = gsub(msg, "(|cnIQ%d:|H(%a+):(%d+).-|h.-|h.-|r)", AddChatIcon)
 		msg = gsub(msg, "(|c%x%x%x%x%x%x%x%x|Htrade:[^:]-:(%d+).-|h.-|h.-|r)", AddTradeIcon)
 	end
 
