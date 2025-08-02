@@ -10,6 +10,7 @@ local MAX_PLAYER_LEVEL = GetMaxLevelForPlayerExpansion()
 local cache = {}
 local compareGUID
 
+-- /ndp raid
 T.RaidData = {
 	[1] = {
 		abbr = L["[ABBR] Nerub-ar Palace"],
@@ -28,6 +29,15 @@ T.RaidData = {
 			{ 41301, 41305, 41309, 41313, 41317, 41321, 41325, 41329 },
 			{ 41302, 41306, 41310, 41314, 41318, 41322, 41326, 41330 }
 		}
+	},
+	[3] = {
+		abbr = L["[ABBR] Manaforge Omega"],
+		achievements = {
+			{ 41633, 41637, 41641, 41645, 41649, 41653, 41657, 41661 },
+			{ 41634, 41638, 41642, 41646, 41650, 41654, 41658, 41662 },
+			{ 41635, 41639, 41643, 41647, 41651, 41655, 41659, 41663 },
+			{ 41636, 41640, 41644, 41648, 41652, 41656, 41660, 41664 }
+		}
 	}
 }
 
@@ -41,6 +51,11 @@ T.MythicPlusAchievementData = {
 		{ id = 40951, abbr = L["[ABBR] The War Within Keystone Legend: Season Two"] },
 		{ id = 40952, abbr = L["[ABBR] The War Within Keystone Hero: Season Two"] },
 		{ id = 41533, abbr = L["[ABBR] The War Within Keystone Master: Season Two"] }
+	},
+	[3] = {
+		{ id = 42172, abbr = L["[ABBR] The War Within Keystone Legend: Season Three"] },
+		{ id = 42171, abbr = L["[ABBR] The War Within Keystone Hero: Season Three"] },
+		{ id = 41973, abbr = L["[ABBR] The War Within Keystone Master: Season Three"] }
 	}
 }
 
@@ -106,7 +121,9 @@ T.MythicPlusMapData = {
 	[505] = L["[ABBR] The Dawnbreaker"],
 	[506] = L["[ABBR] Cinderbrew Meadery"],
 	[507] = L["[ABBR] Grim Batol"],
-	[525] = L["[ABBR] Operation: Floodgate"]
+	[525] = L["[ABBR] Operation: Floodgate"],
+	[541] = L["[ABBR] The Stonecore"],
+	[542] = L["[ABBR] Eco-Dome Al'dani"]
 }
 
 local difficulties = {
