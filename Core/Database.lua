@@ -20,5 +20,5 @@ P.LEFT_MOUSE_BUTTON = [[|TInterface\TutorialFrame\UI-Tutorial-Frame:12:12:0:0:51
 P.RIGHT_MOUSE_BUTTON = [[|TInterface\TutorialFrame\UI-Tutorial-Frame:12:12:0:0:512:512:10:65:330:385|t]]
 
 -- Bindings
-BINDING_HEADER_NDUIPLUS = addonName
+BINDING_HEADER_NDUIPLUS = C_AddOns.GetAddOnMetadata(addonName, "Title")
 BINDING_NAME_NDUIPLUSTOGGLEBAG = L["Toggle OfflineBag"]
