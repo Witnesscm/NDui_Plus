@@ -17,7 +17,7 @@ function M:IconSearch_DoSearch(frame, str)
 	local id = tonumber(str)
 	if not id then return end
 
-	local spell = GetSpellTexture(id)
+	local spell = C_Spell.GetSpellTexture(id)
 	if spell then
 		tinsert(results, spell)
 	end
