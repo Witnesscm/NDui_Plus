@@ -18,7 +18,7 @@ local function AnnounceLoot(chn)
 		local link = GetLootSlotLink(i)
 		local quality = select(5, GetLootSlotInfo(i))
 		if link and quality and quality >= LT.db["AnnounceRarity"] then
-			SendChatMessage(format("- %s", link), chn)
+			C_ChatInfo.SendChatMessage(format("- %s", link), chn)
 		end
 	end
 end
@@ -28,9 +28,9 @@ local function Announce(chn)
 	if nums == 0 then return end
 	if LT.db["AnnounceTitle"] then
 		if UnitIsPlayer("target") or not UnitExists("target") then
-			SendChatMessage(format("*** %s ***", L["Loots in chest"]), chn)
+			C_ChatInfo.SendChatMessage(format("*** %s ***", L["Loots in chest"]), chn)
 		else
-			SendChatMessage(format("*** %s%s ***", UnitName("target"), L["Loots"]), chn)
+			C_ChatInfo.SendChatMessage(format("*** %s%s ***", UnitName("target"), L["Loots"]), chn)
 		end
 	end
 	if IsInInstance() or chn ~= "say" then
