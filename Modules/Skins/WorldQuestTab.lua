@@ -2,59 +2,70 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 local S = P:GetModule("Skins")
 
-local function HandleRewards(button)
-	for index = 1, 4 do
-		local reward = button.Rewards["Reward"..index]
-		if reward then
-			reward.bg = B.ReskinIcon(reward.Icon)
-			B.ReskinIconBorder(reward.IconBorder)
-		end
+local function HandleListButton(self)
+	local Highlight = self.Highlight
+	B.StripTextures(Highlight)
+	Highlight.HL = Highlight:CreateTexture(nil, "ARTWORK")
+	Highlight.HL:SetTexture(DB.bdTex)
+	Highlight.HL:SetVertexColor(DB.r, DB.g, DB.b, .3)
+	Highlight.HL:SetInside()
+end
+
+local function HandleRewardButton(self)
+	for _, reward in ipairs(self.rewardFrames) do
+		reward.BorderMask:Hide()
+		reward.Icon:SetInside()
+		reward.bg = B.ReskinIcon(reward.Icon)
+		B.ReskinIconBorder(reward.QualityColor)
+		reward.AmountBG:SetAlpha(0)
 	end
 end
 
-local function HandleOptionDropDown(option)
-	B.Reskin(option.Dropdown)
-	B.Reskin(option.DecrementButton)
-	B.Reskin(option.IncrementButton)
+local function HandleSettingsCategory(self)
+	B.StripTextures(self)
+	B.Reskin(self)
+
+	if self.Background then
+		self.__bg:SetPoint("TOPLEFT", self.Background, "TOPLEFT", 0, 2)
+		self.__bg:SetPoint("BOTTOMRIGHT", self.Background, "BOTTOMRIGHT", 0, 0)
+	end
+
+	if self.BGRight then
+		self.BGRight:Hide()
+	end
+
+	if not self.ExpandIcon then
+		self.ExpandIcon = self:CreateTexture(nil, "ARTWORK")
+		self.ExpandIcon:SetDesaturated(true)
+		self.ExpandIcon:SetPoint("LEFT", 15, 0)
+	end
 end
 
-local function ReskinCategory(category)
-	B.StripTextures(category)
-	B.Reskin(category)
+local function HandleSettingsCheckbox(self)
+	S:Proxy("ReskinCheck", self.CheckBox)
+end
 
-	for _, setting in ipairs(category.settings) do
+local function HandleSettingsSlider(self)
+	S:Proxy("ReskinStepperSlider", self.SliderWithSteppers)
+	S:Proxy("ReskinInput", self.TextBox)
+end
 
-		if setting.Container and setting.isSpecial then
-			HandleOptionDropDown(setting.Container)
-		elseif setting.Dropdown then
-			B.ReskinDropDown(setting.Dropdown)
-		end
+local function HandleSettingsColor(self)
+	S:Proxy("Reskin", self.Picker)
+	self.Picker.Color:SetAllPoints(self.Picker.__bg)
+	S:Proxy("Reskin", self.ResetButton)
+end
 
-		if setting.SettingSlider then
-			B.ReskinStepperSlider(setting.SettingSlider)
-		end
+local function HandleSettingsDropDown(self)
+	S:Proxy("ReskinDropDown", self.Dropdown)
+end
 
-		if setting.TextBox then
-			B.ReskinInput(setting.TextBox)
-		end
+local function HandleSettingsButton(self)
+	S:Proxy("Reskin", self.Button)
+end
 
-		if setting.Button then
-			B.Reskin(setting.Button)
-		end
-
-		if setting.CheckBox then
-			B.ReskinCheck(setting.CheckBox)
-		end
-
-		if setting.ResetButton then
-			B.Reskin(setting.ResetButton)
-		end
-
-		if setting.Picker then
-			B.Reskin(setting.Picker)
-			setting.Picker.Color:SetAllPoints(setting.Picker.__bg)
-		end
-	end
+local function HandleSettingsTextInput(self)
+	S:Proxy("ReskinInput", self.TextBox)
 end
 
 function S:WorldQuestTab()
@@ -63,72 +74,63 @@ function S:WorldQuestTab()
 	local frame = _G.WQT_WorldQuestFrame
 	if not frame then return end
 
-	S:Proxy("ReskinFilterButton", frame.FilterButton)
-	S:Proxy("ReskinDropDown", frame.SortDropdown)
-
+	-- WQT_ListContainer
 	local ScrollFrame = frame.ScrollFrame
 	if ScrollFrame then
-		if ScrollFrame.Background then
-			ScrollFrame.Background:Hide()
-		end
+		ScrollFrame.Background:Hide()
 		S:Proxy("StripTextures", ScrollFrame.BorderFrame)
+		S:Proxy("ReskinFilterButton", ScrollFrame.FilterDropdown)
+		S:Proxy("ReskinDropDown", ScrollFrame.SortDropdown)
 		S:Proxy("ReskinTrimScroll", ScrollFrame.ScrollBar)
 	end
 
-	local Blocker = frame.Blocker
-	if Blocker then
-		B.StripTextures(Blocker)
-		Blocker.CloseButton:Hide()
-		S:Proxy("StripTextures", Blocker.DetailFrame)
-		S:Proxy("StripTextures", Blocker.BorderFrame)
+	P:SecureHook("WQT_ListButtonMixin", "OnLoad", HandleListButton)
+	P:SecureHook("WQT_RewardDisplayMixin", "OnLoad", HandleRewardButton)
+
+	-- WQT_WhatsNewFrame
+	local WhatsNewFrame = frame.WhatsNewFrame
+	if WhatsNewFrame then
+		WhatsNewFrame.Background:Hide()
+		S:Proxy("StripTextures", WhatsNewFrame.BorderFrame)
+		S:Proxy("ReskinTrimScroll", WhatsNewFrame.ScrollBar)
 	end
 
-	if _G.WQT_ListButtonMixin then
-		hooksecurefunc(_G.WQT_ListButtonMixin, "OnLoad", function(self)
-			HandleRewards(self)
-
-			local Faction = self.Faction
-			Faction.Ring:Hide()
-
-			local Title = self.Title
-			Title:ClearAllPoints()
-			Title:SetPoint("BOTTOMLEFT", Faction, "RIGHT", 0, 0)
-
-			local Time = self.Time
-			Time:ClearAllPoints()
-			Time:SetPoint("TOPLEFT", Faction, "RIGHT", 5, 0)
-
-			local Highlight = self.Highlight
-			B.StripTextures(Highlight)
-			Highlight.HL = Highlight:CreateTexture(nil, "ARTWORK")
-			Highlight.HL:SetTexture(DB.bdTex)
-			Highlight.HL:SetVertexColor(DB.r, DB.g, DB.b, .25)
-			Highlight.HL:SetInside()
-		end)
-	end
-
-	local SettingsFrame = _G.WQT_SettingsFrame
+	-- WQT_SettingsFrame
+	local SettingsFrame = frame.SettingsFrame
 	if SettingsFrame then
-		S:Proxy("ReskinTrimScroll", SettingsFrame.ScrollFrame and SettingsFrame.ScrollFrame.ScrollBar)
-
-		P:Delay(1, function()
-			for _, category in ipairs(SettingsFrame.categories) do
-				ReskinCategory(category)
-
-				for _, subCategory in ipairs(category.subCategories) do
-					ReskinCategory(subCategory)
-				end
-			end
-		end)
+		SettingsFrame.Background:Hide()
+		S:Proxy("StripTextures", SettingsFrame.BorderFrame)
+		S:Proxy("ReskinTrimScroll", SettingsFrame.ScrollBar)
 	end
 
-	if _G.WQT_SettingsQuestListPreview then
-		HandleRewards(_G.WQT_SettingsQuestListPreview.Preview)
+	local SettingsPreview = _G.WQT_SettingsQuestListPreview and _G.WQT_SettingsQuestListPreview.Preview
+	if SettingsPreview and SettingsPreview.Rewards then
+		HandleRewardButton(SettingsPreview.Rewards)
 	end
 
-	if _G.WQT_VersionFrame then
-		S:Proxy("ReskinTrimScroll", _G.WQT_VersionFrame.ScrollBar)
+	P:SecureHook("WQT_SettingsCategoryMixin", "Init", HandleSettingsCategory)
+	P:SecureHook("WQT_SettingsCheckboxMixin", "Init", HandleSettingsCheckbox)
+	P:SecureHook("WQT_SettingsSliderMixin", "Init", HandleSettingsSlider)
+	P:SecureHook("WQT_SettingsColorMixin", "Init", HandleSettingsColor)
+	P:SecureHook("WQT_SettingsDropDownMixin", "Init", HandleSettingsDropDown)
+	P:SecureHook("WQT_SettingsButtonMixin", "Init", HandleSettingsButton)
+	P:SecureHook("WQT_SettingsConfirmButtonMixin", "Init", HandleSettingsButton)
+	P:SecureHook("WQT_SettingsTextInputMixin", "Init", HandleSettingsTextInput)
+
+	-- WQT_Container
+	local FlightMapContainer = _G.WQT_FlightMapContainer
+	if FlightMapContainer then
+		B.StripTextures(FlightMapContainer)
+		B.SetBD(FlightMapContainer, nil, 6, 0, 0, 0)
+		S:Proxy("Reskin", _G.WQT_FlightMapContainerButton)
+	end
+
+	local WorldMapContainer = _G.WQT_WorldMapContainer
+	if WorldMapContainer then
+		B.StripTextures(WorldMapContainer)
+		local bg = B.SetBD(WorldMapContainer, nil, 0, 0, 0, 0)
+		bg:SetFrameLevel(bg:GetFrameLevel() + 1)
 	end
 end
 
-S:RegisterSkin("WorldQuestTab", S.WorldQuestTab)
+S:RegisterSkin("WorldQuestTab", S.WorldQuestTab, true)
