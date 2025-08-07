@@ -2,6 +2,14 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 
 P.Changelog = [[
+v11.2.0
+[主要] 更新版本号至11.2.0
+[聊天] 更新超链接图标
+[鼠标提示] PvE进度更新地心之战S3数据
+[美化] 修复 WeakAurasOptions 按钮重叠
+[美化] 修复 MountsJournal 美化
+[美化] 更新 WorldQuestTab (LanceDH) 美化 
+
 v11.1.6
 [主要] 更新版本号至11.1.7
 [易用性] 虫洞助手支持 DialogueUI 插件
