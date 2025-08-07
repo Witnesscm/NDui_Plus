@@ -40,25 +40,17 @@ local function reskinMainFrame(self)
 end
 
 function S:Collectionator()
-	local function hook(object, method, func)
-		if _G[object] and _G[object][method] then
-			hooksecurefunc(_G[object], method, func)
-		else
-			P.Developer_ThrowError(format("%s:%s does not exist", object, method))
-		end
-	end
-
-	hook("CollectionatorSummaryTabFrameMixin", "OnLoad", reskinMainFrame)
-	hook("CollectionatorReplicateTabFrameMixin", "OnLoad", reskinMainFrame)
-	hook("CollectionatorPetSpeciesFilterMixin", "OnLoad", filterButton)
-	hook("CollectionatorQualityFilterMixin", "OnLoad", filterButton)
-	hook("CollectionatorArmorFilterMixin", "OnLoad", filterButton)
-	hook("CollectionatorWeaponFilterMixin", "OnLoad", filterButton)
-	hook("CollectionatorSlotFilterMixin", "OnLoad", filterButton)
-	hook("CollectionatorMountTypeFilterMixin", "OnLoad", filterButton)
-	hook("CollectionatorProfessionFilterMixin", "OnLoad", filterButton)
-	hook("CollectionatorSummaryViewMixin", "OnLoad", viewFrame)
-	hook("CollectionatorReplicateViewMixin", "OnLoad", viewFrame)
+	P:SecureHook("CollectionatorSummaryTabFrameMixin", "OnLoad", reskinMainFrame)
+	P:SecureHook("CollectionatorReplicateTabFrameMixin", "OnLoad", reskinMainFrame)
+	P:SecureHook("CollectionatorPetSpeciesFilterMixin", "OnLoad", filterButton)
+	P:SecureHook("CollectionatorQualityFilterMixin", "OnLoad", filterButton)
+	P:SecureHook("CollectionatorArmorFilterMixin", "OnLoad", filterButton)
+	P:SecureHook("CollectionatorWeaponFilterMixin", "OnLoad", filterButton)
+	P:SecureHook("CollectionatorSlotFilterMixin", "OnLoad", filterButton)
+	P:SecureHook("CollectionatorMountTypeFilterMixin", "OnLoad", filterButton)
+	P:SecureHook("CollectionatorProfessionFilterMixin", "OnLoad", filterButton)
+	P:SecureHook("CollectionatorSummaryViewMixin", "OnLoad", viewFrame)
+	P:SecureHook("CollectionatorReplicateViewMixin", "OnLoad", viewFrame)
 end
 
 S:RegisterSkin("Collectionator", S.Collectionator)

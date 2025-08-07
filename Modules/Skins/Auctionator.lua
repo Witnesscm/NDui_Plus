@@ -368,31 +368,23 @@ function S:Auctionator()
 		styled = true
 	end)
 
-	local function hook(object, method, func)
-		if _G[object] and _G[object][method] then
-			hooksecurefunc(_G[object], method, func)
-		else
-			P.Developer_ThrowError(format("%s:%s does not exist", object, method))
-		end
-	end
-
 	local ObjectiveTrackerFrame = _G.AuctionatorCraftingInfoObjectiveTrackerFrame
 	if ObjectiveTrackerFrame then
 		reskinSearchButton(ObjectiveTrackerFrame)
 	else
-		hook("AuctionatorCraftingInfoObjectiveTrackerFrameMixin", "OnLoad", reskinSearchButton)
+		P:SecureHook("AuctionatorCraftingInfoObjectiveTrackerFrameMixin", "OnLoad", reskinSearchButton)
 	end
 
-	hook("AuctionatorConfigurationCopyAndPasteMixin", "OnLoad", reskinCopyAndPaste)
-	hook("AuctionatorCraftingInfoProfessionsFrameMixin", "OnLoad", reskinSearchButton)
-	hook("AuctionatorGroupsViewMixin", "OnLoad", reskinBagView)
-	hook("AuctionatorGroupsViewItemMixin", "SetItemInfo", reskinBagItemButton)
-	hook("AuctionatorResetButtonMixin", "OnLoad", resetButton)
-	hook("AuctionatorConfigMinMaxMixin", "OnLoad", configMinMax)
-	hook("AuctionatorConfigCheckboxMixin", "OnLoad", configCheckbox)
-	hook("AuctionatorConfigRadioButtonGroupMixin", "InitializeRadioButtonGroup", configRadioButtonGroup)
-	hook("AuctionatorConfigHorizontalRadioButtonGroupMixin", "InitializeRadioButtonGroup", configRadioButtonGroup)
-	hook("AuctionatorResultsListingMixin", "Init", resultsListing)
+	P:SecureHook("AuctionatorConfigurationCopyAndPasteMixin", "OnLoad", reskinCopyAndPaste)
+	P:SecureHook("AuctionatorCraftingInfoProfessionsFrameMixin", "OnLoad", reskinSearchButton)
+	P:SecureHook("AuctionatorGroupsViewMixin", "OnLoad", reskinBagView)
+	P:SecureHook("AuctionatorGroupsViewItemMixin", "SetItemInfo", reskinBagItemButton)
+	P:SecureHook("AuctionatorResetButtonMixin", "OnLoad", resetButton)
+	P:SecureHook("AuctionatorConfigMinMaxMixin", "OnLoad", configMinMax)
+	P:SecureHook("AuctionatorConfigCheckboxMixin", "OnLoad", configCheckbox)
+	P:SecureHook("AuctionatorConfigRadioButtonGroupMixin", "InitializeRadioButtonGroup", configRadioButtonGroup)
+	P:SecureHook("AuctionatorConfigHorizontalRadioButtonGroupMixin", "InitializeRadioButtonGroup", configRadioButtonGroup)
+	P:SecureHook("AuctionatorResultsListingMixin", "Init", resultsListing)
 end
 
 S:RegisterSkin("Auctionator", S.Auctionator)
