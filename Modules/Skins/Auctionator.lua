@@ -23,7 +23,7 @@ local function reskinInput(editbox)
 	editbox.bg:SetPoint("TOPLEFT", -2, 4)
 end
 
-local function reskinDialog(frame)
+local function reskinDialogFrame(frame)
 	if not frame then P:Debug("Unknown: Dialog") return end
 
 	B.StripTextures(frame)
@@ -196,6 +196,28 @@ local function resultsListing(self)
 	end
 end
 
+local dialogIndex = 1
+local function reskinDialog()
+	local dialog = _G["AuctionatorDialog" .. dialogIndex]
+	if dialog then
+		B.StripTextures(dialog)
+		B.SetBD(dialog)
+
+		if dialog.editBox then
+			B.ReskinInput(dialog.editBox, 24)
+		end
+
+		for _, key in ipairs({ "acceptButton", "cancelButton", "altButton" }) do
+			local bu = dialog[key]
+			if bu then
+				B.Reskin(bu)
+			end
+		end
+
+		dialogIndex = dialogIndex + 1
+	end
+end
+
 function S:Auctionator()
 	if not S.db["Auctionator"] then return end
 
@@ -230,19 +252,19 @@ function S:Auctionator()
 
 			local exportDialog = ShoppingList.exportDialog
 			if exportDialog then
-				reskinDialog(exportDialog)
+				reskinDialogFrame(exportDialog)
 				reskinButtons(exportDialog, {"Export", "SelectAll", "UnselectAll"})
 
 				local copyTextDialog = exportDialog.copyTextDialog
 				if copyTextDialog then
-					reskinDialog(copyTextDialog)
+					reskinDialogFrame(copyTextDialog)
 					S:Proxy("Reskin", copyTextDialog.Close)
 				end
 			end
 
 			local importDialog = ShoppingList.importDialog
 			if importDialog then
-				reskinDialog(importDialog)
+				reskinDialogFrame(importDialog)
 				S:Proxy("Reskin", importDialog.Import)
 			end
 
@@ -267,13 +289,13 @@ function S:Auctionator()
 
 			local exportCSVDialog = ShoppingList.exportCSVDialog
 			if exportCSVDialog then
-				reskinDialog(exportCSVDialog)
+				reskinDialogFrame(exportCSVDialog)
 				S:Proxy("Reskin", exportCSVDialog.Close)
 			end
 
 			local itemHistoryDialog = ShoppingList.itemHistoryDialog
 			if itemHistoryDialog then
-				reskinDialog(itemHistoryDialog)
+				reskinDialogFrame(itemHistoryDialog)
 				reskinButtons(itemHistoryDialog, {"Close", "Dock"})
 			end
 
@@ -294,7 +316,7 @@ function S:Auctionator()
 					for _, key in ipairs({"QuantityCheckConfirmationDialog", "FinalConfirmationDialog"}) do
 						local dialog = buyFrame[key]
 						if dialog then
-							reskinDialog(dialog)
+							reskinDialogFrame(dialog)
 							reskinButtons(dialog, {"AcceptButton", "CancelButton"})
 							if dialog.QuantityInput then reskinInput(dialog.QuantityInput) end
 						end
@@ -367,6 +389,13 @@ function S:Auctionator()
 
 		styled = true
 	end)
+
+	-- Dialogs
+	for _, dialogFunc in ipairs({ "ShowEditBox", "ShowConfirm", "ShowConfirmAlt", "ShowMoney" }) do
+		if Auctionator.Dialogs and Auctionator.Dialogs[dialogFunc] then
+			hooksecurefunc(Auctionator.Dialogs, dialogFunc, reskinDialog)
+		end
+	end
 
 	local ObjectiveTrackerFrame = _G.AuctionatorCraftingInfoObjectiveTrackerFrame
 	if ObjectiveTrackerFrame then
