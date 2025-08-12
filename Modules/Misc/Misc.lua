@@ -153,3 +153,22 @@ do
 		end
 	end
 end
+
+-- Auto-Complete C.H.E.T.T. List
+do
+	B:RegisterEvent("PLAYER_CHOICE_UPDATE", function()
+		C_Timer.After(.1, function()
+			local choiceInfo = C_PlayerChoice.GetCurrentPlayerChoiceInfo()
+			if choiceInfo and choiceInfo.choiceID == 850 then
+				local optionInfo = choiceInfo.options and choiceInfo.options[1]
+				local buttons = optionInfo and optionInfo.buttons
+				if buttons and #buttons > 1 then
+					local button = buttons[1]
+					if button and not button.disabled then
+						C_PlayerChoice.SendPlayerChoiceResponse(button.id)
+					end
+				end
+			end
+		end)
+	end)
+end
