@@ -118,6 +118,7 @@ local function AddNewTag(parent, anchor, x, y)
 	local tag = CreateFrame("Frame", nil, parent, "NewFeatureLabelTemplate")
 	tag:SetPoint("LEFT", anchor or parent, x or -25, y or 10)
 	tag:SetScale(.9)
+	tag.BGLabel:Hide()
 	tag:Show()
 end
 
