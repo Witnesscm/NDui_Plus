@@ -145,6 +145,7 @@ P.DefaultSettings = {
 		WormholeHelper = true,
 		TrainAll = true,
 		AutoRoll = 3,
+		ExitPhaseDiving = true,
 	},
 }
 

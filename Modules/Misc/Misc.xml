@@ -16,4 +16,5 @@
 	<Script file="WormholeHelper.lua"/>
 	<Script file="PTRTools.lua"/>
 	<Script file="AutoRoll.lua"/>
+	<Script file="ExitPhaseDiving.lua"/>
 </Ui>
