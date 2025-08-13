@@ -5,7 +5,68 @@ local S = P:GetModule("Skins")
 local _G = getfenv(0)
 local pairs, type = pairs, type
 local strfind = string.find
-local r, g, b = DB.r, DB.g, DB.b
+local x1, x2, y1, y2 = unpack(DB.TexCoord)
+
+local function UpdateIconBgAlpha(icon, _, _, _, alpha)
+	icon.bg:SetAlpha(alpha)
+	if icon.bg.__shadow then
+		icon.bg.__shadow:SetAlpha(alpha)
+	end
+end
+
+local function UpdateIconTexCoord(icon)
+	if icon.isCutting then return end
+	icon.isCutting = true
+
+	local width, height = icon:GetSize()
+	if width ~= 0 and height ~= 0 then
+		local left, right, top, bottom = x1, x2, y1, y2 -- normal icon
+		local ratio = width / height
+		if ratio > 1 then                         -- fat icon
+			local offset = (1 - 1 / ratio) / 2
+			top = top + offset
+			bottom = bottom - offset
+		elseif ratio < 1 then -- thin icon
+			local offset = (1 - ratio) / 2
+			left = left + offset
+			bottom = bottom - offset
+		end
+		icon:SetTexCoord(left, right, top, bottom)
+	end
+
+	icon.isCutting = nil
+end
+
+local function ReskinWAIcon(icon)
+	UpdateIconTexCoord(icon)
+	hooksecurefunc(icon, "SetTexCoord", UpdateIconTexCoord)
+	icon.bg = B.SetBD(icon, 0)
+	icon.bg:SetFrameLevel(0)
+	hooksecurefunc(icon, "SetVertexColor", UpdateIconBgAlpha)
+end
+
+local function ResetBGLevel(frame)
+	frame.bg:SetFrameLevel(0)
+end
+
+local function Skin_WeakAuras(f, fType)
+	if fType == "icon" then
+		if not f.styled then
+			ReskinWAIcon(f.icon)
+			f.styled = true
+		end
+	elseif fType == "aurabar" then
+		if not f.styled then
+			f.bg = B.SetBD(f.bar, 0)
+			f.bg:SetFrameLevel(0)
+			ReskinWAIcon(f.icon)
+			hooksecurefunc(f, "SetFrameStrata", ResetBGLevel)
+			f.styled = true
+		end
+
+		f.icon.bg:SetShown(not not f.iconVisible)
+	end
+end
 
 local function reskinChildButtons(frame)
 	if not frame then return end
@@ -320,24 +381,42 @@ local function SkinLibAPIAutoComplete(lib)
 end
 
 function S:WeakAuras()
-	if not S.db["WeakAurasOptions"] then return end
-
 	local WeakAuras = _G.WeakAuras
 	if not WeakAuras then return end
 
-	local profilingFrame = _G.WeakAurasProfilingFrame
-	if profilingFrame then
-		profilingFrame:HookScript("OnShow", SkinProfilingFrame)
+	if C.db["Skins"]["WeakAuras"] then
+		-- disable NDui skin
+		if C.otherSkins["WeakAuras"] then
+			C.otherSkins["WeakAuras"] = nil
+		end
+
+		if WeakAuras.Private then
+			if WeakAuras.Private.regionPrototype then
+				local function OnPrototypeCreate(region)
+					Skin_WeakAuras(region, region.regionType)
+				end
+				local function OnPrototypeModifyFinish(_, region)
+					Skin_WeakAuras(region, region.regionType)
+				end
+				hooksecurefunc(WeakAuras.Private.regionPrototype, "create", OnPrototypeCreate)
+				hooksecurefunc(WeakAuras.Private.regionPrototype, "modifyFinish", OnPrototypeModifyFinish)
+			end
+		else
+			local link = format("|cff99ccff|Haddon:%s:%s|h[%s]|h|r", addonName, LINK_ID, L["Click for details"])
+			P:Print(L["WeakAurasSkinTips"], link)
+		end
 	end
 
-	local profilingReport = _G.WeakAurasProfilingReport
-	if profilingReport then
-		profilingReport:HookScript("OnShow", SkinProfilingReport)
-	end
+	if S.db["WeakAurasOptions"] then
+		local profilingFrame = _G.WeakAurasProfilingFrame
+		if profilingFrame then
+			profilingFrame:HookScript("OnShow", SkinProfilingFrame)
+		end
 
-	if C.db["Skins"]["WeakAuras"] and not WeakAuras.Private then
-		local link = format("|cff99ccff|Haddon:%s:%s|h[%s]|h|r", addonName, LINK_ID, L["Click for details"])
-		P:Print(L["WeakAurasSkinTips"], link)
+		local profilingReport = _G.WeakAurasProfilingReport
+		if profilingReport then
+			profilingReport:HookScript("OnShow", SkinProfilingReport)
+		end
 	end
 end
 
@@ -430,7 +509,7 @@ function S:WeakAurasDisplayButton(widget)
 	button.iconBG:SetAllPoints(widget.icon)
 
 	button.highlight:SetTexture(DB.bdTex)
-	button.highlight:SetVertexColor(r, g, b, .25)
+	button.highlight:SetVertexColor(DB.r, DB.g, DB.b, .25)
 	button.highlight:SetInside()
 
 	hooksecurefunc(widget, "SetIcon", S.WeakAuras_SkinIcon)
@@ -447,7 +526,7 @@ function S:WeakAurasNewButton(widget)
 	button.iconBG:SetAllPoints(widget.icon)
 
 	button.highlight:SetTexture(DB.bdTex)
-	button.highlight:SetVertexColor(r, g, b, .25)
+	button.highlight:SetVertexColor(DB.r, DB.g, DB.b, .25)
 	button.highlight:SetInside()
 end
 
@@ -508,7 +587,7 @@ function S:WeakAurasTextureButton(widget)
 	B.CreateBD(button, .25)
 	button:SetHighlightTexture(DB.bdTex)
 	local hl = button:GetHighlightTexture()
-	hl:SetVertexColor(r, g, b, .25)
+	hl:SetVertexColor(DB.r, DB.g, DB.b, .25)
 	hl:SetInside()
 end
 
@@ -567,7 +646,7 @@ function S:WeakAurasTreeGroup(widget)
 	widget.treeframe:GetChildren():HideBackdrop()
 end
 
-S:RegisterSkin("WeakAuras", S.WeakAuras)
+S:RegisterSkin("WeakAuras", S.WeakAuras, true)
 S:RegisterSkin("WeakAurasOptions", S.WeakAurasOptions)
 S:RegisterSkin("WeakAurasTemplates", S.WeakAurasTemplates)
 S:RegisterAceGUIWidget("WeakAurasDisplayButton")
