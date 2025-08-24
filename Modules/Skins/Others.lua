@@ -73,6 +73,40 @@ function S:MogPartialSets()
 	end
 end
 
+function S:BigWigs()
+	local Locale = BigWigsAPI and BigWigsAPI:GetLocale("BigWigs")
+	local keystoneTitle = Locale and Locale.keystoneTitle
+	if not keystoneTitle then return end
+
+	for _, child in pairs {_G.UIParent:GetChildren()} do
+		if child and child.GetTitleText and child.Tabs then
+			local text = child:GetTitleText():GetText()
+			if text and text == keystoneTitle then
+				B.ReskinPortraitFrame(child)
+
+				for i, tab in ipairs(child.Tabs) do
+					B.ReskinTab(tab)
+					tab:SetHeight(28)
+					tab.Text.SetPoint = B.Dummy
+					if i ~= 1 then
+						tab:ClearAllPoints()
+						tab:SetPoint("TOPLEFT", child.Tabs[i - 1], "TOPRIGHT", -15, 0)
+					end
+				end
+
+				for _, subChild in pairs {child:GetChildren()} do
+					if subChild.ScrollBar then
+						B.ReskinTrimScroll(subChild.ScrollBar)
+						break
+					end
+				end
+
+				break
+			end
+		end
+	end
+end
+
 function S:BigWigs_Options()
 	P.ReskinTooltip(_G.BigWigsOptionsTooltip)
 end
@@ -183,6 +217,7 @@ end
 S:RegisterSkin("WorldQuestsList", S.WorldQuestsList)
 S:RegisterSkin("PremadeGroupsFilter", S.PremadeGroupsFilter)
 S:RegisterSkin("MogPartialSets", S.MogPartialSets)
+S:RegisterSkin("BigWigs", S.BigWigs, true)
 S:RegisterSkin("BigWigs_Options", S.BigWigs_Options)
 S:RegisterSkin("LibQTip")
 S:RegisterSkin("SavedInstances", S.SavedInstances)
