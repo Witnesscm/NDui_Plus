@@ -166,6 +166,31 @@ local function ReskinRaidsFrame(frame)
 	end
 end
 
+local function ReskinSpecFrame(frame)
+	if not frame.styled then
+		for _, child in pairs {frame:GetChildren()} do
+			local objType = child:GetObjectType()
+			if objType == "Button" then
+				local texture = child.GetNormalTexture and child:GetNormalTexture()
+				local atlas = texture and texture:GetAtlas()
+				if atlas and atlas == "RedButton-Exit" then
+					B.ReskinClose(child)
+				end
+			elseif objType == "Frame" and child.itemFrames and child.Bg then
+				child:HideBackdrop()
+				B.CreateBDFrame(child.Bg, 0)
+				S:Proxy("Reskin", child.Button)
+
+				for _, button in ipairs(child.itemFrames) do
+					HandleItemButton(button)
+				end
+			end
+		end
+
+		frame.styled = true
+	end
+end
+
 function S:KeystoneLoot()
 	local frame = _G.KeystoneLootFrame
 	if not frame then return end
@@ -215,6 +240,15 @@ function S:KeystoneLoot()
 			tab.Children:HookScript("OnShow", ReskinRaidsFrame)
 		end
 	end
+
+	for _, child in pairs {_G.UIParent:GetChildren()} do
+		if child.layoutType == "SimplePanelTemplate" and B:Round(child:GetHeight()) == 217 then
+			B.StripTextures(child)
+			B.SetBD(child)
+			child:HookScript("OnShow", ReskinSpecFrame)
+			break
+		end
+	end
 end
 
-S:RegisterSkin("KeystoneLoot", S.KeystoneLoot)
+S:RegisterSkin("KeystoneLoot", S.KeystoneLoot, true)
