@@ -17,5 +17,5 @@
 	<Script file="PTRTools.lua"/>
 	<Script file="AutoRoll.lua"/>
 	<Script file="ExitPhaseDiving.lua"/>
-	<Script file="ReshiiWrap.lua"/>
+	<Script file="ReshiiWrapUpgrade.lua"/>
 </Ui>

@@ -13,10 +13,10 @@ local WrapsHelpInfo = {
 	callbackArg = "WrapsUpgrade",
 }
 
-function M:ReshiiWrap()
-	CharacterBackSlot:HookScript("OnMouseDown", function(_, button)
+function M:ReshiiWrapUpgrade()
+	CharacterBackSlot:HookScript("OnMouseDown", function(self, button)
 		if button == "MiddleButton" then
-			local itemID = GetInventoryItemID("player", INVSLOT_BACK)
+			local itemID = GetInventoryItemID("player", self:GetID())
 			if itemID and itemID == WARPS_ITEM_ID then
 				if not InCombatLockdown() then
 					GenericTraitUI_LoadUI()
@@ -52,4 +52,4 @@ function M:ReshiiWrap()
 	end)
 end
 
-M:RegisterMisc("ReshiiWrap", M.ReshiiWrap)
+M:RegisterMisc("ReshiiWrapUpgrade", M.ReshiiWrapUpgrade)
