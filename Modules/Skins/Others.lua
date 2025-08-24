@@ -214,6 +214,23 @@ function S:WarpDeplete()
 	end)
 end
 
+function S:Hekili()
+	local Hekili = _G.Hekili
+	if not Hekili then return end
+
+	if Hekili.CreateButton then
+		local CreateButton = Hekili.CreateButton
+		Hekili.CreateButton = function(...)
+			local button = CreateButton(...)
+			if button and not button.styled then
+				B.CreateSD(button)
+				button.styled = true
+			end
+			return button
+		end
+	end
+end
+
 S:RegisterSkin("WorldQuestsList", S.WorldQuestsList)
 S:RegisterSkin("PremadeGroupsFilter", S.PremadeGroupsFilter)
 S:RegisterSkin("MogPartialSets", S.MogPartialSets)
@@ -225,6 +242,7 @@ S:RegisterSkin("Krowi_WorldMapButtons")
 S:RegisterSkin("BuyEmAll", S.BuyEmAll)
 S:RegisterSkin("OmniCD", S.OmniCD)
 S:RegisterSkin("WarpDeplete", S.WarpDeplete)
+S:RegisterSkin("Hekili", S.Hekili, true)
 
 -- Hide Toggle Button
 S.ToggleFrames = {}
