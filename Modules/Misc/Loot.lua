@@ -85,7 +85,7 @@ function LT:OnLogin()
 			end
 			if i > LOOTFRAME_NUMBUTTONS then
 				if not button then
-					button = CreateFrame(ItemButtonMixin and "ItemButton" or "Button", "LootButton"..i, self, "LootButtonTemplate", i)
+					button = CreateFrame("Button", "LootButton"..i, self, "LootButtonTemplate", i)
 				end
 				LOOTFRAME_NUMBUTTONS = i
 			end
