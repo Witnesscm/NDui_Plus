@@ -93,7 +93,7 @@ function AB:RuneButton_OnClick()
 		ClearCursor()
 		local _, dialog = StaticPopup_Visible("REPLACE_ENCHANT")
 		if dialog then
-			dialog.button1:Click()
+			dialog:GetButton1():Click()
 		end
 	end
 
