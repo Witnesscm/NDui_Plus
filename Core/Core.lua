@@ -102,6 +102,7 @@ P.DefaultSettings = {
 		Ace3 = true,
 		alaCalendar = true,
 		alaGearMan = true,
+		Atlas = true,
 		AtlasLootClassic = true,
 		Auctionator = true,
 		AutoBar = true,
