@@ -228,7 +228,7 @@ local function TalentSpecTab_OnDoubleClick(self)
 	local spec = specs[specIndex]
 	local numTalentGroups = GetNumTalentGroups(false, false)
 	if not spec.pet and numTalentGroups > 1 and specIndex ~= activeSpec then
-		SetActiveTalentGroup(spec.talentGroup)
+		C_SpecializationInfo.SetActiveSpecGroup(spec.talentGroup)
 	end
 end
 
@@ -301,8 +301,8 @@ function M:TalentUI_CreateSpecTab(i, specIndex)
 	tab:SetScript("OnEnter", TalentSpecTab_OnEnter)
 	tab:SetScript("OnLeave", B.HideTooltip)
 
-	local activeTalentGroup, numTalentGroups = GetActiveTalentGroup(false, false), GetNumTalentGroups(false, false)
-	local activePetTalentGroup, numPetTalentGroups = GetActiveTalentGroup(false, true), GetNumTalentGroups(false, true)
+	local activeTalentGroup, numTalentGroups = C_SpecializationInfo.GetActiveSpecGroup(false, false), GetNumTalentGroups(false, false)
+	local activePetTalentGroup, numPetTalentGroups = C_SpecializationInfo.GetActiveSpecGroup(false, true), GetNumTalentGroups(false, true)
 	M.TalentUI_UpdateSpecTab(tab, activeTalentGroup, numTalentGroups, activePetTalentGroup, numPetTalentGroups)
 
 	return tab
@@ -713,7 +713,7 @@ end
 
 function M:TalentUI_Update()
 	local preview = GetCVarBool("previewTalentsOption")
-	local isActiveTalentGroup = M.TalentUI.talentGroup == GetActiveTalentGroup(false, M.TalentUI.pet)
+	local isActiveTalentGroup = M.TalentUI.talentGroup == C_SpecializationInfo.GetActiveSpecGroup(false, M.TalentUI.pet)
 
 	local base
 	local _, name, _, _, pointsSpent, background, previewPointsSpent = GetTalentTabInfo(self.talentTree, false, M.TalentUI.pet, M.TalentUI.talentGroup)
@@ -972,8 +972,8 @@ function M.TalentUI_UpdateControls()
 end
 
 function M.TalentUI_UpdatePlayer()
-	local activeTalentGroup, numTalentGroups = GetActiveTalentGroup(false, false), GetNumTalentGroups(false, false)
-	local activePetTalentGroup, numPetTalentGroups = GetActiveTalentGroup(false, true), GetNumTalentGroups(false, true)
+	local activeTalentGroup, numTalentGroups = C_SpecializationInfo.GetActiveSpecGroup(false, false), GetNumTalentGroups(false, false)
+	local activePetTalentGroup, numPetTalentGroups = C_SpecializationInfo.GetActiveSpecGroup(false, true), GetNumTalentGroups(false, true)
 
 	if not M.TalentUI_UpdateSpecs(activeTalentGroup, numTalentGroups, activePetTalentGroup, numPetTalentGroups) then
 		return
@@ -1125,7 +1125,7 @@ function M:TalentUI_Init()
 	frame.pet = false
 	frame.talentGroup = 1
 
-	local activeTalentGroup = GetActiveTalentGroup()
+	local activeTalentGroup = C_SpecializationInfo.GetActiveSpecGroup()
 	M.TalentUI_UpdateActiveSpec(activeTalentGroup)
 
 	M.TalentUI = frame
@@ -1149,7 +1149,7 @@ function M.TalentUI_Wipe(_, arg1, arg2)
 	if dialog then
 		MoneyFrame_Update(dialog:GetName().."MoneyFrame", arg1)
 		M.TalentUI:Show()
-		local talentGroup = GetActiveTalentGroup()
+		local talentGroup = C_SpecializationInfo.GetActiveSpecGroup()
 		for index, spec in next, specs do
 			if spec.pet == false and spec.talentGroup == talentGroup then
 				TalentSpecTab_OnClick(specTabs[index])
