@@ -44,7 +44,7 @@ function S:MerInspect()
 		end
 
 		local frameName = parent:GetName()
-		if frameName == "PaperDollFrame" or frameName == "InspectFrame" then
+		if frameName == "PaperDollFrame" then
 			local x = frameName == "PaperDollFrame" and _G.EngravingFrame and _G.EngravingFrame:IsVisible() and -180 or 33
 			frame:SetPoint("TOPLEFT", parent, "TOPRIGHT", -x, -16)
 		else
