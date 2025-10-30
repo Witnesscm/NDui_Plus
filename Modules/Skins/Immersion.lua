@@ -12,14 +12,10 @@ local function updateItemBorder(self)
 		local quality = select(4, GetQuestItemInfo(self.type, self:GetID()))
 		local color = DB.QualityColors[quality or 1]
 		self.bg:SetBackdropBorderColor(color.r, color.g, color.b)
-	elseif self.objectType == "currency" then
-		local name, texture, numItems, quality = GetQuestCurrencyInfo(self.type, self:GetID())
-		local currencyID = GetQuestCurrencyID(self.type, self:GetID())
-		if name and texture and numItems and quality and currencyID then
-			local currencyQuality = select(4, CurrencyContainerUtil.GetCurrencyContainerInfo(currencyID, numItems, name, texture, quality))
-			local color = DB.QualityColors[currencyQuality or 1]
-			self.bg:SetBackdropBorderColor(color.r, color.g, color.b)
-		end
+	elseif self.objectType == "currency" and self.currencyInfo then
+		local _, _, _, quality = CurrencyContainerUtil.GetCurrencyContainerInfo(self.currencyInfo.currencyID, self.currencyInfo.displayedAmount, self.currencyInfo.name, self.currencyInfo.texture, self.currencyInfo.quality)
+		local color = DB.QualityColors[quality or 1]
+		self.bg:SetBackdropBorderColor(color.r, color.g, color.b)
 	else
 		self.bg:SetBackdropBorderColor(0, 0, 0)
 	end
@@ -78,6 +74,25 @@ function S:Immersion()
 	B.StripTextures(MainFrame.Model)
 	local ModelBG = B.CreateBDFrame(MainFrame.Model, 0)
 	ModelBG:SetFrameLevel(MainFrame.Model:GetFrameLevel() + 1)
+
+	local ProgressionBar = TalkBox.ProgressionBar
+	B.StripTextures(ProgressionBar)
+	ProgressionBar:SetStatusBarTexture(DB.normTex)
+	B.CreateBDFrame(ProgressionBar, .25)
+
+	local ReputationBar = TalkBox.ReputationBar
+	ReputationBar.icon:SetPoint("TOPLEFT", -30, 6)
+	B.StripTextures(ReputationBar)
+	ReputationBar:SetStatusBarTexture(DB.normTex)
+	B.CreateBDFrame(ReputationBar, .25)
+
+	for i = 1, 4 do
+		local notch = ReputationBar["Notch"..i]
+		if notch then
+			notch:SetColorTexture(0, 0, 0)
+			notch:SetSize(C.mult, 16)
+		end
+	end
 
 	local Indicator = MainFrame.Indicator
 	Indicator:SetScale(1.25)
