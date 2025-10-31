@@ -417,9 +417,12 @@ do
 		return P.RIGHT_MOUSE_BUTTON .. text
 	end
 
-	local t, d = "|T%s%s|t", ""
 	function P.TextureString(texture, data)
-		return format(t, texture, data or d)
+		return format("|T%s:%s|t", texture, data or "16")
+	end
+
+	function P.AtlasString(atlas, data)
+		return format("|A:%s:%s|a", atlas, data or "16:16")
 	end
 
 	function P.CopyTable(tbl)
