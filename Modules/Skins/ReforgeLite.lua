@@ -2,12 +2,54 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 local S = P:GetModule("Skins")
 
-local function reskinCollapse(self)
-	if not self or not self.button then return end
+local function ReskinCollapse(self)
+	if not self then
+		P.Developer_ThrowError("ReforgeLite object is nil")
+		return
+	end
 
-	P.ReskinCollapse(self.button)
-	self.button.SetPushedTexture = B.Dummy
-	self.button:UpdateTexture()
+	P.ReskinCollapse(self)
+	self.SetPushedTexture = B.Dummy
+	self:UpdateTexture()
+end
+
+local function ReskinHelpButton(self)
+	if not self then
+		P.Developer_ThrowError("ReforgeLite object is nil")
+		return
+	end
+
+	if self.Ring then
+		self.Ring:SetAlpha(0)
+	end
+end
+
+local function ReskinItemButton(self)
+	if not self or not self.texture or not self.quality then
+		P.Developer_ThrowError("ReforgeLite object is nil")
+		return
+	end
+
+	self.texture:SetInside()
+	self.bg = B.ReskinIcon(self.texture)
+	B.ReskinIconBorder(self.quality, true)
+end
+
+local function ReskinDropDown(self)
+	B.StripTextures(self)
+	if self.Arrow then self.Arrow:SetAlpha(0) end
+	if self.Background then self.Background:SetAlpha(0) end
+
+	local bg = B.CreateBDFrame(self, 0, true)
+	bg:SetAllPoints()
+	local tex = self:CreateTexture(nil, "ARTWORK")
+	tex:SetPoint("RIGHT", bg, -3, 0)
+	tex:SetSize(18, 18)
+	B.SetupArrow(tex, "down")
+	self.__texture = tex
+
+	self:HookScript("OnEnter", B.Texture_OnEnter)
+	self:HookScript("OnLeave", B.Texture_OnLeave)
 end
 
 local function SkinRLWidget(self)
@@ -16,11 +58,16 @@ local function SkinRLWidget(self)
 	local objType = self and self:GetObjectType()
 	if objType == "EditBox" then
 		B.ReskinInput(self, 20)
-	elseif objType == "Frame" and self.Button then
-		P.ReskinDropDown(self)
-		self.Button:SetPoint("RIGHT", -18, 8)
+	elseif objType == "Button" and self.Left and self.Middle and self.Right and self.Text then
+		B.Reskin(self)
+	elseif objType == "Button" and self.Arrow and self.Text then
+		ReskinDropDown(self)
+	elseif objType == "Button" and self.ResetButton and self.Text then
+		B.ReskinFilterButton(self)
 	elseif objType == "CheckButton" then
 		B.ReskinCheck(self)
+	elseif objType == "Slider" then
+		B.ReskinSlider(self)
 	end
 
 	self.styled = true
@@ -35,87 +82,85 @@ local function SkinAllWidgets()
 	end
 end
 
-local function SkinMethodCategory(self)
-	if self.methodCategory and not self.methodCategory.styled then
-		reskinCollapse(self.methodCategory)
-		S:Proxy("Reskin", self.methodShow)
-		S:Proxy("Reskin", self.methodReset)
-		S:Proxy("Reskin", self.importWowSims)
-
-		self.methodCategory.styled = true
-	end
-end
-
 function S:ReforgeLite()
-	local frame = _G.ReforgeLite
-	if not frame then return end
+	local ReforgeLite = _G.ReforgeLite
+	if not ReforgeLite then return end
 
-	hooksecurefunc(frame, "CreateFrame", function()
-		B.StripTextures(frame)
-		B.SetBD(frame)
-		S:Proxy("ReskinClose", frame.close)
-		S:Proxy("ReskinScroll", frame.scrollBar)
-		S:Proxy("ReskinArrow", frame.presetsButton, "down")
-		S:Proxy("ReskinSlider", frame.quality)
+	-- Main Frame
+	hooksecurefunc(ReforgeLite, "CreateFrame", function(self)
+		B.StripTextures(self)
+		B.SetBD(self)
+		S:Proxy("ReskinClose", self.close)
+		S:Proxy("ReskinScroll", self.scrollBar)
 
-		for _, key in ipairs({"savePresetButton", "deletePresetButton", "exportPresetButton","pawnButton", "computeButton", "storedClear", "storedRestore", "debugButton"}) do
-			S:Proxy("Reskin", frame[key])
-		end
-
-		for _, key in ipairs({"statWeightsCategory", "storedCategory", "settingsCategory"}) do
-			reskinCollapse(frame[key])
-		end
-
-		for _, cap in ipairs(frame.statCaps) do
+		for _, cap in ipairs(self.statCaps) do
 			cap.add:SetDisabledTexture(0)
 			S:Proxy("Reskin", cap.add)
 			cap.add.text = B.CreateFS(cap.add, 18, "+", false, "CENTER", 2, 0)
 		end
 
-		for _, item in ipairs(frame.itemData) do
-			S:Proxy("ReskinIcon", item.texture)
+		for _, item in ipairs(self.itemData) do
+			ReskinItemButton(item)
+		end
+
+		for _, key in ipairs({"itemLockHelpButton", "statWeightsHelpButton", "statCapsHelpButton"}) do
+			local helpBtn = self[key]
+			if helpBtn then
+				ReskinHelpButton(helpBtn)
+			end
 		end
 	end)
 
-	SkinMethodCategory(frame)
-	hooksecurefunc(frame, "UpdateMethodCategory", SkinMethodCategory)
+	local CreateCategory = ReforgeLite.CreateCategory
+	ReforgeLite.CreateCategory = function(...)
+		local category = CreateCategory(...)
+		ReskinCollapse(category.button)
+		return category
+	end
 
-	hooksecurefunc(frame, "ShowMethodWindow", function()
-		if frame.methodWindow and not frame.methodWindow.styled then
-			B.StripTextures(frame.methodWindow)
-			B.SetBD(frame.methodWindow)
-			S:Proxy("ReskinClose", frame.methodWindow.close)
-			S:Proxy("Reskin", frame.methodWindow.reforge)
+	hooksecurefunc(ReforgeLite, "UpdateMethodCategory", function(self)
+		local frame = self.methodCategory
+		if frame and not frame.styled then
+			ReskinHelpButton(self.methodHelpButton)
+			ReskinHelpButton(self.expertiseToHitHelpButton)
 
-			for _, item in ipairs(frame.methodWindow.items) do
-				S:Proxy("ReskinIcon", item.texture)
+			frame.styled = true
+		end
+	end)
+
+	-- Method Window
+	hooksecurefunc(ReforgeLite, "CreateMethodWindow", function(self)
+		local frame = self.methodWindow
+		if frame and not frame.styled then
+			B.StripTextures(frame)
+			B.SetBD(frame)
+			S:Proxy("ReskinClose", frame.close)
+			ReskinHelpButton(frame.helpButton)
+
+			for _, item in ipairs(frame.items) do
+				ReskinItemButton(item)
 			end
 
-			frame.methodWindow.styled = true
+			frame.styled = true
 		end
 	end)
 
-	-- Widget
+	-- All Widgets
 	SkinAllWidgets()
 	for _, method in ipairs({"AddCapPoint", "UpdateStatWeightList", "CreateOptionList", "FillSettings", "ShowMethodWindow"}) do
-		if frame[method] and type(frame[method]) == "function" then
-			hooksecurefunc(frame, method, SkinAllWidgets)
+		if ReforgeLite[method] and type(ReforgeLite[method]) == "function" then
+			hooksecurefunc(ReforgeLite, method, SkinAllWidgets)
 		end
 	end
 
-	-- ErrorFrame
-	if frame.DebugMethod then
-		hooksecurefunc(frame, "DebugMethod", function()
-			local ErrorFrame = _G.ReforgeLiteExportFrame
-			if ErrorFrame and not ErrorFrame.styled then
-				B.StripTextures(ErrorFrame)
-				B.SetBD(ErrorFrame)
-				S:Proxy("ReskinClose", ErrorFrame.close)
-				S:Proxy("ReskinScroll", ErrorFrame.scroll.ScrollBar)
-				ErrorFrame.styled = true
-			end
-		end)
-	end
+	-- Import Button
+	hooksecurefunc(ReforgeLite, "CreateImportButton", function(self)
+		local button = self.importButton
+		if button and not button.styled then
+			B.Reskin(button)
+			button.styled = true
+		end
+	end)
 end
 
 S:RegisterSkin("ReforgeLite", S.ReforgeLite)
