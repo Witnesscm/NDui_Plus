@@ -7,9 +7,12 @@ local select, pairs = select, pairs
 ----------------------------
 -- Credit: AddOnSkins_MeetingStone by hokohuang
 ----------------------------
-local mainFrame
-
 local function reskinDropDown(dropdown)
+	if not dropdown or not dropdown.MenuButton then
+		P.Developer_ThrowError("dropdown is nil")
+		return
+	end
+
 	B.StripTextures(dropdown)
 	local down = dropdown.MenuButton
 	down:ClearAllPoints()
@@ -72,6 +75,7 @@ local function reskinHeader(header)
 	B.StripTextures(header.Overview)
 	header.Overview.Text:SetTextColor(1, 1, 1)
 	header.Overview.Text.SetTextColor = B.Dummy
+	P.ReskinFont(header.Overview.Text)
 end
 
 local function reskinSummary(summary)
@@ -80,6 +84,14 @@ local function reskinSummary(summary)
 	summary.Title.Text.SetTextColor = B.Dummy
 	summary.Overview.Text:SetTextColor(1, 1, 1)
 	summary.Overview.Text.SetTextColor = B.Dummy
+	P.ReskinFont(summary.Overview.Text)
+end
+
+local function replaceTextColor(self, text)
+	if self.isReplacing then return end
+	self.isReplacing = true
+	self:SetText(gsub(text, "^|c%x%x%x%x%x%x%x%x", "|cffffffff"))
+	self.isReplacing = nil
 end
 
 local function reskinItemButton(self)
@@ -99,7 +111,7 @@ local function strToPath(str)
 end
 
 local function getValue(pathStr, tbl)
-	local keys = strToPath(pathStr) 
+	local keys = strToPath(pathStr)
 	local value
 	for _, key in pairs(keys) do
 		value = value and value[key] or tbl[key]
@@ -113,8 +125,9 @@ function S:MeetingHorn()
 	local MeetingHorn = LibStub("AceAddon-3.0"):GetAddon("MeetingHorn", true)
 	if not MeetingHorn then return end
 
-	mainFrame = _G.MeetingHornMainPanel or MeetingHorn.MainPanel
+	local mainFrame = MeetingHorn.MainPanel
 	if not mainFrame then return end
+
 	B.ReskinPortraitFrame(mainFrame)
 	mainFrame.PortraitFrame:SetAlpha(0)
 
@@ -130,9 +143,9 @@ function S:MeetingHorn()
 		"Browser.Activity",
 		"Browser.Mode",
 		"Browser.Quick",
+		"Browser.SortMode",
 		"Manage.Creator.Activity",
 		"Manage.Creator.Mode",
-		"Recent.Instance",
 		"Encounter.Instance",
 		"Challenge.Left.Groups",
 	}
@@ -144,6 +157,7 @@ function S:MeetingHorn()
 
 	local ScrollBars = {
 		"Browser.ActivityList.scrollBar",
+		"Browser.VoiceActivityList.scrollBar",
 		"Manage.Applicant.ApplicantList.scrollBar",
 		"Options.Filters.FilterList.scrollBar",
 		"FeedBack.EditBox.ScrollFrame.ScrollBar",
@@ -163,13 +177,16 @@ function S:MeetingHorn()
 		"Options.Filters",
 		"Recent.Left",
 		"Recent.Right",
+		"PracticalTool.Present",
+		"PracticalTool.QRCodeExhibition",
+		"PracticalTool.Toolbar"
 	}
 
 	local Buttons = {
-		"Browser.Reset",
-		"Browser.Refresh",
-		"Browser.ApplyLeaderBtn",
-		"Browser.RechargeBtn",
+		-- "Browser.Reset",
+		-- "Browser.Refresh",
+		-- "Browser.ApplyLeaderBtn",
+		-- "Browser.RechargeBtn",
 		"Manage.Creator.CreateButton",
 		"Manage.Creator.CloseButton",
 		"Manage.Creator.RecruitButton",
@@ -217,8 +234,7 @@ function S:MeetingHorn()
 	for _, v in pairs(Panels) do
 		local panel = getValue(v, mainFrame)
 		if panel then
-			panel:DisableDrawLayer("BACKGROUND")
-			panel:DisableDrawLayer("BORDER")
+			B.StripTextures(panel)
 			local bg = B.CreateBDFrame(panel, .25)
 			bg:SetPoint("TOPLEFT", 0, 0)
 			bg:SetPoint("BOTTOMRIGHT", 0, 0)
@@ -291,6 +307,22 @@ function S:MeetingHorn()
 			end
 		end
 
+		for _, child in pairs {Browser:GetChildren()} do
+			local objType = child:GetObjectType()
+			if objType == "Button" and child.Left and child.Right and child.Middle and child.Text then
+				B.Reskin(child)
+			end
+		end
+
+		if Browser.OpenVoiceRoom then
+			hooksecurefunc(Browser, "OpenVoiceRoom", function(self)
+				if self.QRTooltip and not self.QRTooltip.styled then
+					reskinQRTooltip(self.QRTooltip)
+					self.QRTooltip.styled = true
+				end
+			end)
+		end
+
 		local progressBar = Browser.ProgressBar
 		if progressBar then
 			B.StripTextures(progressBar)
@@ -314,7 +346,13 @@ function S:MeetingHorn()
 
 		Encounter.BossTitle:SetTextColor(1, 1, 1)
 		Encounter.Panel1.Overview.Text:SetTextColor(1, 1, 1)
+		Encounter.Panel1.Overview.Text.SetTextColor = B.Dummy
+		P.ReskinFont(Encounter.Panel1.Overview.Text)
+		hooksecurefunc(Encounter.Panel1.Overview.Text, "SetText", replaceTextColor)
 		Encounter.Panel2.Overview.Text:SetTextColor(1, 1, 1)
+		Encounter.Panel2.Overview.Text.SetTextColor = B.Dummy
+		P.ReskinFont(Encounter.Panel2.Overview.Text)
+		hooksecurefunc(Encounter.Panel2.Overview.Text, "SetText", replaceTextColor)
 		B.ReskinInput(Encounter.Panel3.Url)
 
 		for i, tab in ipairs(Encounter.Tabs) do
@@ -516,9 +554,13 @@ function S:MeetingHorn()
 	-- MissionGuidance
 	local MissionGuidance = mainFrame.MissionGuidance
 	if MissionGuidance then
-		B.StripTextures(MissionGuidance)
-		B.CreateBDFrame(MissionGuidance, .25)
-		B.ReskinScroll(MissionGuidance.MissionGuidanceScrollFrame.ScrollBar)
+		for _, region in pairs {MissionGuidance:GetRegions()} do
+			if region:GetObjectType() == "FontString" then
+				local fontFile, fontSize = region:GetFont()
+				region:SetFont(fontFile, fontSize, "")
+				region:SetTextColor(0, 0, 0)
+			end
+		end
 	end
 
 	if C_AddOns.IsAddOnLoaded("tdInspect") then  -- Credit: tdUI
