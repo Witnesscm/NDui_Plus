@@ -165,7 +165,7 @@ do
 	}
 
 	local function AddTips(self)
-		if specs[self.specIndex] ~= GetActiveTalentGroup() then
+		if specs[self.specIndex] ~= C_SpecializationInfo.GetActiveSpecGroup() then
 			GameTooltip:AddLine(" ")
 			GameTooltip:AddLine(P.LeftButtonTip(L["QuickChangeTalents"]), .6, .8, 1)
 			GameTooltip:Show()
@@ -174,8 +174,8 @@ do
 
 	local function OnDoubleClick(self)
 		local talentGroup = specs[self.specIndex]
-		if talentGroup ~= GetActiveTalentGroup() then
-			SetActiveTalentGroup(talentGroup)
+		if talentGroup ~= C_SpecializationInfo.GetActiveSpecGroup() then
+			C_SpecializationInfo.SetActiveSpecGroup(talentGroup)
 		end
 	end
 
