@@ -1,9 +1,8 @@
 local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 local S = P:GetModule("Skins")
-local M = B:GetModule("Misc")
 
-local function reskinFrame(frame)
+local function ReskinListPanel(frame)
 	frame:SetBackdrop(nil)
 	frame.SetBackdrop = B.Dummy
 	frame:SetBackdropColor(0, 0, 0, 0)
@@ -17,10 +16,15 @@ local function reskinFrame(frame)
 	frame.bg = B.SetBD(frame, nil, 0, C.mult, 0, -C.mult)
 end
 
-local function resizeStatsFrame(self, _, relativeTo)
-	if self:GetHeight() <= 424 then
-		self:SetHeight(relativeTo == PaperDollFrame and 424 or 422)
-	end
+local function ReskinPortraitFrame(self, unit)
+	self:SetScale(.85)
+	B.StripTextures(self)
+	SetPortraitTexture(self.Portrait, unit)
+	self.PortraitRingQuality:SetTexture("Interface\\Masks\\CircleMaskScalable")
+	self.PortraitRingQuality:SetSize(50, 50)
+	self.PortraitRingQuality:SetDrawLayer("BACKGROUND")
+	self.PortraitRingQuality:ClearAllPoints()
+	self.PortraitRingQuality:SetPoint("CENTER", self.Portrait)
 end
 
 function S:MerInspect()
@@ -28,12 +32,23 @@ function S:MerInspect()
 
 	if not _G.ShowInspectItemListFrame then return end
 
-	hooksecurefunc("ShowInspectItemListFrame", function(_, parent)
+	hooksecurefunc("ShowInspectItemListFrame", function(unit, parent)
 		local frame = parent.inspectFrame
 		if not frame then return end
 
 		if not frame.styled then
-			reskinFrame(frame)
+			ReskinListPanel(frame)
+			ReskinPortraitFrame(frame.portrait, unit)
+
+			local specicon = frame.specicon
+			specicon:SetSize(41, 41)
+			specicon:ClearAllPoints()
+			specicon:SetPoint("TOPRIGHT", -14, -14)
+			specicon:SetAlpha(1)
+			specicon:SetMask("Interface\\Masks\\CircleMaskScalable")
+			local spectext = frame.spectext
+			B.SetFontSize(spectext, 12)
+			spectext:SetAlpha(1)
 
 			for i = 1, frame:GetNumChildren() do
 				local child = select(i, frame:GetChildren())
@@ -46,28 +61,24 @@ function S:MerInspect()
 		end
 
 		local frameName = parent:GetName()
-		if frameName == "InspectFrame" then
-			frame:SetPoint("TOPLEFT", parent, "TOPRIGHT", -34, -15-C.mult)
-		elseif frameName ~= "PaperDollFrame" then
-			frame:SetPoint("TOPLEFT", parent, "TOPRIGHT", C.mult, 0)
-		end
-
-		if frame:GetHeight() <= 424 then
-			frame:SetHeight(frameName == "PaperDollFrame" and 424 or 422)
+		local p1, rel, p2, x, y = frame:GetPoint()
+		if frameName == "PaperDollFrame" or frameName == "InspectFrame" then
+			frame:SetPoint(p1, rel, p2, x + 2, y)
+		else
+			frame:SetPoint(p1, rel, p2, x + C.mult, y)
 		end
 	end)
 
 	if not _G.ClassicStatsFrameTemplate_OnShow then return end
 
-	local PlayerStatsFrame
-
-	hooksecurefunc("ClassicStatsFrameTemplate_OnShow", function(self)
-		if not self.styled then
-			B.StripTextures(self)
-			reskinFrame(self)
+	hooksecurefunc("ClassicStatsFrameTemplate_OnShow", function(frame)
+		if not frame.styled then
+			B.StripTextures(frame)
+			ReskinListPanel(frame)
+			ReskinPortraitFrame(frame.PortraitFrame, frame.data.unit or "player")
 
 			for _, key in pairs({"AttributesCategory", "ResistanceCategory", "EnhancementsCategory", "SuitCategory"}) do
-				local category = self[key]
+				local category = frame[key]
 				if category then
 					B.StripTextures(category)
 					local line = category:CreateTexture(nil, "ARTWORK")
@@ -77,18 +88,7 @@ function S:MerInspect()
 				end
 			end
 
-			self.styled = true
-		end
-
-		if not PlayerStatsFrame then
-			if self:GetParent() == _G.UIParent then
-				PlayerStatsFrame = self
-				hooksecurefunc(PlayerStatsFrame, "SetPoint", resizeStatsFrame)
-			end
-		end
-
-		if self ~= PlayerStatsFrame and self:GetHeight() <= 424 then
-			self:SetHeight(422)
+			frame.styled = true
 		end
 	end)
 end
