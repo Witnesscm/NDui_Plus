@@ -439,4 +439,38 @@ do
 		end
 		return copy
 	end
+
+	function P.Memorize(func)
+		local cache = {}
+
+		return function(k, ...)
+			if not k then
+				return
+			end
+			if not cache[k] then
+				cache[k] = func(k, ...)
+			end
+			return cache[k]
+		end
+	end
+
+	function P:SecureHook(object, method, handler)
+		if not handler then
+			method, handler, object = object, method, nil
+		end
+
+		if object then
+			if _G[object] and _G[object][method] then
+				hooksecurefunc(_G[object], method, handler)
+			else
+				P.Developer_ThrowError(format("%s:%s does not exist", object, method))
+			end
+		else
+			if _G[method] then
+				hooksecurefunc(method, handler)
+			else
+				P.Developer_ThrowError(format("%s does not exist", method))
+			end
+		end
+	end
 end
