@@ -31,10 +31,12 @@ local function updateAchievementBorder(button)
 	if not button.bg then return end
 
 	local achievement = button.Achievement
-	local state = achievement and achievement.TemporaryObtainable and achievement.TemporaryObtainable.Obtainable()
-	if state and (state == false or state == "Past" or state == "Future") then
+	local state = achievement and achievement.GetObtainableState and achievement:GetObtainableState()
+	if state == "Past" then
 		button.bg:SetBackdropBorderColor(.33, 0, 0)
-	elseif state and state == "Current" then
+	elseif state == "Future" then
+		button.bg:SetBackdropBorderColor(.75, .5, .25)
+	elseif state == "Current" then
 		button.bg:SetBackdropBorderColor(0, .33, 0)
 	else
 		button.bg:SetBackdropBorderColor(0, 0, 0)
@@ -73,6 +75,7 @@ local function SkinAchivementButton(button)
 		button.Tracked:SetSize(20, 20)
 		button.Check:SetAlpha(0)
 
+		updateAchievementBorder(button)
 		hooksecurefunc(button, "SetAchievement", updateAchievementBorder)
 	end
 end
@@ -90,8 +93,8 @@ local function SkinAchivementButtonLight(button)
 		button.bg:SetPoint("TOPLEFT", 2, -1)
 		button.bg:SetPoint("BOTTOMRIGHT", -2, 1)
 
+		updateAchievementBorder(button)
 		hooksecurefunc(button, "SetAchievement", updateAchievementBorder)
-		if button.Achievement then button:SetAchievement(button.Achievement) end
 	end
 end
 
@@ -178,6 +181,9 @@ local function SkinAchievementFrame()
 
 	local FilterButton = _G.KrowiAF_AchievementFrameFilterButton
 	B.ReskinFilterButton(FilterButton)
+	if FilterButton.__texture then
+		FilterButton.__texture:Hide()
+	end
 	FilterButton:SetSize(116, 20)
 	FilterButton:ClearAllPoints()
 	FilterButton:SetPoint("TOPLEFT", 142, -2)
