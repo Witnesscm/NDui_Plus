@@ -356,6 +356,9 @@ do
 			if self.PortraitContainer then
 				self.PortraitContainer:SetAlpha(0)
 			end
+			if self.portrait then
+				self.portrait:SetAlpha(0)
+			end
 		end)
 	end
 end
