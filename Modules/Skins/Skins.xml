@@ -6,7 +6,6 @@
 	<Script file="alaTalentEmu.lua"/>
 	<Script file="alaTrade.lua"/>
 	<Script file="AllTheThings.lua"/>
-	<Script file="Atlas.lua"/>
 	<Script file="AtlasLootClassic.lua"/>
 	<Script file="Auctionator.lua"/>
 	<Script file="AutoBar.lua"/>
