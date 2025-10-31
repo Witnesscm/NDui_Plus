@@ -46,6 +46,11 @@ local function reskinCheck(self, tbl)
 end
 
 local function reskinMarker(frame, isTower)
+	if not frame then
+		P.Developer_ThrowError("Unknown NWB Marker")
+		return
+	end
+
 	local icon = frame.texture
 	local tooltip = frame.tooltip
 
@@ -68,7 +73,7 @@ local function reskinMarker(frame, isTower)
 end
 
 local function reskinMarkers(tbl)
-	for k, _ in pairs(tbl) do
+	for k in pairs(tbl) do
 		local mark = _G[k.."NWB"]
 		if mark then
 			reskinMarker(mark)
@@ -139,19 +144,14 @@ function S:NovaWorldBuffs()
 		end
 	end
 
-	hooksecurefunc(NWB, "createShowStatsButton", function()
+	hooksecurefunc(NWB, "createBuffsListExtraButtons", function()
 		reskinCheck(NWB, {"showStatsButton", "showStatsAllButton"})
+		S:Proxy("ReskinSlider", NWB.charsMinLevelSlider)
 	end)
 
 	hooksecurefunc(NWB, "createCopyFormatButton", function()
 		reskinCheck(NWB, {"copyDiscordButton"})
 	end)
-
-	if NWB.createDmfHelperButtons then
-		hooksecurefunc(NWB, "createDmfHelperButtons", function()
-			reskinCheck(NWB, {"dmfChatCountdown", "dmfAutoResButton"})
-		end)
-	end
 
 	hooksecurefunc(NWB, "createTimerLogCheckboxes", function()
 		reskinCheck(NWB, {"timerLogShowRendButton", "timerLogShowOnyButton", "timerLogShowNefButton"})
@@ -172,17 +172,34 @@ function S:NovaWorldBuffs()
 		end
 	end
 
-	reskinMarkers(NWB.songFlowers)
-	reskinMarkers(NWB.tubers)
-	reskinMarkers(NWB.dragons)
+	hooksecurefunc(NWB, "createSongflowerMarkers", function()
+		reskinMarkers(NWB.songFlowers)
+	end)
+	hooksecurefunc(NWB, "createTuberMarkers", function()
+		reskinMarkers(NWB.tubers)
+	end)
+	hooksecurefunc(NWB, "createDragonMarkers", function()
+		reskinMarkers(NWB.dragons)
+	end)
+
 	reskinMarker(_G.NWBDMF)
 	reskinMarker(_G.NWBDMFContinent)
 	--reskinMarker(_G.nefWorldMapNoLayerFrame)
 
 	hooksecurefunc(NWB, "refreshWorldbuffMarkers", function()
-		for layer, _ in NWB:pairsByKeys(NWB.data.layers) do
-			for k, _ in pairs(NWB.worldBuffMapMarkerTypes) do
-				local mark = _G[k..layer.."NWBWorldMap"]
+		if NWB.isLayered then
+			for layer in NWB:pairsByKeys(NWB.data.layers) do
+				for k in pairs(NWB.worldBuffMapMarkerTypes) do
+					local mark = _G[k..layer.."NWBWorldMap"]
+					if mark and not mark.styled then
+						reskinMarker(mark)
+						mark.styled = true
+					end
+				end
+			end
+		else
+			for k in pairs(NWB.worldBuffMapMarkerTypes) do
+				local mark = _G[k.."NWBWorldMap"]
 				if mark and not mark.styled then
 					reskinMarker(mark)
 					mark.styled = true
