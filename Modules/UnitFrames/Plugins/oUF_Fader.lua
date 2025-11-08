@@ -55,8 +55,14 @@ local function ToggleAlpha(self, element, endAlpha)
 
 	if element.Smooth then
 		P:UIFrameFadeOut(self, element.Smooth, self:GetAlpha(), endAlpha)
+		if self.Portrait then
+			P:UIFrameFadeOut(self.Portrait, element.Smooth, self.Portrait:GetAlpha(), endAlpha == 0 and 0 or .2)
+		end
 	else
 		self:SetAlpha(endAlpha)
+		if self.Portrait then
+			self.Portrait:SetAlpha(endAlpha == 0 and 0 or .2)
+		end
 	end
 end
 
@@ -115,7 +121,7 @@ local function Update(self, event, unit)
 		(element.Focus and not P.IsClassic() and UnitExists('focus')) or
 		(element.Health and UnitHealth(unit) < UnitHealthMax(unit)) or
 		(element.Power and (PowerTypesFull[powerType] and UnitPower(unit) < UnitPowerMax(unit))) or
-		(element.Vehicle and (P.IsRetail() or P.IsCata()) and UnitHasVehicleUI(unit)) or
+		(element.Vehicle and (not P.IsClassic()) and UnitHasVehicleUI(unit)) or
 		(element.DynamicFlight and P.IsRetail() and not CanGlide()) or
 		(element.Hover and GetMouseFocus() == (self.__faderobject or self))
 	then
@@ -329,7 +335,7 @@ if not P.IsClassic() then
 	}
 end
 
-if P.IsRetail() or P.IsCata() then
+if not P.IsClassic() then
 	options.Vehicle = {
 		enable = function(self)
 			self:RegisterEvent('UNIT_ENTERED_VEHICLE', Update, true)
