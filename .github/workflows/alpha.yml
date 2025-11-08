@@ -3,8 +3,8 @@ name: Package and build alpha version
 on:
   push:
     tags:
-      - '**-alpha-**'
-      - '**-beta-**'
+      - "**alpha**"
+      - "**beta**"
 
 jobs:
   build:
@@ -22,7 +22,7 @@ jobs:
           fetch-depth: 0
 
       - name: Create Mainline Package
-        uses: BigWigsMods/packager@v2
+        uses: BigWigsMods/packager@master
 
       - name: Upload Github Actions
         uses: actions/upload-artifact@v4
