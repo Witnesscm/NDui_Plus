@@ -163,32 +163,27 @@ function S:Hemlock()
 	local Hemlock = _G.Hemlock
 	if not Hemlock then return end
 
-	local function reskinButton(button)
-		B.ReskinIcon(button:GetNormalTexture())
-		button:GetNormalTexture():SetInside()
-		button:SetHighlightTexture(DB.bdTex)
-		button:GetHighlightTexture():SetVertexColor(1, 1, 1, .25)
-		button:GetHighlightTexture():SetInside()
+	local frame = _G.HemlockFrame
+	if frame then
+		B.StripTextures(frame)
+		frame:ClearAllPoints()
+		frame:SetPoint("LEFT", _G.MerchantFrame, "RIGHT", -2, 0)
 	end
 
-	B.StripTextures(_G.HemlockFrame)
-	_G.HemlockFrame:SetPoint("LEFT", MerchantFrameCloseButton, "RIGHT", 0, 0)
-	hooksecurefunc(Hemlock, "MakeFrame", function(self)
-		for _, button in ipairs(self.frames) do
-			if not button.styled then
-				reskinButton(button)
-				button.styled = true
+	if Hemlock.InitFrames then
+		hooksecurefunc(Hemlock, "InitFrames", function(self)
+			for _, button in ipairs(self.frames) do
+				if not button.styled then
+					B.ReskinIcon(button:GetNormalTexture(), true)
+					button:GetNormalTexture():SetInside()
+					button:SetHighlightTexture(DB.bdTex)
+					button:GetHighlightTexture():SetVertexColor(1, 1, 1,.25)
+					button:GetHighlightTexture():SetInside()
+					button.styled = true
+				end
 			end
-		end
-	end)
-
-	hooksecurefunc(Hemlock, "MakeScanFrame", function(self)
-		local button = _G.HemlockPoisonButtonOpen
-		if button and not button.styled then
-			reskinButton(button)
-			button.styled = true
-		end
-	end)
+		end)
+	end
 end
 
 function S:TotemTimers()
@@ -328,6 +323,24 @@ function S:LibQTip()
 	end
 end
 
+function S:OmniCD_HandleIcon(barFrame, iconIndex)
+	local icon = barFrame.icons[iconIndex]
+	if not icon.__shadow then
+		icon.__shadow = B.CreateSD(icon)
+	end
+	icon.icon:SetTexCoord(unpack(DB.TexCoord))
+end
+
+function S:OmniCD()
+	local OmniCD = _G.OmniCD
+	if not OmniCD then return end
+
+	local Party = OmniCD[1].Party
+	if Party.AcquireIcon then
+		hooksecurefunc(Party, "AcquireIcon", S.OmniCD_HandleIcon)
+	end
+end
+
 local function reskinExtraTip(self, tooltip)
 	local reg = self.tooltipRegistry[tooltip]
 	if reg and reg.extraTip then
@@ -344,6 +357,23 @@ function S:LibExtraTip()
 	hooksecurefunc(LibExtraTip, "AddDoubleLine", reskinExtraTip)
 end
 
+function S:Hekili()
+	local Hekili = _G.Hekili
+	if not Hekili then return end
+
+	if Hekili.CreateButton then
+		local CreateButton = Hekili.CreateButton
+		Hekili.CreateButton = function(...)
+			local button = CreateButton(...)
+			if button and not button.styled then
+				B.CreateSD(button)
+				button.styled = true
+			end
+			return button
+		end
+	end
+end
+
 S:RegisterSkin("HandyNotes_NPCs (Classic)", S.HandyNotes_NPCs)
 S:RegisterSkin("HandyNotes_NPCs (Burning Crusade Classic)", S.HandyNotes_NPCs)
 S:RegisterSkin("BattleInfo", S.BattleInfo)
@@ -357,7 +387,9 @@ S:RegisterSkin("BigWigs_Options", S.BigWigs_Options)
 S:RegisterSkin("Restocker", S.Restocker)
 S:RegisterSkin("RaidLedger", S.RaidLedger)
 S:RegisterSkin("LibQTip")
+S:RegisterSkin("OmniCD", S.OmniCD)
 S:RegisterSkin("LibExtraTip")
+S:RegisterSkin("Hekili", S.Hekili, true)
 
 -- Hide Toggle Button
 S.ToggleFrames = {}
