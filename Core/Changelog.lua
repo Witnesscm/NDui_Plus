@@ -2,6 +2,11 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 
 P.Changelog = [[
+v11.2.3
+[主要] 更新版本号至11.2.5
+[美化] 修复 MountsJournal 美化
+[美化] 更新部分插件美化
+
 v11.2.2
 [美化] 添加 BigWigs 钥石界面美化
 [美化] 添加 Hekili 按钮阴影边框
