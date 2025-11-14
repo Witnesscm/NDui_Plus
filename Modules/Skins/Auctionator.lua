@@ -29,8 +29,17 @@ local function reskinDialogFrame(frame)
 	B.StripTextures(frame)
 	B.SetBD(frame, .7)
 
-	if frame.ScrollBar then B.ReskinTrimScroll(frame.ScrollBar) end
-	if frame.CloseDialog then B.ReskinClose(frame.CloseDialog) end
+	if frame.ScrollBar then
+		B.ReskinTrimScroll(frame.ScrollBar)
+	end
+
+	if frame.CloseDialog then
+		B.ReskinClose(frame.CloseDialog)
+	end
+
+	if frame.EditBoxContainer then
+		B.CreateBDFrame(frame.EditBoxContainer, 0, true)
+	end
 end
 
 local function reskinRefreshButton(self)
@@ -228,12 +237,6 @@ function S:Auctionator()
 	hooksecurefunc(_G.AuctionatorInitalizeMainlineFrame, "AuctionHouseShown", function()
 		if styled then return end
 
-		local SplashScreen = _G.AuctionatorSplashScreen
-		if SplashScreen then
-			P.ReskinFrame(SplashScreen)
-			S:Proxy("ReskinTrimScroll", SplashScreen.ScrollBar)
-		end
-
 		for _, tab in ipairs(_G.AuctionatorAHTabsContainer.Tabs) do
 			B.ReskinTab(tab)
 		end
@@ -282,8 +285,6 @@ function S:Auctionator()
 			if ContainerTabs then
 				for _, tab in ipairs(ContainerTabs.Tabs) do
 					B.ReskinTab(tab)
-					tab.bg:SetInside()
-					tab:SetSize(102, 30)
 				end
 			end
 

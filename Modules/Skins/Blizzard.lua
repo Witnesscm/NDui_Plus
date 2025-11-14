@@ -19,4 +19,4 @@ function S:QuestMapFrame()
 	end
 end
 
-S:RegisterSkin("QuestMapFrame")
+--S:RegisterSkin("QuestMapFrame")
