@@ -24,6 +24,10 @@ local function handleActionButton(button)
 	button.icon = button.icon or select(4, button:GetRegions())
 	button.icon:SetInside()
 	B.ReskinIcon(button.icon, true)
+
+	if button.checkedTexture then
+		button.checkedTexture:SetTexture(DB.pushedTex)
+	end
 end
 
 local function handleIconButton(button)
@@ -326,23 +330,24 @@ local function handleConditionOption(self)
 end
 
 function S:MountsJournal()
-	if not C.db["Skins"]["BlizzardSkins"] then return end
-
 	local MountsJournal = _G.MountsJournal
 	if not MountsJournal then return end
 
-	P.ReskinTooltip(_G.MJTooltipModel)
+	local summonPanel = MountsJournal.summonPanel
+	if summonPanel then
+		handleActionButton(summonPanel.summon1)
+		handleActionButton(summonPanel.summon2)
+	end
+end
+
+function S:MountsJournalUI()
+	if not C.db["Skins"]["BlizzardSkins"] then return end
 
 	local MountsJournalFrame = _G.MountsJournalFrame
-	if MountsJournalFrame.ADDON_LOADED then
-		hooksecurefunc(MountsJournalFrame, "ADDON_LOADED", function(self)
-			if self.useMountsJournalButton then
-				B.ReskinCheck(self.useMountsJournalButton)
-			end
-		end)
-	else
-		S:Proxy("ReskinCheck", MountsJournalFrame.useMountsJournalButton)
-	end
+	if not MountsJournalFrame then return end
+
+	P.ReskinTooltip(_G.MJTooltipModel)
+	S:Proxy("ReskinCheck", MountsJournalFrame.useMountsJournalButton)
 
 	hooksecurefunc(MountsJournalFrame, "init", function(self)
 		local bgFrame = self.bgFrame
@@ -409,7 +414,7 @@ function S:MountsJournal()
 		handleFilterButton(self.filtersButton)
 		handleDropMenu(self.tags and self.tags.mountOptionsMenu)
 		handleCombobox(self.gridModelAnimation)
-		P.ReskinTooltip(_G.MountsJournalTooltip)
+		P.ReskinTooltip(_G.MountsJournalUITooltip)
 
 		local worldMap = self.worldMap
 		if worldMap then
@@ -541,10 +546,8 @@ function S:MountsJournal()
 			end
 		end
 
-		local summonPanel = self.summonPanel
+		local summonPanel = _G.MountsJournal.summonPanel
 		if summonPanel then
-			handleActionButton(summonPanel.summon1)
-			handleActionButton(summonPanel.summon2)
 			handleMJSlider(summonPanel.fade)
 			handleMJSlider(summonPanel.resize)
 		end
@@ -567,6 +570,17 @@ function S:MountsJournal()
 
 	hooksecurefunc(MountsJournalFrame, "gridModelSceneInit", function(self, button)
 		handleGridModelScene(button)
+	end)
+
+	hooksecurefunc(MountsJournalFrame, "updateFilterNavBar", function(self)
+		for frame in self.shownPanel.framePool:EnumerateActive() do
+			if not frame.styled then
+				frame:HideBackdrop()
+				frame.bg = B.CreateBDFrame(frame, 0)
+				frame.bg:SetAllPoints()
+				frame.styled = true
+			end
+		end
 	end)
 
 	local util = _G.MountsJournalUtil
@@ -799,6 +813,8 @@ function S:MountsJournal()
 		handleFilterButton(self.examples)
 		S:Proxy("Reskin", self.cancelBtn)
 		S:Proxy("Reskin", self.completeBtn)
+		S:Proxy("Reskin", self.backBtn)
+		S:Proxy("Reskin", self.nextBtn)
 		S:Proxy("StripTextures", self.codeBtn)
 		S:Proxy("CreateBDFrame", self.codeBtn, .8)
 		S:Proxy("ReskinTrimScroll", self.scrollBar)
@@ -806,3 +822,4 @@ function S:MountsJournal()
 end
 
 S:RegisterSkin("MountsJournal", S.MountsJournal)
+S:RegisterSkin("MountsJournalUI", S.MountsJournalUI)
