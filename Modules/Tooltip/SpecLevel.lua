@@ -9,7 +9,7 @@ local isPending = LFG_LIST_LOADING
 local resetTime, frequency = 900, .5
 local cache, currentUNIT, currentGUID = {}
 
-local ICON_STRING = ":0:0:0:-2:64:64:5:59:5:59"
+local ICON_STRING = "0:0:0:-2:64:64:5:59:5:59"
 local PLAYER_NOT_FOUND_STRING = gsub(ERR_CHAT_PLAYER_NOT_FOUND_S, "%%s", "(.+)")
 
 function T:InspectOnUpdate(elapsed)
@@ -65,7 +65,7 @@ end
 	Inspect over addon comm channel. Credit: tdInspect
 ]]
 
-local ALA_PREFIX = "ATEADD"
+local ALA_PREFIX = "EMUCOM"
 
 local Ala = {}
 do
@@ -872,13 +872,13 @@ function T:GetUnitSpec(unit)
 	if not unit or UnitGUID(unit) ~= currentGUID then return end
 
 	local isInspect = unit ~= "player"
-	local talentGroup = GetActiveTalentGroup(isInspect)
+	local talentGroup = C_SpecializationInfo.GetActiveSpecGroup(isInspect)
 
 	local specName, specIcon = NONE
 	local higher = 0
 	local points = {}
 	for i = 1, 3 do
-		local _, name, _, icon, point = GetTalentTabInfo(i, isInspect, false, talentGroup)
+		local _, name, _, icon, _, _, point = C_SpecializationInfo.GetSpecializationInfo(i, isInspect, false, nil, nil, talentGroup)
 
 		if point > higher then
 			higher = point
