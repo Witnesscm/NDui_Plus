@@ -31,10 +31,12 @@ local function updateAchievementBorder(button)
 	if not button.bg then return end
 
 	local achievement = button.Achievement
-	local state = achievement and achievement.TemporaryObtainable and achievement.TemporaryObtainable.Obtainable()
-	if state and (state == false or state == "Past" or state == "Future") then
+	local state = achievement and achievement.GetObtainableState and achievement:GetObtainableState()
+	if state == "Past" then
 		button.bg:SetBackdropBorderColor(.33, 0, 0)
-	elseif state and state == "Current" then
+	elseif state == "Future" then
+		button.bg:SetBackdropBorderColor(.75, .5, .25)
+	elseif state == "Current" then
 		button.bg:SetBackdropBorderColor(0, .33, 0)
 	else
 		button.bg:SetBackdropBorderColor(0, 0, 0)
@@ -73,6 +75,7 @@ local function SkinAchivementButton(button)
 		button.Tracked:SetSize(20, 20)
 		button.Check:SetAlpha(0)
 
+		updateAchievementBorder(button)
 		hooksecurefunc(button, "SetAchievement", updateAchievementBorder)
 	end
 end
@@ -90,8 +93,8 @@ local function SkinAchivementButtonLight(button)
 		button.bg:SetPoint("TOPLEFT", 2, -1)
 		button.bg:SetPoint("BOTTOMRIGHT", -2, 1)
 
+		updateAchievementBorder(button)
 		hooksecurefunc(button, "SetAchievement", updateAchievementBorder)
-		if button.Achievement then button:SetAchievement(button.Achievement) end
 	end
 end
 
@@ -178,6 +181,9 @@ local function SkinAchievementFrame()
 
 	local FilterButton = _G.KrowiAF_AchievementFrameFilterButton
 	B.ReskinFilterButton(FilterButton)
+	if FilterButton.__texture then
+		FilterButton.__texture:Hide()
+	end
 	FilterButton:SetSize(116, 20)
 	FilterButton:ClearAllPoints()
 	FilterButton:SetPoint("TOPLEFT", 142, -2)
@@ -185,29 +191,25 @@ local function SkinAchievementFrame()
 
 	local PrevButton = _G.KrowiAF_AchievementFrameBrowsingHistoryPrevAchievementButton
 	local NextButton = _G.KrowiAF_AchievementFrameBrowsingHistoryNextAchievementButton
-	if PrevButton and NextButton then
-		B.ReskinArrow(PrevButton, "left")
-		B.ReskinArrow(NextButton, "right")
-		PrevButton:ClearAllPoints()
-		PrevButton:SetPoint("LEFT", FilterButton, "RIGHT", 10, 0)
-		NextButton:ClearAllPoints()
-		NextButton:SetPoint("LEFT", PrevButton, "RIGHT", 6, 0)
-	end
+	B.ReskinArrow(PrevButton, "left")
+	B.ReskinArrow(NextButton, "right")
+	PrevButton:ClearAllPoints()
+	PrevButton:SetPoint("LEFT", FilterButton, "RIGHT", 10, 0)
+	NextButton:ClearAllPoints()
+	NextButton:SetPoint("LEFT", PrevButton, "RIGHT", 6, 0)
 
-	local CalendarButton = _G.KrowiAF_AchievementCalendarButton
-	if CalendarButton then
-		B.Reskin(CalendarButton)
-		CalendarButton:SetSize(24, 24)
-		local CalendarFS = CalendarButton:GetFontString()
-		B.SetFontSize(CalendarFS, 13)
-		CalendarFS:SetTextColor(1, 1, 1)
-		CalendarFS:ClearAllPoints()
-		CalendarFS:SetPoint("CENTER", 1, -1)
-		CalendarButton.Icon = CalendarButton:CreateTexture(nil, "ARTWORK")
-		CalendarButton.Icon:SetInside()
-		CalendarButton.Icon:SetTexture("Interface\\Calendar\\UI-Calendar-Button")
-		CalendarButton.Icon:SetTexCoord(0.11, 0.390625-.11, 2*0.11, 0.78125-2*0.12)
-	end
+	local CalendarButton = _G.KrowiAF_AchievementFrameCalendarButton
+	B.Reskin(CalendarButton)
+	CalendarButton:SetSize(24, 24)
+	local CalendarFS = CalendarButton:GetFontString()
+	B.SetFontSize(CalendarFS, 13)
+	CalendarFS:SetTextColor(1, 1, 1)
+	CalendarFS:ClearAllPoints()
+	CalendarFS:SetPoint("CENTER", 1, -1)
+	CalendarButton.Icon = CalendarButton:CreateTexture(nil, "ARTWORK")
+	CalendarButton.Icon:SetInside()
+	CalendarButton.Icon:SetTexture("Interface\\Calendar\\UI-Calendar-Button")
+	CalendarButton.Icon:SetTexCoord(0.11, 0.390625-.11, 2*0.11, 0.78125-2*0.12)
 
 	-- Search Box
 	local SearchBox = _G.KrowiAF_SearchBoxFrame
