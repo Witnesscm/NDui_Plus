@@ -2,8 +2,6 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 local M = P:GetModule("Misc")
 
-if not P.IsWrath() then return end
-
 local LSP = LibStub("LibShowUIPanel-1.0")
 local ShowUIPanel = LSP.ShowUIPanel
 local HideUIPanel = LSP.HideUIPanel
@@ -152,6 +150,16 @@ local TALENT_ARROW_TEXTURECOORDS = {
 	},
 }
 
+local talentInfoQuery = {}
+local function MakeTalentQuery(tabIndex, talentIndex, isInspect, isPet, groupIndex)
+	talentInfoQuery.specializationIndex = tabIndex
+	talentInfoQuery.talentIndex = talentIndex
+	talentInfoQuery.isInspect = isInspect
+	talentInfoQuery.isPet = isPet
+	talentInfoQuery.groupIndex = groupIndex
+	return talentInfoQuery
+end
+
 function M:TalentUI_CreatePanel(i)
 	local frame = CreateFrame("Frame", nil, self)
 	local isPet = i > 3
@@ -239,9 +247,9 @@ local function IsRoleChecked(self)
 end
 
 local menuList = {
-	{text = P.TextureString(B.GetRoleTex("TANK"), ":16:16")..TANK, func = SelectRole, classicChecks = true, value = "TANK", checked = IsRoleChecked},
-	{text = P.TextureString(B.GetRoleTex("HEALER"), ":16:16")..HEALER, func = SelectRole, classicChecks = true, value = "HEALER", checked = IsRoleChecked},
-	{text = P.TextureString(B.GetRoleTex("DAMAGER"), ":16:16")..DAMAGER, func = SelectRole, classicChecks = true, value = "DAMAGER", checked = IsRoleChecked},
+	{text = P.TextureString(B.GetRoleTex("TANK"))..TANK, func = SelectRole, classicChecks = true, value = "TANK", checked = IsRoleChecked},
+	{text = P.TextureString(B.GetRoleTex("HEALER"))..HEALER, func = SelectRole, classicChecks = true, value = "HEALER", checked = IsRoleChecked},
+	{text = P.TextureString(B.GetRoleTex("DAMAGER"))..DAMAGER, func = SelectRole, classicChecks = true, value = "DAMAGER", checked = IsRoleChecked},
 }
 
 local RoleDropDown
@@ -299,7 +307,7 @@ local function TalentSpecTab_OnDoubleClick(self)
 	local spec = specs[specIndex]
 	local numTalentGroups = GetNumTalentGroups(false, false)
 	if not spec.pet and numTalentGroups > 1 and specIndex ~= activeSpec then
-		SetActiveTalentGroup(spec.talentGroup)
+		C_SpecializationInfo.SetActiveSpecGroup(spec.talentGroup)
 	end
 end
 
@@ -313,14 +321,14 @@ local function TalentSpecTab_OnEnter(self)
 
 		if numPetTalentGroups <= 1 and numTalentGroups <= 1 then
 			if not spec.pet then
-				GameTooltip:AddDoubleLine(UnitName(spec.unit), P.TextureString(B.GetRoleTex(role), ":16:16"), NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b)
+				GameTooltip:AddDoubleLine(UnitName(spec.unit), P.TextureString(B.GetRoleTex(role)), NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b)
 				GameTooltip:AddLine(" ")
 			else
 				GameTooltip:AddLine(UnitName(spec.unit), NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b)
 			end
 		else
 			if not spec.pet then
-				GameTooltip:AddDoubleLine(spec.tooltip, P.TextureString(B.GetRoleTex(role), ":16:16"))
+				GameTooltip:AddDoubleLine(spec.tooltip, P.TextureString(B.GetRoleTex(role)))
 				GameTooltip:AddLine(" ")
 			else
 				GameTooltip:AddLine(spec.tooltip)
@@ -393,8 +401,8 @@ function M:TalentUI_CreateSpecTab(i, specIndex)
 	tab:SetScript("OnLeave", B.HideTooltip)
 	tab:SetScript("OnEvent", TalentSpecTab_OnEvent)
 
-	local activeTalentGroup, numTalentGroups = GetActiveTalentGroup(false, false), GetNumTalentGroups(false, false)
-	local activePetTalentGroup, numPetTalentGroups = GetActiveTalentGroup(false, true), GetNumTalentGroups(false, true)
+	local activeTalentGroup, numTalentGroups = C_SpecializationInfo.GetActiveSpecGroup(false, false), GetNumTalentGroups(false, false)
+	local activePetTalentGroup, numPetTalentGroups = C_SpecializationInfo.GetActiveSpecGroup(false, true), GetNumTalentGroups(false, true)
 	M.TalentUI_UpdateSpecTab(tab, activeTalentGroup, numTalentGroups, activePetTalentGroup, numPetTalentGroups)
 
 	return tab
@@ -463,7 +471,7 @@ function M.TalentUI_UpdateSpecInfoCache(cache, inspect, pet, talentGroup)
 	for i = 1, MAX_TALENT_TABS do
 		cache[i] = cache[i] or {}
 		if i <= numTabs then
-			local _, name, _, icon, pointsSpent, _, previewPointsSpent = GetTalentTabInfo(i, inspect, pet, talentGroup)
+			local _, name, _, icon, _, _, pointsSpent, _, previewPointsSpent = C_SpecializationInfo.GetSpecializationInfo(i, inspect, pet, nil, nil, talentGroup)
 			local displayPointsSpent = pointsSpent + previewPointsSpent
 
 			cache[i].name = name
@@ -533,12 +541,18 @@ end
 local function TalentButton_OnEnter(self)
 	GameTooltip:ClearLines()
 	GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-	GameTooltip:SetTalent(self.__owner.talentTree, self:GetID(), false, M.TalentUI.pet, M.TalentUI.talentGroup, GetCVarBool("previewTalentsOption"))
+	local talentInfo = C_SpecializationInfo.GetTalentInfo(MakeTalentQuery(self.__owner.talentTree, self:GetID(), false, M.TalentUI.pet, M.TalentUI.talentGroup))
+	if talentInfo then
+		GameTooltip:SetTalent(talentInfo.talentID, false, M.TalentUI.pet, M.TalentUI.talentGroup)
+	end
 end
 
 local function TalentButton_OnEvent(self, event, ...)
 	if GameTooltip:IsOwned(self) then
-		GameTooltip:SetTalent(self.__owner.talentTree, self:GetID(), false, M.TalentUI.pet, M.TalentUI.talentGroup, GetCVarBool("previewTalentsOption"))
+		local talentInfo = C_SpecializationInfo.GetTalentInfo(MakeTalentQuery(self.__owner.talentTree, self:GetID(), false, M.TalentUI.pet, M.TalentUI.talentGroup))
+		if talentInfo then
+			GameTooltip:SetTalent(talentInfo.talentID, false, M.TalentUI.pet, M.TalentUI.talentGroup)
+		end
 	end
 end
 
@@ -805,10 +819,10 @@ end
 
 function M:TalentUI_Update()
 	local preview = GetCVarBool("previewTalentsOption")
-	local isActiveTalentGroup = M.TalentUI.talentGroup == GetActiveTalentGroup(false, M.TalentUI.pet)
+	local isActiveTalentGroup = M.TalentUI.talentGroup == C_SpecializationInfo.GetActiveSpecGroup(false, M.TalentUI.pet)
 
 	local base
-	local _, name, _, _, pointsSpent, background, previewPointsSpent = GetTalentTabInfo(self.talentTree, false, M.TalentUI.pet, M.TalentUI.talentGroup)
+	local _, name, _, _, _, _, pointsSpent, background, previewPointsSpent = C_SpecializationInfo.GetSpecializationInfo(self.talentTree, false, M.TalentUI.pet, nil, nil, M.TalentUI.talentGroup)
 	if name then
 		base = "Interface\\TalentFrame\\"..background.."-"
 	else
@@ -840,8 +854,10 @@ function M:TalentUI_Update()
 	for i = 1, MAX_NUM_TALENTS do
 		local button = M.TalentUI_GetButton(self, i)
 		if i <= numTalents then
-			local talentName, iconTexture, tier, column, rank, maxRank, meetsPrereq, previewRank, meetsPreviewPrereq = GetTalentInfo(self.talentTree, i, false, M.TalentUI.pet, M.TalentUI.talentGroup)
-			if talentName then
+			local talentInfo = C_SpecializationInfo.GetTalentInfo(MakeTalentQuery(self.talentTree, i, false, M.TalentUI.pet, M.TalentUI.talentGroup))
+			if talentInfo then
+				local iconTexture, tier, column, rank, maxRank, meetsPrereq, previewRank, meetsPreviewPrereq = talentInfo.icon, talentInfo.tier, talentInfo.column, talentInfo.rank, talentInfo.maxRank, talentInfo.meetsPrereq, talentInfo.previewRank, talentInfo.meetsPreviewPrereq
+
 				local displayRank
 				if preview then
 					displayRank = previewRank
@@ -1064,8 +1080,8 @@ function M.TalentUI_UpdateControls()
 end
 
 function M.TalentUI_UpdatePlayer()
-	local activeTalentGroup, numTalentGroups = GetActiveTalentGroup(false, false), GetNumTalentGroups(false, false)
-	local activePetTalentGroup, numPetTalentGroups = GetActiveTalentGroup(false, true), GetNumTalentGroups(false, true)
+	local activeTalentGroup, numTalentGroups = C_SpecializationInfo.GetActiveSpecGroup(false, false), GetNumTalentGroups(false, false)
+	local activePetTalentGroup, numPetTalentGroups = C_SpecializationInfo.GetActiveSpecGroup(false, true), GetNumTalentGroups(false, true)
 
 	if not M.TalentUI_UpdateSpecs(activeTalentGroup, numTalentGroups, activePetTalentGroup, numPetTalentGroups) then
 		return
@@ -1275,16 +1291,17 @@ function M:TalentUI_Init()
 	frame.pet = false
 	frame.talentGroup = 1
 
-	local activeTalentGroup = GetActiveTalentGroup()
+	local activeTalentGroup = C_SpecializationInfo.GetActiveSpecGroup()
 	M.TalentUI_UpdateActiveSpec(activeTalentGroup)
 
 	M.TalentUI = frame
 
 	local alaEmu = _G.__ala_meta__ and _G.__ala_meta__.emu
-	if alaEmu and alaEmu.MT then
+	local EmuCreateFunc = alaEmu.MT and alaEmu.MT.CreateEmulator
+	if EmuCreateFunc then
 		local CalcButton = P.CreateButton(ContainerBar, 70, 20, L["TalentEmu"])
 		CalcButton:SetPoint("LEFT", Glyph, "RIGHT", 4, 0)
-		CalcButton:SetScript("OnClick", function() alaEmu.MT.CreateEmulator() end)
+		CalcButton:SetScript("OnClick", function() EmuCreateFunc() end)
 		frame.CalcButton = CalcButton
 	end
 end
@@ -1296,7 +1313,7 @@ function M.TalentUI_Wipe(_, arg1, arg2)
 	if dialog then
 		MoneyFrame_Update(dialog:GetName().."MoneyFrame", arg1)
 		M.TalentUI:Show()
-		local talentGroup = GetActiveTalentGroup()
+		local talentGroup = C_SpecializationInfo.GetActiveSpecGroup()
 		for index, spec in next, specs do
 			if spec.pet == false and spec.talentGroup == talentGroup then
 				TalentSpecTab_OnClick(specTabs[index])
@@ -1335,8 +1352,12 @@ function M:ExtTalentUI()
 		if M.db["TalentExpand"] then
 			B:TogglePanel(M.TalentUI)
 		else
-			if not C_AddOns.IsAddOnLoaded("Blizzard_TalentUI") then TalentFrame_LoadUI() end
-			if not C_AddOns.IsAddOnLoaded("Blizzard_GlyphUI") then GlyphFrame_LoadUI() end
+			if not C_AddOns.IsAddOnLoaded("Blizzard_TalentUI") then
+				UIParentLoadAddOn("Blizzard_TalentUI")
+			end
+			if not C_AddOns.IsAddOnLoaded("Blizzard_GlyphUI") then
+				UIParentLoadAddOn("Blizzard_GlyphUI")
+			end
 
 			if PlayerTalentFrame:IsShown() then
 				HideUIPanel(PlayerTalentFrame)
