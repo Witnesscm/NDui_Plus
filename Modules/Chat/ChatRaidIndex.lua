@@ -44,9 +44,9 @@ end
 
 function CH:ChatRaidIndex()
 	CH.RolePaths = {
-		TANK = P.TextureString(B.GetRoleTex("TANK"), ":16:16"),
-		HEALER = P.TextureString(B.GetRoleTex("HEALER"), ":16:16"),
-		DAMAGER = P.TextureString(B.GetRoleTex("DAMAGER"), ":16:16")
+		TANK = P.TextureString(B.GetRoleTex("TANK")),
+		HEALER = P.TextureString(B.GetRoleTex("HEALER")),
+		DAMAGER = P.TextureString(B.GetRoleTex("DAMAGER"))
 	}
 
 	local eventList = {
