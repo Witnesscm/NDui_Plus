@@ -64,7 +64,7 @@ StaticPopupDialogs["NDUIPLUS_CONFIRM_REMOVE_GLYPH"] = {
 	button2 = NO,
 	OnAccept = function (self)
 		local talentGroup = M.TalentUI and M.TalentUI.talentGroup or 1
-		if talentGroup == GetActiveTalentGroup() then
+		if talentGroup == C_SpecializationInfo.GetActiveSpecGroup() then
 			RemoveGlyphFromSocket(self.data.id)
 		end
 	end,
@@ -88,12 +88,12 @@ local function GlyphButton_OnClick(self, button)
 			ChatEdit_InsertLink(link)
 		end
 	elseif button == "RightButton" then
-		if IsShiftKeyDown() and talentGroup == GetActiveTalentGroup() then
+		if IsShiftKeyDown() and talentGroup == C_SpecializationInfo.GetActiveSpecGroup() then
 			if self.glyphName then
 				StaticPopup_Show("NDUIPLUS_CONFIRM_REMOVE_GLYPH", nil, nil, {name = self.glyphName, id = id})
 			end
 		end
-	elseif talentGroup == GetActiveTalentGroup() then
+	elseif talentGroup == C_SpecializationInfo.GetActiveSpecGroup() then
 		if self.glyphName and GlyphMatchesSocket(id) then
 			local newGlyphName = GetPendingGlyphInfo()
 			if newGlyphName then
@@ -188,7 +188,7 @@ end
 function M:GlyphUI_Update()
 	if not M.GlyphUI or not M.GlyphUI:IsVisible() then return end
 
-	local isActiveTalentGroup = not M.TalentUI.pet and M.TalentUI.talentGroup == GetActiveTalentGroup(false, M.TalentUI.pet)
+	local isActiveTalentGroup = not M.TalentUI.pet and M.TalentUI.talentGroup == C_SpecializationInfo.GetActiveSpecGroup(false, M.TalentUI.pet)
 
 	for i = 1, NUM_GLYPH_SLOTS do
 		SetDesaturation(M.GlyphUI.slots[i].icon, not isActiveTalentGroup)

@@ -183,7 +183,7 @@ do
 	local function UpdateGroupRole()
 		if not IsInGroup() then return end
 
-		local role =  GetTalentGroupRole(GetActiveTalentGroup())
+		local role =  GetTalentGroupRole(C_SpecializationInfo.GetActiveSpecGroup())
 		if UnitGroupRolesAssigned("player") ~= role then
 			UnitSetRole("player", role)
 		end

@@ -57,7 +57,7 @@ end
 local function GetItemSlotLevel(itemLink)
 	local level
 	if itemLink then
-		level = select(4, GetItemInfo(itemLink))
+		level = select(4, C_Item.GetItemInfo(itemLink))
 	end
 	return tonumber(level) or 0
 end
