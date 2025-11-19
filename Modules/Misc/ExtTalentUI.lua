@@ -146,6 +146,16 @@ local TALENT_ARROW_TEXTURECOORDS = {
 	},
 }
 
+local talentInfoQuery = {}
+local function MakeTalentQuery(tabIndex, talentIndex, isInspect, isPet, groupIndex)
+	talentInfoQuery.specializationIndex = tabIndex
+	talentInfoQuery.talentIndex = talentIndex
+	talentInfoQuery.isInspect = isInspect
+	talentInfoQuery.isPet = isPet
+	talentInfoQuery.groupIndex = groupIndex
+	return talentInfoQuery
+end
+
 function M:TalentUI_CreatePanel(i)
 	local frame = CreateFrame("Frame", nil, self)
 	frame:SetSize(initialOffsetX * 2 + TALENT_COLUMNS_CLASSIC * buttonSpacingX - 26, initialOffsetY * 2 + TALENT_TIERS_CLASSIC * buttonSpacingX - 26)
@@ -371,7 +381,7 @@ function M.TalentUI_UpdateSpecInfoCache(cache, inspect, pet, talentGroup)
 	for i = 1, MAX_TALENT_TABS do
 		cache[i] = cache[i] or {}
 		if i <= numTabs then
-			local _, name, _, icon, pointsSpent, _, previewPointsSpent = GetTalentTabInfo(i, inspect, pet, talentGroup)
+			local _, name, _, icon, _, _, pointsSpent, _, previewPointsSpent = C_SpecializationInfo.GetSpecializationInfo(i, inspect, pet, nil, nil, talentGroup)
 			local displayPointsSpent = pointsSpent + previewPointsSpent
 
 			cache[i].name = name
@@ -441,12 +451,18 @@ end
 local function TalentButton_OnEnter(self)
 	GameTooltip:ClearLines()
 	GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-	GameTooltip:SetTalent(self.__owner.talentTree, self:GetID(), false, M.TalentUI.pet, M.TalentUI.talentGroup, GetCVarBool("previewTalentsOption"))
+	local talentInfo = C_SpecializationInfo.GetTalentInfo(MakeTalentQuery(self.__owner.talentTree, self:GetID(), false, M.TalentUI.pet, M.TalentUI.talentGroup))
+	if talentInfo then
+		GameTooltip:SetTalent(talentInfo.talentID, false, M.TalentUI.pet, M.TalentUI.talentGroup)
+	end
 end
 
 local function TalentButton_OnEvent(self, event, ...)
 	if GameTooltip:IsOwned(self) then
-		GameTooltip:SetTalent(self.__owner.talentTree, self:GetID(), false, M.TalentUI.pet, M.TalentUI.talentGroup, GetCVarBool("previewTalentsOption"))
+		local talentInfo = C_SpecializationInfo.GetTalentInfo(MakeTalentQuery(self.__owner.talentTree, self:GetID(), false, M.TalentUI.pet, M.TalentUI.talentGroup))
+		if talentInfo then
+			GameTooltip:SetTalent(talentInfo.talentID, false, M.TalentUI.pet, M.TalentUI.talentGroup)
+		end
 	end
 end
 
@@ -716,7 +732,7 @@ function M:TalentUI_Update()
 	local isActiveTalentGroup = M.TalentUI.talentGroup == C_SpecializationInfo.GetActiveSpecGroup(false, M.TalentUI.pet)
 
 	local base
-	local _, name, _, _, pointsSpent, background, previewPointsSpent = GetTalentTabInfo(self.talentTree, false, M.TalentUI.pet, M.TalentUI.talentGroup)
+	local _, name, _, _, _, _, pointsSpent, background, previewPointsSpent = C_SpecializationInfo.GetSpecializationInfo(self.talentTree, false, M.TalentUI.pet, nil, nil, M.TalentUI.talentGroup)
 	if name then
 		base = "Interface\\TalentFrame\\"..background.."-"
 	else
@@ -748,8 +764,10 @@ function M:TalentUI_Update()
 	for i = 1, MAX_NUM_TALENTS do
 		local button = M.TalentUI_GetButton(self, i)
 		if i <= numTalents then
-			local talentName, iconTexture, tier, column, rank, maxRank, meetsPrereq, previewRank, meetsPreviewPrereq = GetTalentInfo(self.talentTree, i, false, M.TalentUI.pet, M.TalentUI.talentGroup)
-			if talentName then
+			local talentInfo = C_SpecializationInfo.GetTalentInfo(MakeTalentQuery(self.talentTree, i, false, M.TalentUI.pet, M.TalentUI.talentGroup))
+			if talentInfo then
+				local iconTexture, tier, column, rank, maxRank, meetsPrereq, previewRank, meetsPreviewPrereq = talentInfo.icon, talentInfo.tier, talentInfo.column, talentInfo.rank, talentInfo.maxRank, talentInfo.meetsPrereq, talentInfo.previewRank, talentInfo.meetsPreviewPrereq
+
 				local displayRank
 				if preview then
 					displayRank = previewRank
@@ -1131,14 +1149,12 @@ function M:TalentUI_Init()
 	M.TalentUI = frame
 
 	local alaEmu = _G.__ala_meta__ and _G.__ala_meta__.emu
-	if alaEmu then
-		local EmuCreateFunc = alaEmu.MT and alaEmu.MT.CreateEmulator or alaEmu.Emu_Create
-		if EmuCreateFunc then
-			local CalcButton = P.CreateButton(ContainerBar, 70, 20, L["TalentEmu"])
-			CalcButton:SetPoint("BOTTOMLEFT", 16, 6)
-			CalcButton:SetScript("OnClick", function() EmuCreateFunc() end)
-			frame.CalcButton = CalcButton
-		end
+	local EmuCreateFunc = alaEmu.MT and alaEmu.MT.CreateEmulator
+	if EmuCreateFunc then
+		local CalcButton = P.CreateButton(ContainerBar, 70, 20, L["TalentEmu"])
+		CalcButton:SetPoint("BOTTOMLEFT", 16, 6)
+		CalcButton:SetScript("OnClick", function() EmuCreateFunc() end)
+		frame.CalcButton = CalcButton
 	end
 end
 
