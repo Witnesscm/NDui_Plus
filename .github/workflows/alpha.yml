@@ -22,7 +22,7 @@ jobs:
           fetch-depth: 0
 
       - name: Create Mainline Package
-        uses: Witnesscm/packager@master
+        uses: BigWigsMods/packager@master
         with:
           args: -g wrath
 
