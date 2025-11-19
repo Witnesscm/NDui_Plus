@@ -4,13 +4,12 @@ local S = P:RegisterModule("Skins")
 
 local _G = getfenv(0)
 local xpcall, pairs, type = xpcall, pairs, type
-local tinsert = table.insert
 
 S.nonAddonsToLoad = {}
 S.aceWidgets = {}
 S.aceContainers = {}
 
-function S:RegisterSkin(name, func)
+function S:RegisterSkin(name, func, early)
 	if not func then
 		func = self[name]
 
@@ -18,7 +17,11 @@ function S:RegisterSkin(name, func)
 			self.nonAddonsToLoad[name] = func
 		end
 	else
-		P:AddCallbackForAddon(name, func)
+		if early then
+			P:AddCallbackForAddonEarly(name, func)
+		else
+			P:AddCallbackForAddon(name, func)
+		end
 	end
 end
 

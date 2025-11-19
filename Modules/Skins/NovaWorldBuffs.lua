@@ -46,6 +46,11 @@ local function reskinCheck(self, tbl)
 end
 
 local function reskinMarker(frame, isTower)
+	if not frame then
+		P.Developer_ThrowError("Unknown NWB Marker")
+		return
+	end
+
 	local icon = frame.texture
 	local tooltip = frame.tooltip
 

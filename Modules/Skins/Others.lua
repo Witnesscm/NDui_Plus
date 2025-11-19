@@ -247,43 +247,58 @@ function S:BigWigs_Options()
 	P.ReskinTooltip(_G.BigWigsOptionsTooltip)
 end
 
-function S:RestockerTBC()
+function S:Restocker()
 	local RS = _G.RS_ADDON
 	if not RS or not RS.MainFrame then return end
 
 	local frame = RS.MainFrame
-	P.ReskinFrame(frame)
-	B.StripTextures(frame.listInset)
-	B.ReskinScroll(frame.scrollFrame.ScrollBar)
-	B.Reskin(frame.addBtn)
-	B.ReskinInput(frame.editBox)
+	B.StripTextures(frame)
+	B.SetBD(frame)
+	S:Proxy("ReskinClose", frame.CloseButton)
+	S:Proxy("StripTextures", frame.listInset)
+	S:Proxy("ReskinScroll", frame.scrollFrame.ScrollBar)
+	S:Proxy("Reskin", frame.addBtn)
+	S:Proxy("ReskinInput", frame.editBox)
 	P.ReskinDropDown(frame.profileDropDownMenu)
 	UIDropDownMenu_SetWidth(frame.profileDropDownMenu, 120)
 
 	for _, child in pairs({frame:GetChildren()}) do
-		if child:GetObjectType() == "CheckButton" then
-			B.ReskinCheck(child)
+		if child.GetText and child:GetText() == "Settings" then
+			B.Reskin(child)
+			break
 		end
 	end
 
-	local function reskinItemFrame(item)
-		for _, child in pairs({item:GetChildren()}) do
-			local objectType = child:GetObjectType()
-			if objectType == "Button" then
-				B.ReskinClose(child)
-			elseif objectType == "EditBox" then
-				P.ReskinInput(child)
-				child.bg:SetPoint("BOTTOMRIGHT", -4, 0)
+	local function reskinItem(item)
+		local prev
+		for _, key in ipairs({"delBtn", "buyBtn", "toBankBtn", "fromBankBtn", "amountBox"}) do
+			local bu = item[key]
+			if bu then
+				if key == "delBtn" then
+					B.ReskinClose(bu)
+				elseif key ~= "amountBox" then
+					B.Reskin(bu)
+					bu:SetHeight(20)
+				end
+				bu:ClearAllPoints()
+				if not prev then
+					bu:SetPoint("RIGHT")
+				else
+					bu:SetPoint("RIGHT", prev, "LEFT", -1, 0)
+				end
+				prev = bu
 			end
 		end
+		S:Proxy("ReskinInput", item.amountBox)
+		S:Proxy("ReskinInput", item.reactionBox)
 	end
 
 	for _, item in ipairs(RS.framepool) do
-		reskinItemFrame(item)
+		reskinItem(item)
 	end
 
-	hooksecurefunc(RS, "addListFrame", function()
-		reskinItemFrame(RS.framepool[#RS.framepool])
+	hooksecurefunc(RS, "CreateRestockListRow", function()
+		reskinItem(RS.framepool[#RS.framepool])
 	end)
 end
 
@@ -343,6 +358,39 @@ function S:Ranker()
 	end
 end
 
+local function reskinExtraTip(self, tooltip)
+	local reg = self.tooltipRegistry[tooltip]
+	if reg and reg.extraTip then
+		P.ReskinTooltip(reg.extraTip)
+		reg.extraTip.bg:SetFrameLevel(0)
+	end
+end
+
+function S:LibExtraTip()
+	local LibExtraTip = _G.LibStub and _G.LibStub("LibExtraTip-1", true)
+	if not LibExtraTip then return end
+
+	hooksecurefunc(LibExtraTip, "AddLine", reskinExtraTip)
+	hooksecurefunc(LibExtraTip, "AddDoubleLine", reskinExtraTip)
+end
+
+function S:Hekili()
+	local Hekili = _G.Hekili
+	if not Hekili then return end
+
+	if Hekili.CreateButton then
+		local CreateButton = Hekili.CreateButton
+		Hekili.CreateButton = function(...)
+			local button = CreateButton(...)
+			if button and not button.styled then
+				B.CreateSD(button)
+				button.styled = true
+			end
+			return button
+		end
+	end
+end
+
 S:RegisterSkin("HandyNotes_NPCs (Classic)", S.HandyNotes_NPCs)
 S:RegisterSkin("HandyNotes_NPCs (Burning Crusade Classic)", S.HandyNotes_NPCs)
 S:RegisterSkin("BattleInfo", S.BattleInfo)
@@ -353,12 +401,14 @@ S:RegisterSkin("BuyEmAllClassic", S.BuyEmAllClassic)
 S:RegisterSkin("Hemlock", S.Hemlock)
 S:RegisterSkin("TotemTimers", S.TotemTimers)
 S:RegisterSkin("BigWigs_Options", S.BigWigs_Options)
-S:RegisterSkin("RestockerTBC", S.RestockerTBC)
+S:RegisterSkin("Restocker", S.Restocker)
 S:RegisterSkin("RaidLedger", S.RaidLedger)
 S:RegisterSkin("LibQTip")
 S:RegisterSkin("NovaSpellRankChecker", S.NovaSpellRankChecker)
 S:RegisterSkin("OmniCD", S.OmniCD)
 S:RegisterSkin("Ranker", S.Ranker)
+S:RegisterSkin("LibExtraTip")
+S:RegisterSkin("Hekili", S.Hekili, true)
 
 -- Hide Toggle Button
 S.ToggleFrames = {}

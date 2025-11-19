@@ -11,7 +11,7 @@ local isMoving = false
 local hasNew = false
 local timeout = 0
 local chatIn = true
-local offset = 28
+local offset = 4
 
 do
 	-- NDui CopyButton
