@@ -1,12 +1,8 @@
 local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 local S = P:GetModule("Skins")
-local M = B:GetModule("Misc")
 
-local _G = getfenv(0)
-local select, pairs = select, pairs
-
-local function reskinInspect(frame)
+local function ReskinListPanel(frame)
 	frame:SetBackdrop(nil)
 	frame.SetBackdrop = B.Dummy
 	frame:SetBackdropColor(0, 0, 0, 0)
@@ -17,8 +13,18 @@ local function reskinInspect(frame)
 		return self.backdrop
 	end
 
-	if frame:GetHeight() <= 424 then frame:SetHeight(422) end
 	frame.bg = B.SetBD(frame, nil, 0, C.mult, 0, -C.mult)
+end
+
+local function ReskinPortraitFrame(self, unit)
+	self:SetScale(.85)
+	B.StripTextures(self)
+	SetPortraitTexture(self.Portrait, unit)
+	self.PortraitRingQuality:SetTexture("Interface\\Masks\\CircleMaskScalable")
+	self.PortraitRingQuality:SetSize(50, 50)
+	self.PortraitRingQuality:SetDrawLayer("BACKGROUND")
+	self.PortraitRingQuality:ClearAllPoints()
+	self.PortraitRingQuality:SetPoint("CENTER", self.Portrait)
 end
 
 function S:MerInspect()
@@ -26,12 +32,23 @@ function S:MerInspect()
 
 	if not _G.ShowInspectItemListFrame then return end
 
-	hooksecurefunc("ShowInspectItemListFrame", function(_, parent)
+	hooksecurefunc("ShowInspectItemListFrame", function(unit, parent)
 		local frame = parent.inspectFrame
 		if not frame then return end
 
 		if not frame.styled then
-			reskinInspect(frame)
+			ReskinListPanel(frame)
+			ReskinPortraitFrame(frame.portrait, unit)
+
+			local specicon = frame.specicon
+			specicon:SetSize(41, 41)
+			specicon:ClearAllPoints()
+			specicon:SetPoint("TOPRIGHT", -14, -14)
+			specicon:SetAlpha(1)
+			specicon:SetMask("Interface\\Masks\\CircleMaskScalable")
+			local spectext = frame.spectext
+			B.SetFontSize(spectext, 12)
+			spectext:SetAlpha(1)
 
 			for i = 1, frame:GetNumChildren() do
 				local child = select(i, frame:GetChildren())
@@ -40,15 +57,20 @@ function S:MerInspect()
 				end
 			end
 
+			if frame == _G.PaperDollFrame.inspectFrame then
+				frame:SetHeight(422)
+			end
+
 			frame.styled = true
 		end
 
 		local frameName = parent:GetName()
+		local p1, rel, p2, x, y = frame:GetPoint()
 		if frameName == "PaperDollFrame" then
-			local x = frameName == "PaperDollFrame" and _G.EngravingFrame and _G.EngravingFrame:IsVisible() and -180 or 33
-			frame:SetPoint("TOPLEFT", parent, "TOPRIGHT", -x, -16)
-		else
-			frame:SetPoint("TOPLEFT", parent, "TOPRIGHT", 1, 0)
+			local offset = _G.EngravingFrame and _G.EngravingFrame:IsVisible() and 2 or -2
+			frame:SetPoint(p1, rel, p2, x + offset, y - 2)
+		elseif not frameName then
+			frame:SetPoint(p1, rel, p2, x - C.mult, y)
 		end
 	end)
 
@@ -63,15 +85,15 @@ function S:MerInspect()
 
 	if not _G.ClassicStatsFrameTemplate_OnShow then return end
 
-	hooksecurefunc("ClassicStatsFrameTemplate_OnShow", function(self)
-		if self:GetHeight() <= 424 then self:SetHeight(422) end
-
-		if not self.styled then
-			B.StripTextures(self)
-			reskinInspect(self)
+	hooksecurefunc("ClassicStatsFrameTemplate_OnShow", function(frame)
+		local unit = frame.data.unit or "player"
+		if not frame.styled then
+			B.StripTextures(frame)
+			ReskinListPanel(frame)
+			ReskinPortraitFrame(frame.PortraitFrame, unit)
 
 			for _, key in pairs({"AttributesCategory", "ResistanceCategory", "EnhancementsCategory", "SuitCategory"}) do
-				local category = self[key]
+				local category = frame[key]
 				if category then
 					B.StripTextures(category)
 					local line = category:CreateTexture(nil, "ARTWORK")
@@ -81,12 +103,17 @@ function S:MerInspect()
 				end
 			end
 
-			self.styled = true
+			if unit == "player" then
+				hooksecurefunc(frame, "SetPoint", function(_, _, rel)
+					frame:SetHeight((rel == PaperDollFrame or rel == PaperDollFrame.inspectFrame) and 422 or 424)
+				end)
+			end
+
+			frame.styled = true
 		end
 
-		if self.EnhancementsCategory and self.SuitCategory and self.EnhancementsCategory:IsShown() then
-			local a1, p, a2, x, y = self.SuitCategory:GetPoint(1)
-			self.SuitCategory:SetPoint(a1, p, a2, x, y+C.mult)
+		if unit == "player" and frame:GetHeight() <= 424 then
+			frame:SetHeight(422)
 		end
 	end)
 end
