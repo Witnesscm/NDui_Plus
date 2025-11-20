@@ -83,7 +83,7 @@ local function GlyphButton_OnClick(self, button)
 	local talentGroup = M.TalentUI.talentGroup
 
 	if IsModifiedClick("CHATLINK") and ChatEdit_GetActiveWindow() then
-		local link = GetGlyphLink(id, talentGroup)
+		local link = C_GlyphInfo.GetGlyphLink(id, talentGroup)
 		if link then
 			ChatEdit_InsertLink(link)
 		end
