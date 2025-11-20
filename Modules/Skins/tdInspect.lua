@@ -267,7 +267,7 @@ function S:tdInspect()
 		hooksecurefunc(tdInspect, "OpenInspectGearFrame", function(self)
 			if self.InspectGearFrame then
 				self.InspectGearFrame:ClearAllPoints()
-				self.InspectGearFrame:SetPoint("TOPLEFT", _G.InspectPaperDollFrame, "TOPRIGHT", -33, -16)
+				self.InspectGearFrame:SetPoint("TOPLEFT", _G.InspectPaperDollFrame, "TOPRIGHT", 2, 0)
 			end
 		end)
 	end

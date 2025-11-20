@@ -102,7 +102,7 @@ function S:MerInspect()
 			frame.styled = true
 		end
 
-		if unit == "player" then
+		if unit == "player" and frame:GetHeight() <= 424 then
 			frame:SetHeight(422)
 		end
 	end)
