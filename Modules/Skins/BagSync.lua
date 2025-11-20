@@ -104,6 +104,23 @@ function S:BagSync()
 	for name, module in pairs(BagSync.modules) do
 		SkinBagSyncFrame(name, module)
 	end
+
+	local Tooltip = BagSync:GetModule("Tooltip")
+	if Tooltip then
+		hooksecurefunc(Tooltip, "TallyUnits", function(self, objTooltip)
+			if not self.qTip then return end
+
+			local BPBIDTooltip
+			if objTooltip == _G.FloatingBattlePetTooltip then
+				BPBIDTooltip = _G["BPBID_BreedTooltip2"]
+			else
+				BPBIDTooltip = _G["BPBID_BreedTooltip"]
+			end
+
+			self.qTip:ClearAllPoints()
+			self.qTip:SetPoint("TOPRIGHT", BPBIDTooltip and BPBIDTooltip:IsVisible() and BPBIDTooltip or objTooltip, "BOTTOMRIGHT", 0, 2*C.mult)
+		end)
+	end
 end
 
 S:RegisterSkin("BagSync", S.BagSync)

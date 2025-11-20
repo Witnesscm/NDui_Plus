@@ -33,9 +33,14 @@ function S:RareScanner()
 		close:SetPoint("BOTTOMRIGHT",-5, 5)
 	end
 
-	if button.FilterEntityButton and button.UnfilterEnabledButton then
-		B.ReskinArrow(button.FilterEntityButton, "down")
-		B.ReskinArrow(button.UnfilterEnabledButton, "up")
+	for index, key in ipairs({"FilterEntityButton", "UnFilterEntityButton"}) do
+		local filter = button[key]
+		if filter then
+			B.ReskinArrow(filter, index == 1 and "down" or "up")
+			filter:HookScript("OnEnter", function(self)
+				P.ReskinTooltip(self.tooltip)
+			end)
+		end
 	end
 
 	P.ReskinFont(button.Title)
@@ -65,6 +70,17 @@ function S:RareScanner()
 					end
 				end
 			end)
+		end
+	end
+
+	-- RSSearch
+	for _, child in pairs({_G.WorldMapFrame:GetChildren()}) do
+		if child:GetObjectType() == "Frame" and child.EditBox and child.RefreshPOIs then
+			child:ClearAllPoints()
+			child:SetPoint("TOP", _G.WorldMapFrame:GetCanvasContainer(), "TOP", 0, 0)
+			child.EditBox:DisableDrawLayer("BACKGROUND")
+			B.ReskinInput(child.EditBox, 20)
+			break
 		end
 	end
 end
