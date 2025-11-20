@@ -118,9 +118,7 @@ local function ReskinMJEnhanced()
 					child:HookScript("PreClick", function(self, button)
 						if not self.isHooked and button == "LeftButton" then
 							if S.aceContainers["Window"] then
-								print("Try TempPostHook")
 								TempPostHook(S.aceContainers, "Window", function(_, widget)
-									print("once Window")
 									PetWindow = widget
 								end)
 							end
