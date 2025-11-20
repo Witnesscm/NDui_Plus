@@ -20,6 +20,71 @@ local function updateButtonBorder(button)
 	end
 end
 
+local function TempPostHook(object, method, hookFunc)
+	local orig = object[method]
+	if orig then
+		object[method] = function(...)
+			local results = {orig(...)}
+			hookFunc(...)
+			object[method] = orig
+			return unpack(results)
+		end
+	end
+end
+
+local function HandlePetButton(self)
+	if not self.bg then
+		self.background:SetAlpha(0)
+		self:SetHighlightTexture(0)
+		self.iconBorder:SetTexture("")
+		self.selectedTexture:SetTexture("")
+
+		self.bg = B.CreateBDFrame(self, .25)
+		self.bg:SetPoint("TOPLEFT", 1, -1)
+		self.bg:SetPoint("BOTTOMRIGHT", 0, 1)
+
+		local icon = self.icon
+		icon:SetSize(25, 25)
+		icon.SetSize = B.Dummy
+		icon.bg = B.ReskinIcon(icon)
+	end
+
+	if self.selectedTexture:IsShown() then
+		self.bg:SetBackdropColor(DB.r, DB.g, DB.b, .25)
+	else
+		self.bg:SetBackdropColor(0, 0, 0, .25)
+	end
+end
+
+local PetWindow
+local function ReskinPetPanel()
+	if PetWindow and not PetWindow.styled then
+		local frame = PetWindow.frame
+		if frame.bg then
+			B.CreateBD(frame.bg)
+			B.CreateSD(frame.bg)
+			B.CreateTex(frame.bg)
+			frame.bg:SetPoint("TOPLEFT", 2, 0)
+			frame.bg:SetPoint("BOTTOMRIGHT")
+		end
+
+		S:Proxy("ReskinInput", frame.SearchBox)
+		S:Proxy("ReskinTrimScroll", frame.ScrollBar)
+
+		if frame.ScrollBox then
+			hooksecurefunc(frame.ScrollBox, "Update", function(self)
+				self:ForEachFrame(HandlePetButton)
+			end)
+		end
+
+		if PetWindow.InfoButton then
+			PetWindow.InfoButton.Ring:Hide()
+		end
+
+		PetWindow.styled = true
+	end
+end
+
 local styled
 local function ReskinMJEnhanced()
 	if CollectionsJournal.selectedTab == COLLECTIONS_JOURNAL_TAB_INDEX_MOUNTS and not styled then
@@ -50,6 +115,23 @@ local function ReskinMJEnhanced()
 					B.ReskinIcon(child.Icon)
 					child:SetNormalTexture(0)
 					child:SetCheckedTexture(DB.pushedTex)
+					child:HookScript("PreClick", function(self, button)
+						if not self.isHooked and button == "LeftButton" then
+							if S.aceContainers["Window"] then
+								print("Try TempPostHook")
+								TempPostHook(S.aceContainers, "Window", function(_, widget)
+									print("once Window")
+									PetWindow = widget
+								end)
+							end
+							self.isHooked = true
+						end
+					end)
+					child:HookScript("PostClick", function(_, button)
+						if button == "LeftButton" then
+							ReskinPetPanel()
+						end
+					end)
 				end
 			end
 
