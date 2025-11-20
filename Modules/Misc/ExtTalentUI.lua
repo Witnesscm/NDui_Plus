@@ -1149,7 +1149,7 @@ function M:TalentUI_Init()
 	M.TalentUI = frame
 
 	local alaEmu = _G.__ala_meta__ and _G.__ala_meta__.emu
-	local EmuCreateFunc = alaEmu.MT and alaEmu.MT.CreateEmulator
+	local EmuCreateFunc = alaEmu and alaEmu.MT and alaEmu.MT.CreateEmulator
 	if EmuCreateFunc then
 		local CalcButton = P.CreateButton(ContainerBar, 70, 20, L["TalentEmu"])
 		CalcButton:SetPoint("BOTTOMLEFT", 16, 6)
