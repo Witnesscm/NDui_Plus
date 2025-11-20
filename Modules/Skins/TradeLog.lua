@@ -17,6 +17,7 @@ function S:TradeLog()
 	B.ReskinCheck(TradeListOnlyCompleteCB)
 	B.ReskinSlider(TradeLogFrameScaleSlider)
 	B.ReskinScroll(TradeListScrollFrameScrollBar)
+	if _G.TradeListDescending then B.ReskinCheck(_G.TradeListDescending) end
 
 	if TradeListScrollFrameScrollBar.SetBackdrop then
 		TradeListScrollFrameScrollBar.SetBackdrop = B.Dummy
@@ -33,12 +34,19 @@ function S:TradeLog()
 	B.CreateMF(TradeLogFrame)
 
 	local function reskinButton(bu)
-		_G[bu:GetName().."IconTexture"]:SetTexCoord(.08, .92, .08, .92)
-		bu:GetHighlightTexture():SetColorTexture(1, 1, 1, .25)
-		B.CreateBDFrame(bu, .25)
+		bu:SetNormalTexture(0)
+		bu:SetPushedTexture(0)
+		local hl = bu:GetHighlightTexture()
+		hl:SetColorTexture(1, 1, 1, .25)
+		hl:SetInside()
+		local icon = _G[bu:GetName().."IconTexture"]
+		icon:SetTexCoord(unpack(DB.TexCoord))
+		icon:SetInside()
+		bu.bg = B.CreateBDFrame(icon, .25)
 		local bd = B.CreateBDFrame(bu, .25)
-		bd:SetPoint("TOPLEFT", bu, "TOPRIGHT")
+		bd:SetPoint("TOPLEFT", bu, "TOPRIGHT", C.mult, 0)
 		bd:SetPoint("BOTTOMRIGHT", 80, 0)
+		--B.ReskinIconBorder(bu.IconBorder)
 	end
 
 	for i = 1, MAX_TRADE_ITEMS do

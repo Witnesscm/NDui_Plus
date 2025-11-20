@@ -33,13 +33,14 @@ function S:RareScanner()
 		close:SetPoint("BOTTOMRIGHT",-5, 5)
 	end
 
-	S:Proxy("ReskinArrow", button.FilterEntityButton, "down")
-	local filterButton = button.FilterEntityButton
-	if filterButton then
-		B.ReskinArrow(filterButton, "down")
-		filterButton:HookScript("OnEnter", function(self)
-			P.ReskinTooltip(self.tooltip)
-		end)
+	for index, key in ipairs({"FilterEntityButton", "UnFilterEntityButton"}) do
+		local filter = button[key]
+		if filter then
+			B.ReskinArrow(filter, index == 1 and "down" or "up")
+			filter:HookScript("OnEnter", function(self)
+				P.ReskinTooltip(self.tooltip)
+			end)
+		end
 	end
 
 	P.ReskinFont(button.Title)
