@@ -204,6 +204,7 @@ local AddonSkins = {
 	{"AtlasLootClassic", "AtlasLootClassic"},
 	{"Auctionator", "Auctionator"},
 	{"AutoBar", "AutoBar"},
+	{"BtWQuests", "BtWQuests"},
 	{"ButtonForge", "Button Forge"},
 	{"GearMenu", "GearMenu"},
 	{"Immersion", "Immersion"},

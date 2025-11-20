@@ -10,6 +10,7 @@
 	<Script file="Auctionator.lua"/>
 	<Script file="AutoBar.lua"/>
 	<Script file="BagSync.lua"/>
+	<Script file="BtWQuests.lua"/>
 	<Script file="ButtonForge.lua"/>
 	<Script file="CChatNotifier.lua"/>
 	<Script file="ExtVendorUI.lua"/>

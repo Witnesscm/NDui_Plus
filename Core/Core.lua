@@ -97,6 +97,7 @@ P.DefaultSettings = {
 		AtlasLootClassic = true,
 		Auctionator = true,
 		AutoBar = true,
+		BtWQuests = true,
 		ButtonForge = true,
 		ClassicThreatMeter = true,
 		GearMenu = true,
