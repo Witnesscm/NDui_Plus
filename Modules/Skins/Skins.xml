@@ -19,6 +19,7 @@
 	<Script file="GearMenu.lua"/>
 	<Script file="InboxMailBag.lua"/>
 	<Script file="ItemRack.lua"/>
+	<Script file="Journalator.lua"/>
 	<Script file="LibUIDropDownMenu.lua"/>
 	<Script file="ls_Toasts.lua"/>
 	<Script file="MeetingHorn.lua"/>
