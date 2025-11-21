@@ -153,6 +153,12 @@ function S:NovaWorldBuffs()
 		reskinCheck(NWB, {"copyDiscordButton"})
 	end)
 
+	if NWB.createDmfHelperButtons then
+		hooksecurefunc(NWB, "createDmfHelperButtons", function()
+			reskinCheck(NWB, {"dmfChatCountdown", "dmfAutoResButton"})
+		end)
+	end
+
 	hooksecurefunc(NWB, "createTimerLogCheckboxes", function()
 		reskinCheck(NWB, {"timerLogShowRendButton", "timerLogShowOnyButton", "timerLogShowNefButton"})
 	end)
@@ -175,9 +181,11 @@ function S:NovaWorldBuffs()
 	hooksecurefunc(NWB, "createSongflowerMarkers", function()
 		reskinMarkers(NWB.songFlowers)
 	end)
+
 	hooksecurefunc(NWB, "createTuberMarkers", function()
 		reskinMarkers(NWB.tubers)
 	end)
+
 	hooksecurefunc(NWB, "createDragonMarkers", function()
 		reskinMarkers(NWB.dragons)
 	end)

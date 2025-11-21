@@ -457,6 +457,7 @@ function LR:UpdateLootRollTest()
 
 	if not testFrame then
 		LR:LootRollTest()
+		return
 	end
 
 	local width, height = LR.db["Width"], LR.db["Height"]
