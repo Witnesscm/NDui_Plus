@@ -116,6 +116,17 @@ function S:tdInspect_SetupUI()
 	if GlyphFrame then
 		B.StripTextures(GlyphFrame)
 	end
+
+	-- Tabs
+	for _, child in pairs {InspectFrame:GetChildren()} do
+		local objType = child:GetObjectType()
+		if objType == "Button" and not child.bg then
+			local frameName = child.GetName and child:GetName()
+			if frameName and strmatch(frameName, "^InspectFrameTab%d+$") then
+				B.ReskinTab(child)
+			end
+		end
+	end
 end
 
 function S:tdInspect_AddTab()
@@ -231,7 +242,7 @@ function S:tdInspect()
 	local PaperDoll = tdInspect:GetClass("UI.PaperDoll")
 
 	hooksecurefunc(tdInspect, "SetupUI", S.tdInspect_SetupUI)
-	hooksecurefunc(InspectFrame, "AddTab", S.tdInspect_AddTab)
+	--hooksecurefunc(InspectFrame, "AddTab", S.tdInspect_AddTab)
 	hooksecurefunc(TalentFrame, "GetTalentButton", S.tdInspect_GetTalentButton)
 	hooksecurefunc(SlotItem, "Update", S.tdInspect_UpdateSlot)
 	hooksecurefunc(PaperDoll, "Update", S.tdInspect_UpdateILvl)

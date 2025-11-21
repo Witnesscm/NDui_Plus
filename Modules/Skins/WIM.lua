@@ -2,26 +2,22 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 local S = P:GetModule("Skins")
 
-local _G = getfenv(0)
-local strfind = string.find
-
-local backdrops = {"tl", "tr", "bl", "br", "t", "b", "l", "r", "bg"}
-local funcs = {"SetNormalTexture", "SetPushedTexture", "SetDisabledTexture", "SetHighlightTexture", "SetWidth", "SetHeight"}
-
-local function disableSkin(button)
-	for _, func in pairs(funcs) do
-		if button[func] then button[func] = B.Dummy end	
+local function DisableTexture(button)
+	for _, func in pairs({"SetNormalTexture", "SetPushedTexture", "SetDisabledTexture", "SetHighlightTexture", "SetWidth", "SetHeight"}) do
+		if button[func] then button[func] = B.Dummy end
 	end
 end
 
-local function reskinChatFrame(frame)
+local function HandleChatFrame(frame)
+	if frame.styled then return end
+
 	local backdrop = frame.widgets.Backdrop
 	local msgbox = frame.widgets.msg_box
 	local chat = frame.widgets.chat_display
 	local up = frame.widgets.scroll_up
 	local down = frame.widgets.scroll_down
 
-	for _, v in pairs(backdrops) do
+	for _, v in pairs({"tl", "tr", "bl", "br", "t", "b", "l", "r", "bg"}) do
 		backdrop[v]:SetTexture(nil)
 		backdrop[v].SetTexture = B.Dummy
 	end
@@ -37,10 +33,10 @@ local function reskinChatFrame(frame)
 
 	B.ReskinArrow(up, "up")
 	up:SetPoint("TOPRIGHT", -10, -49)
-	disableSkin(up)
+	DisableTexture(up)
 	B.ReskinArrow(down, "down")
 	down:SetPoint("BOTTOMRIGHT", -10, 33)
-	disableSkin(down)
+	DisableTexture(down)
 
 	frame.circle = frame:CreateTexture(nil, "BACKGROUND");
 	frame.circle:SetTexture("Interface\\TargetingFrame\\UI-Classes-Circles")
@@ -62,16 +58,27 @@ local function reskinChatFrame(frame)
 			end
 		end)
 	end
+
+	frame.styled = true
 end
 
-local function reskinFunc()
+local function HandleIconButton(button)
+	if button.icon and not button.styled then
+		B.ReskinIcon(button:GetNormalTexture())
+		button:GetHighlightTexture():SetColorTexture(1, 1, 1, .25)
+		button:SetPushedTexture(0)
+		button.SetPushedTexture = B.Dummy
+		button.icon:SetTexCoord(unpack(DB.TexCoord))
+
+		button.styled = true
+	end
+end
+
+local function HandleWindow()
 	local index = 1
 	local msgFrame = _G["WIM3_msgFrame"..index]
 	while msgFrame do
-		if not msgFrame.styled then
-			reskinChatFrame(msgFrame)
-			msgFrame.styled = true
-		end
+		HandleChatFrame(msgFrame)
 		index = index + 1
 		msgFrame = _G["WIM3_msgFrame"..index]
 	end
@@ -79,42 +86,29 @@ local function reskinFunc()
 	index = 1
 	local button = _G["WIM_ShortcutBarButton"..index]
 	while button do
-		if button.icon and not button.styled then
-			B.ReskinIcon(button:GetNormalTexture())
-			button:GetHighlightTexture():SetColorTexture(1, 1, 1, .25)
-			button:SetPushedTexture(0)
-			button.SetPushedTexture = B.Dummy
-			button.icon:SetTexCoord(unpack(DB.TexCoord))
-			button.styled = true
-		end
+		HandleIconButton(button)
 		index = index + 1
 		button = _G["WIM_ShortcutBarButton"..index]
 	end
 end
 
 function S:WIM()
-	if not S.db["WIM"] then return end
-
 	local WIM = _G.WIM
+	if not WIM then return end
 
-	P:Delay(.5, function()
-		local minimap = _G.WIM3MinimapButton
-		if minimap then
-			for _, region in pairs {minimap:GetRegions()} do
-				if region:GetObjectType() == "Texture" then
-					local texturePath = region.GetTextureFilePath and region:GetTextureFilePath()
-					if texturePath and type(texturePath) == "string" and (strfind(texturePath, "TempPortraitAlphaMask") or strfind(texturePath, "TrackingBorder")) then
-						region:SetTexture("")
-					end
-				end
-			end
-		end
+	local minimap = _G.WIM3MinimapButton
+	if minimap then
+		minimap.backGround:SetTexture("")
+		minimap:DisableDrawLayer("OVERLAY")
+	end
+
+	hooksecurefunc(WIM, "CreateWhisperWindow", HandleWindow)
+	hooksecurefunc(WIM, "CreateChatWindow", HandleWindow)
+	hooksecurefunc(WIM, "CreateW2WWindow", HandleWindow)
+	hooksecurefunc(WIM, "ShowDemoWindow", HandleWindow)
+	hooksecurefunc(WIM, "PopContextMenu", function()
+		S:SkinDropDownMenu("LibDropDownMenu_List")
 	end)
-
-	hooksecurefunc(WIM, "CreateWhisperWindow", reskinFunc)
-	hooksecurefunc(WIM, "CreateChatWindow", reskinFunc)
-	hooksecurefunc(WIM, "CreateW2WWindow", reskinFunc)
-	hooksecurefunc(WIM, "ShowDemoWindow", reskinFunc)
 end
 
 S:RegisterSkin("WIM", S.WIM)

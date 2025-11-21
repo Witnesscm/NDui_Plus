@@ -43,6 +43,32 @@ local function reskinItemButtons(buttons)
 	end
 end
 
+local function handleSpellReward(self)
+	if not self.textBg then
+		local icon = self.Icon
+		local nameFrame = self.NameFrame
+		B.ReskinIcon(icon)
+		nameFrame:Hide()
+		self.textBg = B.CreateBDFrame(nameFrame, .25)
+		self.textBg:SetPoint("TOPLEFT", icon, "TOPRIGHT", 2, C.mult)
+		self.textBg:SetPoint("BOTTOMRIGHT", nameFrame, "BOTTOMRIGHT", -24, 15)
+	end
+end
+
+local function handleFollowerReward(self)
+	if not self.textBg then
+		local portrait = self.PortraitFrame
+		B.ReskinGarrisonPortrait(portrait)
+		self.BG:Hide()
+		portrait:SetPoint("TOPLEFT", 2, -5)
+		self.textBg = B.CreateBDFrame(self, .25)
+		self.textBg:SetPoint("TOPLEFT", 0, -3)
+		self.textBg:SetPoint("BOTTOMRIGHT", 2, 7)
+		self.Class:SetPoint("TOPRIGHT", self.textBg, "TOPRIGHT", -C.mult, -C.mult)
+		self.Class:SetPoint("BOTTOMRIGHT", self.textBg, "BOTTOMRIGHT", -C.mult, C.mult)
+	end
+end
+
 function S:Immersion()
 	if not S.db["Immersion"] then return end
 
@@ -65,7 +91,14 @@ function S:Immersion()
 	local Elements = TalkBox.Elements
 	B.StripTextures(Elements)
 	B.SetBD(Elements, nil, 0, -10, 0, 0)
-	Elements.Content.RewardsFrame.ItemHighlight.Icon:SetAlpha(0)
+
+	local Content = Elements.Content
+	Content.RewardsFrame.ItemHighlight.Icon:SetAlpha(0)
+
+	local SpecialFrame = Content.SpecialObjectivesFrame
+	SpecialFrame.SpellObjectiveLearnLabel:SetTextColor(1, 1, 1)
+	SpecialFrame.SpellObjectiveLearnLabel.SetTextColor = B.Dummy
+	handleSpellReward(SpecialFrame.SpellObjectiveFrame)
 
 	local MainFrame = TalkBox.MainFrame
 	B.StripTextures(MainFrame)
@@ -164,19 +197,20 @@ function S:Immersion()
 			reskinItemButton(skillPointFrame)
 		end
 
-		-- Spell Rewards
 		local spellRewards = C_QuestInfoSystem.GetQuestRewardSpells(GetQuestID()) or {}
 		if #spellRewards > 0 then
-			for spellReward in rewardsFrame.spellRewardPool:EnumerateActive() do
-				if not spellReward.textBg then
-					local icon = spellReward.Icon
-					local nameFrame = spellReward.NameFrame
-					B.ReskinIcon(icon)
-					nameFrame:Hide()
-					spellReward.textBg = B.CreateBDFrame(nameFrame, .25)
-					spellReward.textBg:SetPoint("TOPLEFT", icon, "TOPRIGHT", 2, C.mult)
-					spellReward.textBg:SetPoint("BOTTOMRIGHT", nameFrame, "BOTTOMRIGHT", -24, 15)
-				end
+			-- Spell Rewards
+			for reward in rewardsFrame.spellRewardPool:EnumerateActive() do
+				handleSpellReward(reward)
+			end
+			-- Follower Rewards
+			for reward in rewardsFrame.followerRewardPool:EnumerateActive() do
+				handleFollowerReward(reward)
+
+				local portrait = reward.PortraitFrame
+				local color = DB.QualityColors[portrait.quality or 1]
+				portrait.squareBG:SetBackdropBorderColor(color.r, color.g, color.b)
+				reward.Class:SetTexCoord(unpack(DB.TexCoord))
 			end
 		end
 	end)
