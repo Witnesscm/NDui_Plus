@@ -62,10 +62,7 @@ function S:tdInspect_SetupUI()
 			B.StripTextures(SummaryBG)
 		end
 
-		for i, tab in ipairs(TalentFrame.Tabs) do
-			if i == 1 then
-				tab:SetPoint("TOPLEFT", 70, -45)
-			end
+		for _, tab in ipairs(TalentFrame.Tabs) do
 			B.ReskinTab(tab)
 		end
 	end
