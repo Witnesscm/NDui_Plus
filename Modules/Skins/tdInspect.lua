@@ -82,10 +82,6 @@ function S:tdInspect_SetupUI()
 	-- PaperDoll
 	local PaperDoll = InspectFrame.PaperDoll
 	if PaperDoll then
-		PaperDoll.RaceBackground:Hide()
-		PaperDoll.LastUpdate:ClearAllPoints()
-		PaperDoll.LastUpdate:SetPoint("BOTTOMLEFT", PaperDoll, "BOTTOMRIGHT", -130, 80)
-
 		for _, slot in pairs(PaperDoll.buttons) do
 			slot.IconBorder:SetTexture("")
 			slot:DisableDrawLayer("BACKGROUND")
@@ -103,10 +99,7 @@ function S:tdInspect_SetupUI()
 			B.StripTextures(SummaryBG)
 		end
 
-		for i, tab in ipairs(TalentFrame.Tabs) do
-			if i == 1 then
-				tab:SetPoint("TOPLEFT", 70, -45)
-			end
+		for _, tab in ipairs(TalentFrame.Tabs) do
 			B.ReskinTab(tab)
 		end
 	end
@@ -115,17 +108,6 @@ function S:tdInspect_SetupUI()
 	local GlyphFrame = InspectFrame.GlyphFrame
 	if GlyphFrame then
 		B.StripTextures(GlyphFrame)
-	end
-
-	-- Tabs
-	for _, child in pairs {InspectFrame:GetChildren()} do
-		local objType = child:GetObjectType()
-		if objType == "Button" and not child.bg then
-			local frameName = child.GetName and child:GetName()
-			if frameName and strmatch(frameName, "^InspectFrameTab%d+$") then
-				B.ReskinTab(child)
-			end
-		end
 	end
 end
 
@@ -226,6 +208,14 @@ function S:tdInspect_ReskinGear()
 		P.ReskinFont(item.Name)
 		P.ReskinFont(item.ItemLevel)
 	end
+
+	local Portrait = self.Portrait
+	B.StripTextures(Portrait)
+	Portrait.PortraitRingQuality:SetTexture("Interface\\Masks\\CircleMaskScalable")
+	Portrait.PortraitRingQuality:SetSize(50, 50)
+	Portrait.PortraitRingQuality:SetDrawLayer("BACKGROUND")
+	Portrait.PortraitRingQuality:ClearAllPoints()
+	Portrait.PortraitRingQuality:SetPoint("CENTER", Portrait.Portrait)
 end
 
 function S:tdInspect()
@@ -242,7 +232,7 @@ function S:tdInspect()
 	local PaperDoll = tdInspect:GetClass("UI.PaperDoll")
 
 	hooksecurefunc(tdInspect, "SetupUI", S.tdInspect_SetupUI)
-	--hooksecurefunc(InspectFrame, "AddTab", S.tdInspect_AddTab)
+	hooksecurefunc(InspectFrame, "AddTab", S.tdInspect_AddTab)
 	hooksecurefunc(TalentFrame, "GetTalentButton", S.tdInspect_GetTalentButton)
 	hooksecurefunc(SlotItem, "Update", S.tdInspect_UpdateSlot)
 	hooksecurefunc(PaperDoll, "Update", S.tdInspect_UpdateILvl)
