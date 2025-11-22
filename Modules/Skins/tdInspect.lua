@@ -45,10 +45,6 @@ function S:tdInspect_SetupUI()
 	-- PaperDoll
 	local PaperDoll = InspectFrame.PaperDoll
 	if PaperDoll then
-		PaperDoll.RaceBackground:Hide()
-		PaperDoll.LastUpdate:ClearAllPoints()
-		PaperDoll.LastUpdate:SetPoint("BOTTOMLEFT", PaperDoll, "BOTTOMRIGHT", -130, 80)
-
 		for _, slot in pairs(PaperDoll.buttons) do
 			slot.IconBorder:SetTexture("")
 			slot:DisableDrawLayer("BACKGROUND")
@@ -170,12 +166,20 @@ function S:tdInspect_ReskinGear()
 	self:SetBackdropBorderColor(0, 0, 0, 0)
 	self.SetBackdropBorderColor = B.Dummy
 	self:DisableDrawLayer("BACKGROUND")
-	self.bg = B.SetBD(self, nil, 0, C.mult, 0, C.mult)
+	self.bg = B.SetBD(self, nil, 0, 0, 0, 0)
 
 	for _, item in pairs(self.gears) do
 		P.ReskinFont(item.Name)
 		P.ReskinFont(item.ItemLevel)
 	end
+
+	local Portrait = self.Portrait
+	B.StripTextures(Portrait)
+	Portrait.PortraitRingQuality:SetTexture("Interface\\Masks\\CircleMaskScalable")
+	Portrait.PortraitRingQuality:SetSize(50, 50)
+	Portrait.PortraitRingQuality:SetDrawLayer("BACKGROUND")
+	Portrait.PortraitRingQuality:ClearAllPoints()
+	Portrait.PortraitRingQuality:SetPoint("CENTER", Portrait.Portrait)
 end
 
 function S:tdInspect()
@@ -201,7 +205,11 @@ function S:tdInspect()
 	local CharacterGearParent = tdInspect.CharacterGearParent
 	if CharacterGearParent then
 		CharacterGearParent:ClearAllPoints()
-		CharacterGearParent:SetPoint("TOPLEFT", _G.CharacterFrame, "TOPRIGHT", -33, -16)
+		if PaperDollFrame.Inset then
+			CharacterGearParent:SetPoint("TOPLEFT", PaperDollFrame, "TOPRIGHT", 2, 0)
+		else
+			CharacterGearParent:SetPoint("TOPLEFT", PaperDollFrame, "TOPRIGHT", -33, -15)
+		end
 	end
 
 	local GearFrame = tdInspect:GetClass("UI.GearFrame")
