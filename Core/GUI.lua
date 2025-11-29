@@ -246,7 +246,7 @@ local AddonSkins = {
 	{"Ace3", "AceGUI-3.0"},
 	{"alaCalendar", "alaCalendar"},
 	{"alaGearMan", "alaGearMan"},
-	-- {"Atlas", "Atlas"},
+	{"Atlas", "Atlas"},
 	{"AtlasLootClassic", "AtlasLootClassic"},
 	{"Auctionator", "Auctionator"},
 	{"AutoBar", "AutoBar"},
