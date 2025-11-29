@@ -190,7 +190,9 @@ end
 function S:AtlasLootClassic()
 	if not S.db["AtlasLootClassic"] then return end
 
-	local AtlasLoot = _G.AtlasLoot
+	local AtlasLoot = _G.AtlasLoot or _G.AtlasLootMY
+	if not AtlasLoot then return end
+
 	AtlasLoot.db.Tooltip.useGameTooltip = true
 
 	local frame = _G["AtlasLoot_GUI-Frame"]
@@ -302,3 +304,4 @@ function S:AtlasLootClassic()
 end
 
 S:RegisterSkin("AtlasLootClassic", S.AtlasLootClassic)
+S:RegisterSkin("AtlasLootMY", S.AtlasLootClassic)
