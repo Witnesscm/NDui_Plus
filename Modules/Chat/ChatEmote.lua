@@ -153,8 +153,10 @@ function CH:ChatEmote()
 	B.SetBD(panel)
 	panel:Hide()
 
-	hooksecurefunc("ChatEdit_OnHide", function() C_Timer.After(.5, function() panel:Hide() end) end)
-	hooksecurefunc("ChatEdit_OnTextChanged", function(self, userInput)
+	ChatFrame1EditBox:HookScript("OnHide", function()
+		C_Timer.After(.5, function() panel:Hide() end)
+	end)
+	ChatFrame1EditBox:HookScript("OnTextChanged", function(self, userInput)
 		local text = self:GetText()
 		if (userInput and strsub(text, -1) == "{") then
 			panel:Show()
