@@ -241,7 +241,7 @@ function CH:ChatHide()
 	end)
 
 	-- Modified NDui ChatFrame
-	for i = 1, NUM_CHAT_WINDOWS do
+	for i = 1, Constants.ChatFrameConstants.MaxChatWindows do
 		local chatframe = _G["ChatFrame" .. i]
 		CH.SetupChat(chatframe)
 	end

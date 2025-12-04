@@ -97,8 +97,8 @@ local function filter(self, event, msg, ...)
 end
 
 local function EmoteButton_OnClick(self, button)
-	local editBox = ChatEdit_ChooseBoxForSend()
-	ChatEdit_ActivateChat(editBox)
+	local editBox = ChatFrameUtil.ChooseBoxForSend()
+	ChatFrameUtil.ActivateChat(editBox)
 	editBox:SetText(editBox:GetText():gsub("{$","") .. self.emote)
 	if (button == "LeftButton") then
 		self:GetParent():Hide()
@@ -117,7 +117,7 @@ function CH:ChatEmote()
 	if not CH.db["Emote"] then return end
 
 	for _, event in pairs(CH.ChatEvents) do
-		ChatFrame_AddMessageEventFilter(event, filter)
+		ChatFrameUtil.AddMessageEventFilter(event, filter)
 	end
 
 	local icon

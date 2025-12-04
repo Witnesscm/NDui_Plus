@@ -59,7 +59,7 @@ function CH:ChatRaidIndex()
 		B:RegisterEvent(event, CH.UpdateGroupInfo)
 	end
 
-	for i = 1, NUM_CHAT_WINDOWS do
+	for i = 1, Constants.ChatFrameConstants.MaxChatWindows do
 		if i ~= 2 then
 			local chatFrame = _G["ChatFrame"..i]
 			chatFrame.origAddMsg = chatFrame.AddMessage

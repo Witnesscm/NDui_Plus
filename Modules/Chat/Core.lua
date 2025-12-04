@@ -135,7 +135,7 @@ function CH:ChatClassColor()
 	if not CH.db["ClassColor"] then return end
 
 	for _, event in pairs(CH.ChatEvents) do
-		ChatFrame_AddMessageEventFilter(event, CH.UpdateChatColor)
+		ChatFrameUtil.AddMessageEventFilter(event, CH.UpdateChatColor)
 	end
 
 	hooksecurefunc("GetPlayerInfoByGUID",function(...)
