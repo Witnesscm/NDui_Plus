@@ -2,6 +2,11 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 
 P.Changelog = [[
+v11.2.4
+[主要] 更新版本号至11.2.7
+[聊天] 更新部分聊天框API
+[美化] 更新部分插件美化
+
 v11.2.3
 [主要] 更新版本号至11.2.5
 [美化] 修复 MountsJournal 美化
