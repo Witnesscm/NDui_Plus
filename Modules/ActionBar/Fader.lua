@@ -227,6 +227,7 @@ end
 
 function AB:GlobalFade()
 	if not AB.db["GlobalFade"] then return end
+	if P.isMidnight then return end
 
 	AB.fadeParent = CreateFrame("Frame", "NDuiPlus_Fader", _G.UIParent, "SecureHandlerStateTemplate")
 	RegisterStateDriver(AB.fadeParent, "visibility", "[petbattle] hide; show")

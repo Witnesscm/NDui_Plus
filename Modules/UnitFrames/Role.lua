@@ -35,7 +35,9 @@ end
 function UF:SetupRoleIcons()
 	UF:UpdateRoleIcons()
 
-	hooksecurefunc(NUF, "CreateIcons", function(_, frame)
-		UF:Configure_RoleIcon(frame)
-	end)
+	if NUF.CreateIcons then
+		hooksecurefunc(NUF, "CreateIcons", function(_, frame)
+			UF:Configure_RoleIcon(frame)
+		end)
+	end
 end

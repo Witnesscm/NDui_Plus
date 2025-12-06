@@ -356,6 +356,8 @@ function AB:StyleActionButton(button, cfg)
 end
 
 function AB:OnLogin()
+	if P.isMidnight then return end
+
 	AB:GlobalFade()
 	AB:FinisherGlow()
 end

@@ -111,7 +111,7 @@ do
 			local text = self.Text:GetText()
 			local title = text and strmatch(text, titleString)
 			if title then
-				ChatFrame_OpenChat(gsub(title, " %- ", "."), SELECTED_DOCK_FRAME)
+				ChatFrameUtil.OpenChat(gsub(title, " %- ", "."), SELECTED_DOCK_FRAME)
 			end
 		end)
 
@@ -144,12 +144,14 @@ end
 
 -- remove <Right click for Frame Settings>
 do
-	function UnitFrame_UpdateTooltip(self)
-		GameTooltip_SetDefaultAnchor(GameTooltip, self)
-		if GameTooltip:SetUnit(self.unit, self.hideStatusOnTooltip) then
-			self.UpdateTooltip = UnitFrame_UpdateTooltip
-		else
-			self.UpdateTooltip = nil
+	if not P.isMidnight  then
+		function UnitFrame_UpdateTooltip(self)
+			GameTooltip_SetDefaultAnchor(GameTooltip, self)
+			if GameTooltip:SetUnit(self.unit, self.hideStatusOnTooltip) then
+				self.UpdateTooltip = UnitFrame_UpdateTooltip
+			else
+				self.UpdateTooltip = nil
+			end
 		end
 	end
 end
