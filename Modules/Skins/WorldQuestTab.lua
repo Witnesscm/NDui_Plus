@@ -12,12 +12,16 @@ local function HandleListButton(self)
 end
 
 local function HandleRewardButton(self)
-	for _, reward in ipairs(self.rewardFrames) do
-		reward.BorderMask:Hide()
-		reward.Icon:SetInside()
-		reward.bg = B.ReskinIcon(reward.Icon)
-		B.ReskinIconBorder(reward.QualityColor)
-		reward.AmountBG:SetAlpha(0)
+	if not self.styled then
+		for _, reward in ipairs(self.rewardFrames) do
+			reward.BorderMask:Hide()
+			reward.Icon:SetInside()
+			reward.bg = B.ReskinIcon(reward.Icon)
+			B.ReskinIconBorder(reward.QualityColor)
+			reward.AmountBG:SetAlpha(0)
+		end
+
+		self.styled = true
 	end
 end
 
@@ -52,7 +56,9 @@ end
 
 local function HandleSettingsColor(self)
 	S:Proxy("Reskin", self.Picker)
-	self.Picker.Color:SetAllPoints(self.Picker.__bg)
+	local color = self.Picker.Color
+	color:SetTexture(130871)
+	color:SetInside(self.Picker.__bg)
 	S:Proxy("Reskin", self.ResetButton)
 end
 
@@ -85,7 +91,7 @@ function S:WorldQuestTab()
 	end
 
 	P:SecureHook("WQT_ListButtonMixin", "OnLoad", HandleListButton)
-	P:SecureHook("WQT_RewardDisplayMixin", "OnLoad", HandleRewardButton)
+	P:SecureHook("WQT_RewardDisplayMixin", "UpdateRewards", HandleRewardButton)
 
 	-- WQT_WhatsNewFrame
 	local WhatsNewFrame = frame.WhatsNewFrame
@@ -103,19 +109,23 @@ function S:WorldQuestTab()
 		S:Proxy("ReskinTrimScroll", SettingsFrame.ScrollBar)
 	end
 
-	local SettingsPreview = _G.WQT_SettingsQuestListPreview and _G.WQT_SettingsQuestListPreview.Preview
-	if SettingsPreview and SettingsPreview.Rewards then
-		HandleRewardButton(SettingsPreview.Rewards)
+	local function wrap(func)
+		return function(self, ...)
+			if not self.styled then
+				func(self, ...)
+				self.styled = true
+			end
+		end
 	end
 
-	P:SecureHook("WQT_SettingsCategoryMixin", "Init", HandleSettingsCategory)
-	P:SecureHook("WQT_SettingsCheckboxMixin", "Init", HandleSettingsCheckbox)
-	P:SecureHook("WQT_SettingsSliderMixin", "Init", HandleSettingsSlider)
-	P:SecureHook("WQT_SettingsColorMixin", "Init", HandleSettingsColor)
-	P:SecureHook("WQT_SettingsDropDownMixin", "Init", HandleSettingsDropDown)
-	P:SecureHook("WQT_SettingsButtonMixin", "Init", HandleSettingsButton)
-	P:SecureHook("WQT_SettingsConfirmButtonMixin", "Init", HandleSettingsButton)
-	P:SecureHook("WQT_SettingsTextInputMixin", "Init", HandleSettingsTextInput)
+	P:SecureHook("WQT_SettingsCategoryMixin", "Init", wrap(HandleSettingsCategory))
+	P:SecureHook("WQT_SettingsCheckboxMixin", "Init", wrap(HandleSettingsCheckbox))
+	P:SecureHook("WQT_SettingsSliderMixin", "Init", wrap(HandleSettingsSlider))
+	P:SecureHook("WQT_SettingsColorMixin", "Init", wrap(HandleSettingsColor))
+	P:SecureHook("WQT_SettingsDropDownMixin", "Init", wrap(HandleSettingsDropDown))
+	P:SecureHook("WQT_SettingsButtonMixin", "Init", wrap(HandleSettingsButton))
+	P:SecureHook("WQT_SettingsConfirmButtonMixin", "Init", wrap(HandleSettingsButton))
+	P:SecureHook("WQT_SettingsTextInputMixin", "Init", wrap(HandleSettingsTextInput))
 
 	-- WQT_Container
 	local FlightMapContainer = _G.WQT_FlightMapContainer
@@ -134,3 +144,31 @@ function S:WorldQuestTab()
 end
 
 S:RegisterSkin("WorldQuestTab", S.WorldQuestTab, true)
+
+local function ReskinTabs(lib)
+	for _, tab in ipairs(lib.tabs) do
+		if not tab.bg then
+			B.StripTextures(tab, 2)
+			tab.bg = B.SetBD(tab)
+			tab.bg:SetInside(nil, 2, 2)
+			local hl = tab:CreateTexture(nil, "HIGHLIGHT")
+			hl:SetColorTexture(1, 1, 1, .25)
+			hl:SetInside(tab.bg)
+
+			tab.SelectedTexture:SetDrawLayer("BACKGROUND")
+			tab.SelectedTexture:SetColorTexture(DB.r, DB.g, DB.b, .25)
+			tab.SelectedTexture:SetInside(tab.bg)
+		end
+	end
+end
+
+function S:WorldMapTabsLib()
+	local tabLib = _G.LibStub and _G.LibStub("WorldMapTabsLib-1.0", true)
+	if not tabLib then return end
+
+	ReskinTabs(tabLib)
+	hooksecurefunc(tabLib, "CreateTab", ReskinTabs)
+	hooksecurefunc(tabLib, "AddCustomTab", ReskinTabs)
+end
+
+S:RegisterSkin("WorldMapTabsLib")
