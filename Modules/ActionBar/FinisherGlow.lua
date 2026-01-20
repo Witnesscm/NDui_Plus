@@ -2,10 +2,10 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 local AB = P:GetModule("ActionBar")
 
-local ActionButtons = {}
-local ActionButtonMap = {}
+local LAB = LibStub("LibActionButton-1.0-NDui", true)
+local ActionButtons = LAB.actionButtons
 
--- https://wago.tools/db2/Spell?filter[Description_lang]=%09Finishing%20move&build=1.15.0.52409&page=1
+-- https://wago.tools/db2/Spell?filter[Description_lang]=%09Finishing%20move&build=3.4.3.52237&page=1
 local FinisherSpells = {
 	["ROGUE"] = {
 		[408] = true, -- 肾击(等级 1)
@@ -31,30 +31,47 @@ local FinisherSpells = {
 		[11275] = true, -- 割裂(等级 6)
 		[11299] = true, -- 刺骨(等级 7)
 		[11300] = true, -- 刺骨(等级 8)
-		[27615] = true, -- 肾击(等级 2)
+		[26679] = true, -- 致命投掷(等级 1)
+		[26865] = true, -- 刺骨(等级 10)
+		[26866] = true, -- 破甲(等级 6)
+		[26867] = true, -- 割裂(等级 7)
 		[31016] = true, -- 刺骨(等级 9)
-		[398198] = true, -- 刀剑风暴
-		[399963] = true, -- 毒伤
-		[400009] = true, -- 正中眉心
-		[400012] = true, -- 刃舞
+		[32645] = true, -- 毒伤(等级 1)
+		[32684] = true, -- 毒伤(等级 2)
+		[48667] = true, -- 刺骨(等级 11)
+		[48668] = true, -- 刺骨(等级 12)
+		[48669] = true, -- 破甲(等级 7)
+		[48671] = true, -- 割裂(等级 8)
+		[48672] = true, -- 割裂(等级 9)
+		[48673] = true, -- 致命投掷(等级 2)
+		[48674] = true, -- 致命投掷(等级 3)
+		[57992] = true, -- 毒伤(等级 3)
+		[57993] = true -- 毒伤(等级 4)
 	},
 	["DRUID"] = {
-		[1079] = true, -- 撕扯(等级 1)
-		[9492] = true, -- 撕扯(等级 2)
-		[9493] = true, -- 撕扯(等级 3)
-		[9752] = true, -- 撕扯(等级 4)
-		[9894] = true, -- 撕扯(等级 5)
-		[9896] = true, -- 撕扯(等级 6)
+		[1079] = true, -- 割裂(等级 1)
+		[9492] = true, -- 割裂(等级 2)
+		[9493] = true, -- 割裂(等级 3)
+		[9752] = true, -- 割裂(等级 4)
+		[9894] = true, -- 割裂(等级 5)
+		[9896] = true, -- 割裂(等级 6)
 		[22568] = true, -- 凶猛撕咬(等级 1)
 		[22570] = true, -- 割碎(等级 1)
 		[22827] = true, -- 凶猛撕咬(等级 2)
 		[22828] = true, -- 凶猛撕咬(等级 3)
 		[22829] = true, -- 凶猛撕咬(等级 4)
-		-- [24238] = true,	-- Test Rip(Rank 6)
-		-- [24248] = true,	-- Copy of Ferocious Bite(等级 4)
+		-- [24238] = true, -- Test Rip(Rank 6)
+		[24248] = true, -- 凶猛撕咬(等级 6)
+		[27008] = true, -- 割裂(等级 7)
 		[31018] = true, -- 凶猛撕咬(等级 5)
-		[407988] = true, -- 野蛮咆哮
-		[407989] = true, -- 野蛮咆哮
+		[48576] = true, -- 凶猛撕咬(等级 7)
+		[48577] = true, -- 凶猛撕咬(等级 8)
+		[48628] = true, -- 锁喉(等级 1)
+		[49799] = true, -- 割裂(等级 8)
+		[49800] = true, -- 割裂(等级 9)
+		[49802] = true, -- 割碎(等级 2)
+		[52610] = true, -- 野蛮咆哮(等级 1)
+		[62071] = true -- 野蛮咆哮
 	}
 }
 
@@ -73,14 +90,7 @@ function AB:UpdateMaxPoints(...)
 end
 
 function AB:FinisherGlow_Update()
-	local spellId
-	local spellType, id = GetActionInfo(self.action)
-	if spellType == "spell" then
-		spellId = id
-	elseif spellType == "macro" then
-		spellId = GetMacroSpell(id)
-	end
-
+	local spellId = self:GetSpellId()
 	if spellId and IsSpellOverlayed(spellId) then
 		B.ShowOverlayGlow(self)
 	else
@@ -99,18 +109,8 @@ function AB:FinisherGlow_OnEvent(...)
 	end
 end
 
-function AB:FinisherGlow_OnSlotChanged(slot)
-	if ActionButtonMap[slot] then
-		AB.FinisherGlow_Update(ActionButtonMap[slot])
-	end
-end
-
-function AB:FinisherGlow_OnButtonUpdate()
-	if self.action and self.old_action ~= self.action then
-		AB.FinisherGlow_Update(self)
-		ActionButtonMap[self.action] = self
-		self.old_action = self.action
-	end
+function AB:FinisherGlow_OnButtonUpdate(button)
+	AB.FinisherGlow_Update(button)
 end
 
 function AB:FinisherGlow()
@@ -119,17 +119,9 @@ function AB:FinisherGlow()
 	AB.Finishers = FinisherSpells[DB.MyClass]
 	if not AB.Finishers then return end
 
-	local Bar = B:GetModule("Actionbar")
-	for _, button in ipairs(Bar.buttons) do
-		if button.action then
-			ActionButtons[button] = true
-		end
-	end
-
 	AB:UpdateMaxPoints()
 	B:RegisterEvent("UNIT_MAXPOWER", AB.UpdateMaxPoints)
 	B:RegisterEvent("UNIT_POWER_UPDATE", AB.FinisherGlow_OnEvent)
 	B:RegisterEvent("PLAYER_TARGET_CHANGED", AB.FinisherGlow_OnEvent)
-	B:RegisterEvent("ACTIONBAR_SLOT_CHANGED", AB.FinisherGlow_OnSlotChanged)
-	hooksecurefunc("ActionButton_Update", AB.FinisherGlow_OnButtonUpdate)
+	LAB:RegisterCallback("OnButtonUpdate", AB.FinisherGlow_OnButtonUpdate)
 end

@@ -384,14 +384,14 @@ function AB:MageBar_Toggle()
 
 	if AB.db["MageBar"] then
 		AB:MageBar_Update()
-		B:RegisterEvent("LEARNED_SPELL_IN_TAB", AB.MageBar_Update)
+		B:RegisterEvent("LEARNED_SPELL_IN_SKILL_LINE", AB.MageBar_Update)
 		B:RegisterEvent("ACTIONBAR_UPDATE_COOLDOWN", AB.MageBar_UpdateCooldown)
 		B:RegisterEvent("BAG_UPDATE_DELAYED", AB.MageBar_UpdateCooldown)
 		B:RegisterEvent("SPELL_UPDATE_USABLE", AB.MageBar_UpdateUsable)
 		B:RegisterEvent("UPDATE_SHAPESHIFT_FORMS", AB.MageBar_UpdateUsable)
 		AB.MageBar:Show()
 	else
-		B:UnregisterEvent("LEARNED_SPELL_IN_TAB", AB.MageBar_Update)
+		B:UnregisterEvent("LEARNED_SPELL_IN_SKILL_LINE", AB.MageBar_Update)
 		B:UnregisterEvent("ACTIONBAR_UPDATE_COOLDOWN", AB.MageBar_UpdateCooldown)
 		B:UnregisterEvent("BAG_UPDATE_DELAYED", AB.MageBar_UpdateCooldown)
 		B:UnregisterEvent("SPELL_UPDATE_USABLE", AB.MageBar_UpdateUsable)
