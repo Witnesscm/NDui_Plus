@@ -1,5 +1,5 @@
-## Interface: 11508
-## Title: |cff0080ffNDui|r |cffffffffPlus|r
+## Interface: 20505
+## Title: |cff0080ffNDui|r |cff00ff00Plus|r
 ## Author: Witness
 ## Notes: NDui Plugin
 ## RequiredDeps: NDui
