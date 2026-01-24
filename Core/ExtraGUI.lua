@@ -159,12 +159,12 @@ function G:SetupABFader(parent)
 	createOptionTitle(frame, L["Fade Condition"], -offset)
 
 	local options = {
-		[1] = {"Combat", L["Combat"]},
-		[2] = {"Target", L["Target"]},
-		[3] = {"Health", L["Health"]},
-		[4] = {"Vehicle", L["Vehicle"]},
-		[5] = {"Casting", L["Casting"]},
-		[6] = {"DynamicFlight", L["DynamicFlight"]},
+		{"Combat", L["Combat"]},
+		{"Target", L["Target"]},
+		-- {"Health", L["Health"]},
+		{"Vehicle", L["Vehicle"]},
+		{"Casting", L["Casting"]},
+		{"DynamicFlight", L["DynamicFlight"]},
 	}
 
 	offset = offset + 40
@@ -207,13 +207,13 @@ function G:SetupUFsFader(parent)
 	createOptionTitle(frame, L["Fade Condition"], -offset)
 
 	local options = {
-		[1] = {"Hover", L["Hover"]},
-		[2] = {"Combat", L["Combat"]},
-		[3] = {"Target", L["Target"]},
-		[4] = {"Focus", L["Focus"]},
-		[5] = {"Health", L["Health"]},
-		[6] = {"Vehicle", L["Vehicle"]},
-		[7] = {"Casting", L["Casting"]},
+		{"Hover", L["Hover"]},
+		{"Combat", L["Combat"]},
+		{"Target", L["Target"]},
+		{"Focus", L["Focus"]},
+		-- {"Health", L["Health"]},
+		{"Vehicle", L["Vehicle"]},
+		{"Casting", L["Casting"]},
 	}
 
 	offset = offset + 40

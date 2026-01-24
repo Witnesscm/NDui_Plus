@@ -86,7 +86,7 @@ function AB:FadeParent_OnEvent(event, arg)
 		(AB.db["Combat"] and UnitAffectingCombat("player")) or
 		(AB.db["Target"] and UnitExists("target")) or
 		(AB.db["Casting"] and (UnitCastingInfo("player") or UnitChannelInfo("player"))) or
-		(AB.db["Health"] and (UnitHealth("player") ~= UnitHealthMax("player"))) or
+		-- (AB.db["Health"] and (UnitHealth("player") ~= UnitHealthMax("player"))) or
 		(AB.db["Vehicle"] and UnitHasVehicleUI("player")) or
 		(AB.db["DynamicFlight"] and (canGlide or CanGlide()))
 	then
@@ -227,7 +227,6 @@ end
 
 function AB:GlobalFade()
 	if not AB.db["GlobalFade"] then return end
-	if P.isMidnight then return end
 
 	AB.fadeParent = CreateFrame("Frame", "NDuiPlus_Fader", _G.UIParent, "SecureHandlerStateTemplate")
 	RegisterStateDriver(AB.fadeParent, "visibility", "[petbattle] hide; show")

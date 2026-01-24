@@ -119,8 +119,8 @@ local function Update(self, event, unit)
 		(element.PlayerTarget and UnitExists('target')) or
 		(element.UnitTarget and UnitExists(unit..'target')) or
 		(element.Focus and not P.IsClassic() and UnitExists('focus')) or
-		(element.Health and UnitHealth(unit) < UnitHealthMax(unit)) or
-		(element.Power and (PowerTypesFull[powerType] and UnitPower(unit) < UnitPowerMax(unit))) or
+		-- (element.Health and UnitHealth(unit) < UnitHealthMax(unit)) or
+		-- (element.Power and (PowerTypesFull[powerType] and UnitPower(unit) < UnitPowerMax(unit))) or
 		(element.Vehicle and (not P.IsClassic()) and UnitHasVehicleUI(unit)) or
 		(element.DynamicFlight and P.IsRetail() and not CanGlide()) or
 		(element.Hover and GetMouseFocus() == (self.__faderobject or self))
