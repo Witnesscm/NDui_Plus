@@ -5,7 +5,7 @@ local CH = P:GetModule("Chat")
 -- TinyChat, Author:M
 ----------------------------
 local _G = getfenv(0)
-local ipairs, select = ipairs, select
+local ipairs = ipairs
 local gsub = string.gsub
 
 local locale = GetLocale()

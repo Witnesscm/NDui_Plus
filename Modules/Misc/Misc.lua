@@ -144,14 +144,12 @@ end
 
 -- remove <Right click for Frame Settings>
 do
-	if not P.isMidnight  then
-		function UnitFrame_UpdateTooltip(self)
-			GameTooltip_SetDefaultAnchor(GameTooltip, self)
-			if GameTooltip:SetUnit(self.unit, self.hideStatusOnTooltip) then
-				self.UpdateTooltip = UnitFrame_UpdateTooltip
-			else
-				self.UpdateTooltip = nil
-			end
+	function UnitFrame_UpdateTooltip(self)
+		GameTooltip_SetDefaultAnchor(GameTooltip, self)
+		if GameTooltip:SetUnit(self.unit, self.hideStatusOnTooltip) then
+			self.UpdateTooltip = UnitFrame_UpdateTooltip
+		else
+			self.UpdateTooltip = nil
 		end
 	end
 end

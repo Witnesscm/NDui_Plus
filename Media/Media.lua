@@ -34,16 +34,6 @@ function P:ReplaceTexture()
 	end
 end
 
-do
-	-- Before NDui module loaded
-	hooksecurefunc(B, "SetSmoothingAmount", function()
-		if not P.Initialized then
-			P:BuildTextureTable()
-			P:ReplaceTexture()
-		end
-	end)
-end
-
 -- Role
 P.RoleList = {
 	[1] = {
