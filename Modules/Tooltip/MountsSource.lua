@@ -15,6 +15,10 @@ function T:IsCollected(spell)
 end
 
 function T:GetOrCreateMountTable(spell)
+	if issecretvalue(spell) then
+		return
+	end
+
 	if not self.MountTable[spell] then
 		local index = C_MountJournal.GetMountFromSpell(spell)
 		if index then
@@ -49,10 +53,12 @@ function T:MountsSource()
 	hooksecurefunc(GameTooltip, "SetUnitAura", function(self, ...)
 		if not T.db["MountsSource"] then return end
 
-		local id = select(10, AuraUtil.UnpackAuraData(C_UnitAuras.GetAuraDataByIndex(...)))
-		local table = id and T:GetOrCreateMountTable(id)
+		local data = C_UnitAuras.GetAuraDataByIndex(...)
+		if not data then return end
+
+		local table = data.spellId and T:GetOrCreateMountTable(data.spellId)
 		if table then
-			AddLine(self, table.source, T:IsCollected(id) and COLLECTED or NOT_COLLECTED, SOURCE)
+			AddLine(self, table.source, T:IsCollected(data.spellId) and COLLECTED or NOT_COLLECTED, SOURCE)
 		end
 	end)
 
