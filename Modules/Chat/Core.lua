@@ -35,6 +35,7 @@ CH.ChatEvents = {
 
 local isCalling = false
 function CH:GetPlayerInfoByGUID(guid)
+	if issecretvalue(guid) then return end
 	if isCalling then return end
 
 	local data = CH.GuidCache[guid]

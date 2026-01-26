@@ -35,7 +35,7 @@ local function addRaidIndex(fullName, info, nameText)
 end
 
 function CH:UpdateRaidIndex(text, ...)
-	if IsInGroup() and (CH.db["RaidIndex"] or CH.db["Role"]) then
+	if not issecretvalue(text) and IsInGroup() and (CH.db["RaidIndex"] or CH.db["Role"]) then
 		text = gsub(text, "|Hplayer:([^:]+)([^|Hh]+)|h%[([^:]+)%]|h", addRaidIndex)
 	end
 
