@@ -72,20 +72,20 @@ local function SkinBagSyncFrame(name, module)
 	end
 
 	if name == "Search" then
-		S:Proxy("Reskin", frame.advSearchBtn)
+		S:Proxy("Reskin", frame.searchFiltersBtn)
 		S:Proxy("Reskin", frame.resetButton)
 		SkinInfoFrame(module.helpFrame)
 		SkinScrollBar(module.helpFrame.ScrollFrame)
 		SkinInfoFrame(module.savedSearch)
 		SkinScrollBar(module.savedSearch.scrollFrame)
 		S:Proxy("Reskin", module.savedSearch.addSavedBtn)
-	elseif name == "AdvancedSearch" then
+	elseif name == "SearchFilters" then
 		SkinScrollBar(module.playerScroll)
 		SkinScrollBar(module.locationScroll)
 		S:Proxy("Reskin", frame.selectAllButton)
 		S:Proxy("Reskin", frame.resetButton)
 	elseif name == "Blacklist" then
-		S:Proxy("ReskinDropDown", frame.guildDD)
+		P.ReskinDropDown(frame.guildDD)
 		S:Proxy("Reskin", frame.addGuildBtn)
 		S:Proxy("Reskin", frame.addItemIDBtn)
 		S:Proxy("ReskinInput", frame.itemIDBox)
@@ -101,7 +101,7 @@ function S:BagSync()
 	local BagSync = _G.BagSync
 	if not BagSync then return end
 
-	for name, module in pairs(BagSync.modules) do
+	for name, module in pairs(BagSync._modulesByName) do
 		SkinBagSyncFrame(name, module)
 	end
 
