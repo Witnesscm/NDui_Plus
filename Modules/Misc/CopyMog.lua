@@ -4,8 +4,6 @@ local M = P:GetModule("Misc")
 ------------------------------------
 -- Credit: Narcissus, by Peterodox
 ------------------------------------
-local ItemList, gearFrame = {}
-
 local fontSize = 14
 
 if GetLocale() ~= "zhCN" and GetLocale() ~= "zhTW" then
@@ -34,40 +32,21 @@ local SlotIDtoName = {
 	[19]= TABARDSLOT,
 }
 
-local function createGearFrame()
-	if gearFrame then gearFrame:Show() return end
-
-	gearFrame = CreateFrame("Frame", "CopyMogGearTexts", UIParent, "BackdropTemplate")
-	gearFrame:SetPoint("CENTER")
-	gearFrame:SetSize(400, 300)
-	gearFrame:SetFrameStrata("DIALOG")
-	B.CreateMF(gearFrame)
-	B.SetBD(gearFrame)
-
-	gearFrame.Header = B.CreateFS(gearFrame, 14, L["Transmog"], true, "TOP", 0, -5)
-
-	local close = CreateFrame("Button", nil, gearFrame, "UIPanelCloseButton")
-	close:SetPoint("TOPRIGHT", gearFrame)
-	B.ReskinClose(close)
-	gearFrame.Close = close
-
-	local scrollArea = CreateFrame("ScrollFrame", nil, gearFrame, "UIPanelScrollFrameTemplate")
-	scrollArea:SetPoint("TOPLEFT", 10, -30)
-	scrollArea:SetPoint("BOTTOMRIGHT", -28, 10)
-	B.ReskinScroll(scrollArea.ScrollBar)
-
-	local editBox = CreateFrame("EditBox", nil, gearFrame)
-	editBox:SetMultiLine(true)
-	editBox:SetMaxLetters(99999)
-	editBox:EnableMouse(true)
-	editBox:SetAutoFocus(true)
-	editBox:SetFont(STANDARD_TEXT_FONT, 14, "")
-	editBox:SetWidth(scrollArea:GetWidth())
-	editBox:SetHeight(scrollArea:GetHeight())
-	editBox:SetScript("OnEscapePressed", function() gearFrame:Hide() end)
-	scrollArea:SetScrollChild(editBox)
-	gearFrame.EditBox = editBox
-end
+local TransmogSlotOrder = {
+	INVSLOT_HEAD,
+	INVSLOT_SHOULDER,
+	INVSLOT_BACK,
+	INVSLOT_CHEST,
+	INVSLOT_BODY,
+	INVSLOT_TABARD,
+	INVSLOT_WRIST,
+	INVSLOT_HAND,
+	INVSLOT_WAIST,
+	INVSLOT_LEGS,
+	INVSLOT_FEET,
+	INVSLOT_MAINHAND,
+	INVSLOT_OFFHAND,
+}
 
 local function GenerateSource(sourceID, sourceType, itemModID, itemQuality)
 	local sourceTextColorized = ""
@@ -115,123 +94,71 @@ local function GetIllusionSource(illusionID)
 	return name, sourceText
 end
 
-local function GetSourceInfo(sourceID)
-	local sourceInfo = C_TransmogCollection.GetSourceInfo(sourceID)
-	if not sourceInfo then return end
-
-	return sourceInfo.isHideVisual, sourceInfo.sourceType, sourceInfo.itemModID, sourceInfo.itemID, sourceInfo.name, sourceInfo.quality
-end
-
 local function GetTransmogInfo(slotID, sourceID)
-	local isHideVisual, sourceType, itemModID, itemID, itemName, itemQuality = GetSourceInfo(sourceID)
-	if not isHideVisual or M.db["ShowHideVisual"] then
-		local sourceTextColorized = GenerateSource(sourceID, sourceType, itemModID, itemQuality)
-		return {["SlotID"] = slotID, ["Name"] = itemName, ["Source"] = sourceTextColorized}
+	local sourceInfo = C_TransmogCollection.GetSourceInfo(sourceID)
+	if not sourceInfo or not sourceInfo.name then
+		M.TransmogTextFrame.waitingOnItemData = true
+		return
 	end
+
+	if sourceInfo.isHideVisual and not M.db["ShowHideVisual"] then
+		return
+	end
+
+	return {
+		["SlotID"] = slotID,
+		["Name"] = sourceInfo.name,
+		["Source"] = GenerateSource(sourceID, sourceInfo.sourceType, sourceInfo.itemModID, sourceInfo.quality)
+	}
 end
 
-local function getInspectSources()
-	wipe(ItemList)
+function M:CopyMog_UpdateItemText(transmogInfoList)
+	local textFrame = M.TransmogTextFrame
+	wipe(textFrame.itemList)
+	textFrame.waitingOnItemData = false
+	textFrame.transmogInfoList = transmogInfoList
 
 	local mainHandEnchant, offHandEnchant
-	local transmogList = C_TransmogCollection.GetInspectItemTransmogInfoList()
-
-	for slotID, transmogInfo in ipairs(transmogList) do
-		local appearanceID, secondaryAppearanceID, illusionID = transmogInfo.appearanceID, transmogInfo.secondaryAppearanceID, transmogInfo.illusionID
-
-		if appearanceID and appearanceID ~= Constants.Transmog.NoTransmogID then
-			local info = GetTransmogInfo(slotID, appearanceID)
-			if info then
-				table.insert(ItemList, info)
-			end
-		end
-
-		if C_Transmog.CanHaveSecondaryAppearanceForSlotID(slotID) and secondaryAppearanceID > 0 then
-			local info = GetTransmogInfo(slotID, secondaryAppearanceID)
-			if info then
-				table.insert(ItemList, info)
-			end
-		end
-
-		if slotID == 16 then
-			mainHandEnchant = illusionID
-		elseif slotID == 17 then
-			offHandEnchant = illusionID
-		end
-	end
-
-	if not M.db["ShowIllusion"] then return end
-
-	if mainHandEnchant and mainHandEnchant > 0 then
-		local illusionName, sourceText = GetIllusionSource(mainHandEnchant)
-		table.insert(ItemList, {["SlotID"] = 16, ["Name"] = illusionName, ["Source"] = sourceText})
-	end
-
-	if offHandEnchant and offHandEnchant > 0 then
-		local illusionName, sourceText = GetIllusionSource(offHandEnchant)
-		table.insert(ItemList, {["SlotID"] = 17, ["Name"] = illusionName, ["Source"] = sourceText})
-	end
-end
-
-local function GetSlotVisualID(slotID, type, modification)
-	if slotID == 2 or slotID == 18 or (slotID > 10 and slotID < 15) then
-		return -1, -1
-	end
-	local slotName = TransmogUtil.GetSlotName(slotID)
-	local location = TransmogUtil.GetTransmogLocation(slotName, type, modification)
-
-	local baseSourceID, baseVisualID, appliedSourceID, appliedVisualID, _, _, _, _, _, hideVisual = C_Transmog.GetSlotVisualInfo(location)
-	if ( hideVisual ) then
-		return 0, 0
-	elseif ( appliedSourceID == Constants.Transmog.NoTransmogID and modification ~= Enum.TransmogModification.Secondary) then
-		return baseSourceID, baseVisualID
-	else
-		return appliedSourceID, appliedVisualID
-	end
-end
-
-local function getPlayerSources()
-	wipe(ItemList)
-
-	for slotID = 1, 19 do 
-		local appliedSourceID, appliedVisualID = GetSlotVisualID(slotID, Enum.TransmogType.Appearance, Enum.TransmogModification.Main)
-		if appliedVisualID > 0 and appliedSourceID and appliedSourceID ~= Constants.Transmog.NoTransmogID then
-			local info = GetTransmogInfo(slotID, appliedSourceID)
-			if info then
-				table.insert(ItemList, info)
-			end
-		end
-
-		if C_Transmog.CanHaveSecondaryAppearanceForSlotID(slotID) then
-			local secondarySourceID, secondaryVisualID = GetSlotVisualID(slotID, Enum.TransmogType.Appearance, Enum.TransmogModification.Secondary)
-			if secondaryVisualID > 0 and secondarySourceID and secondarySourceID ~= Constants.Transmog.NoTransmogID and secondarySourceID ~= appliedSourceID then
-				local info = GetTransmogInfo(slotID, secondarySourceID)
+	for _, slotID in ipairs(TransmogSlotOrder) do
+		local transmogInfo = transmogInfoList[slotID]
+		if transmogInfo then
+			local appearanceID, secondaryAppearanceID, illusionID = transmogInfo.appearanceID, transmogInfo.secondaryAppearanceID, transmogInfo.illusionID
+			if appearanceID and appearanceID ~= Constants.Transmog.NoTransmogID then
+				local info = GetTransmogInfo(slotID, appearanceID)
 				if info then
-					table.insert(ItemList, info)
+					table.insert(textFrame.itemList, info)
 				end
 			end
+
+			if C_Transmog.CanHaveSecondaryAppearanceForSlotID(slotID) and secondaryAppearanceID ~= Constants.Transmog.NoTransmogID and secondaryAppearanceID ~= appearanceID then
+				local info = GetTransmogInfo(slotID, secondaryAppearanceID)
+				if info then
+					table.insert(textFrame.itemList, info)
+				end
+			end
+
+			if slotID == 16 then
+				mainHandEnchant = illusionID
+			elseif slotID == 17 then
+				offHandEnchant = illusionID
+			end
 		end
 	end
 
-	if not M.db["ShowIllusion"] then return end
+	if M.db["ShowIllusion"] then
+		if mainHandEnchant and mainHandEnchant > 0 then
+			local illusionName, sourceText = GetIllusionSource(mainHandEnchant)
+			table.insert(textFrame.itemList, {["SlotID"] = 16, ["Name"] = illusionName, ["Source"] = sourceText})
+		end
 
-	local mainHandEnchant = GetSlotVisualID(16, Enum.TransmogType.Illusion, Enum.TransmogModification.Main)
-	if mainHandEnchant > 0 then
-		local illusionName, sourceText = GetIllusionSource(mainHandEnchant)
-		table.insert(ItemList, {["SlotID"] = 16, ["Name"] = illusionName, ["Source"] = sourceText})
+		if offHandEnchant and offHandEnchant > 0 then
+			local illusionName, sourceText = GetIllusionSource(offHandEnchant)
+			table.insert(textFrame.itemList, {["SlotID"] = 17, ["Name"] = illusionName, ["Source"] = sourceText})
+		end
 	end
 
-	local offHandEnchant = GetSlotVisualID(17, Enum.TransmogType.Illusion, Enum.TransmogModification.Main)
-	if offHandEnchant > 0 then
-		local illusionName, sourceText = GetIllusionSource(offHandEnchant)
-		table.insert(ItemList, {["SlotID"] = 17, ["Name"] = illusionName, ["Source"] = sourceText})
-	end
-end
-
-local function copyTexts()
 	local texts = ""
-
-	for _, info in ipairs(ItemList) do
+	for _, info in ipairs(textFrame.itemList) do
 		if info.Name and info.Name ~= "" then
 			texts = texts .. "|cFFFFD100"..SlotIDtoName[info.SlotID]..":|r " .. info.Name
 			if info.Source and info.Source ~= "" then
@@ -241,11 +168,68 @@ local function copyTexts()
 		end
 	end
 
-	gearFrame.EditBox:SetText(strtrim(texts))
-	gearFrame.EditBox:HighlightText()
+	textFrame.EditBox:SetText(strtrim(texts))
+	textFrame.EditBox:HighlightText()
+	textFrame:Show()
 end
 
-local function createCopyButton(parent)
+local function TextFrame_OnShow(self)
+	self:RegisterEvent("TRANSMOG_COLLECTION_ITEM_UPDATE")
+end
+
+local function TextFrame_OnHide(self)
+	self:UnregisterEvent("TRANSMOG_COLLECTION_ITEM_UPDATE")
+end
+
+local function TextFrame_OnEvent(self, event, ...)
+	if event == "TRANSMOG_COLLECTION_ITEM_UPDATE" then
+		if self.waitingOnItemData and self.transmogInfoList then
+			M:CopyMog_UpdateItemText(self.transmogInfoList)
+		end
+	end
+end
+
+function M:CopyMog_CreateTextFrame()
+	local textFrame = CreateFrame("Frame", nil, UIParent, "BackdropTemplate")
+	textFrame:SetPoint("CENTER")
+	textFrame:SetSize(400, 300)
+	textFrame:SetFrameStrata("DIALOG")
+	B.CreateMF(textFrame)
+	B.SetBD(textFrame)
+
+	textFrame:SetScript("OnShow", TextFrame_OnShow)
+	textFrame:SetScript("OnHide", TextFrame_OnHide)
+	textFrame:SetScript("OnEvent", TextFrame_OnEvent)
+	textFrame:Hide()
+
+	textFrame.Header = B.CreateFS(textFrame, 14, L["Transmog"], true, "TOP", 0, -5)
+
+	local close = CreateFrame("Button", nil, textFrame, "UIPanelCloseButton")
+	close:SetPoint("TOPRIGHT", textFrame)
+	B.ReskinClose(close)
+	textFrame.Close = close
+
+	local scrollArea = CreateFrame("ScrollFrame", nil, textFrame, "UIPanelScrollFrameTemplate")
+	scrollArea:SetPoint("TOPLEFT", 10, -30)
+	scrollArea:SetPoint("BOTTOMRIGHT", -28, 10)
+	B.ReskinScroll(scrollArea.ScrollBar)
+
+	local editBox = CreateFrame("EditBox", nil, textFrame)
+	editBox:SetMultiLine(true)
+	editBox:SetMaxLetters(99999)
+	editBox:EnableMouse(true)
+	editBox:SetAutoFocus(true)
+	editBox:SetFont(STANDARD_TEXT_FONT, 14, "")
+	editBox:SetWidth(scrollArea:GetWidth())
+	editBox:SetHeight(scrollArea:GetHeight())
+	editBox:SetScript("OnEscapePressed", function() textFrame:Hide() end)
+	scrollArea:SetScrollChild(editBox)
+	textFrame.EditBox = editBox
+
+	return textFrame
+end
+
+local function CreateCopyButton(parent)
 	local button = CreateFrame("Button", nil, parent, "UIPanelButtonTemplate")
 	button:SetSize(50, 20)
 	button:SetText(L["Transmog"])
@@ -257,26 +241,46 @@ local function createCopyButton(parent)
 	return button
 end
 
+function M:CopyMog_CreatePlayerButton()
+	local button = CreateCopyButton(_G.PaperDollFrame)
+	button:SetPoint("BOTTOMLEFT", 5, 6)
+	button:SetScript("OnClick", function()
+		local playerActor = _G.CharacterModelScene:GetPlayerActor()
+		if not playerActor then
+			return
+		end
+
+		local transmogInfoList = playerActor:GetItemTransmogInfoList()
+		if not transmogInfoList then
+			return
+		end
+
+		M:CopyMog_UpdateItemText(transmogInfoList)
+	end)
+end
+
+function M:CopyMog_CreateInspectButton()
+	local button = CreateCopyButton(_G.InspectPaperDollFrame)
+	button:SetPoint("BOTTOMLEFT", 5, 6)
+	button:SetScript("OnClick", function()
+		local transmogInfoList = C_TransmogCollection.GetInspectItemTransmogInfoList()
+		if not transmogInfoList then
+			return
+		end
+
+		M:CopyMog_UpdateItemText(transmogInfoList)
+	end)
+end
+
 function M:CopyMog()
 	if not M.db["CopyMog"] then return end
 
-	local button = createCopyButton(_G.PaperDollFrame)
-	button:SetPoint("BOTTOMLEFT", 5, 6)
-	button:SetScript("OnClick", function()
-		createGearFrame()
-		getPlayerSources()
-		copyTexts()
-	end)
+	M.TransmogTextFrame = M:CopyMog_CreateTextFrame()
+	M.TransmogTextFrame.itemList = {}
+	M.TransmogTextFrame.waitingOnItemData = false
 
-	P:AddCallbackForAddon("Blizzard_InspectUI", function()
-		local button = createCopyButton(_G.InspectPaperDollFrame)
-		button:SetPoint("BOTTOMLEFT", 5, 6)
-		button:SetScript("OnClick", function()
-			createGearFrame()
-			getInspectSources()
-			copyTexts()
-		end)
-	end)
+	M:CopyMog_CreatePlayerButton()
+	P:AddCallbackForAddon("Blizzard_InspectUI", M.CopyMog_CreateInspectButton)
 end
 
 M:RegisterMisc("CopyMog", M.CopyMog)
