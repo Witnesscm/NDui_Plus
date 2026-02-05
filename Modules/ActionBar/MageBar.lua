@@ -312,7 +312,7 @@ function AB:MageBar_Update()
 			node = {name = info.name, index = index, subSpell = {}}
 
 			for _, spellID in ipairs(info.spell) do
-				if IsPlayerSpell(spellID) then
+				if C_SpellBook.IsSpellKnown(spellID, Enum.SpellBookSpellBank.Player) then
 					tinsert(node.subSpell, spellID)
 					node.mainSpell = spellID
 				end
