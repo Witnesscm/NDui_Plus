@@ -72,20 +72,20 @@ local function SkinBagSyncFrame(name, module)
 	end
 
 	if name == "Search" then
-		S:Proxy("Reskin", frame.advSearchBtn)
+		S:Proxy("Reskin", frame.searchFiltersBtn)
 		S:Proxy("Reskin", frame.resetButton)
 		SkinInfoFrame(module.helpFrame)
 		SkinScrollBar(module.helpFrame.ScrollFrame)
 		SkinInfoFrame(module.savedSearch)
 		SkinScrollBar(module.savedSearch.scrollFrame)
 		S:Proxy("Reskin", module.savedSearch.addSavedBtn)
-	elseif name == "AdvancedSearch" then
+	elseif name == "SearchFilters" then
 		SkinScrollBar(module.playerScroll)
 		SkinScrollBar(module.locationScroll)
 		S:Proxy("Reskin", frame.selectAllButton)
 		S:Proxy("Reskin", frame.resetButton)
 	elseif name == "Blacklist" then
-		S:Proxy("ReskinDropDown", frame.guildDD)
+		P.ReskinDropDown(frame.guildDD)
 		S:Proxy("Reskin", frame.addGuildBtn)
 		S:Proxy("Reskin", frame.addItemIDBtn)
 		S:Proxy("ReskinInput", frame.itemIDBox)
@@ -101,14 +101,18 @@ function S:BagSync()
 	local BagSync = _G.BagSync
 	if not BagSync then return end
 
-	for name, module in pairs(BagSync.modules) do
+	for name, module in pairs(BagSync._modulesByName) do
 		SkinBagSyncFrame(name, module)
 	end
 
 	local Tooltip = BagSync:GetModule("Tooltip")
 	if Tooltip then
+		hooksecurefunc(Tooltip, "EnsureExtTip", function(self)
+			P.ReskinTooltip(self.extTip)
+		end)
+
 		hooksecurefunc(Tooltip, "TallyUnits", function(self, objTooltip)
-			if not self.qTip then return end
+			if not self.extTip then return end
 
 			local BPBIDTooltip
 			if objTooltip == _G.FloatingBattlePetTooltip then
@@ -117,8 +121,8 @@ function S:BagSync()
 				BPBIDTooltip = _G["BPBID_BreedTooltip"]
 			end
 
-			self.qTip:ClearAllPoints()
-			self.qTip:SetPoint("TOPRIGHT", BPBIDTooltip and BPBIDTooltip:IsVisible() and BPBIDTooltip or objTooltip, "BOTTOMRIGHT", 0, 2*C.mult)
+			self.extTip:ClearAllPoints()
+			self.extTip:SetPoint("TOPRIGHT", BPBIDTooltip and BPBIDTooltip:IsVisible() and BPBIDTooltip or objTooltip, "BOTTOMRIGHT", 0, 2 * C.mult)
 		end)
 	end
 end
