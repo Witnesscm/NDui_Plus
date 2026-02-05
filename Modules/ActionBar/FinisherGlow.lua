@@ -2,7 +2,7 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 local AB = P:GetModule("ActionBar")
 
-local LAB = LibStub("LibActionButton-1.0-NDui", true) or LibStub("LibActionButton-1.0", true) -- pre-compatible
+local LAB = LibStub("LibActionButton-1.0-NDui", true)
 local ActionButtons = LAB.actionButtons
 
 -- https://wago.tools/db2/Spell?filter[Description_lang]=%09Finishing%20move&build=3.4.3.52237&page=1
@@ -21,7 +21,7 @@ local FinisherSpells = {
 		[8639] = true, -- 割裂(等级 2)
 		[8640] = true, -- 割裂(等级 3)
 		[8643] = true, -- 肾击(等级 2)
-		[8647] = true, -- 破甲
+		[8647] = true, -- 破甲(等级 1)
 		[8649] = true, -- 破甲(等级 2)
 		[8650] = true, -- 破甲(等级 3)
 		[11197] = true, -- 破甲(等级 4)
