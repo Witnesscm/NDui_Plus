@@ -445,17 +445,21 @@ do
 			method, handler, object = object, method, nil
 		end
 
+		if object and type(object) == "string" then
+			object = _G[object]
+		end
+
 		if object then
-			if _G[object] and _G[object][method] then
-				hooksecurefunc(_G[object], method, handler)
+			if object[method] then
+				hooksecurefunc(object, method, handler)
 			else
-				P.Developer_ThrowError(format("%s:%s does not exist", object, method))
+				P.Developer_ThrowError(format("Attempting to hook a non existing function %s", method))
 			end
 		else
 			if _G[method] then
 				hooksecurefunc(method, handler)
 			else
-				P.Developer_ThrowError(format("%s does not exist", method))
+				P.Developer_ThrowError(format("Attempting to hook a non existing function %s", method))
 			end
 		end
 	end
