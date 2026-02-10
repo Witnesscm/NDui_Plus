@@ -105,24 +105,10 @@ function S:BagSync()
 		SkinBagSyncFrame(name, module)
 	end
 
-	local Tooltip = BagSync:GetModule("Tooltip")
-	if Tooltip then
-		hooksecurefunc(Tooltip, "EnsureExtTip", function(self)
+	local ExtTip = BagSync:GetModule("ExtTip")
+	if ExtTip then
+		P:SecureHook(ExtTip, "EnsureTip", function(self)
 			P.ReskinTooltip(self.extTip)
-		end)
-
-		hooksecurefunc(Tooltip, "TallyUnits", function(self, objTooltip)
-			if not self.extTip then return end
-
-			local BPBIDTooltip
-			if objTooltip == _G.FloatingBattlePetTooltip then
-				BPBIDTooltip = _G["BPBID_BreedTooltip2"]
-			else
-				BPBIDTooltip = _G["BPBID_BreedTooltip"]
-			end
-
-			self.extTip:ClearAllPoints()
-			self.extTip:SetPoint("TOPRIGHT", BPBIDTooltip and BPBIDTooltip:IsVisible() and BPBIDTooltip or objTooltip, "BOTTOMRIGHT", 0, 2 * C.mult)
 		end)
 	end
 end
