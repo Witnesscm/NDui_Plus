@@ -2,6 +2,10 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 
 P.Changelog = [[
+v3.80.4
+[美化] 添加 Clique 美化
+[美化] 更新部分插件美化
+
 v3.80.3
 [美化] 添加 AtlasLootMY 美化
 [美化] 修复 WeakAurasOptions 美化
