@@ -34,6 +34,15 @@ function P:ReplaceTexture()
 	end
 end
 
+if B.SetupUIScale then
+	hooksecurefunc(B, "SetupUIScale", function()
+		if not P.Initialized then
+			P:BuildTextureTable()
+			P:ReplaceTexture()
+		end
+	end)
+end
+
 -- Role
 P.RoleList = {
 	[1] = {
