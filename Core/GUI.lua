@@ -132,7 +132,7 @@ G.TabList = {
 	L["Chat"],
 	L["Skins"],
 	L["Tooltip"],
-	IsNew..L["Misc"],
+	L["Misc"],
 }
 
 G.OptionList = { -- type, key, value, name, horizon, data, callback, tooltip, scripts
@@ -199,7 +199,7 @@ G.OptionList = { -- type, key, value, name, horizon, data, callback, tooltip, sc
 		{},
 		{1, "LootRoll", "Enable", HeaderTag..L["LootRoll"], nil, setupLootRoll, nil, L["LootRollTip"], {OnHide = hideLootRoll}},
 		{1, "Misc", "LootSpecManager", HeaderTag..L["LootSpecManagerEnable"], nil, toggleLootSpecManager, nil, L["LootSpecManagerTip"]},
-		{4, "Misc", "AutoRoll", IsNew..L["Auto Roll"], true, {P.AtlasString("lootroll-toast-icon-need-up").." "..NEED, P.AtlasString("lootroll-toast-icon-pass-up").." "..PASS, DISABLE}},
+		{4, "Misc", "AutoRoll", L["Auto Roll"], true, {P.AtlasString("lootroll-toast-icon-need-up").." "..NEED, P.AtlasString("lootroll-toast-icon-pass-up").." "..PASS, DISABLE}},
 		{},
 		{1, "Misc", "QuestHelper", L["QuestHelper"], nil, nil, nil, L["QuestHelperTip"]},
 		{1, "Misc", "AuctionEnhanced", L["AuctionEnhanced"], true, nil, nil, L["AuctionEnhancedTip"]},
@@ -212,7 +212,7 @@ G.OptionList = { -- type, key, value, name, horizon, data, callback, tooltip, sc
 		{1, "Misc", "GuildBankItemLevel", L["GuildBankItemLevel"]},
 		{1, "Misc", "WormholeHelper", L["WormholeHelper"], true, nil, nil, L["WormholeHelperTip"]},
 		{1, "Misc", "TrainAll", L["TrainAll"], nil, nil, nil, L["TrainAllTip"]},
-		{1, "Misc", "ExitPhaseDiving", IsNew..L["ExitPhaseDivingButton"].."*", true, nil, toggleExitPhaseDiving},
+		{1, "Misc", "ExitPhaseDiving", L["ExitPhaseDivingButton"].."*", true, nil, toggleExitPhaseDiving},
 		{},
 		{1, "Misc", "CopyMog", HeaderTag..L["CopyMogEnable"], nil, nil, nil, L["CopyMogTip"]},
 		{1, "Misc", "ShowHideVisual", L["ShowHideVisual"].."*"},
