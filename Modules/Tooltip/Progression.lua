@@ -59,6 +59,48 @@ T.MythicPlusAchievementData = {
 	}
 }
 
+if GetServerExpansionLevel() == 11 then
+	-- /ndp raid 11
+	T.RaidData = {
+		[1] = {
+			abbr = L["[ABBR] The Dreamrift"],
+			achievements = {
+				{ 61474 },
+				{ 61475 },
+				{ 61476 },
+				{ 61477 }
+			}
+		},
+		[2] = {
+			abbr = L["[ABBR] The Voidspire"],
+			achievements = {
+				{ 61276, 61280, 61284, 61288, 61292, 61296 },
+				{ 61277, 61281, 61285, 61289, 61293, 61297 },
+				{ 61278, 61282, 61286, 61290, 61294, 61298 },
+				{ 61279, 61283, 61287, 61291, 61295, 61299 }
+			}
+		},
+		[3] = {
+			abbr = L["[ABBR] March on Quel'Danas"],
+			achievements = {
+				{ 61300, 61304 },
+				{ 61301, 61305 },
+				{ 61302, 61306 },
+				{ 61303, 61307 }
+			}
+		}
+	}
+
+	-- https://wago.tools/db2/Achievement?filter%5BTitle_lang%5D=Midnight%20Keystone&page=1
+	T.MythicPlusAchievementData = {
+		[1] = {
+			{ id = 61258, abbr = L["[ABBR] Midnight Keystone Legend: Season One"] },
+			{ id = 61257, abbr = L["[ABBR] Midnight Keystone Hero: Season One"] },
+			{ id = 61256, abbr = L["[ABBR] Midnight Keystone Master: Season One"] }
+		}
+	}
+end
+
 -- https://wago.tools/db2/MapChallengeMode
 T.MythicPlusMapData = {
 	[2] = L["[ABBR] Temple of the Jade Serpent"],
@@ -123,7 +165,13 @@ T.MythicPlusMapData = {
 	[507] = L["[ABBR] Grim Batol"],
 	[525] = L["[ABBR] Operation: Floodgate"],
 	[541] = L["[ABBR] The Stonecore"],
-	[542] = L["[ABBR] Eco-Dome Al'dani"]
+	[542] = L["[ABBR] Eco-Dome Al'dani"],
+	[556] = L["[ABBR] Pit of Saron"],
+	[557] = L["[ABBR] Windrunner Spire"],
+	[558] = L["[ABBR] Magisters' Terrace"],
+	[559] = L["[ABBR] Nexus-Point Xenas"],
+	[560] = L["[ABBR] Maisara Caverns"],
+	[583] = L["[ABBR] Seat of the Triumvirate"]
 }
 
 local difficulties = {
