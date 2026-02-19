@@ -100,6 +100,7 @@ P.DefaultSettings = {
 		BtWQuests = true,
 		ButtonForge = true,
 		ClassicThreatMeter = true,
+		Clique = true,
 		GearMenu = true,
 		Immersion = true,
 		InboxMailBag = true,

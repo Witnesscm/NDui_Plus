@@ -206,6 +206,7 @@ local AddonSkins = {
 	{"AutoBar", "AutoBar"},
 	{"BtWQuests", "BtWQuests"},
 	{"ButtonForge", "Button Forge"},
+	{"Clique", "Clique"},
 	{"GearMenu", "GearMenu"},
 	{"Immersion", "Immersion"},
 	{"InboxMailBag", "Inbox MailBag"},

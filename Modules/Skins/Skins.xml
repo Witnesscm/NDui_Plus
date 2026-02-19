@@ -13,6 +13,7 @@
 	<Script file="BtWQuests.lua"/>
 	<Script file="ButtonForge.lua"/>
 	<Script file="CChatNotifier.lua"/>
+	<Script file="Clique.lua"/>
 	<Script file="Collectionator.lua"/>
 	<Script file="ExtVendorUI.lua"/>
 	<Script file="Immersion.lua"/>
