@@ -228,6 +228,7 @@ local AddonSkins = {
 	{"BtWLoadouts", "BtWLoadouts"},
 	{"BtWQuests", "BtWQuests"},
 	{"ButtonForge", "Button Forge"},
+	{"Clique", "Clique"},
 	{"Immersion", "Immersion"},
 	{"InboxMailBag", "Inbox MailBag"},
 	{"ls_Toasts", "ls_Toasts"},

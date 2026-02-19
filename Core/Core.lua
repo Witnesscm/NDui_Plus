@@ -102,6 +102,7 @@ P.DefaultSettings = {
 		BtWLoadouts = true,
 		BtWQuests = true,
 		ButtonForge = true,
+		Clique = true,
 		Immersion = true,
 		InboxMailBag = true,
 		ls_Toasts = true,

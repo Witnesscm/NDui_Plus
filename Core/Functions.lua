@@ -446,6 +446,11 @@ do
 	end
 
 	function P:SecureHook(object, method, handler)
+		if not object then
+			P.Developer_ThrowError("Attempting to hook a non existing object")
+			return
+		end
+
 		if not handler then
 			method, handler, object = object, method, nil
 		end
