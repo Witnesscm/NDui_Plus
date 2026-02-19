@@ -2,6 +2,10 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 
 P.Changelog = [[
+v1.15.15
+[美化] 添加 Clique 美化
+[美化] 更新部分插件美化
+
 v1.15.14
 [易用性] 修复天赋扩展面板鼠标提示
 [美化] 更新部分插件美化
