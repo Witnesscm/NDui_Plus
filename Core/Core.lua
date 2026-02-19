@@ -420,9 +420,6 @@ loader:SetScript("OnEvent", function(self, event, addon)
 				end
 			end
 
-			P:BuildTextureTable()
-			P:ReplaceTexture()
-
 			self.loaded = true
 		end
 
