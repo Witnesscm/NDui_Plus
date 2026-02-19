@@ -280,6 +280,11 @@ do
 
 		local frameName = self.GetName and self:GetName()
 		local down = self.Button or frameName and (_G[frameName.."Button"] or _G[frameName.."_Button"])
+		if not down then
+			P.Developer_ThrowError("dropdown button is nil")
+			return
+		end
+
 		down:ClearAllPoints()
 		down:SetPoint("RIGHT", -18, 2)
 		B.ReskinArrow(down, "down")

@@ -50,19 +50,6 @@ local function ReskinSizer(frame)
 	frame:SetPoint("BOTTOMRIGHT")
 end
 
-local function SAMDropDownSkin(frame)
-	if not frame then
-		return
-	end
-
-	frame:SetWidth(180)
-	frame:SetHeight(32)
-	P.ReskinDropDown(frame)
-	frame.Button:SetSize(20, 20)
-	frame.Text:ClearAllPoints()
-	frame.Text:SetPoint("RIGHT", frame.Button, "LEFT", -2, 0)
-end
-
 local function ReskinModules(frame)
 	if frame.styled then return end
 
@@ -71,7 +58,7 @@ local function ReskinModules(frame)
 	S:Proxy("Reskin", frame.CancelButton)
 	S:Proxy("Reskin", frame.EnableAllButton)
 	S:Proxy("Reskin", frame.DisableAllButton)
-	SAMDropDownSkin(frame.CharacterDropDown)
+	S:Proxy("ReskinDropDown", frame.CharacterDropDown)
 
 	frame.OkButton:ClearAllPoints()
 	frame.OkButton:SetPoint("RIGHT", frame.CancelButton, "LEFT", -2, 0)
