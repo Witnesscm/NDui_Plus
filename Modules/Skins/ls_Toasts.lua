@@ -88,7 +88,10 @@ function S:ls_Toasts()
 	local LE, LC = unpack(_G.ls_Toasts)
 	LE:RegisterSkin("ndui", style)
 	LE:RegisterCallback("ToastCreated", SkinToast)
-	LC.db.profile.skin = "ndui"
+
+	if LC and LC.db and LC.db.profile then
+		LC.db.profile.skin = "ndui"
+	end
 end
 
 function S:LSPreviewBoxCurrency(widget)
