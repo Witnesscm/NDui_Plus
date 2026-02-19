@@ -13,6 +13,7 @@
 	<Script file="BagSync.lua"/>
 	<Script file="ButtonForge.lua"/>
 	<Script file="CChatNotifier.lua"/>
+	<Script file="Clique.lua"/>
 	<Script file="ExtVendorUI.lua"/>
 	<Script file="Immersion.lua"/>
 	<Script file="ImprovedAddonList.lua"/>

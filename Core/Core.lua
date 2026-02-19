@@ -109,6 +109,7 @@ P.DefaultSettings = {
 		AutoBar = true,
 		ButtonForge = true,
 		ClassicThreatMeter = true,
+		Clique = true,
 		GearMenu = true,
 		Immersion = true,
 		InboxMailBag = true,

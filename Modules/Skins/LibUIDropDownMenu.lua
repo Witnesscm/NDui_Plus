@@ -111,8 +111,8 @@ local function reskinDropDown(self)
 			local hl = line.Highlight
 			hl:SetColorTexture(r, g, b, .25)
 			hl:ClearAllPoints()
-			hl:SetPoint("TOPLEFT", -16, 0)
-			hl:SetPoint("BOTTOMRIGHT", 16, 0)
+			hl:SetPoint("TOPLEFT", -8, 0)
+			hl:SetPoint("BOTTOMRIGHT", 8, 0)
 
 			local arrow = line.Expand
 			B.SetupArrow(arrow, "right")
