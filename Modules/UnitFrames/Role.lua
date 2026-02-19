@@ -6,23 +6,30 @@ local UF = P:GetModule("UnitFrames")
 local NUF = B:GetModule("UnitFrames")
 
 function UF:Configure_RoleIcon(frame)
-	local role = frame.GroupRoleIndicator
+	local roleIcon = frame.GroupRoleIndicator
 	local mystyle = frame.mystyle
-	if role and mystyle == "raid" then
-		role.__orig = role.__orig or {
-			width = B:Round(role:GetWidth()),
-			height = B:Round(role:GetHeight()),
-			point = {role:GetPoint()}
+	if roleIcon and mystyle == "raid" then
+		roleIcon.__orig = roleIcon.__orig or {
+			width = B:Round(roleIcon:GetWidth()),
+			height = B:Round(roleIcon:GetHeight()),
+			point = {roleIcon:GetPoint()}
 		}
-		role:ClearAllPoints()
+		roleIcon:ClearAllPoints()
 
 		if UF.db["RolePos"] then
-			role:SetPoint(G.Points[UF.db["RolePoint"]], frame, UF.db["RoleXOffset"], UF.db["RoleYOffset"])
-			role:SetSize(UF.db["RoleSize"], UF.db["RoleSize"])
+			roleIcon:SetPoint(G.Points[UF.db["RolePoint"]], frame, UF.db["RoleXOffset"], UF.db["RoleYOffset"])
+			roleIcon:SetSize(UF.db["RoleSize"], UF.db["RoleSize"])
 		else
-			role:SetPoint(unpack(role.__orig.point))
-			role:SetSize(role.__orig.width, role.__orig.height)
+			roleIcon:SetPoint(unpack(roleIcon.__orig.point))
+			roleIcon:SetSize(roleIcon.__orig.width, roleIcon.__orig.height)
 		end
+	end
+
+	if roleIcon and roleIcon.PostUpdate and not roleIcon.__hooked then
+		hooksecurefunc(roleIcon, "PostUpdate", function(self, role)
+			B.ReskinSmallRole(self, role)
+		end)
+		roleIcon.__hooked = true
 	end
 end
 
