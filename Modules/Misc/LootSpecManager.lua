@@ -38,6 +38,12 @@ local function GetExpansionEJTier(expansion)
 end
 
 local function GetEncounterList(instanceID)
+	EJ_SelectInstance(instanceID)
+	local dungeonAreaMapID = select(7, EJ_GetInstanceInfo())
+	if not dungeonAreaMapID or dungeonAreaMapID == 0 then
+		return
+	end
+
 	local list = { }
 	local name, _, _, _, _, _, encounterID = EJ_GetEncounterInfoByIndex(1, instanceID)
 	while name do
@@ -50,15 +56,16 @@ end
 function LSM:UpdateRaidData()
 	LSM.CurrentTier = EJ_GetCurrentTier()
 
-	local maxTier = GetExpansionEJTier(GetExpansionLevel()) or EJ_GetNumTiers()
+	local maxTier = GetExpansionEJTier(GetServerExpansionLevel()) or EJ_GetNumTiers()
 	EJ_SelectTier(maxTier)
 
-	local index = 2
+	local index = 1
 	local raidInstID, name = EJ_GetInstanceByIndex(index, true)
 	while raidInstID do
-		EJ_SelectInstance(raidInstID)
 		local encounters = GetEncounterList(raidInstID)
-		tinsert(LSM.Data.Raid, 1, {id = raidInstID, name = name, encounters = encounters})
+		if encounters then
+			tinsert(LSM.Data.Raid, 1, {id = raidInstID, name = name, encounters = encounters})
+		end
 
 		index = index + 1
 		raidInstID, name = EJ_GetInstanceByIndex(index, true)
