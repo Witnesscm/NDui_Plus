@@ -6,18 +6,17 @@ local S = P:GetModule("Skins")
 function M:ExtMacroUI()
 	if not M.db["ExtMacroUI"] then return end
 
-	_G.MacroFrame:SetSize(535, 558)
+	_G.MacroFrame:SetSize(535, 568)
 	SetUIPanelAttribute(_G.MacroFrame, "width", 535)
-	_G.MacroFrame.MacroSelector:SetSize(516, 232)
-	_G.MacroFrame.MacroSelector:SetCustomStride(10) -- cause taint
-	_G.MacroFrame.MacroSelector:SetCustomPadding(5, 5, 5, 5, 13, 10) -- cause taint
+	_G.MacroFrame.MacroSelector:SetSize(516, 242)
+	_G.MacroFrame.MacroSelector:SetCustomStride(nil)
 	_G.MacroHorizontalBarLeft:SetSize(452, 16)
-	_G.MacroHorizontalBarLeft:SetPoint("TOPLEFT", 2, -298)
-	_G.MacroFrameSelectedMacroBackground:SetPoint("TOPLEFT", 5, -306)
+	_G.MacroHorizontalBarLeft:SetPoint("TOPLEFT", 2, -308)
+	_G.MacroFrameSelectedMacroBackground:SetPoint("TOPLEFT", 5, -316)
 	_G.MacroFrameScrollFrame:SetSize(484, 130)
 	_G.MacroFrameText:SetSize(484, 130)
 	_G.MacroFrameTextBackground:SetSize(520, 140)
-	_G.MacroFrameTextBackground:SetPoint("TOPLEFT", 6, -377)
+	_G.MacroFrameTextBackground:SetPoint("TOPLEFT", 6, -387)
 end
 
 P:AddCallbackForAddon("Blizzard_MacroUI", M.ExtMacroUI)
