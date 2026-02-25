@@ -146,6 +146,22 @@ function S:WorldQuestTab()
 		local bg = B.SetBD(WorldMapContainer, nil, 0, 0, 0, 0)
 		bg:SetFrameLevel(bg:GetFrameLevel() + 1)
 	end
+
+	-- WQT_GameTooltip
+	local WQT_GameTooltip = _G.WQT_GameTooltip
+	if WQT_GameTooltip then
+		P.ReskinTooltip(WQT_GameTooltip)
+
+		local ItemTooltip = WQT_GameTooltip.ItemTooltip
+		if ItemTooltip then
+			ItemTooltip.Icon:SetTexCoord(unpack(DB.TexCoord))
+			ItemTooltip.bg = B.CreateBDFrame(ItemTooltip.Icon, 0)
+			B.ReskinIconBorder(ItemTooltip.IconBorder)
+		end
+
+		P.ReskinTooltip(_G.WQT_ShoppingTooltip1)
+		P.ReskinTooltip(_G.WQT_ShoppingTooltip2)
+	end
 end
 
 S:RegisterSkin("WorldQuestTab", S.WorldQuestTab, true)

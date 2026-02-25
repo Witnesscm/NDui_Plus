@@ -347,6 +347,17 @@ do
 			self.bg = B.SetBD(self, .7)
 			self.bg:SetInside(self)
 
+			local header = self.CompareHeader
+			if header then
+				B.StripTextures(header)
+				local bg = header:CreateTexture(nil, "ARTWORK")
+				bg:SetTexture("Interface\\LFGFrame\\UI-LFG-SEPARATOR")
+				bg:SetTexCoord(0, .66, 0, .31)
+				bg:SetVertexColor(cr, cg, cb, .8)
+				bg:SetPoint("BOTTOM", 0, -4)
+				bg:SetSize(100, 30)
+			end
+
 			self.tipStyled = true
 		end
 	end
