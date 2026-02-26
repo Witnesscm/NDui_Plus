@@ -173,6 +173,8 @@ local function resetChatAnchor(self, _, parent)
 end
 
 function CH:ChatHide()
+	CH:FixEditModeAnchor()
+
 	if not CH.db["ChatHide"] then return end
 	if not C.db["Chat"]["Lock"] then return end
 
@@ -265,4 +267,23 @@ function CH:ChatHide()
 
 	CH:UpdateAutoShow()
 	CH:UpdateAutoHide()
+
+	-- Fix edit mode anchor
+	hooksecurefunc(_G.ChatFrame1, "OnSystemPositionChange", function(self)
+		local systemInfo = _G.EditModeManagerFrame:GetActiveLayoutSystemInfo(self.system, self.systemIndex)
+		local anchorInfo = systemInfo and systemInfo.anchorInfo
+		if anchorInfo and anchorInfo.relativeTo == "NDui_PlusChatBG" then
+			self:ResetToDefaultPosition()
+		end
+	end)
+end
+
+function CH:FixEditModeAnchor()
+	local systemInfo = _G.EditModeManagerFrame:GetActiveLayoutSystemInfo(Enum.EditModeSystem.ChatFrame)
+	local anchorInfo = systemInfo and systemInfo.anchorInfo
+	if anchorInfo and anchorInfo.relativeTo == "NDui_PlusChatBG" then
+		_G.ChatFrame1:ResetToDefaultPosition()
+		_G.EditModeManagerFrame:SaveLayouts()
+		P:Print(L["ChatFrameAnchorReset"])
+	end
 end
