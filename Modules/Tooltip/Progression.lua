@@ -13,93 +13,42 @@ local compareGUID
 -- /ndp raid
 T.RaidData = {
 	[1] = {
-		abbr = L["[ABBR] Nerub-ar Palace"],
+		abbr = L["[ABBR] The Dreamrift"],
 		achievements = {
-			{ 40267, 40271, 40275, 40279, 40283, 40287, 40291, 40295 },
-			{ 40268, 40272, 40276, 40280, 40284, 40288, 40292, 40296 },
-			{ 40269, 40273, 40277, 40281, 40285, 40289, 40293, 40297 },
-			{ 40270, 40274, 40278, 40282, 40286, 40290, 40294, 40298 }
+			{ 61474 },
+			{ 61475 },
+			{ 61476 },
+			{ 61477 }
 		}
 	},
 	[2] = {
-		abbr = L["[ABBR] Liberation of Undermine"],
+		abbr = L["[ABBR] The Voidspire"],
 		achievements = {
-			{ 41299, 41303, 41307, 41311, 41315, 41319, 41323, 41327 },
-			{ 41300, 41304, 41308, 41312, 41316, 41320, 41324, 41328 },
-			{ 41301, 41305, 41309, 41313, 41317, 41321, 41325, 41329 },
-			{ 41302, 41306, 41310, 41314, 41318, 41322, 41326, 41330 }
+			{ 61276, 61280, 61284, 61288, 61292, 61296 },
+			{ 61277, 61281, 61285, 61289, 61293, 61297 },
+			{ 61278, 61282, 61286, 61290, 61294, 61298 },
+			{ 61279, 61283, 61287, 61291, 61295, 61299 }
 		}
 	},
 	[3] = {
-		abbr = L["[ABBR] Manaforge Omega"],
+		abbr = L["[ABBR] March on Quel'Danas"],
 		achievements = {
-			{ 41633, 41637, 41641, 41645, 41649, 41653, 41657, 41661 },
-			{ 41634, 41638, 41642, 41646, 41650, 41654, 41658, 41662 },
-			{ 41635, 41639, 41643, 41647, 41651, 41655, 41659, 41663 },
-			{ 41636, 41640, 41644, 41648, 41652, 41656, 41660, 41664 }
+			{ 61300, 61304 },
+			{ 61301, 61305 },
+			{ 61302, 61306 },
+			{ 61303, 61307 }
 		}
 	}
 }
 
--- https://wago.tools/db2/Achievement?filter[Title_lang]=The%20War%20Within%20Keystone&page=1
+-- https://wago.tools/db2/Achievement?filter%5BTitle_lang%5D=Midnight%20Keystone&page=1
 T.MythicPlusAchievementData = {
 	[1] = {
-		{ id = 20526, abbr = L["[ABBR] The War Within Keystone Hero: Season One"] },
-		{ id = 20525, abbr = L["[ABBR] The War Within Keystone Master: Season One"] }
-	},
-	[2] = {
-		{ id = 40951, abbr = L["[ABBR] The War Within Keystone Legend: Season Two"] },
-		{ id = 40952, abbr = L["[ABBR] The War Within Keystone Hero: Season Two"] },
-		{ id = 41533, abbr = L["[ABBR] The War Within Keystone Master: Season Two"] }
-	},
-	[3] = {
-		{ id = 42172, abbr = L["[ABBR] The War Within Keystone Legend: Season Three"] },
-		{ id = 42171, abbr = L["[ABBR] The War Within Keystone Hero: Season Three"] },
-		{ id = 41973, abbr = L["[ABBR] The War Within Keystone Master: Season Three"] }
+		{ id = 61258, abbr = L["[ABBR] Midnight Keystone Legend: Season One"] },
+		{ id = 61257, abbr = L["[ABBR] Midnight Keystone Hero: Season One"] },
+		{ id = 61256, abbr = L["[ABBR] Midnight Keystone Master: Season One"] }
 	}
 }
-
-if GetServerExpansionLevel() == 11 then
-	-- /ndp raid 11
-	T.RaidData = {
-		[1] = {
-			abbr = L["[ABBR] The Dreamrift"],
-			achievements = {
-				{ 61474 },
-				{ 61475 },
-				{ 61476 },
-				{ 61477 }
-			}
-		},
-		[2] = {
-			abbr = L["[ABBR] The Voidspire"],
-			achievements = {
-				{ 61276, 61280, 61284, 61288, 61292, 61296 },
-				{ 61277, 61281, 61285, 61289, 61293, 61297 },
-				{ 61278, 61282, 61286, 61290, 61294, 61298 },
-				{ 61279, 61283, 61287, 61291, 61295, 61299 }
-			}
-		},
-		[3] = {
-			abbr = L["[ABBR] March on Quel'Danas"],
-			achievements = {
-				{ 61300, 61304 },
-				{ 61301, 61305 },
-				{ 61302, 61306 },
-				{ 61303, 61307 }
-			}
-		}
-	}
-
-	-- https://wago.tools/db2/Achievement?filter%5BTitle_lang%5D=Midnight%20Keystone&page=1
-	T.MythicPlusAchievementData = {
-		[1] = {
-			{ id = 61258, abbr = L["[ABBR] Midnight Keystone Legend: Season One"] },
-			{ id = 61257, abbr = L["[ABBR] Midnight Keystone Hero: Season One"] },
-			{ id = 61256, abbr = L["[ABBR] Midnight Keystone Master: Season One"] }
-		}
-	}
-end
 
 -- https://wago.tools/db2/MapChallengeMode
 T.MythicPlusMapData = {
