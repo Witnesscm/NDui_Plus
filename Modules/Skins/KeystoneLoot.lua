@@ -11,183 +11,61 @@ local function HandleItemButton(self)
 	end
 end
 
-local function ReskinCatalystFrame(frame)
-	for _, child in pairs {frame:GetChildren()} do
-		if not child.styled then
-			local objType = child:GetObjectType()
-			if objType == "Frame" and child.Bg then
-				B.StripTextures(child)
-				local bg = B.SetBD(child)
-				bg:SetInside()
-				child.styled = true
-			elseif objType == "Button" and child.Icon and child.FavoriteStar then
-				HandleItemButton(child)
-				child.styled = true
-			end
-		end
+local function ReskinTabSystem(self)
+	if not self.TabSystem then
+		return
+	end
+
+	for _, tab in ipairs(self.TabSystem.tabs) do
+		B.ReskinTab(tab)
+		tab.Text:ClearAllPoints()
+		tab.Text:SetPoint("CENTER")
+		tab.Text.SetPoint = B.Dummy
+		tab.leftPadding = -16
 	end
 end
 
-local function ReskinTooltipFrame(frame)
-	for _, child in pairs {frame:GetChildren()} do
-		local objType = child:GetObjectType()
-		if objType == "Button" and child.Ticksquare and child.Checkmark then
-			local Ticksquare = child.Ticksquare
-			local Checkmark = child.Checkmark
-			local Background = child.Background
+local function ReskinIconButton(self)
+	local frame = self.Content
+	if frame and not self.styled then
+		HandleItemButton(frame)
+		frame.IconEmpty:SetAlpha(0)
 
-			if not child.bg then
-				child.bg = B.CreateBDFrame(Ticksquare)
-				child.bg:SetAllPoints(Ticksquare)
-				Ticksquare:SetTexture("")
-
-				Checkmark:SetAtlas("checkmark-minimal")
-				Checkmark:SetVertexColor(DB.r, DB.g, DB.b)
-				Checkmark:SetSize(20, 20)
-				Checkmark:SetDesaturated(true)
-				Checkmark:ClearAllPoints()
-				Checkmark:SetPoint("CENTER", Ticksquare)
-
-				Background:SetTexture(DB.bdTex)
-				Background:SetVertexColor(DB.r, DB.g, DB.b, .25)
-				Background:ClearAllPoints()
-				Background:SetPoint("TOPLEFT", -15 + 2*C.mult, 0)
-				Background:SetPoint("BOTTOMRIGHT", 15 - 2*C.mult, 0)
-			end
-
-			child.bg:SetShown(Ticksquare:IsShown() and Ticksquare:GetAlpha() == 1)
-		end
+		self.styled = true
 	end
 end
 
-local function HandleDungeon(self)
-	B.StripTextures(self, 0)
-	self.Bg:SetAlpha(1)
-	B.CreateBDFrame(self.Bg, 0)
+local function ReskinSubFrame(self)
+	S:Proxy("StripTextures", self.Inset)
+	S:Proxy("StripTextures", self.BorderFrame)
+end
 
-	for _, button in ipairs(self.itemFrames) do
-		HandleItemButton(button)
+local function ReskinEntryFrame(self)
+	if self.Background then
+		self.Background:SetAlpha(0)
 	end
 
 	local button = self.TeleportButton
 	if button then
-		local icon = button.Icon:GetTexture()
-		local noTex = button.NoTeleportTexture:GetTexture()
-		B.StripTextures(button)
-		button.Icon:SetTexture(icon)
-		button.NoTeleportTexture:SetTexture(noTex)
 		button.bg = B.ReskinIcon(button.Icon)
-		button:GetHighlightTexture():SetColorTexture(1, 1, 1, .25)
-		button:GetHighlightTexture():SetInside(button.bg)
+		button.IconBorder:SetAlpha(0)
+		button.HL = button:CreateTexture(nil, "HIGHLIGHT")
+		button.HL:SetColorTexture(1, 1, 1, .25)
+		button.HL:SetInside(button.bg)
 	end
 end
 
-local function ReskinDungeonsFrame(frame)
-	if not frame.styled then
-		B.StripTextures(frame)
-
-		for _, child in pairs {frame:GetChildren()} do
-			local objType = child:GetObjectType()
-			if objType == "Button" and child.Icon and child.Text then
-				B.ReskinFilterButton(child)
-				if child.__texture then
-					child.__texture:Hide()
-				end
-			elseif objType == "Frame" and child.Title and child.itemFrames then
-				HandleDungeon(child)
-			end
-		end
-
-		frame.styled = true
-	end
+local function ReskinReminderSpec(self)
+	B.StripTextures(self)
+	S:Proxy("CreateBDFrame", self.Bg, .25)
+	S:Proxy("Reskin", self.LootSpecButton)
 end
 
-local function updateBackdropColor(self, isDisabled)
-	if isDisabled then
-		self.bg:SetBackdropColor(0, 0, 0, .25)
-	else
-		self.bg:SetBackdropColor(DB.r, DB.g, DB.b, .25)
-	end
-end
+local function ReskinReminderIcon(self)
+	if not self.styled then
+		HandleItemButton(self)
 
-local function HandleRaid(self)
-	self.BgTexture:SetAlpha(0)
-	self.iconbg = B.ReskinIcon(self.BossIcon)
-	self.bg = B.CreateBDFrame(self, .25)
-	self.bg:ClearAllPoints()
-	self.bg:SetPoint("TOPLEFT", self.iconbg, "TOPRIGHT", 2, 0)
-	self.bg:SetPoint("BOTTOMLEFT", self.iconbg, "BOTTOMRIGHT", 2, 0)
-	self.bg:SetPoint("RIGHT")
-
-	for _, button in ipairs(self.itemFrames) do
-		HandleItemButton(button)
-	end
-
-	updateBackdropColor(self, self.BgTexture:IsDesaturated())
-	hooksecurefunc(self, "SetDisabled", updateBackdropColor)
-end
-
-local function ReskinRaidTab(frame)
-	for _, child in pairs {frame:GetChildren()} do
-		local objType = child:GetObjectType()
-		if objType == "Frame" and child.Title and child.BossIcon and child.itemFrames then
-			HandleRaid(child)
-		end
-	end
-end
-
-local function ReskinRaidsFrame(frame)
-	if not frame.styled then
-		B.StripTextures(frame)
-
-		for _, child in pairs {frame:GetChildren()} do
-			local objType = child:GetObjectType()
-			if objType == "Button" and child.Icon and child.Text then
-				B.ReskinFilterButton(child)
-				if child.__texture then
-					child.__texture:Hide()
-				end
-			end
-		end
-
-		for i, tab in ipairs(frame.Tabs) do
-			B.ReskinTab(tab)
-			B.ResetTabAnchor(tab)
-
-			if i ~= 1 then
-				tab:ClearAllPoints()
-				tab:SetPoint("TOPLEFT", frame.Tabs[i-1], "TOPRIGHT", -15, 0)
-			end
-
-			ReskinRaidTab(tab.Children)
-		end
-
-		frame.styled = true
-	end
-end
-
-local function ReskinSpecFrame(frame)
-	if not frame.styled then
-		for _, child in pairs {frame:GetChildren()} do
-			local objType = child:GetObjectType()
-			if objType == "Button" then
-				local texture = child.GetNormalTexture and child:GetNormalTexture()
-				local atlas = texture and texture:GetAtlas()
-				if atlas and atlas == "RedButton-Exit" then
-					B.ReskinClose(child)
-				end
-			elseif objType == "Frame" and child.itemFrames and child.Bg then
-				child:HideBackdrop()
-				B.CreateBDFrame(child.Bg, 0)
-				S:Proxy("Reskin", child.Button)
-
-				for _, button in ipairs(child.itemFrames) do
-					HandleItemButton(button)
-				end
-			end
-		end
-
-		frame.styled = true
+		self.styled = true
 	end
 end
 
@@ -196,59 +74,39 @@ function S:KeystoneLoot()
 	if not frame then return end
 
 	B.ReskinPortraitFrame(frame)
+	S:Proxy("ReskinDropDown", frame.SlotDropdown)
+	S:Proxy("ReskinDropDown", frame.ClassDropdown)
+	S:Proxy("ReskinDropDown", frame.ItemLevelDropdown)
+	P:SecureHook(frame, "InitializeTabSystem", ReskinTabSystem)
 
-	for _, child in pairs {frame:GetChildren()} do
-		local texture = child.GetNormalTexture and child:GetNormalTexture()
-		local atlas = texture and texture:GetAtlas()
-		if atlas and atlas == "RedButton-Exit" then
-			B.ReskinClose(child)
-			break
-		end
-	end
-
-	local OptionsButton = frame.OptionsButton
-	if OptionsButton then
-		OptionsButton:ClearAllPoints()
-		OptionsButton:SetPoint("TOPRIGHT", -28, -6)
+	local SettingsDropdown = frame.SettingsDropdown
+	if SettingsDropdown then
+		SettingsDropdown:ClearAllPoints()
+		SettingsDropdown:SetPoint("TOPRIGHT", -28, -6)
 	end
 
 	local CatalystFrame = frame.CatalystFrame
 	if CatalystFrame then
 		CatalystFrame:ClearAllPoints()
 		CatalystFrame:SetPoint("TOPLEFT", frame, "TOPRIGHT", 0, -40)
-		CatalystFrame:HookScript("OnShow", ReskinCatalystFrame)
+		S:Proxy("StripTextures", CatalystFrame.Border)
+		CatalystFrame.bg = B.SetBD(CatalystFrame)
+		CatalystFrame.bg:SetInside()
 	end
 
-	local TooltipFrame = frame.TooltipFrame
-	if TooltipFrame then
-		P.ReskinTooltip(TooltipFrame)
-		TooltipFrame:HookScript("OnShow", ReskinTooltipFrame)
+	P:SecureHook("KeystoneLootLootIconButtonMixin", "Init", ReskinIconButton)
+	P:SecureHook("KeystoneLootDungeonsFrameMixin", "OnLoad", ReskinSubFrame)
+	P:SecureHook("KeystoneLootRaidsFrameMixin", "OnLoad", ReskinSubFrame)
+	P:SecureHook("KeystoneLootEntryFrameMixin", "OnLoad", ReskinEntryFrame)
+
+	-- ReminderFrame
+	local ReminderFrame = _G.KeystoneLootReminderFrame
+	if ReminderFrame then
+		B.ReskinPortraitFrame(ReminderFrame)
 	end
 
-	for i, tab in ipairs(frame.Tabs) do
-		B.ReskinTab(tab)
-		B.ResetTabAnchor(tab)
-
-		if i ~= 1 then
-			tab:ClearAllPoints()
-			tab:SetPoint("TOPLEFT", frame.Tabs[i-1], "TOPRIGHT", -15, 0)
-		end
-
-		if tab.id == "dungeons" then
-			tab.Children:HookScript("OnShow", ReskinDungeonsFrame)
-		elseif tab.id == "raids" then
-			tab.Children:HookScript("OnShow", ReskinRaidsFrame)
-		end
-	end
-
-	for _, child in pairs {_G.UIParent:GetChildren()} do
-		if child.layoutType == "SimplePanelTemplate" and B:Round(child:GetHeight()) == 217 then
-			B.StripTextures(child)
-			B.SetBD(child)
-			child:HookScript("OnShow", ReskinSpecFrame)
-			break
-		end
-	end
+	P:SecureHook("KeystoneLootReminderSpecMixin", "OnLoad", ReskinReminderSpec)
+	P:SecureHook("KeystoneLootReminderIconMixin", "Init", ReskinReminderIcon)
 end
 
-S:RegisterSkin("KeystoneLoot", S.KeystoneLoot, true)
+S:RegisterSkin("KeystoneLoot", S.KeystoneLoot)
