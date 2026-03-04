@@ -56,7 +56,7 @@ end
 function LSM:UpdateRaidData()
 	LSM.CurrentTier = EJ_GetCurrentTier()
 
-	local maxTier = GetExpansionEJTier(GetServerExpansionLevel()) or EJ_GetNumTiers()
+	local maxTier = GetExpansionEJTier(GetExpansionLevel()) or EJ_GetNumTiers()
 	EJ_SelectTier(maxTier)
 
 	local index = 1
