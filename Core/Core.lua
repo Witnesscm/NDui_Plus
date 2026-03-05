@@ -106,6 +106,7 @@ P.DefaultSettings = {
 		Immersion = true,
 		InboxMailBag = true,
 		ls_Toasts = true,
+		KeystoneLoot = true,
 		MeetingStone = true,
 		RareScanner = true,
 		ShadowDancer = true,

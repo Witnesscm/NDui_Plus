@@ -232,6 +232,7 @@ local AddonSkins = {
 	{"Immersion", "Immersion"},
 	{"InboxMailBag", "Inbox MailBag"},
 	{"ls_Toasts", "ls_Toasts"},
+	{"KeystoneLoot", "KeystoneLoot"},
 	{"MeetingStone", "MeetingStone"},
 	{"RareScanner", "RareScanner"},
 	{"ShadowDancer", "ShadowDancer"},

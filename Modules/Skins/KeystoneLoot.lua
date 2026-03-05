@@ -70,6 +70,8 @@ local function ReskinReminderIcon(self)
 end
 
 function S:KeystoneLoot()
+	if not S.db["KeystoneLoot"] then return end
+
 	local frame = _G.KeystoneLootFrame
 	if not frame then return end
 
