@@ -130,7 +130,7 @@ P.DefaultSettings = {
 		HideCreator = false,
 	},
 	Misc = {
-		LootSpecManager = false,
+		LootSpecManager = true,
 		TalentManager = true,
 		QuestHelper = true,
 		CopyMog = true,
@@ -142,7 +142,7 @@ P.DefaultSettings = {
 		AuctionEnhanced = true,
 		GuildBankItemLevel = true,
 		ExtVendorUI = true,
-		ExtMacroUI =  false,
+		ExtMacroUI = true,
 		WormholeHelper = true,
 		TrainAll = true,
 		AutoRoll = 3,
