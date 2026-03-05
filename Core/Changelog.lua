@@ -2,6 +2,13 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 
 P.Changelog = [[
+v12.0.3
+[聊天] 修复聊天框锚点错误
+[易用性] 启用自动Roll点时，自动确认拾取绑定对话框
+[美化] 修复材质列表中缺失部分LibSharedMedia材质的问题
+[美化] 更新 WorldQuestTab 美化
+[美化] 更新 KeystoneLoot 美化
+
 v12.0.2
 [单位框体] 修复NDui单位框体职责图标替换
 [鼠标提示] PvE进度更新至暗之夜S1数据
