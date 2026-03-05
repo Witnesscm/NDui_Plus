@@ -80,9 +80,19 @@ function M:AutoRoll_CreateButton()
 	end)
 end
 
+function M:AutoRoll_Confirm()
+	if M.db["AutoRoll"] == 1 then
+		local _, dialog = StaticPopup_Visible("CONFIRM_LOOT_ROLL")
+		if dialog then
+			dialog:GetButton1():Click()
+		end
+	end
+end
+
 function M:AutoRoll()
 	M:AutoRoll_CreateButton()
 	B:RegisterEvent("START_LOOT_ROLL", M.AutoRoll_OnEvent)
+	B:RegisterEvent("CONFIRM_LOOT_ROLL", M.AutoRoll_Confirm)
 end
 
 M:RegisterMisc("AutoRoll", M.AutoRoll)
