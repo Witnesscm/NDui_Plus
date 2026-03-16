@@ -98,7 +98,7 @@ function S:KeystoneLoot()
 
 	P:SecureHook("KeystoneLootLootIconButtonMixin", "Init", ReskinIconButton)
 	P:SecureHook("KeystoneLootDungeonsFrameMixin", "OnLoad", ReskinSubFrame)
-	P:SecureHook("KeystoneLootRaidsFrameMixin", "OnLoad", ReskinSubFrame)
+	P:SecureHook("KeystoneLootRaidBlockMixin", "OnLoad", ReskinSubFrame)
 	P:SecureHook("KeystoneLootEntryFrameMixin", "OnLoad", ReskinEntryFrame)
 
 	-- ReminderFrame
