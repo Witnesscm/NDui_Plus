@@ -16,6 +16,7 @@ local TEXTURE_GETTERS = {
 	spell = C_Spell.GetSpellTexture,
 	enchant = C_Spell.GetSpellTexture,
 	mount = C_Spell.GetSpellTexture,
+	curio = C_Spell.GetSpellTexture,
 	item = C_Item.GetItemIconByID,
 	keystone = C_Item.GetItemIconByID,
 	talent = function(id) return select(3, GetTalentInfoByID(id)) end,
