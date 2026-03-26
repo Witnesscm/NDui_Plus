@@ -39,7 +39,7 @@ local function AddLine(self, source, isCollectedText, type, noadd)
 		local line = _G[self:GetName() .. "TextLeft" .. i]
 		if not line then break end
 		local text = line:GetText()
-		if text and text == type then return end
+		if text and B:NotSecretValue(text) and text == type then return end
 	end
 	if not noadd then self:AddLine(" ") end
 	self:AddDoubleLine(type, isCollectedText)

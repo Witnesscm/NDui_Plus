@@ -27,7 +27,7 @@ function T:AlreadyUsed_CheckStatus()
 	if questID and C_QuestLog.IsQuestFlaggedCompleted(questID) then
 		local line = _G[self:GetName().."TextLeft1"]
 		local text = line and line:GetText()
-		if text then
+		if text and B:NotSecretValue(text) then
 			line:SetText(text..USED_STRING)
 			self:Show()
 		end

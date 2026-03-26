@@ -21,7 +21,7 @@ function T:HideCreatedString()
 		for i = 2, self:NumLines() do
 			local line = _G[self:GetName().."TextLeft"..i]
 			local text = line and line:GetText()
-			if text and text ~= "" and strmatch(text, createdString) then
+			if text and B:NotSecretValue(text) and text ~= "" and strmatch(text, createdString) then
 				line:SetText("")
 				break
 			end
