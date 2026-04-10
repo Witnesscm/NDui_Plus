@@ -49,7 +49,7 @@ function AB:MageButton_UpdateSize()
 	self.Name:SetScale(scale)
 	self.Count:SetScale(scale)
 	self.HotKey:SetScale(scale)
-	self.FlyoutArrow:SetScale(scale)
+	self.Arrow:SetScale(scale)
 end
 
 function AB:MageButton_UpdateSpell(spellID)
@@ -105,30 +105,28 @@ function AB:MageButton_UpdateUsable()
 end
 
 function AB:MageButton_UpdateFlyout()
-	if not self.FlyoutArrow then return end
+	if not self.Arrow then return end
 
 	local arrowDistance
 	local mouseFoci = GetMouseFoci()
 	if mouseFoci and mouseFoci[1] == self then
-		self.FlyoutBorder:Show()
-		self.FlyoutBorderShadow:Show()
+		self.BorderShadow:Show()
 		arrowDistance = 5
 	else
-		self.FlyoutBorder:Hide()
-		self.FlyoutBorderShadow:Hide()
+		self.BorderShadow:Hide()
 		arrowDistance = 2
 	end
 
-	self.FlyoutArrow:Show()
-	self.FlyoutArrow:ClearAllPoints()
+	self.Arrow:Show()
+	self.Arrow:ClearAllPoints()
 
 	local vertical = AB.db["MageBarVertical"]
 	if vertical then
-		self.FlyoutArrow:SetPoint("LEFT", self, "LEFT", -arrowDistance, 0)
-		SetClampedTextureRotation(self.FlyoutArrow, 270)
+		self.Arrow:SetPoint("LEFT", self, "LEFT", -arrowDistance, 0)
+		SetClampedTextureRotation(self.Arrow, 270)
 	else
-		self.FlyoutArrow:SetPoint("TOP", self, "TOP", 0, arrowDistance)
-		SetClampedTextureRotation(self.FlyoutArrow, 0)
+		self.Arrow:SetPoint("TOP", self, "TOP", 0, arrowDistance)
+		SetClampedTextureRotation(self.Arrow, 0)
 	end
 end
 
@@ -171,7 +169,7 @@ end
 function AB:CreateMageButton(name, parent, spellID)
 	local button = CreateFrame("Button", name, parent, "ActionButtonTemplate, SecureActionButtonTemplate")
 	button:SetHitRectInsets(-margin/2, -margin/2, -margin/2, -margin/2)
-	button:RegisterForClicks("AnyUp")
+	button:RegisterForClicks("AnyUp", "AnyDown")
 	AB:StyleActionButton(button, AB.BarConfig)
 
 	AB.MageButton_UpdateSpell(button, spellID)
@@ -384,14 +382,14 @@ function AB:MageBar_Toggle()
 
 	if AB.db["MageBar"] then
 		AB:MageBar_Update()
-		B:RegisterEvent("LEARNED_SPELL_IN_TAB", AB.MageBar_Update)
+		B:RegisterEvent("LEARNED_SPELL_IN_SKILL_LINE", AB.MageBar_Update)
 		B:RegisterEvent("ACTIONBAR_UPDATE_COOLDOWN", AB.MageBar_UpdateCooldown)
 		B:RegisterEvent("BAG_UPDATE_DELAYED", AB.MageBar_UpdateCooldown)
 		B:RegisterEvent("SPELL_UPDATE_USABLE", AB.MageBar_UpdateUsable)
 		B:RegisterEvent("UPDATE_SHAPESHIFT_FORMS", AB.MageBar_UpdateUsable)
 		AB.MageBar:Show()
 	else
-		B:UnregisterEvent("LEARNED_SPELL_IN_TAB", AB.MageBar_Update)
+		B:UnregisterEvent("LEARNED_SPELL_IN_SKILL_LINE", AB.MageBar_Update)
 		B:UnregisterEvent("ACTIONBAR_UPDATE_COOLDOWN", AB.MageBar_UpdateCooldown)
 		B:UnregisterEvent("BAG_UPDATE_DELAYED", AB.MageBar_UpdateCooldown)
 		B:UnregisterEvent("SPELL_UPDATE_USABLE", AB.MageBar_UpdateUsable)

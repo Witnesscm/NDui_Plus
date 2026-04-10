@@ -84,6 +84,6 @@ end
 
 function CH:ChatLinkIcon()
 	for _, event in pairs(CH.ChatEvents) do
-		ChatFrame_AddMessageEventFilter(event, CH.ChatLinkfilter)
+		ChatFrameUtil.AddMessageEventFilter(event, CH.ChatLinkfilter)
 	end
 end

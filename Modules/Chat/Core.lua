@@ -126,7 +126,7 @@ function CH:HookBubble(frame, backdrop)
 	frame.isHooked = true
 end
 
-function CH:UpdateChatColor(event, msg, ...)
+function CH:UpdateChatColor(_, msg, ...)
 	msg = CH:ClassFilter(msg) or msg
 	return false, msg, ...
 end
@@ -135,10 +135,10 @@ function CH:ChatClassColor()
 	if not CH.db["ClassColor"] then return end
 
 	for _, event in pairs(CH.ChatEvents) do
-		ChatFrame_AddMessageEventFilter(event, CH.UpdateChatColor)
+		ChatFrameUtil.AddMessageEventFilter(event, CH.UpdateChatColor)
 	end
 
-	hooksecurefunc("GetPlayerInfoByGUID",function(...) 
+	hooksecurefunc("GetPlayerInfoByGUID",function(...)
 		CH:GetPlayerInfoByGUID(...)
 	end)
 end
