@@ -12,7 +12,7 @@ local function CreateTankStyle(self)
 		insideAlpha = 1, outsideAlpha = .4,
 	}
 
-	NUF:CreateHeader(self)
+	NUF:CreateHeader(self, true)
 	UF:CreateHealthBar(self)
 	NUF:CreateHealthText(self)
 	UF:CreatePowerBar(self)

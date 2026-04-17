@@ -266,33 +266,6 @@ function UF:UpdateTankSize()
 	end
 end
 
-function UF:CreateDebuffs(self)
-	local mystyle = self.mystyle
-	local bu = CreateFrame("Frame", nil, self)
-	bu.spacing = 3
-	bu.initialAnchor = "TOPRIGHT"
-	bu["growth-x"] = "LEFT"
-	bu["growth-y"] = "DOWN"
-	bu.tooltipAnchor = "ANCHOR_BOTTOMLEFT"
-	bu.showDebuffType = true
-	if mystyle == "tank" then
-		bu.initialAnchor = "BOTTOMLEFT"
-		bu["growth-x"] = "RIGHT"
-		bu:SetPoint("BOTTOMLEFT", self.Health, C.mult, C.mult)
-		bu.num = C.db["UFs"]["ShowRaidDebuff"] and 3 or 0
-		bu.size = C.db["UFs"]["RaidDebuffSize"]
-		bu.CustomFilter = NUF.RaidDebuffFilter
-		bu.disableMouse = true
-		bu.fontSize = C.db["UFs"]["RaidDebuffSize"]-2
-	end
-
-	NUF:UpdateAuraContainer(self, bu, bu.num)
-	bu.PostCreateIcon = NUF.PostCreateIcon
-	bu.PostUpdateIcon = NUF.PostUpdateIcon
-
-	self.Debuffs = bu
-end
-
 function UF:OnLogin()
 	UF:SetupTankFrame()
 	UF:UpdateUFsFader()
