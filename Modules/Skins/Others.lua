@@ -84,14 +84,15 @@ function S:BigWigs()
 			if text and text == keystoneTitle then
 				B.ReskinPortraitFrame(child)
 
-				for i, tab in ipairs(child.Tabs) do
+				--for i, tab in ipairs(child.Tabs) do
+				for _, tab in ipairs(child.Tabs) do
 					B.ReskinTab(tab)
-					tab:SetHeight(28)
-					tab.Text.SetPoint = B.Dummy
-					if i ~= 1 then
-						tab:ClearAllPoints()
-						tab:SetPoint("TOPLEFT", child.Tabs[i - 1], "TOPRIGHT", -15, 0)
-					end
+					--tab:SetHeight(28)
+					--tab.Text.SetPoint = B.Dummy
+					--if i ~= 1 then
+						--tab:ClearAllPoints()
+						--tab:SetPoint("TOPLEFT", child.Tabs[i - 1], "TOPRIGHT", -15, 0)
+					--end
 				end
 
 				for _, subChild in pairs {child:GetChildren()} do
