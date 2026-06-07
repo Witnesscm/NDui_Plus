@@ -759,9 +759,8 @@ function module:OnLogin()
 	B:RegisterEvent("GET_ITEM_INFO_RECEIVED", UpdateItemButtonInfo)
 end
 
-SlashCmdList["NDUI_PLUS_BAG"] = function(msg)
+P:AddCommand("OFFLINE_BAG", "/ndpb", function()
 	if not bagFrame then return end
 
 	B:TogglePanel(_G.NDui_Plus_BagFrame)
-end
-SLASH_NDUI_PLUS_BAG1 = "/ndpb"
+end)
