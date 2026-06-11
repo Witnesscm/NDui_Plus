@@ -169,7 +169,7 @@ end
 function AB:CreateMageButton(name, parent, spellID)
 	local button = CreateFrame("Button", name, parent, "ActionButtonTemplate, SecureActionButtonTemplate")
 	button:SetHitRectInsets(-margin/2, -margin/2, -margin/2, -margin/2)
-	button:RegisterForClicks("AnyUp", "AnyDown")
+	button:SetAttribute("useOnKeyDown", false)
 	AB:StyleActionButton(button, AB.BarConfig)
 
 	AB.MageButton_UpdateSpell(button, spellID)
