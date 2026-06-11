@@ -169,7 +169,7 @@ end
 function AB:CreateMageButton(name, parent, spellID)
 	local button = CreateFrame("Button", name, parent, "ActionButtonTemplate, SecureActionButtonTemplate")
 	button:SetHitRectInsets(-margin/2, -margin/2, -margin/2, -margin/2)
-	button:SetAttribute("useOnKeyDown", false)
+	button:RegisterForClicks("AnyUp", "AnyDown")
 	AB:StyleActionButton(button, AB.BarConfig)
 
 	AB.MageButton_UpdateSpell(button, spellID)
@@ -244,7 +244,9 @@ function AB:CreateMainButton(info)
 				BAR_MAP[button] = bar
 			]=])
 			PopupHandler:WrapScript(popupButton, "OnClick", [=[
-				BAR_MAP[self]:Hide()
+				if not down then
+					BAR_MAP[self]:Hide()
+				end
 			]=])
 			PopupHandler:WrapScript(popupButton, "OnEnter", [=[
 				local popupBar = BAR_MAP[self]
