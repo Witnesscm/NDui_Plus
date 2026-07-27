@@ -2,8 +2,8 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 local AB = P:GetModule("ActionBar")
 
-local ActionButtons = {}
-local ActionButtonMap = {}
+local LAB = LibStub("LibActionButton-1.0-NDui", true)
+local ActionButtons = LAB.actionButtons
 
 -- https://wago.tools/db2/Spell?filter[Description_lang]=%09Finishing%20move&build=1.15.0.52409&page=1
 local FinisherSpells = {
@@ -73,14 +73,7 @@ function AB:UpdateMaxPoints(...)
 end
 
 function AB:FinisherGlow_Update()
-	local spellId
-	local spellType, id = GetActionInfo(self.action)
-	if spellType == "spell" then
-		spellId = id
-	elseif spellType == "macro" then
-		spellId = GetMacroSpell(id)
-	end
-
+	local spellId = self:GetSpellId()
 	if spellId and IsSpellOverlayed(spellId) then
 		B.ShowOverlayGlow(self)
 	else
@@ -99,18 +92,8 @@ function AB:FinisherGlow_OnEvent(...)
 	end
 end
 
-function AB:FinisherGlow_OnSlotChanged(slot)
-	if ActionButtonMap[slot] then
-		AB.FinisherGlow_Update(ActionButtonMap[slot])
-	end
-end
-
-function AB:FinisherGlow_OnButtonUpdate()
-	if self.action and self.old_action ~= self.action then
-		AB.FinisherGlow_Update(self)
-		ActionButtonMap[self.action] = self
-		self.old_action = self.action
-	end
+function AB:FinisherGlow_OnButtonUpdate(button)
+	AB.FinisherGlow_Update(button)
 end
 
 function AB:FinisherGlow()
@@ -119,17 +102,9 @@ function AB:FinisherGlow()
 	AB.Finishers = FinisherSpells[DB.MyClass]
 	if not AB.Finishers then return end
 
-	local Bar = B:GetModule("Actionbar")
-	for _, button in ipairs(Bar.buttons) do
-		if button.action then
-			ActionButtons[button] = true
-		end
-	end
-
 	AB:UpdateMaxPoints()
 	B:RegisterEvent("UNIT_MAXPOWER", AB.UpdateMaxPoints)
 	B:RegisterEvent("UNIT_POWER_UPDATE", AB.FinisherGlow_OnEvent)
 	B:RegisterEvent("PLAYER_TARGET_CHANGED", AB.FinisherGlow_OnEvent)
-	B:RegisterEvent("ACTIONBAR_SLOT_CHANGED", AB.FinisherGlow_OnSlotChanged)
-	hooksecurefunc("ActionButton_Update", AB.FinisherGlow_OnButtonUpdate)
+	LAB:RegisterCallback("OnButtonUpdate", AB.FinisherGlow_OnButtonUpdate)
 end

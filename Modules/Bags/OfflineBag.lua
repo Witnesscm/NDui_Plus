@@ -613,7 +613,7 @@ local function OwnerSelector_OnEnter(self)
 end
 
 local function CreateSelectorButton(parent)
-	local bu = B.CreateButton(parent, 22, 22, true, "Atlas:UI-ChatIcon-App")
+	local bu = B.CreateButton(parent, 22, 22, true, "Interface\\CHATFRAME\\UI-ChatIcon-Battlenet")
 	bu:RegisterForClicks("AnyUp")
 	bu:SetScript("OnClick", OwnerSelector_OnClick)
 	bu:SetScript("OnEnter", OwnerSelector_OnEnter)
@@ -759,9 +759,8 @@ function module:OnLogin()
 	B:RegisterEvent("GET_ITEM_INFO_RECEIVED", UpdateItemButtonInfo)
 end
 
-SlashCmdList["NDUI_PLUS_BAG"] = function(msg)
+P:AddCommand("OFFLINE_BAG", "/ndpb", function()
 	if not bagFrame then return end
 
 	B:TogglePanel(_G.NDui_Plus_BagFrame)
-end
-SLASH_NDUI_PLUS_BAG1 = "/ndpb"
+end)
