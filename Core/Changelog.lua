@@ -2,6 +2,9 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 
 P.Changelog = [[
+v1.15.16
+[主要] 更新支持1.15.9
+
 v1.15.15
 [美化] 添加 Clique 美化
 [美化] 更新部分插件美化
