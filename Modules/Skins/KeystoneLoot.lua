@@ -69,6 +69,40 @@ local function ReskinReminderIcon(self)
 	end
 end
 
+local function rowOnEnter(self)
+	self.bg:SetBackdropBorderColor(DB.r, DB.g, DB.b)
+end
+
+local function rowOnLeave(self)
+	self.bg:SetBackdropBorderColor(0, 0, 0)
+end
+
+local function ReskinNotificationRow(self)
+	if not self.rowPool then
+		return
+	end
+
+	for row in self.rowPool:EnumerateActive() do
+		if not row.styled then
+			B.StripTextures(row)
+			row.bg = B.CreateBDFrame(row, .25)
+			row:HookScript("OnEnter", rowOnEnter)
+			row:HookScript("OnLeave", rowOnLeave)
+			HandleItemButton(row.IconFrame)
+
+			local button = row.WhisperButton
+			B.Reskin(button)
+			button.__bg:SetInside(nil, 2, 2)
+			button.Icon = button:CreateTexture(nil, "ARTWORK")
+			button.Icon:SetTexture([[Interface\CHATFRAME\UI-ChatWhisperIcon]])
+			button.Icon:SetPoint("CENTER")
+			button.Icon:SetSize(24, 24)
+
+			row.styled = true
+		end
+	end
+end
+
 function S:KeystoneLoot()
 	if not S.db["KeystoneLoot"] then return end
 
@@ -109,6 +143,68 @@ function S:KeystoneLoot()
 
 	P:SecureHook("KeystoneLootReminderSpecMixin", "OnLoad", ReskinReminderSpec)
 	P:SecureHook("KeystoneLootReminderIconMixin", "Init", ReskinReminderIcon)
+
+	-- NotificationFrame
+	local NotificationFrame = _G.KeystoneLootDropNotificationFrame
+	if NotificationFrame then
+		B.ReskinPortraitFrame(NotificationFrame)
+		P:SecureHook(NotificationFrame, "Refresh", ReskinNotificationRow)
+	end
+
+	-- KSLMenu
+	local KSLMenu = _G.KSLMenu
+	if not KSLMenu then return end
+
+	-- from NDui
+	local menuManagerProxy = KSLMenu.GetManager()
+
+	local backdrops = {}
+
+	local function skinMenu(menuFrame)
+		B.StripTextures(menuFrame)
+
+		if backdrops[menuFrame] then
+			menuFrame.bg = backdrops[menuFrame]
+		else
+			menuFrame.bg = B.SetBD(menuFrame)
+			backdrops[menuFrame] = menuFrame.bg
+		end
+
+		local framelevel = menuFrame:GetFrameLevel() - 1
+		menuFrame.bg:SetFrameLevel(framelevel < 0 and 0 or framelevel)
+
+		if not menuFrame.ScrollBar.styled then
+			B.ReskinTrimScroll(menuFrame.ScrollBar)
+			menuFrame.ScrollBar.styled = true
+		end
+
+		for i = 1, menuFrame:GetNumChildren() do
+			local child = select(i, menuFrame:GetChildren())
+
+			local minLevel = child.MinLevel
+			if minLevel and not minLevel.styled then
+				B.ReskinEditBox(minLevel)
+				minLevel.styled = true
+			end
+
+			local maxLevel = child.MaxLevel
+			if maxLevel and not maxLevel.styled then
+				B.ReskinEditBox(maxLevel)
+				maxLevel.styled = true
+			end
+		end
+	end
+
+	local function setupMenu(manager, _, menuDescription)
+		local menuFrame = manager:GetOpenMenu()
+		if menuFrame then
+			skinMenu(menuFrame)
+			menuDescription:AddMenuAcquiredCallback(skinMenu)
+		end
+	end
+
+	hooksecurefunc(menuManagerProxy, "OpenMenu", setupMenu)
+	hooksecurefunc(menuManagerProxy, "OpenContextMenu", setupMenu)
 end
 
 S:RegisterSkin("KeystoneLoot", S.KeystoneLoot)
