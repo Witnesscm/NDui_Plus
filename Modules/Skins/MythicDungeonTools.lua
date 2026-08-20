@@ -76,7 +76,7 @@ function S:MythicDungeonTools()
 
 			P.ReskinTooltip(MDT.tooltip)
 			P.ReskinTooltip(MDT.pullTooltip)
-		end)
+		end, 0.2, 20)
 
 		styled = true
 	end)
