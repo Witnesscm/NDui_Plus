@@ -9,19 +9,16 @@ local function HandleListButton(self)
 	Highlight.HL:SetTexture(DB.bdTex)
 	Highlight.HL:SetVertexColor(DB.r, DB.g, DB.b, .3)
 	Highlight.HL:SetInside()
-end
 
-local function HandleRewardButton(self)
-	if not self.styled then
-		for _, reward in ipairs(self.rewardFrames) do
+	local rewardsFrame = self.GetRewardsFrame and self:GetRewardsFrame()
+	if rewardsFrame then
+		for _, reward in ipairs(rewardsFrame.rewardFrames) do
 			reward.BorderMask:Hide()
 			reward.Icon:SetInside()
 			reward.bg = B.ReskinIcon(reward.Icon)
 			B.ReskinIconBorder(reward.QualityColor)
 			reward.AmountBG:SetAlpha(0)
 		end
-
-		self.styled = true
 	end
 end
 
@@ -70,8 +67,48 @@ local function HandleSettingsButton(self)
 	S:Proxy("Reskin", self.Button)
 end
 
+local function HandleSettingsConfirmButton(self)
+	S:Proxy("Reskin", self.Button)
+	S:Proxy("Reskin", self.ButtonConfirm)
+	S:Proxy("Reskin", self.ButtonDecline)
+end
+
 local function HandleSettingsTextInput(self)
 	S:Proxy("ReskinInput", self.TextBox)
+end
+
+local function HandleSettingsPreview(self)
+	self:DisableDrawLayer("BACKGROUND")
+	HandleListButton(self.Preview)
+end
+
+local function OnAcquiredQuestFrame(self, frame, data, new)
+	if not new then return end
+
+	HandleListButton(frame)
+end
+
+local skinFuncs = {
+	["WQT_SettingCategoryTemplate"] = HandleSettingsCategory,
+	["WQT_SettingSubCategoryTemplate"] = HandleSettingsCategory,
+	["WQT_SettingCheckboxTemplate"] = HandleSettingsCheckbox,
+	["WQT_SettingSliderTemplate"] = HandleSettingsSlider,
+	["WQT_SettingColorTemplate"] = HandleSettingsColor,
+	["WQT_SettingDropDownTemplate"] = HandleSettingsDropDown,
+	["WQT_SettingButtonTemplate"] = HandleSettingsButton,
+	["WQT_SettingConfirmButtonTemplate"] = HandleSettingsConfirmButton,
+	["WQT_SettingTextInputTemplate"] = HandleSettingsTextInput,
+	["WQT_SettingsQuestListPreviewTemplate"] = HandleSettingsPreview,
+}
+
+local function OnAcquiredSettingFrame(self, frame, data, new)
+	if not new then return end
+
+	local template = data.template
+	local func = template and skinFuncs[template]
+	if func then
+		func(frame)
+	end
 end
 
 function S:WorldQuestTab()
@@ -93,17 +130,11 @@ function S:WorldQuestTab()
 			S:Proxy("ReskinDropDown", TopBar.SortDropdown)
 			S:Proxy("ReskinInput", TopBar.SearchBox)
 		end
-	end
 
-	P:SecureHook("WQT_ListButtonMixin", "OnLoad", HandleListButton)
-	P:SecureHook("WQT_RewardDisplayMixin", "UpdateRewards", HandleRewardButton)
-
-	-- WQT_WhatsNewFrame
-	local WhatsNewFrame = frame.WhatsNewFrame
-	if WhatsNewFrame then
-		WhatsNewFrame.Background:Hide()
-		S:Proxy("StripTextures", WhatsNewFrame.BorderFrame)
-		S:Proxy("ReskinTrimScroll", WhatsNewFrame.ScrollBar)
+		local questScrollBox = ScrollFrame.GetQuestScrollBox and ScrollFrame:GetQuestScrollBox()
+		if questScrollBox then
+			questScrollBox:RegisterCallback(ScrollBoxListMixin.Event.OnAcquiredFrame, OnAcquiredQuestFrame)
+		end
 	end
 
 	-- WQT_SettingsFrame
@@ -112,25 +143,12 @@ function S:WorldQuestTab()
 		SettingsFrame.Background:Hide()
 		S:Proxy("StripTextures", SettingsFrame.BorderFrame)
 		S:Proxy("ReskinTrimScroll", SettingsFrame.ScrollBar)
-	end
 
-	local function wrap(func)
-		return function(self, ...)
-			if not self.styled then
-				func(self, ...)
-				self.styled = true
-			end
+		local settingsScrollBox = SettingsFrame.ScrollBox
+		if settingsScrollBox then
+			settingsScrollBox:RegisterCallback(ScrollBoxListMixin.Event.OnAcquiredFrame, OnAcquiredSettingFrame)
 		end
 	end
-
-	P:SecureHook("WQT_SettingsCategoryMixin", "Init", wrap(HandleSettingsCategory))
-	P:SecureHook("WQT_SettingsCheckboxMixin", "Init", wrap(HandleSettingsCheckbox))
-	P:SecureHook("WQT_SettingsSliderMixin", "Init", wrap(HandleSettingsSlider))
-	P:SecureHook("WQT_SettingsColorMixin", "Init", wrap(HandleSettingsColor))
-	P:SecureHook("WQT_SettingsDropDownMixin", "Init", wrap(HandleSettingsDropDown))
-	P:SecureHook("WQT_SettingsButtonMixin", "Init", wrap(HandleSettingsButton))
-	P:SecureHook("WQT_SettingsConfirmButtonMixin", "Init", wrap(HandleSettingsButton))
-	P:SecureHook("WQT_SettingsTextInputMixin", "Init", wrap(HandleSettingsTextInput))
 
 	-- WQT_Container
 	local FlightMapContainer = _G.WQT_FlightMapContainer
@@ -164,7 +182,7 @@ function S:WorldQuestTab()
 	end
 end
 
-S:RegisterSkin("WorldQuestTab", S.WorldQuestTab, true)
+S:RegisterSkin("WorldQuestTab", S.WorldQuestTab)
 
 local function ReskinTabs(lib)
 	for _, tab in ipairs(lib.tabs) do
