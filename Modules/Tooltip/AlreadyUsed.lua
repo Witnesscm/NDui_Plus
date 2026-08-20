@@ -13,6 +13,8 @@ local questItems = {
 }
 
 function T:AlreadyUsed_CheckStatus()
+	if self:IsForbidden() then return end
+
 	if not self.GetItem then return end
 
 	local name = self:GetName()

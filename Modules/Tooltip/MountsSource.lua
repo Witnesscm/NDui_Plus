@@ -15,10 +15,6 @@ function T:IsCollected(spell)
 end
 
 function T:GetOrCreateMountTable(spell)
-	if issecretvalue(spell) then
-		return
-	end
-
 	if not self.MountTable[spell] then
 		local index = C_MountJournal.GetMountFromSpell(spell)
 		if index then
@@ -47,11 +43,13 @@ local function AddLine(self, source, isCollectedText, type, noadd)
 	self:Show()
 end
 
-local function AddSourceByIndex(self, ...)
+local function AddSourceByIndex(self, unit, index, filter)
 	if not T.db["MountsSource"] then return end
 
-	local data = C_UnitAuras.GetAuraDataByIndex(...)
-	if not data then return end
+	if self:IsForbidden() then return end
+
+	local ok, data = pcall(C_UnitAuras.GetAuraDataByIndex, unit, index, filter)
+	if not ok or not data or issecretvalue(data.spellId) then return end
 
 	local table = data.spellId and T:GetOrCreateMountTable(data.spellId)
 	if table then
@@ -62,8 +60,10 @@ end
 local function AddSourceByAuraInstanceID(self, unit, auraInstanceID)
 	if not T.db["MountsSource"] then return end
 
-	local data = C_UnitAuras.GetAuraDataByAuraInstanceID(unit, auraInstanceID)
-	if not data then return end
+	if self:IsForbidden() then return end
+
+	local ok, data = pcall(C_UnitAuras.GetAuraDataByAuraInstanceID, unit, auraInstanceID)
+	if not ok or not data or issecretvalue(data.spellId) then return end
 
 	local table = data.spellId and T:GetOrCreateMountTable(data.spellId)
 	if table then

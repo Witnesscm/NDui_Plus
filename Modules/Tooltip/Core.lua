@@ -13,6 +13,8 @@ local createdString = gsub(ITEM_CREATED_BY, "%%s", ".+")
 
 function T:HideCreatedString()
 	TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Item, function(self)
+		if self:IsForbidden() then return end
+
 		if not T.db["HideCreator"] then return end
 
 		local name = self:GetName()
