@@ -5,6 +5,12 @@ local G = P:GetModule("GUI")
 local UF = P:GetModule("UnitFrames")
 local NUF = B:GetModule("UnitFrames")
 
+local roleToString = {
+	[Enum.LFGRole.Tank] = "TANK",
+	[Enum.LFGRole.Healer] = "HEALER",
+	[Enum.LFGRole.Damage] = "DAMAGER",
+}
+
 function UF:Configure_RoleIcon(frame)
 	local roleIcon = frame.GroupRoleIndicator
 	local mystyle = frame.mystyle
@@ -27,7 +33,9 @@ function UF:Configure_RoleIcon(frame)
 
 	if roleIcon and roleIcon.PostUpdate and not roleIcon.__hooked then
 		hooksecurefunc(roleIcon, "PostUpdate", function(self, role)
-			B.ReskinSmallRole(self, role)
+			if role and roleToString[role] then
+				B.ReskinSmallRole(self, roleToString[role])
+			end
 		end)
 		roleIcon.__hooked = true
 	end
