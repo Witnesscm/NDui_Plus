@@ -38,15 +38,48 @@ T.RaidData = {
 			{ 61302, 61306 },
 			{ 61303, 61307 }
 		}
+	},
+	[4] = {
+		abbr = L["[ABBR] Sporefall"],
+		achievements = {
+			{ 63233 },
+			{ 63234 },
+			{ 63235 },
+			{ 63236 }
+		}
+	},
+	[5] = {
+		abbr = L["[ABBR] The Tidebound Grotto"],
+		achievements = {
+			{ 63613 },
+			{ 63614 },
+			{ 63615 },
+			{ 63616 }
+		}
+	},
+	[6] = {
+		abbr = L["[ABBR] The Venomous Abyss"],
+		achievements = {
+			{ 63533, 63537, 63541, 63547, 63548, 63549, 63550, 63551 },
+			{ 63534, 63538, 63552, 63555, 63558, 63561, 63564, 63567 },
+			{ 63535, 63539, 63553, 63556, 63559, 63562, 63565, 63568 },
+			{ 63536, 63540, 63554, 63557, 63560, 63563, 63566, 63569 }
+		}
 	}
 }
 
 -- https://wago.tools/db2/Achievement?filter%5BTitle_lang%5D=Midnight%20Keystone&page=1
 T.MythicPlusAchievementData = {
 	[1] = {
-		{ id = 61258, abbr = L["[ABBR] Midnight Keystone Legend: Season One"] },
-		{ id = 61257, abbr = L["[ABBR] Midnight Keystone Hero: Season One"] },
-		{ id = 61256, abbr = L["[ABBR] Midnight Keystone Master: Season One"] }
+		{ id = 63097, abbr = L["[ABBR] Midnight Keystone Myth: Season 1"] },
+		{ id = 61258, abbr = L["[ABBR] Midnight Keystone Legend: Season 1"] },
+		{ id = 61257, abbr = L["[ABBR] Midnight Keystone Hero: Season 1"] },
+		{ id = 61256, abbr = L["[ABBR] Midnight Keystone Master: Season 1"] }
+	},
+	[2] = {
+		{ id = 62449, abbr = L["[ABBR] Midnight Keystone Legend: Season 2"] },
+		{ id = 62448, abbr = L["[ABBR] Midnight Keystone Hero: Season 2"] },
+		{ id = 62447, abbr = L["[ABBR] Midnight Keystone Master: Season 2"] }
 	}
 }
 
@@ -133,7 +166,12 @@ T.MythicPlusMapData = {
 	[558] = L["[ABBR] Magisters' Terrace"],
 	[559] = L["[ABBR] Nexus-Point Xenas"],
 	[560] = L["[ABBR] Maisara Caverns"],
-	[583] = L["[ABBR] Seat of the Triumvirate"]
+	[583] = L["[ABBR] Seat of the Triumvirate"],
+	[584] = L["[ABBR] The Blinding Vale"],
+	[585] = L["[ABBR] Voidscar Arena"],
+	[586] = L["[ABBR] Den of Nalorakk"],
+	[587] = L["[ABBR] Murder Row"],
+	[588] = L["[ABBR] Altar of Fangs"]
 }
 
 local difficulties = {
@@ -161,13 +199,13 @@ function T:UpdateProgSettings(full)
 end
 
 local function GetBossKillTimes(guid, achievementID)
-	local func = guid == T.myGUID and GetStatistic or GetComparisonStatistic
+	local func = guid == P.MyGUID and GetStatistic or GetComparisonStatistic
 	return tonumber(func(achievementID), 10) or 0
 end
 
 local function GetAchievementInfoByID(guid, achievementID)
 	local completed, month, day, year
-	if guid == T.myGUID then
+	if guid == P.MyGUID then
 		completed, month, day, year = select(4, GetAchievementInfo(achievementID))
 	else
 		completed, month, day, year = GetAchievementComparisonInfo(achievementID)
@@ -183,7 +221,7 @@ local function GetAchievementInfoByID(guid, achievementID)
 	return completedString, completed
 end
 
-function T:UpdateProgression(guid, faction)
+function T:UpdateProgression(guid)
 	cache[guid] = cache[guid] or {}
 	cache[guid].info = cache[guid].info or {}
 	cache[guid].timer = GetTime()
@@ -302,12 +340,8 @@ function T:GetAchievementInfo(GUID)
 	local unit = "mouseover"
 
 	if UnitExists(unit) then
-		local race = select(3, UnitRace(unit))
-		local faction = race and C_CreatureInfo.GetFactionInfo(race).groupTag
-		if faction then
-			T:UpdateProgression(GUID, faction)
-			GameTooltip:RefreshData()
-		end
+		T:UpdateProgression(GUID)
+		GameTooltip:RefreshData()
 	end
 
 	ClearAchievementComparisonUnit()
@@ -330,8 +364,8 @@ function T:AddProgression()
 
 	local guid = UnitGUID(unit)
 	if not cache[guid] or (GetTime() - cache[guid].timer) > 600 then
-		if guid == T.myGUID then
-			T:UpdateProgression(guid, T.myFaction)
+		if guid == P.MyGUID then
+			T:UpdateProgression(guid)
 		else
 			ClearAchievementComparisonUnit()
 

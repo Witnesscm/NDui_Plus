@@ -59,9 +59,6 @@ function T:GetCovenantName(covenantID)
 end
 
 function T:OnLogin()
-	T.myGUID = UnitGUID("player")
-	T.myFaction = UnitFactionGroup("player")
-
 	T:HideCreatedString()
 	T:Progression()
 	T:AlreadyUsed()
