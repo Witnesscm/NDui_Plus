@@ -429,8 +429,8 @@ function LR:OnLogin()
 	B:RegisterEvent("ENCOUNTER_END", self.LootRoll_EncounterEnd)
 	B:RegisterEvent("START_LOOT_ROLL", self.LootRoll_Start)
 
-	_G.UIParent:UnregisterEvent("START_LOOT_ROLL")
-	_G.UIParent:UnregisterEvent("CANCEL_LOOT_ROLL")
+	GameEvent.UnregisterInternalEvent("START_LOOT_ROLL")
+	GameEvent.UnregisterInternalEvent("CANCEL_LOOT_ROLL")
 end
 
 local testFrame
