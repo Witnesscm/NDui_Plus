@@ -30,6 +30,7 @@ do
 	-- "维克茜和磨轮（随机解放安德麦）"
 	-- "元首阿福扎恩（随机团队虚影尖塔）"
 	-- "奇美鲁斯，未梦之神（随机梦境裂隙）"
+	-- 尼姆瑞莎·唤波者（世界潮缚石窟）
 	local function GetAchievementData(expansion, raidName)
 		local data = {}
 		local pattern = format("^.-（(.-)%s）", raidName)
@@ -41,7 +42,7 @@ do
 				local _, name = GetAchievementInfo(id)
 				local diff = strmatch(name, pattern)
 				if diff then
-					diff = strfind(diff, "随机") and "随机" or diff
+					diff = (strfind(diff, "随机") or strfind(diff, "世界")) and "随机" or diff
 					data[diff] = data[diff] or {}
 					tinsert(data[diff], id)
 				end
