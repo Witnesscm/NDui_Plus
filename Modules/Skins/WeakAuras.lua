@@ -228,7 +228,7 @@ hooksecurefunc("SetItemRef", function(link)
 end)
 
 local function SkinWeakAurasOptions()
-	local frame = _G.WeakAurasOptions
+	local frame = _G.WeakAurasOptions or _G.M33kAurasOptions
 	if not frame or frame.styled then return end
 
 	B.ReskinPortraitFrame(frame)
@@ -263,18 +263,18 @@ local function SkinWeakAurasOptions()
 					end
 
 					if frame.window == "texteditor" then
-						local snippets = _G.WeakAurasSnippets
+						local snippets = _G.WeakAurasSnippets or _G.M33kAurasSnippets
 						if snippets then
 							P.ReskinFrame(snippets)
 							reskinChildButtons(snippets)
 						end
-						local apiSearchFrame = _G.WeakAurasAPISearchFrame
+						local apiSearchFrame = _G.WeakAurasAPISearchFrame or _G.M33kAurasAPISearchFrame
 						if apiSearchFrame then
 							P.ReskinFrame(apiSearchFrame)
 						end
 
 						S:Proxy("Reskin", _G.WASettingsButton)
-						S:Proxy("ReskinInput", _G.WeakAurasAPISearchFilterInput)
+						S:Proxy("ReskinInput", _G.WeakAurasAPISearchFilterInput or _G.M33kAurasAPISearchFilterInput)
 					elseif frame.window == "codereview" then
 						local codebox = group.codebox
 						local codeTree = group.codeTree
@@ -381,7 +381,7 @@ local function SkinLibAPIAutoComplete(lib)
 end
 
 function S:WeakAuras()
-	local WeakAuras = _G.WeakAuras
+	local WeakAuras = _G.WeakAuras or _G.M33kAuras
 	if not WeakAuras then return end
 
 	if C.db["Skins"]["WeakAuras"] then
@@ -390,16 +390,17 @@ function S:WeakAuras()
 			C.otherSkins["WeakAuras"] = nil
 		end
 
-		if WeakAuras.Private then
-			if WeakAuras.Private.regionPrototype then
+		local Private = WeakAuras.Private or _G.WASYNC_MAIN_PRIVATE
+		if Private then
+			if Private.regionPrototype then
 				local function OnPrototypeCreate(region)
 					Skin_WeakAuras(region, region.regionType)
 				end
 				local function OnPrototypeModifyFinish(_, region)
 					Skin_WeakAuras(region, region.regionType)
 				end
-				hooksecurefunc(WeakAuras.Private.regionPrototype, "create", OnPrototypeCreate)
-				hooksecurefunc(WeakAuras.Private.regionPrototype, "modifyFinish", OnPrototypeModifyFinish)
+				hooksecurefunc(Private.regionPrototype, "create", OnPrototypeCreate)
+				hooksecurefunc(Private.regionPrototype, "modifyFinish", OnPrototypeModifyFinish)
 			end
 		else
 			local link = format("|cff99ccff|Haddon:%s:%s|h[%s]|h|r", addonName, LINK_ID, L["Click for details"])
@@ -408,12 +409,12 @@ function S:WeakAuras()
 	end
 
 	if S.db["WeakAurasOptions"] then
-		local profilingFrame = _G.WeakAurasProfilingFrame
+		local profilingFrame = _G.WeakAurasProfilingFrame or _G.M33kAurasProfilingFrame
 		if profilingFrame then
 			profilingFrame:HookScript("OnShow", SkinProfilingFrame)
 		end
 
-		local profilingReport = _G.WeakAurasProfilingReport
+		local profilingReport = _G.WeakAurasProfilingReport or _G.M33kAurasProfilingReport
 		if profilingReport then
 			profilingReport:HookScript("OnShow", SkinProfilingReport)
 		end
@@ -423,7 +424,7 @@ end
 function S:WeakAurasOptions()
 	if not S.db["WeakAurasOptions"] then return end
 
-	local WeakAuras = _G.WeakAuras
+	local WeakAuras = _G.WeakAuras or _G.M33kAuras
 	if not WeakAuras then return end
 
 	if WeakAuras.ShowOptions then
@@ -460,7 +461,7 @@ end
 function S:WeakAurasTemplates()
 	if not S.db["WeakAurasOptions"] then return end
 
-	local WeakAuras = _G.WeakAuras
+	local WeakAuras = _G.WeakAuras or _G.M33kAuras
 	if not WeakAuras or not WeakAuras.CreateTemplateView then return end
 
 	local origCreateTemplateView = WeakAuras.CreateTemplateView
@@ -663,3 +664,20 @@ S:RegisterAceGUIWidget("WeakAurasScrollArea")
 S:RegisterAceGUIWidget("WA_LSM30_StatusbarAtlas")
 S:RegisterAceGUIWidget("WeakAurasInputWithIndentation", S.Ace3_EditBox)
 S:RegisterAceGUIContainer("WeakAurasTreeGroup")
+
+S:RegisterSkin("M33kAuras", S.WeakAuras, true)
+S:RegisterSkin("M33kAurasOptions", S.WeakAurasOptions)
+S:RegisterSkin("M33kAurasTemplates", S.WeakAurasTemplates)
+S:RegisterAceGUIWidget("M33kAurasDisplayButton", S.WeakAurasDisplayButton)
+S:RegisterAceGUIWidget("M33kAurasNewButton", S.WeakAurasNewButton)
+S:RegisterAceGUIWidget("M33kAurasPendingUpdateButton", S.WeakAurasPendingUpdateButton)
+S:RegisterAceGUIWidget("M33kAurasMultiLineEditBox", S.WeakAurasMultiLineEditBox)
+S:RegisterAceGUIWidget("M33kAuras-MultiLineEditBoxWithEnter", S.WeakAurasMultiLineEditBox)
+S:RegisterAceGUIWidget("M33kAurasLoadedHeaderButton", S.WeakAurasLoadedHeaderButton)
+S:RegisterAceGUIWidget("M33kAurasIconButton", S.WeakAurasIconButton)
+S:RegisterAceGUIWidget("M33kAurasTextureButton", S.WeakAurasTextureButton)
+S:RegisterAceGUIWidget("M33kAurasSpinBox", S.WeakAurasSpinBox)
+S:RegisterAceGUIWidget("M33kAurasSnippetButton", S.WeakAurasSnippetButton)
+S:RegisterAceGUIWidget("M33kAurasScrollArea", S.WeakAurasScrollArea)
+S:RegisterAceGUIWidget("M33kAurasInputWithIndentation", S.Ace3_EditBox)
+S:RegisterAceGUIContainer("M33kAurasTreeGroup", S.WeakAurasTreeGroup)
