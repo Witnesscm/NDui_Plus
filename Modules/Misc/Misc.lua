@@ -172,3 +172,15 @@ do
 		end)
 	end)
 end
+
+-- Display the Item Sets tab in the Adventure Guide
+do
+	function M:DisplayItemSetsTab()
+		EncounterJournal:HookScript("OnShow", function(self)
+			PanelTemplates_SetAllTabsShown(self, true)
+			PanelTemplates_SetNumTabs(self, #self.Tabs)
+		end)
+	end
+
+	P:AddCallbackForAddon("Blizzard_EncounterJournal", M.DisplayItemSetsTab)
+end
