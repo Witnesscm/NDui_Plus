@@ -97,7 +97,7 @@ end
 local function GetTransmogInfo(slotID, sourceID)
 	local sourceInfo = C_TransmogCollection.GetSourceInfo(sourceID)
 	if not sourceInfo or not sourceInfo.name then
-		M.TransmogTextFrame.waitingOnItemData = true
+		M.CopyMog_TextFrame.waitingOnItemData = true
 		return
 	end
 
@@ -113,7 +113,7 @@ local function GetTransmogInfo(slotID, sourceID)
 end
 
 function M:CopyMog_UpdateItemText(transmogInfoList)
-	local textFrame = M.TransmogTextFrame
+	local textFrame = M.CopyMog_TextFrame
 	wipe(textFrame.itemList)
 	textFrame.waitingOnItemData = false
 	textFrame.transmogInfoList = transmogInfoList
@@ -245,12 +245,9 @@ function M:CopyMog_CreatePlayerButton()
 	local button = CreateCopyButton(_G.PaperDollFrame)
 	button:SetPoint("BOTTOMLEFT", 5, 6)
 	button:SetScript("OnClick", function()
-		local playerActor = _G.CharacterModelScene:GetPlayerActor()
-		if not playerActor then
-			return
-		end
+		M.CopyMog_ModelScene:SetUnit("player")
 
-		local transmogInfoList = playerActor:GetItemTransmogInfoList()
+		local transmogInfoList = M.CopyMog_ModelScene:GetItemTransmogInfoList()
 		if not transmogInfoList then
 			return
 		end
@@ -275,9 +272,11 @@ end
 function M:CopyMog()
 	if not M.db["CopyMog"] then return end
 
-	M.TransmogTextFrame = M:CopyMog_CreateTextFrame()
-	M.TransmogTextFrame.itemList = {}
-	M.TransmogTextFrame.waitingOnItemData = false
+	M.CopyMog_TextFrame = M:CopyMog_CreateTextFrame()
+	M.CopyMog_TextFrame.itemList = {}
+	M.CopyMog_TextFrame.waitingOnItemData = false
+
+	M.CopyMog_ModelScene = CreateFrame("DressUpModel")
 
 	M:CopyMog_CreatePlayerButton()
 	P:AddCallbackForAddon("Blizzard_InspectUI", M.CopyMog_CreateInspectButton)
