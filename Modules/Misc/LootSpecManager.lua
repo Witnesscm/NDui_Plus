@@ -19,6 +19,7 @@ LSM.DiffNames = {
 	[15] = "Heroic",
 	[16] = "Mythic",
 	[17] = "LFR",
+	[250] = "LFR",
 }
 
 local SPACING = 24
@@ -251,7 +252,7 @@ function LSM:CreateGUI()
 	gui.help = helpInfo
 
 	local current = CreateFrame("Frame", nil, gui, "UIDropDownMenuTemplate")
-	current:SetPoint("TOPLEFT", NDuiPlus_LSMFrame, "TOPLEFT", -5, -40)
+	current:SetPoint("TOPLEFT", gui, "TOPLEFT", -5, -40)
 	UIDropDownMenu_SetWidth(current, 100)
 	P.ReskinDropDown(current)
 	UIDropDownMenu_Initialize(current, function()
