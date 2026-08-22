@@ -33,6 +33,8 @@ CH.ChatEvents = {
 	"CHAT_MSG_CURRENCY",
 }
 
+local PLAYER_REALM = gsub(DB.MyRealm, "[%s%-]", "")
+
 local isCalling = false
 function CH:GetPlayerInfoByGUID(guid)
 	if issecretvalue(guid) then return end
@@ -49,7 +51,7 @@ function CH:GetPlayerInfoByGUID(guid)
 		if realm == "" then realm = nil end
 		local nameWithRealm
 		if name and name ~= "" then
-			nameWithRealm = (realm and name.."-"..realm) or name.."-"..DB.MyRealm
+			nameWithRealm = (realm and name .. "-" .. realm) or name .. "-" .. PLAYER_REALM
 		end
 
 		data = {
@@ -144,10 +146,13 @@ function CH:ChatClassColor()
 	end)
 end
 
+function CH:OnInitialize()
+	CH:ChatLinkIcon()
+	CH:LFGRoleFlags()
+end
+
 function CH:OnLogin()
 	self:ChatEmote()
 	self:ChatClassColor()
-	self:ChatRaidIndex()
-	self:ChatLinkIcon()
 	self:ChatHide()
 end

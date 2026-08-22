@@ -1,0 +1,379 @@
+local _, ns = ...
+local B, C, _, DB, P = unpack(ns)
+local _, _, L = unpack(_G.NDui)
+local CH = P:GetModule("Chat")
+local NCH = B:GetModule("Chat")
+
+local gsub, strfind, strmatch, format, strsub, strlen, strupper = string.gsub, string.find, string.match, string.format, string.sub, string.len, string.upper
+local tostring = tostring
+local time = time
+local RemoveExtraSpaces = RemoveExtraSpaces
+local INTERFACE_ACTION_BLOCKED = INTERFACE_ACTION_BLOCKED
+local colon = HEADER_COLON
+local isCN = strlen(colon) > 1
+
+-- Modified from NDui ChannelRename
+
+function CH:UpdateGroupInfo()
+	wipe(CH.GroupNames)
+	wipe(CH.GroupRoles)
+
+	if not IsInGroup() then return end
+
+	for i = 1, GetNumGroupMembers() do
+		local name, _, subgroup, _, _, _, _, _, _, _, _, role = GetRaidRosterInfo(i)
+		if name and subgroup and role then
+			CH.GroupNames[name] = tostring(subgroup)
+			CH.GroupRoles[name] = role
+		end
+	end
+end
+
+local function AddLFGRoleFlags(fullName, info, nameText)
+	local name = Ambiguate(fullName, "none")
+	local group = name and CH.GroupNames[name]
+	local role = name and CH.GroupRoles[name]
+	local icon = CH.db["Role"] and role and CH.RolePaths[role] or ""
+
+	if group and IsInRaid() and CH.db["RaidIndex"] then
+		nameText = nameText .. ":" .. group
+	end
+
+	return "|Hplayer:" .. fullName .. info .. "|h" .. icon .. "[" .. nameText .. "]|h"
+end
+
+
+-- Timestamp
+local timestampFormat = {
+	[2] = "[%I:%M %p] ",
+	[3] = "[%I:%M:%S %p] ",
+	[4] = "[%H:%M] ",
+	[5] = "[%H:%M:%S] ",
+}
+
+-- Author Logo
+local function AddAuthorLogo(link, unitName)
+	if unitName and DB.Devs[unitName] then
+		return "|T" .. DB.chatLogo .. ":12:24|t" .. link
+	end
+	return link
+end
+
+-- Channel name abbr
+local LEADERSHIP = {
+	PartyLeader = strmatch(CHAT_PARTY_LEADER_GET, "|h%[(.-)%]|h"),
+	PartyGuide = strmatch(CHAT_PARTY_GUIDE_GET, "|h%[(.-)%]|h"),
+	RaidLeader = strmatch(CHAT_RAID_LEADER_GET, "|h%[(.-)%]|h"),
+	InstLeader = strmatch(CHAT_INSTANCE_CHAT_LEADER_GET, "|h%[(.-)%]|h"),
+}
+
+local CHANNEL_ABBR = {
+	PARTY = {
+		abbr = "P",
+		leaders = {
+			[LEADERSHIP.PartyLeader] = "PL",
+			[LEADERSHIP.PartyGuide] = "PG",
+		},
+	},
+	RAID = {
+		abbr = "R",
+		leaders = {
+			[LEADERSHIP.RaidLeader] = "RL",
+		},
+	},
+	INSTANCE_CHAT = {
+		abbr = "I",
+		leaders = {
+			[LEADERSHIP.InstLeader] = "IL",
+		},
+	},
+	GUILD = { abbr = "G" },
+	OFFICER = { abbr = "O" },
+}
+
+local CHANNEL_ABBR_LOCALES = {
+	PARTY = {
+		abbr = L["PartyAbbr"],
+		leaders = {
+			[LEADERSHIP.PartyLeader] = L["PartyLeaderAbbr"],
+			[LEADERSHIP.PartyGuide]  = L["PartyGuideAbbr"],
+		},
+	},
+	RAID = {
+		abbr = L["RaidAbbr"],
+		leaders = {
+			[LEADERSHIP.RaidLeader] = L["RaidLeaderAbbr"],
+		},
+	},
+	INSTANCE_CHAT = {
+		abbr = L["InstAbbr"],
+		leaders = {
+			[LEADERSHIP.InstLeader] = L["InstLeaderAbbr"],
+		},
+	},
+	GUILD = { abbr = L["GuildAbbr"] },
+	OFFICER = { abbr = L["OfficerAbbr"] },
+}
+
+local matchPattern = "(|H(%w+):?([^:]+):?(%d*)|h)%[(.-)%]|h"
+
+local function AbbrChannelName(prefix, linkType, channel, channelID, channelName)
+	if C.db["Chat"]["ChannelAbbr"] == 1 then return end
+
+	if linkType ~= "channel" then return end
+
+	if channel == "channel" then
+		return prefix .. "[" .. channelID .. "]|h"
+	end
+
+	local channels = C.db["Chat"]["ChannelAbbr"] == 2 and CHANNEL_ABBR or CHANNEL_ABBR_LOCALES
+	local data = channels[channel]
+	if not data then
+		return prefix .. "[" .. channelName .. "]|h"
+	end
+
+	local abbr = data.abbr
+	local isLeader = data.leaders and data.leaders[channelName]
+	if isLeader then
+		abbr = isLeader
+	end
+
+	return prefix .. "[" .. abbr .. "]|h"
+end
+
+-- Kill colon before message
+local channels = {
+	SAY = not isCN,
+	YELL = not isCN,
+	WHISPER = not isCN,
+	GUILD = not isCN,
+	OFFICER = not isCN,
+	CHANNEL = not isCN,
+	PARTY = true,
+	RAID = true,
+	INSTANCE_CHAT = not isCN,
+}
+
+local cnColonChannels = {
+	SAY = true,
+	YELL = true,
+	WHISPER = true,
+	GUILD = true,
+	OFFICER = true,
+	CHANNEL = true,
+	PARTY = true,
+	RAID = true,
+	INSTANCE_CHAT = true,
+}
+
+local cnPattern = "(|Hplayer[^]]*:([^:]+):[^]]*%]|h.-)" .. colon .. "%s"
+local enPattern = "(|Hplayer[^]]*:([^:]+):[^]]*%]|h.-):%s"
+
+local function KillColon(link, tag)
+	if channels[tag] then
+		return link .. " "
+	end
+end
+
+local function KillCNColon(link, tag)
+	if cnColonChannels[tag] then
+		return link .. ": "
+	end
+end
+
+local function convertLink(text, value)
+	return "|Hurl:" .. tostring(value) .. "|h" .. DB.InfoColor .. text .. "|r|h"
+end
+
+local function highlightURL(_, url)
+	return " " .. convertLink("[" .. url .. "]", url) .. " "
+end
+
+-- FCFManager_GetChatTarget clone (safeguard)
+local function GetChatTarget(chatGroup, playerTarget, channelTarget)
+	if chatGroup == "CHANNEL" then
+		return tostring(channelTarget)
+	elseif chatGroup == "WHISPER" or chatGroup == "BN_WHISPER" then
+		return playerTarget and strsub(playerTarget, 1, 2) ~= "|K" and strupper(playerTarget) or playerTarget
+	end
+end
+
+-- Dedup cache: prevent double-processing when addons like WhisperPop
+-- re-invoke event filters manually after WoW already processed them,
+-- which would cause self:AddMessage to be called twice -> duplicate messages.
+local processedLines = {}
+local processedCount = 0
+local PROCESSED_LINES_MAX = 200
+
+-- Chat event filter: format message, respect window settings, use correct colors
+local function ChatMsgFilter(self, event, msg, sender, language, channelString, target, flags, zoneChannelID, channelIndex, channelBaseName, languageID, lineID, senderGUID, bnSenderID, isMobile, isSubtitle, hideSenderInLetterbox, suppressRaidIcons)
+	-- Let Blizzard's secure handler process restricted chat values.
+	if B:IsSecretValue(msg) or B:IsSecretValue(sender) then return end
+
+	if strfind(msg, INTERFACE_ACTION_BLOCKED) and not DB.isDeveloper then
+		return true
+	end
+
+	-- Dedup: skip if this message was already processed for this chat frame
+	if lineID and lineID > 0 then
+		local key = self:GetName() .. "_" .. lineID
+		if processedLines[key] then
+			return true
+		end
+		processedLines[key] = true
+		processedCount = processedCount + 1
+		if processedCount > PROCESSED_LINES_MAX then
+			wipe(processedLines)
+			processedCount = 0
+		end
+	end
+
+	-- Per-window visibility check
+	local chatType = strsub(event, 10)
+	local chatGroup = ChatFrameUtil.GetChatCategory(chatType)
+	local chatTarget = GetChatTarget(chatGroup, sender, channelIndex)
+	local channelLength = strlen(channelString)
+
+	-- For CHANNEL type: check self.channelList (mirrors Blizzard's logic in MessageEventHandler)
+	-- For non-CHANNEL types: use FCFManager_ShouldSuppressMessage
+	if chatType == "CHANNEL" then
+		if channelLength > 0 then
+			local found = false
+			for index, value in pairs(self.channelList) do
+				if channelLength > strlen(value) then
+					if ((zoneChannelID > 0) and (self.zoneChannelList and self.zoneChannelList[index] == zoneChannelID)) or (strupper(value) == strupper(channelBaseName or "")) then
+						found = true
+						break
+					end
+				end
+			end
+			if not found then
+				return true
+			end
+		end
+	else
+		if FCFManager_ShouldSuppressMessage(self, chatGroup, chatTarget) then
+			return true
+		end
+	end
+
+	-- Get correct color
+	local info
+	if chatType == "CHANNEL" and channelIndex and channelIndex > 0 then
+		info = ChatTypeInfo["CHANNEL" .. channelIndex] or ChatTypeInfo[chatType]
+	else
+		info = ChatTypeInfo[chatType]
+	end
+	info = info or ChatTypeInfo["SYSTEM"]
+
+	-- URL highlighting
+	msg = gsub(msg, "(%s?)(%d%d?%d?%.%d%d?%d?%.%d%d?%d?%.%d%d?%d?:%d%d?%d?%d?%d?)(%s?)", highlightURL)
+	msg = gsub(msg, "(%s?)(%d%d?%d?%.%d%d?%d?%.%d%d?%d?%.%d%d?%d?)(%s?)", highlightURL)
+	msg = gsub(msg, "(%s?)([%w_-]+%.?[%w_-]+%.[%w_-]+:%d%d%d?%d?%d?)(%s?)", highlightURL)
+	msg = gsub(msg, "(%s?)(%a+://[%w_/%.%?%%=~&-'%-]+)(%s?)", highlightURL)
+	msg = gsub(msg, "(%s?)(www%.[%w_/%.%?%%=~&-'%-]+)(%s?)", highlightURL)
+	msg = gsub(msg, "(%s?)([_%w-%.~-]+@[_%w-]+%.[_%w-%.]+)(%s?)", highlightURL)
+
+	-- Build formatted message
+	local formatKey = _G["CHAT_" .. chatType .. "_GET"]
+	if not formatKey then return end
+
+	local coloredName = ChatFrameUtil.GetDecoratedSenderName(event, msg, sender, language, channelString, target, flags, zoneChannelID, channelIndex, channelBaseName, languageID, lineID, senderGUID, bnSenderID, isMobile)
+	local pflag = ChatFrameUtil.GetPFlag(flags, zoneChannelID, channelIndex)
+
+	local playerLink
+	if chatType == "BN_WHISPER" or chatType == "BN_WHISPER_INFORM" then
+		playerLink = GetBNPlayerLink(sender, "[" .. coloredName .. "]", bnSenderID, lineID, chatGroup, 0)
+	else
+		playerLink = GetPlayerLink(sender, "[" .. coloredName .. "]", lineID, chatGroup, 0)
+	end
+
+	msg = gsub(msg, "%%", "%%%%")
+	msg = C_ChatInfo.ReplaceIconAndGroupExpressions(msg, suppressRaidIcons)
+	msg = RemoveExtraSpaces(msg)
+
+	local outMsg = format(formatKey .. msg, pflag .. playerLink)
+
+	-- Add channel prefix for custom channels
+	if channelLength > 0 then
+		local channelName = ChatFrameUtil.ResolvePrefixedChannelName(channelString)
+		if channelName then
+			outMsg = "|Hchannel:channel:" .. (channelIndex or 0) .. "|h[" .. channelName .. "]|h " .. outMsg
+		end
+	end
+
+	-- Apply NDui modifications
+	local chatTimestampFmt = NDuiADB["TimestampFormat"] > 1 and DB.GreyColor .. timestampFormat[NDuiADB["TimestampFormat"]] .. "|r" or ChatFrameUtil.GetTimestampFormat()
+	if chatTimestampFmt then
+		local timeStamp = TimeUtil.BetterDate(chatTimestampFmt, time())
+		outMsg = timeStamp .. outMsg
+	end
+	outMsg = gsub(outMsg, "(|Hplayer:([^|:]+))", AddAuthorLogo)
+	if isCN then outMsg = gsub(outMsg, cnPattern, KillCNColon) end
+	--outMsg = gsub(outMsg, enPattern, KillColon)
+	outMsg = gsub(outMsg, matchPattern, AbbrChannelName)
+
+	-- Add lfg role flags
+	if IsInGroup() and (CH.db["RaidIndex"] or CH.db["Role"]) then
+		outMsg = gsub(outMsg, "|Hplayer:([^:|]+)(.-)|h%[([^:]+)%]|h", AddLFGRoleFlags)
+	end
+
+	self:AddMessage(outMsg, info.r, info.g, info.b, info.id)
+
+	-- Fix whipser reply
+	if chatType == "WHISPER" or chatType == "BN_WHISPER" then
+		ChatFrameUtil.SetLastTellTarget(sender, chatType)
+		if not self.tellTimer or (GetTime() > self.tellTimer) then
+			PlaySound(SOUNDKIT.TELL_MESSAGE)
+		end
+		self.tellTimer = GetTime() + ChatFrameConstants.WhisperSoundAlertCooldown
+		-- We don't flash the app icon for front end chat for now.
+		if FlashClientIcon then
+			FlashClientIcon()
+		end
+	end
+	ChatFrameUtil.FlashTabIfNotShown(self, info, chatType, chatGroup, chatTarget)
+
+	return true
+end
+
+
+function CH:RewriteChatMessage()
+	local events = {
+		"CHAT_MSG_SAY", "CHAT_MSG_YELL",
+		"CHAT_MSG_GUILD", "CHAT_MSG_OFFICER",
+		"CHAT_MSG_PARTY", "CHAT_MSG_PARTY_LEADER", "CHAT_MSG_PARTY_GUIDE",
+		"CHAT_MSG_RAID", "CHAT_MSG_RAID_LEADER",
+		"CHAT_MSG_INSTANCE_CHAT", "CHAT_MSG_INSTANCE_CHAT_LEADER",
+		"CHAT_MSG_WHISPER", "CHAT_MSG_WHISPER_INFORM",
+		"CHAT_MSG_BN_WHISPER", "CHAT_MSG_BN_WHISPER_INFORM",
+		"CHAT_MSG_CHANNEL", "CHAT_MSG_MONSTER_SAY"
+	}
+	for _, event in ipairs(events) do
+		ChatFrame_AddMessageEventFilter(event, ChatMsgFilter)
+	end
+end
+
+
+
+function CH:LFGRoleFlags()
+	local roleList = P.RoleList[NDuiPlusDB["RoleStyle"]["Index"]]
+	CH.RolePaths = {
+		TANK = P.TextureString(roleList.TANK),
+		HEALER = P.TextureString(roleList.HEALER),
+		DAMAGER = P.TextureString(roleList.DAMAGER)
+	}
+
+	local eventList = {
+		"GROUP_ROSTER_UPDATE",
+		"PLAYER_ENTERING_WORLD",
+	}
+
+	for _, event in next, eventList do
+		B:RegisterEvent(event, CH.UpdateGroupInfo)
+	end
+
+	if NCH.ChannelRename then
+		NCH.ChannelRename = CH.RewriteChatMessage
+	end
+end

@@ -58,7 +58,7 @@ function CH:ToggleChat()
 	end
 end
 
-function CH:SetupChat()
+function CH:SetupChatHide()
 	if not self or self.__parentBG then return end
 
 	self:SetParent(CH.ChatBG)
@@ -245,14 +245,14 @@ function CH:ChatHide()
 	-- Modified NDui ChatFrame
 	for i = 1, Constants.ChatFrameConstants.MaxChatWindows do
 		local chatframe = _G["ChatFrame" .. i]
-		CH.SetupChat(chatframe)
+		CH.SetupChatHide(chatframe)
 	end
 
 	hooksecurefunc("FCF_OpenTemporaryWindow", function()
 		for _, chatFrameName in ipairs(CHAT_FRAMES) do
 			local frame = _G[chatFrameName]
 			if frame.isTemporary then
-				CH.SetupChat(frame)
+				CH.SetupChatHide(frame)
 			end
 		end
 	end)
