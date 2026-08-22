@@ -10,40 +10,15 @@ do
 	-- AceTimer
 	_G.LibStub("AceTimer-3.0"):Embed(P)
 
-	function P:WaitFunc(elapse)
-		local i = 1
-		while i <= #P.WaitTable do
-			local data = P.WaitTable[i]
-			if data[1] > elapse then
-				data[1], i = data[1] - elapse, i + 1
-			else
-				tremove(P.WaitTable, i)
-				data[2](unpack(data[3]))
-
-				if #P.WaitTable == 0 then
-					P.WaitFrame:Hide()
-				end
-			end
-		end
+	local function CreateClosure(func, data)
+		return function() func(unpack(data)) end
 	end
 
-	P.WaitTable = {}
-	P.WaitFrame = CreateFrame("Frame", "NDuiPlus_WaitFrame", _G.UIParent)
-	P.WaitFrame:SetScript("OnUpdate", P.WaitFunc)
-
 	function P:Delay(delay, func, ...)
-		if type(delay) ~= "number" or type(func) ~= "function" then
-			return false
-		end
+		if type(delay) ~= 'number' or type(func) ~= 'function' then return false end
 
-		if delay < 0.01 then delay = 0.01 end
-
-		if select("#", ...) <= 0 then
-			C_Timer.After(delay, func)
-		else
-			tinsert(P.WaitTable,{delay,func,{...}})
-			P.WaitFrame:Show()
-		end
+		local args = { ... }
+		C_Timer.After(delay < 0.01 and 0.01 or delay, (#args <= 0 and func) or CreateClosure(func, args))
 
 		return true
 	end
