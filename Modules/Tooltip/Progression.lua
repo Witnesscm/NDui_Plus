@@ -221,6 +221,23 @@ local function GetAchievementInfoByID(guid, achievementID)
 	return completedString, completed
 end
 
+local mythicPlusCache = {}
+
+function T:GetMythicPlusData(unit, guid)
+	guid = guid or UnitGUID(unit)
+	if B:IsSecretValue(guid) or not guid then
+		return
+	end
+
+	local data = C_PlayerInfo.GetPlayerMythicPlusRatingSummary(unit)
+
+	if data then
+		mythicPlusCache[guid] = data
+	end
+
+	return mythicPlusCache[guid]
+end
+
 function T:UpdateProgression(guid)
 	cache[guid] = cache[guid] or {}
 	cache[guid].info = cache[guid].info or {}
@@ -318,8 +335,8 @@ function T:SetProgressionInfo(unit, guid)
 		end
 	end
 
-	local summary = C_PlayerInfo.GetPlayerMythicPlusRatingSummary(unit)
-	local runs = summary and summary.runs
+	local data = T:GetMythicPlusData(unit, guid)
+	local runs = data and data.runs
 	if T.db["ProgDungeons"] and runs and next(runs) then
 		GameTooltip:AddLine(" ")
 		GameTooltip:AddDoubleLine(CHALLENGES, L["Score (Level)"])
@@ -334,13 +351,13 @@ function T:SetProgressionInfo(unit, guid)
 	end
 end
 
-function T:GetAchievementInfo(GUID)
-	if (compareGUID ~= GUID) then return end
+function T:GetAchievementInfo(guid)
+	if (compareGUID ~= guid) then return end
 
 	local unit = "mouseover"
 
 	if UnitExists(unit) then
-		T:UpdateProgression(GUID)
+		T:UpdateProgression(guid)
 		GameTooltip:RefreshData()
 	end
 
