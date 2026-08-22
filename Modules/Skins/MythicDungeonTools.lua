@@ -15,28 +15,38 @@ local Buttons = {
 }
 
 local function HandleDungeonButton(self)
-	self.texture:SetInside()
-	self.bg = B.ReskinIcon(self.texture)
-	local hl = self:GetHighlightTexture()
-	hl:SetColorTexture(1, 1, 1, .25)
-	hl:SetInside(self.bg)
-	self.selectedTexture:SetColorTexture(1, .8, 0, .5)
-	self.selectedTexture:SetInside(self.bg)
+	if not self.styled then
+		self.texture:SetInside()
+		self.bg = B.ReskinIcon(self.texture)
+		local hl = self:GetHighlightTexture()
+		hl:SetColorTexture(1, 1, 1, .25)
+		hl:SetInside(self.bg)
+		self.selectedTexture:SetColorTexture(1, .8, 0, .5)
+		self.selectedTexture:SetInside(self.bg)
+
+		self.styled = true
+	end
+end
+
+local function ReskinDungeonButtons()
+	local index = 1
+	local button = _G["MDTDungeonButton" .. index]
+	while button do
+		HandleDungeonButton(button)
+		index = index + 1
+		button = _G["MDTDungeonButton" .. index]
+	end
 end
 
 function S:MythicDungeonTools()
-	local MDT = _G.MDT
-	if not MDT then return end
+	local API = _G.MythicDungeonToolsAPI
+	if not API then return end
 
-	local styled
-	hooksecurefunc(MDT, "Async", function(_, _, name)
-		if name ~= "showInterface" or styled then return end
-
+	API:RegisterUIInitializer(function()
 		P.WaitFor(function()
-			return not not (MDT.tooltip and MDT.pullTooltip)
+			return not not (_G.MDTFrame and _G.MDTFrame.toolbar)
 		end, function()
-			local frame = MDT.main_frame
-			if not frame then return end
+			local frame = _G.MDTFrame
 
 			local closeButton = frame.closeButton
 			if closeButton then
@@ -66,54 +76,34 @@ function S:MythicDungeonTools()
 				B.CreateBDFrame(progressBar, .25)
 			end
 
-			for _, key in ipairs({"topPanelTex", "bottomPanelTex", "sidePanelTex"}) do
-				frame[key]:SetAlpha(0)
+			for _, key in ipairs({ "topPanelTex", "bottomPanelTex", "sidePanelTex" }) do
+				local tex = frame[key]
+				if tex then
+					frame[key]:SetAlpha(0)
+				end
 			end
 
 			local bg = B.SetBD(frame)
-			bg:SetPoint("TOPLEFT", frame.topPanel)
-			bg:SetPoint("BOTTOMRIGHT", frame.sidePanel)
-
-			P.ReskinTooltip(MDT.tooltip)
-			P.ReskinTooltip(MDT.pullTooltip)
-		end, 0.2, 20)
-
-		styled = true
-	end)
-
-	local enemyStyled
-	hooksecurefunc(MDT, "ShowEnemyInfoFrame", function()
-		if enemyStyled then return end
-
-		local frame = MDT.EnemyInfoFrame
-
-		local modelDummyIcon = frame.modelDummyIcon
-		if modelDummyIcon and modelDummyIcon.image and modelDummyIcon.image.bg then
-			modelDummyIcon.image.bg:Hide()
-		end
-
-		for _, key in ipairs({"midContainer", "rightContainer"}) do
-			local container = frame[key]
-			if container and container.children then
-				for _, child in ipairs(container.children) do
-					if child.type == "Icon" and child.image and child.image.bg then
-						child.image.bg:Hide()
-					end
-				end
+			if frame.navigationSidebar and frame.sidePanel then
+				B.StripTextures(frame.navigationSidebar)
+				bg:SetPoint("TOPLEFT", frame.navigationSidebar)
+				bg:SetPoint("BOTTOMRIGHT", frame.sidePanel)
 			end
-		end
 
-		enemyStyled = true
-	end)
+			P.ReskinTooltip(_G.MDTModelTooltip)
+			P.ReskinTooltip(_G.MDTPullTooltip)
 
-	local dungeonIndex = 1
-	hooksecurefunc(MDT, "UpdateDungeonDropDown", function()
-		local button = _G["MDTDungeonButton"..dungeonIndex]
-		while button do
-			HandleDungeonButton(button)
-			dungeonIndex = dungeonIndex + 1
-			button = _G["MDTDungeonButton"..dungeonIndex]
-		end
+			local seasonDropdown = frame.seasonSelectionGroup and frame.seasonSelectionGroup.seasonDropdown
+			if seasonDropdown and seasonDropdown.events and seasonDropdown.events["OnValueChanged"] then
+				hooksecurefunc(seasonDropdown.events, "OnValueChanged", function()
+					P:Delay(.2, ReskinDungeonButtons)
+				end)
+			end
+		end, 0.2)
+
+		P.WaitFor(function()
+			return not not (_G.MDTDungeonButton8)
+		end, ReskinDungeonButtons, 0.5)
 	end)
 end
 
