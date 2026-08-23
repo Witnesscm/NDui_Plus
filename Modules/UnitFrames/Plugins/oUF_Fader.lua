@@ -91,7 +91,7 @@ local function Update(self, event, unit)
 
 	-- try to get the unit from the parent
 	if event == 'PLAYER_IS_GLIDING_CHANGED' or not unit then
-		unit = self.unit
+		unit = self.__unit
 	end
 
 	-- range fader
@@ -139,7 +139,7 @@ local function Update(self, event, unit)
 end
 
 local function ForceUpdate(element)
-	return Update(element.__owner, "ForceUpdate", element.__owner.unit)
+	return Update(element.__owner, "ForceUpdate", element.__owner.__unit)
 end
 
 local function onRangeUpdate(frame, elapsed)
