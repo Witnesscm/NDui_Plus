@@ -1,6 +1,7 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
 	<Include file="ActionBar\ActionBar.xml"/>
 	<Include file="Chat\Chat.xml"/>
+	<Include file="Combat\Combat.xml"/>
 	<Include file="Tooltip\Tooltip.xml"/>
 	<Include file="Quest\Quest.xml"/>
 	<Include file="Skins\Skins.xml"/>

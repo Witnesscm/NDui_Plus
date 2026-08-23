@@ -150,6 +150,13 @@ P.DefaultSettings = {
 		AutoRoll = 3,
 		ExitPhaseDiving = true,
 	},
+	FocusMarker = {
+		Enable = false,
+		MarkerIndex = 1,
+		AnnounceMarker = true,
+		DisableInRaid = true,
+		KeepExistingMarker = true,
+	}
 }
 
 P.CharacterSettings = {

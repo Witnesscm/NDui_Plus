@@ -16,6 +16,23 @@ G.Quality = {
 	[4] = ITEM_QUALITY_COLORS[4].hex .. ITEM_QUALITY4_DESC .. "|r",
 }
 
+local MarkerColors = {
+	{1, .92, 0},
+	{.98, .57, 0},
+	{.83, .22, .9},
+	{.04, .95, 0},
+	{.7, .82, .875},
+	{0, .71, 1},
+	{1, .24, .168},
+	{.98, .98, .98},
+}
+
+G.TargetMarker = {}
+
+for index, color in ipairs(MarkerColors) do
+	G.TargetMarker[index] = P.TextureString("Interface\\TargetingFrame\\UI-RaidTargetingIcon_"..index).." "..B.HexRGB(unpack(color)).._G["RAID_TARGET_"..index]
+end
+
 local function setupChangelog()
 	G:SetupChangelog(gui)
 end
@@ -33,11 +50,11 @@ local function setupUFsRole()
 end
 
 local function setupChatAutoShow()
-	G:SetupChatAutoShow(guiPage[3])
+	G:SetupChatAutoShow(guiPage[4])
 end
 
 local function setupLootRoll()
-	G:SetupLootRoll(guiPage[6])
+	G:SetupLootRoll(guiPage[7])
 end
 
 local function updateABFaderState()
@@ -50,6 +67,10 @@ end
 
 local function updateUFsRole()
 	P:GetModule("UnitFrames"):UpdateRoleIcons()
+end
+
+local function updateFocusMarkerMacro()
+	P:GetModule("FocusMarker"):UpdateMacroText()
 end
 
 local function updateUFsFader()
@@ -129,6 +150,7 @@ end
 G.TabList = {
 	L["Actionbar"],
 	L["UnitFrames"],
+	IsNew..L["Combat"],
 	L["Chat"],
 	L["Skins"],
 	L["Tooltip"],
@@ -157,6 +179,13 @@ G.OptionList = { -- type, key, value, name, horizon, data, callback, tooltip, sc
 		{1, "UnitFrames", "RolePos", L["Role Icon"].."*", nil, setupUFsRole, updateUFsRole},
 	},
 	[3] = {
+		{1, "FocusMarker", "Enable", IsNew..HeaderTag..L["FocusMarkerEnable"].."*", nil, nil, updateFocusMarkerMacro, L["FocusMarkerTip"]},
+		{1, "FocusMarker", "AnnounceMarker", L["AnnounceMarker"].."*", nil, nil, nil, L["AnnounceMarkerTip"]},
+		{1, "FocusMarker", "DisableInRaid", L["Disable Marker In Raid"].."*", nil, nil, updateFocusMarkerMacro},
+		{4, "FocusMarker", "MarkerIndex", L["Marker"].."*", true, G.TargetMarker, updateFocusMarkerMacro},
+		{1, "FocusMarker", "KeepExistingMarker", L["Keep Existing Marker"].."*", nil, nil, updateFocusMarkerMacro},
+	},
+	[4] = {
 		{1, "Chat", "Emote", L["ChatEmote"], nil, nil, nil, L["ChatEmoteTip"]},
 		{1, "Chat", "ClassColor", L["ChatClassColor"], true, nil, nil, L["ChatClassColorTip"]},
 		{1, "Chat", "RaidIndex", L["ChatRaidIndex"].."*", nil, nil, nil, L["ChatRaidIndexTip"]},
@@ -168,7 +197,7 @@ G.OptionList = { -- type, key, value, name, horizon, data, callback, tooltip, sc
 		{1, "Chat", "AutoHide", L["AutoHide"].."*", nil, nil, updateChatAutoHide, L["AutoHideTip"]},
 		{3, "Chat", "AutoHideTime", L["AutoHideTime"].."*", true, {5, 60, 1}},
 	},
-	[4] = {
+	[5] = {
 		{1, "TexStyle", "Enable", HeaderTag..L["ReplaceTexture"], nil, nil, nil, L["ReplaceTextureTip"]},
 		{4, "TexStyle", "Index", L["Texture Style"], nil, {}, toggleTexStyle},
 		{},
@@ -178,7 +207,7 @@ G.OptionList = { -- type, key, value, name, horizon, data, callback, tooltip, sc
 		{},
 		{1, "Skins", "HideToggle", L["HideToggle"].."*", nil, nil, updateToggleVisible},
 	},
-	[5] = {
+	[6] = {
 		{1, "Tooltip", "MountsSource", L["MountsSource"].."*", nil, nil, nil, L["MountsSourceTip"]},
 		{1, "Tooltip", "HideCreator", L["HideCreator"].."*", true, nil, nil, L["HideCreatorTip"]},
 		{},
@@ -192,7 +221,7 @@ G.OptionList = { -- type, key, value, name, horizon, data, callback, tooltip, sc
 		{2, "Tooltip", "AchievementList", L["AchievementList"].."*", true, nil, updateAchievementList, L["AchievementListTip"]},
 		{1, "Tooltip", "ProgDungeons", CHALLENGES.."*"},
 	},
-	[6] = {
+	[7] = {
 		{1, "Loot", "Enable", HeaderTag..L["LootEnhancedEnable"], nil, nil, nil, L["LootEnhancedTip"]},
 		{1, "Loot", "Announce", L["LootAnnounceButton"]},
 		{1, "Loot", "AnnounceTitle", L["Announce Target Name"].."*"},
@@ -200,7 +229,7 @@ G.OptionList = { -- type, key, value, name, horizon, data, callback, tooltip, sc
 		{},
 		{1, "LootRoll", "Enable", HeaderTag..L["LootRoll"], nil, setupLootRoll, nil, L["LootRollTip"], {OnHide = hideLootRoll}},
 		{1, "Misc", "LootSpecManager", HeaderTag..L["LootSpecManagerEnable"], nil, toggleLootSpecManager, nil, L["LootSpecManagerTip"]},
-		{4, "Misc", "AutoRoll", L["Auto Roll"], true, {P.AtlasString("lootroll-toast-icon-need-up").." "..NEED, P.AtlasString("lootroll-toast-icon-pass-up").." "..PASS, DISABLE}},
+		{4, "Misc", "AutoRoll", L["Auto Roll"].."*", true, {P.AtlasString("lootroll-toast-icon-need-up").." "..NEED, P.AtlasString("lootroll-toast-icon-pass-up").." "..PASS, DISABLE}},
 		{},
 		{1, "Misc", "QuestHelper", L["QuestHelper"], nil, nil, nil, L["QuestHelperTip"]},
 		{1, "Misc", "AuctionEnhanced", L["AuctionEnhanced"], true, nil, nil, L["AuctionEnhancedTip"]},
@@ -247,7 +276,7 @@ local AddonSkins = {
 
 for i, value in ipairs(AddonSkins) do
 	local key, name = unpack(value)
-	tinsert(G.OptionList[4], 6 + i, {1, "Skins", key, name, (i % 2 == 0) and true})
+	tinsert(G.OptionList[5], 6 + i, {1, "Skins", key, name, (i % 2 == 0) and true})
 end
 
 function G.Variable(key, value, newValue)
