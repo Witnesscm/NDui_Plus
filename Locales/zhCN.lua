@@ -93,6 +93,7 @@ L["ProgressionTip"] = "添加PvE进度到鼠标提示框，默认按下Shift时�
 L["CombatHide"] = "战斗中隐藏"
 L["ShowByShift"] = "仅按下Shift时显示"
 L["Raids"] = "团队副本"
+L["CurrentSeasonOnly"] = "仅显示本赛季团本"
 L["Keystone Master Achievement"] = "钥石大师成就"
 L["AchievementList"] = "自定义成就"
 L["AchievementListTip"] = "输入需要观察的成就ID，以空格隔开。"

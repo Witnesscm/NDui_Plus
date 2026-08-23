@@ -14,6 +14,7 @@ local compareGUID
 T.RaidData = {
 	[1] = {
 		abbr = L["[ABBR] The Dreamrift"],
+		seasonID = 34,
 		achievements = {
 			{ 61474 },
 			{ 61475 },
@@ -23,6 +24,7 @@ T.RaidData = {
 	},
 	[2] = {
 		abbr = L["[ABBR] The Voidspire"],
+		seasonID = 34,
 		achievements = {
 			{ 61276, 61280, 61284, 61288, 61292, 61296 },
 			{ 61277, 61281, 61285, 61289, 61293, 61297 },
@@ -32,6 +34,7 @@ T.RaidData = {
 	},
 	[3] = {
 		abbr = L["[ABBR] March on Quel'Danas"],
+		seasonID = 34,
 		achievements = {
 			{ 61300, 61304 },
 			{ 61301, 61305 },
@@ -41,6 +44,7 @@ T.RaidData = {
 	},
 	[4] = {
 		abbr = L["[ABBR] Sporefall"],
+		seasonID = 34,
 		achievements = {
 			{ 63233 },
 			{ 63234 },
@@ -50,6 +54,7 @@ T.RaidData = {
 	},
 	[5] = {
 		abbr = L["[ABBR] The Tidebound Grotto"],
+		seasonID = 37,
 		achievements = {
 			{ 63613 },
 			{ 63614 },
@@ -59,6 +64,7 @@ T.RaidData = {
 	},
 	[6] = {
 		abbr = L["[ABBR] The Venomous Abyss"],
+		seasonID = 37,
 		achievements = {
 			{ 63533, 63537, 63541, 63547, 63548, 63549, 63550, 63551 },
 			{ 63534, 63538, 63552, 63555, 63558, 63561, 63564, 63567 },
@@ -320,16 +326,18 @@ function T:SetProgressionInfo(unit, guid)
 		local title = false
 
 		for tier, data in ipairs(T.RaidData) do
-			for diff = #data.achievements, 1, -1 do
-				if (cache[guid].info.raids[tier][diff]) then
-					if not title then
-						GameTooltip:AddLine(" ")
-						GameTooltip:AddLine(L["Raids"])
-						title = true
-					end
+			if not (T.db["CurrentSeasonOnly"] and data.seasonID ~= T.CurrentSeason) then
+				for diff = #data.achievements, 1, -1 do
+					if (cache[guid].info.raids[tier][diff]) then
+						if not title then
+							GameTooltip:AddLine(" ")
+							GameTooltip:AddLine(L["Raids"])
+							title = true
+						end
 
-					local right = format("|cff%s%s|r", difficulties[diff].color, difficulties[diff].abbr).. " ".. cache[guid].info.raids[tier][diff]
-					GameTooltip:AddDoubleLine(data.abbr, right, .6, .8, 1, 1, 1, 1)
+						local right = format("|cff%s%s|r", difficulties[diff].color, difficulties[diff].abbr).." "..cache[guid].info.raids[tier][diff]
+						GameTooltip:AddDoubleLine(data.abbr, right, .6, .8, 1, 1, 1, 1)
+					end
 				end
 			end
 		end
@@ -406,6 +414,7 @@ do
 end
 
 function T:Progression()
+	T.CurrentSeason = C_SeasonInfo.GetCurrentDisplaySeasonID()
 	T:UpdateProgSettings(true)
 end
 

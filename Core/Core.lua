@@ -123,6 +123,7 @@ P.DefaultSettings = {
 		CombatHide = true,
 		ShowByShift = true,
 		ProgRaids = true,
+		CurrentSeasonOnly = true,
 		ProgDungeons = true,
 		ProgAchievement = true,
 		KeystoneMaster = true,
