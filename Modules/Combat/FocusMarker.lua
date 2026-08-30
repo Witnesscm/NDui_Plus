@@ -32,7 +32,7 @@ function FM:UpdateMacroText()
 end
 
 function FM:AnnounceFocusMarker()
-	if FM.db["AnnounceMarker"] and FM.db["MarkerIndex"] and FM.db["MarkerIndex"] >= 1 and FM.db["MarkerIndex"] <= 8 and not IsInRaid() then
+	if FM.db["Enable"] and FM.db["AnnounceMarker"] and FM.db["MarkerIndex"] and FM.db["MarkerIndex"] >= 1 and FM.db["MarkerIndex"] <= 8 and not IsInRaid() then
 		C_ChatInfo.SendChatMessage(format(L["FocusMarkerChatAnnouncement"], FM.db["MarkerIndex"]), "PARTY")
 	end
 end
