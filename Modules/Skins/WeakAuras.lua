@@ -497,7 +497,7 @@ end
 function S:WeakAurasDisplayButton(widget)
 	local button = widget.frame
 
-	P.ReskinCollapse(widget.expand, false, true)
+	P.ReskinCollapse(widget.expand)
 	widget.expand.disabled = false
 	widget:DisableExpand()
 	widget.expand:SetPushedTexture(0)
