@@ -452,7 +452,7 @@ function S:WeakAurasOptions()
 	local LibDD, LibMinor = LibStub("LibUIDropDownMenu-4.0", true)
 	if LibDD and (not LibDD.oldminor or LibDD.oldminor < LibMinor) then
 		hooksecurefunc(LibDD, "ToggleDropDownMenu", function(_, level)
-			S:SkinDropDownMenu("L_DropDownList", level)
+			S:SkinDropDownMenu("L_DropDownList", level, _G.L_UIDROPDOWNMENU_MAXBUTTONS)
 		end)
 	end
 end
@@ -498,6 +498,8 @@ function S:WeakAurasDisplayButton(widget)
 	local button = widget.frame
 
 	P.ReskinCollapse(widget.expand)
+	widget.expand.disabled = false
+	widget:DisableExpand()
 	widget.expand:SetPushedTexture(0)
 	widget.expand.SetPushedTexture = B.Dummy
 	B.ReskinInput(widget.renamebox)
