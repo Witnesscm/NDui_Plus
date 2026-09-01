@@ -284,6 +284,5 @@ function CH:FixEditModeAnchor()
 	if anchorInfo and anchorInfo.relativeTo == "NDui_PlusChatBG" then
 		_G.ChatFrame1:ResetToDefaultPosition()
 		_G.EditModeManagerFrame:SaveLayouts()
-		P:Print(L["ChatFrameAnchorReset"])
 	end
 end
