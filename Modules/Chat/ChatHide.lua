@@ -58,7 +58,7 @@ function CH:ToggleChat()
 	end
 end
 
-function CH:SetupChat()
+function CH:SetupChatHide()
 	if not self or self.__parentBG then return end
 
 	self:SetParent(CH.ChatBG)
@@ -173,6 +173,8 @@ local function resetChatAnchor(self, _, parent)
 end
 
 function CH:ChatHide()
+	CH:FixEditModeAnchor()
+
 	if not CH.db["ChatHide"] then return end
 	if not C.db["Chat"]["Lock"] then return end
 
@@ -243,14 +245,14 @@ function CH:ChatHide()
 	-- Modified NDui ChatFrame
 	for i = 1, Constants.ChatFrameConstants.MaxChatWindows do
 		local chatframe = _G["ChatFrame" .. i]
-		CH.SetupChat(chatframe)
+		CH.SetupChatHide(chatframe)
 	end
 
 	hooksecurefunc("FCF_OpenTemporaryWindow", function()
 		for _, chatFrameName in ipairs(CHAT_FRAMES) do
 			local frame = _G[chatFrameName]
 			if frame.isTemporary then
-				CH.SetupChat(frame)
+				CH.SetupChatHide(frame)
 			end
 		end
 	end)
@@ -262,13 +264,25 @@ function CH:ChatHide()
 
 	hooksecurefunc(_G.ChatFrame1, "SetPoint", resetChatAnchor)
 	resetChatAnchor(_G.ChatFrame1)
-	FCF_SavePositionAndDimensions(_G.ChatFrame1)
-	hooksecurefunc("FCF_RestorePositionAndDimensions", function(chatFrame)
-		if chatFrame == DEFAULT_CHAT_FRAME then
-			resetChatAnchor(chatFrame)
-		end
-	end)
 
 	CH:UpdateAutoShow()
 	CH:UpdateAutoHide()
+
+	-- Fix edit mode anchor
+	hooksecurefunc(_G.ChatFrame1, "OnSystemPositionChange", function(self)
+		local systemInfo = _G.EditModeManagerFrame:GetActiveLayoutSystemInfo(self.system, self.systemIndex)
+		local anchorInfo = systemInfo and systemInfo.anchorInfo
+		if anchorInfo and anchorInfo.relativeTo == "NDui_PlusChatBG" then
+			self:ResetToDefaultPosition()
+		end
+	end)
+end
+
+function CH:FixEditModeAnchor()
+	local systemInfo = _G.EditModeManagerFrame:GetActiveLayoutSystemInfo(Enum.EditModeSystem.ChatFrame)
+	local anchorInfo = systemInfo and systemInfo.anchorInfo
+	if anchorInfo and anchorInfo.relativeTo == "NDui_PlusChatBG" then
+		_G.ChatFrame1:ResetToDefaultPosition()
+		_G.EditModeManagerFrame:SaveLayouts()
+	end
 end
