@@ -1,4 +1,4 @@
-## Interface: 20505
+## Interface: 20506
 ## Title: |cff0080ffNDui|r |cff00ff00Plus|r
 ## Author: Witness
 ## Notes: NDui Plugin
