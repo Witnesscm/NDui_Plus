@@ -103,9 +103,7 @@ function S:SimpleAddonManager()
 	local SimpleAddonManager = _G.SimpleAddonManager
 	if not SimpleAddonManager then return end
 
-	B.StripTextures(SimpleAddonManager)
-	B.SetBD(SimpleAddonManager)
-	S:Proxy("ReskinClose", SimpleAddonManager.CloseButton)
+	B.ReskinPortraitFrame(SimpleAddonManager)
 	P.ReskinTooltip(_G.SAM_ADDON_LIST_TOOLTIP)
 	hooksecurefunc(SimpleAddonManager, "Initialize", ReskinModules)
 end
