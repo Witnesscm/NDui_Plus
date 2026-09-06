@@ -176,9 +176,20 @@ end
 -- Display the Item Sets tab in the Adventure Guide
 do
 	function M:DisplayItemSetsTab()
+		if not M.db["DisplayItemSetsTab"] then return end
+
 		EncounterJournal:HookScript("OnShow", function(self)
-			PanelTemplates_SetAllTabsShown(self, true)
-			PanelTemplates_SetNumTabs(self, #self.Tabs)
+			local previousTab
+			for _, tab in ipairs(self.Tabs) do
+				PanelTemplates_ShowTab(self, tab:GetID())
+				tab:ClearAllPoints()
+				if previousTab then
+					tab:SetPoint("LEFT", previousTab, "RIGHT", 3, 0)
+				else
+					tab:SetPoint("TOPLEFT", self, "BOTTOMLEFT", 11, 2)
+				end
+				previousTab = tab
+			end
 		end)
 	end
 

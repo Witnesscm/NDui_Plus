@@ -149,6 +149,7 @@ P.DefaultSettings = {
 		TrainAll = true,
 		AutoRoll = 3,
 		ExitPhaseDiving = true,
+		DisplayItemSetsTab = true,
 	},
 	FocusMarker = {
 		Enable = false,
