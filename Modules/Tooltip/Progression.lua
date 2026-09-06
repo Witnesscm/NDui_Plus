@@ -366,7 +366,10 @@ function T:GetAchievementInfo(guid)
 
 	if UnitExists(unit) then
 		T:UpdateProgression(guid)
-		GameTooltip:RefreshData()
+
+		if not GameTooltip:IsForbidden() then
+			GameTooltip:RefreshData()
+		end
 	end
 
 	ClearAchievementComparisonUnit()
