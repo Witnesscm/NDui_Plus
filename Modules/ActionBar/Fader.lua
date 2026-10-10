@@ -37,6 +37,34 @@ function AB:FadeBlings(alpha)
 	end
 end
 
+-- The actionbars fade through the fadeParent. NDui's menubar is a nameless
+-- file-local frame, and the fadeParent is hidden during pet battles, so the
+-- menubar is faded on its own instead of being reparented into it.
+local function SetFadeAlpha(alpha)
+	if not AB.fadeParent then return end
+
+	AB.fadeParent:SetAlpha(alpha)
+	if AB.menubar then
+		AB.menubar:SetAlpha(AB.db["Micromenu"] and alpha or 1)
+	end
+end
+
+local function ForFadeTargets(func)
+	func(AB.fadeParent)
+	if AB.db["Micromenu"] and AB.menubar then func(AB.menubar) end
+end
+
+-- NDui does not expose the menubar, so capture it while its micro buttons are
+-- built. Stays nil while NDui's Micromenu option is off.
+if type(Bar.MicroButton_Create) == "function" then
+	hooksecurefunc(Bar, "MicroButton_Create", function(_, parent)
+		AB.menubar = parent
+		if AB.db and AB.fadeParent then
+			SetFadeAlpha(AB.fadeParent:GetAlpha())
+		end
+	end)
+end
+
 function AB:Button_OnEnter()
 	AB:SetFadeRevealed(true)
 end
@@ -186,6 +214,10 @@ function AB:IsFadeHovered()
 		end
 	end
 
+	if AB.db["Micromenu"] and AB.menubar and AB.menubar:IsShown() and AB.menubar:IsMouseOver(1, -1, -1, 1) then
+		return true
+	end
+
 	-- flyouts open outside the bar rectangles
 	local flyout = _G.SpellFlyout
 	if flyout and flyout:IsShown() and flyout:IsMouseOver(1, -1, -1, 1) then return true end
@@ -203,11 +235,15 @@ function AB:SetFadeRevealed(show)
 	AB.revealed = show
 
 	if show then
-		ClearTimers(AB.fadeParent)
-		P:UIFrameFadeIn(AB.fadeParent, .2, AB.fadeParent:GetAlpha(), 1)
+		ForFadeTargets(function(frame)
+			ClearTimers(frame)
+			P:UIFrameFadeIn(frame, .2, frame:GetAlpha(), 1)
+		end)
 		AB:FadeBlings(1)
 	else
-		DelayFadeOut(AB.fadeParent, .38, AB.fadeParent:GetAlpha(), AB.db["Alpha"])
+		ForFadeTargets(function(frame)
+			DelayFadeOut(frame, .38, frame:GetAlpha(), AB.db["Alpha"])
+		end)
 		AB:FadeBlings(AB.db["Alpha"])
 	end
 end
@@ -220,7 +256,7 @@ end
 
 -- The faded alpha changed in the options: apply it and let the state settle.
 function AB:ApplyFadeAlpha(alpha)
-	AB.fadeParent:SetAlpha(alpha)
+	SetFadeAlpha(alpha)
 	AB.revealed = nil
 	AB:ReevaluateFade()
 end
@@ -252,6 +288,10 @@ function AB:UpdateFaderState()
 		if bar then
 			bar:SetParent(AB.db[key] and AB.fadeParent or UIParent)
 		end
+	end
+
+	if AB.menubar then
+		SetFadeAlpha(AB.fadeParent:GetAlpha())
 	end
 
 	if not AB.isHooked then
