@@ -62,7 +62,6 @@ local function updateABFaderState()
 	if not AB.fadeParent then return end
 
 	AB:UpdateFaderState()
-	AB.fadeParent:SetAlpha(AB.db["Alpha"])
 end
 
 local function updateUFsRole()

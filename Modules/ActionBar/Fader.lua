@@ -38,18 +38,11 @@ function AB:FadeBlings(alpha)
 end
 
 function AB:Button_OnEnter()
-	if not AB.fadeParent.mouseLock then
-		ClearTimers(AB.fadeParent)
-		P:UIFrameFadeIn(AB.fadeParent, .2, AB.fadeParent:GetAlpha(), 1)
-		AB:FadeBlings(1)
-	end
+	AB:SetFadeRevealed(true)
 end
 
 function AB:Button_OnLeave()
-	if not AB.fadeParent.mouseLock then
-		DelayFadeOut(AB.fadeParent, .38, AB.fadeParent:GetAlpha(), AB.db["Alpha"])
-		AB:FadeBlings(AB.db["Alpha"])
-	end
+	AB:ReevaluateFade()
 end
 
 local function flyoutButtonAnchor(frame)
@@ -91,13 +84,10 @@ function AB:FadeParent_OnEvent(event, arg)
 		(AB.db["DynamicFlight"] and (canGlide or CanGlide()))
 	then
 		self.mouseLock = true
-		ClearTimers(AB.fadeParent)
-		P:UIFrameFadeIn(self, .2, self:GetAlpha(), 1)
-		AB:FadeBlings(1)
+		AB:SetFadeRevealed(true)
 	else
 		self.mouseLock = false
-		DelayFadeOut(self, .38, self:GetAlpha(), AB.db["Alpha"])
-		AB:FadeBlings(AB.db["Alpha"])
+		AB:ReevaluateFade()
 	end
 end
 
@@ -178,6 +168,74 @@ local NDui_ActionBar = {
 	["StanceBar"] = "NDui_ActionBarStance",
 }
 
+-- The hover of a whole bar rectangle counts, not just its buttons, so the bars
+-- do not fade out while the cursor is between buttons or on their padding.
+function AB:IsFadeHovered()
+	for key, name in pairs(NDui_ActionBar) do
+		local bar = _G[name]
+		if bar and AB.db[key] then
+			if bar:IsShown() and bar:IsMouseOver(1, -1, -1, 1) then
+				return true
+			end
+
+			-- Bar3's right half lives in a child frame while it is in use
+			local child = bar.child
+			if child and child.mover and not child.mover.isDisable and child:IsShown() and child:IsMouseOver(1, -1, -1, 1) then
+				return true
+			end
+		end
+	end
+
+	-- flyouts open outside the bar rectangles
+	local flyout = _G.SpellFlyout
+	if flyout and flyout:IsShown() and flyout:IsMouseOver(1, -1, -1, 1) then return true end
+
+	flyout = LAB and LAB.flyoutHandler
+	if flyout and flyout.IsShown and flyout:IsShown() and flyout:IsMouseOver(1, -1, -1, 1) then return true end
+
+	return false
+end
+
+-- Only fade in/out on state changes, so a poll does not restart the animation
+-- and the cooldown blings are only touched on a transition.
+function AB:SetFadeRevealed(show)
+	if AB.revealed == show then return end
+	AB.revealed = show
+
+	if show then
+		ClearTimers(AB.fadeParent)
+		P:UIFrameFadeIn(AB.fadeParent, .2, AB.fadeParent:GetAlpha(), 1)
+		AB:FadeBlings(1)
+	else
+		DelayFadeOut(AB.fadeParent, .38, AB.fadeParent:GetAlpha(), AB.db["Alpha"])
+		AB:FadeBlings(AB.db["Alpha"])
+	end
+end
+
+function AB:ReevaluateFade()
+	if not AB.fadeParent or AB.fadeParent.mouseLock then return end
+
+	AB:SetFadeRevealed(AB:IsFadeHovered())
+end
+
+-- The faded alpha changed in the options: apply it and let the state settle.
+function AB:ApplyFadeAlpha(alpha)
+	AB.fadeParent:SetAlpha(alpha)
+	AB.revealed = nil
+	AB:ReevaluateFade()
+end
+
+-- The button hooks miss the gaps between buttons; polling keeps the state
+-- correct while the cursor sits on a bar without touching a button.
+local driver = CreateFrame("Frame")
+driver:Hide()
+driver:SetScript("OnUpdate", function(self, elapsed)
+	self.elapsed = (self.elapsed or 0) + elapsed
+	if self.elapsed < .1 then return end
+	self.elapsed = 0
+	AB:ReevaluateFade()
+end)
+
 local function updateAfterCombat(event)
 	AB:UpdateFaderState()
 	B:UnregisterEvent(event, updateAfterCombat)
@@ -206,6 +264,8 @@ function AB:UpdateFaderState()
 
 		AB.isHooked = true
 	end
+
+	AB:ReevaluateFade()
 end
 
 function AB:SetupFlyoutButton(button)
@@ -238,4 +298,5 @@ function AB:GlobalFade()
 	AB:UpdateFaderSettings()
 	AB:UpdateFaderState()
 	AB:SetupLABFlyout()
+	driver:Show()
 end
