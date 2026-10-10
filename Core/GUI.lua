@@ -62,7 +62,6 @@ local function updateABFaderState()
 	if not AB.fadeParent then return end
 
 	AB:UpdateFaderState()
-	AB.fadeParent:SetAlpha(AB.db["Alpha"])
 end
 
 local function updateUFsRole()
@@ -172,6 +171,7 @@ G.OptionList = { -- type, key, value, name, horizon, data, callback, tooltip, sc
 		{1, "ActionBar", "Bar8", L["Bar"].."8*", true, nil, updateABFaderState},
 		{1, "ActionBar", "PetBar", L["PetBar"].."*", nil, nil, updateABFaderState},
 		{1, "ActionBar", "StanceBar", L["StanceBar"].."*", true, nil, updateABFaderState},
+		{1, "ActionBar", "Micromenu", L["Menubar"].."*", nil, nil, updateABFaderState, L["MenubarTip"]},
 	},
 	[2] = {
 		{1, "UnitFrames", "Fader", HeaderTag..L["UnitFramesFader"].."*", nil, setupUFsFader, updateUFsFader, L["UnitFramesFaderTip"]},
