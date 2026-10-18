@@ -6,17 +6,6 @@ local NS = B:GetModule("Skins")
 local _G = getfenv(0)
 local select, pairs, type, strfind = select, pairs, type, string.find
 
-function S:PremadeGroupsFilter()
-	local button = _G.UsePFGButton or _G.UsePGFButton
-	if button then
-		button:SetSize(32, 32)
-		button:ClearAllPoints()
-		button:SetPoint("RIGHT", _G.LFGListFrame.SearchPanel.RefreshButton, "LEFT", -55, 0)
-		button.text:SetText(FILTER)
-		button.text:SetWidth(button.text:GetStringWidth())
-	end
-end
-
 function S:WorldQuestsList()
 	local frame = _G["WorldQuestsListFrame"]
 	B.StripTextures(frame)
@@ -232,7 +221,6 @@ function S:Hekili()
 end
 
 S:RegisterSkin("WorldQuestsList", S.WorldQuestsList)
-S:RegisterSkin("PremadeGroupsFilter", S.PremadeGroupsFilter)
 S:RegisterSkin("MogPartialSets", S.MogPartialSets)
 S:RegisterSkin("BigWigs", S.BigWigs, true)
 S:RegisterSkin("BigWigs_Options", S.BigWigs_Options)
