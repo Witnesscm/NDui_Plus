@@ -5,11 +5,68 @@ local G = P:GetModule("GUI")
 local UF = P:GetModule("UnitFrames")
 local NUF = B:GetModule("UnitFrames")
 
-local roleToString = {
-	[Enum.LFGRole.Tank] = "TANK",
-	[Enum.LFGRole.Healer] = "HEALER",
-	[Enum.LFGRole.Damage] = "DAMAGER",
-}
+-- Modified from NDui
+function NUF:CreateIcons(self)
+	local mystyle = self.mystyle
+	if mystyle == "player" then
+		local combat = self:CreateTexture(nil, "OVERLAY")
+		combat:SetPoint("CENTER", self, "BOTTOMLEFT")
+		combat:SetSize(28, 28)
+		combat:SetAtlas(DB.objectTex)
+		self.CombatIndicator = combat
+	elseif mystyle == "target" then
+		local quest = self:CreateTexture(nil, "OVERLAY")
+		quest:SetPoint("TOPLEFT", self, "TOPLEFT", 0, 8)
+		quest:SetSize(16, 16)
+		self.QuestIndicator = quest
+	end
+
+	local phase = CreateFrame("Frame", nil, self)
+	phase:SetSize(24, 24)
+	phase:SetPoint("CENTER", self.Health)
+	phase:SetFrameLevel(5)
+	phase:EnableMouse(true)
+	local icon = phase:CreateTexture(nil, "OVERLAY")
+	icon:SetAllPoints()
+	phase.Icon = icon
+	self.PhaseIndicator = phase
+
+	if C.db["UFs"]["ShowRoleMode"] ~= 2 then
+		local ri = self:CreateTexture(nil, "OVERLAY")
+		if mystyle == "raid" then
+			ri:SetPoint("TOPRIGHT", self, 5, 5)
+		else
+			ri:SetPoint("TOPRIGHT", self, 0, 8)
+		end
+		ri:SetSize(15, 15)
+		ri.damageAtlas = C.db["UFs"]["ShowRoleMode"] == 3 and ""
+
+		if ri and NDuiPlusDB["RoleStyle"]["Enable"] then
+			local roleList = P.RoleList[NDuiPlusDB["RoleStyle"]["Index"]]
+			ri.tankAtlas = roleList.TANK
+			ri.healerAtlas = roleList.HEALER
+			ri.damageAtlas = ri.damageAtlas or roleList.DAMAGER
+		end
+
+		self.GroupRoleIndicator = ri
+	end
+
+	local li = self:CreateTexture(nil, "OVERLAY")
+	if mystyle == "raid" then
+		li:SetPoint("BOTTOM", self, 0, 0)
+	else
+		li:SetPoint("TOPLEFT", self, 0, 8)
+	end
+	li:SetSize(12, 12)
+	self.LeaderIndicator = li
+
+	local ai = self:CreateTexture(nil, "OVERLAY")
+	ai:SetPoint("TOPLEFT", self, -1, 8)
+	ai:SetSize(12, 12)
+	self.AssistantIndicator = ai
+
+	UF:Configure_RoleIcon(self)
+end
 
 function UF:Configure_RoleIcon(frame)
 	local roleIcon = frame.GroupRoleIndicator
@@ -31,28 +88,16 @@ function UF:Configure_RoleIcon(frame)
 		end
 	end
 
-	if roleIcon and roleIcon.PostUpdate and not roleIcon.__hooked then
-		hooksecurefunc(roleIcon, "PostUpdate", function(self, role)
-			if role and roleToString[role] then
-				B.ReskinSmallRole(self, roleToString[role])
-			end
-		end)
-		roleIcon.__hooked = true
+	if roleIcon and NDuiPlusDB["RoleStyle"]["Enable"] then
+		local roleList = P.RoleList[NDuiPlusDB["RoleStyle"]["Index"]]
+		roleIcon.tankAtlas = roleList.TANK
+		roleIcon.healerAtlas = roleList.HEALER
+		roleIcon.damageAtlas = roleIcon.damageAtlas or roleList.DAMAGER
 	end
 end
 
 function UF:UpdateRoleIcons()
 	for _, frame in pairs(oUF.objects) do
 		UF:Configure_RoleIcon(frame)
-	end
-end
-
-function UF:SetupRoleIcons()
-	UF:UpdateRoleIcons()
-
-	if NUF.CreateIcons then
-		hooksecurefunc(NUF, "CreateIcons", function(_, frame)
-			UF:Configure_RoleIcon(frame)
-		end)
 	end
 end
