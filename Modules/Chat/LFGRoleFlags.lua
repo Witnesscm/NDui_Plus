@@ -279,7 +279,11 @@ local function ChatMsgFilter(self, event, msg, sender, language, channelString, 
 	if not formatKey then return end
 
 	local coloredName = ChatFrameUtil.GetDecoratedSenderName(event, msg, sender, language, channelString, target, flags, zoneChannelID, channelIndex, channelBaseName, languageID, lineID, senderGUID, bnSenderID, isMobile)
+	-- Sender name is readable, but the class color behind it can be secret in instances/PvP,
+	-- which makes the whole decorated name secret. "["..coloredName.."]" would then throw.
+	if B:IsSecretValue(coloredName) then return end
 	local pflag = ChatFrameUtil.GetPFlag(flags, zoneChannelID, channelIndex)
+	if B:IsSecretValue(pflag) then pflag = "" end
 
 	local playerLink
 	if chatType == "BN_WHISPER" or chatType == "BN_WHISPER_INFORM" then
@@ -320,9 +324,9 @@ local function ChatMsgFilter(self, event, msg, sender, language, channelString, 
 
 	self:AddMessage(outMsg, info.r, info.g, info.b, info.id)
 
-	-- Fix whipser reply
+	-- Fix whisper reply
 	if chatType == "WHISPER" or chatType == "BN_WHISPER" then
-		ChatFrameUtil.SetLastTellTarget(sender, chatType)
+		pcall(ChatFrameUtil.SetLastTellTarget, sender, chatType)
 		if not self.tellTimer or (GetTime() > self.tellTimer) then
 			PlaySound(SOUNDKIT.TELL_MESSAGE)
 		end
@@ -337,8 +341,7 @@ local function ChatMsgFilter(self, event, msg, sender, language, channelString, 
 	return true
 end
 
-
-function CH:RewriteChatMessage()
+function NCH:ChannelRename()
 	local events = {
 		"CHAT_MSG_SAY", "CHAT_MSG_YELL",
 		"CHAT_MSG_GUILD", "CHAT_MSG_OFFICER",
@@ -353,8 +356,6 @@ function CH:RewriteChatMessage()
 		ChatFrame_AddMessageEventFilter(event, ChatMsgFilter)
 	end
 end
-
-
 
 function CH:LFGRoleFlags()
 	local roleList = P.RoleList[NDuiPlusDB["RoleStyle"]["Index"]]
@@ -371,9 +372,5 @@ function CH:LFGRoleFlags()
 
 	for _, event in next, eventList do
 		B:RegisterEvent(event, CH.UpdateGroupInfo)
-	end
-
-	if NCH.ChannelRename then
-		NCH.ChannelRename = CH.RewriteChatMessage
 	end
 end
