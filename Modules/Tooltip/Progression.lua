@@ -403,6 +403,8 @@ function T:AddProgression()
 	if not NDuiPlusDB["Debug"] and not (level and level == MAX_PLAYER_LEVEL) then return end
 
 	local guid = UnitGUID(unit)
+	if not guid or B:IsSecretValue(guid) then return end
+
 	if not cache[guid] or (GetTime() - cache[guid].timer) > 600 then
 		if guid == P.MyGUID then
 			T:UpdateProgression(guid)
