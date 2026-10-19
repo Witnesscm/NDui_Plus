@@ -72,6 +72,17 @@ T.RaidData = {
 			{ 63536, 63540, 63554, 63557, 63560, 63563, 63566, 63569 }
 		}
 	}
+	,
+	[7] = {
+		abbr = L["[ABBR] The Unbinding of Kith'ix"],
+		seasonID = 37,
+		achievements = {
+			{ 63839 },
+			{ 63840 },
+			{ 63841 },
+			{ 63842 }
+		}
+	}
 }
 
 -- https://wago.tools/db2/Achievement?filter%5BTitle_lang%5D=Midnight%20Keystone&page=1
@@ -83,6 +94,7 @@ T.MythicPlusAchievementData = {
 		{ id = 61256, abbr = L["[ABBR] Midnight Keystone Master: Season 1"] }
 	},
 	[2] = {
+		{ id = 63690, abbr = L["[ABBR] Midnight Keystone Myth: Season 2"] },
 		{ id = 62449, abbr = L["[ABBR] Midnight Keystone Legend: Season 2"] },
 		{ id = 62448, abbr = L["[ABBR] Midnight Keystone Hero: Season 2"] },
 		{ id = 62447, abbr = L["[ABBR] Midnight Keystone Master: Season 2"] }
