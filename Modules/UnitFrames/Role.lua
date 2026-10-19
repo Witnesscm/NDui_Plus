@@ -41,7 +41,7 @@ function NUF:CreateIcons(self)
 		ri:SetSize(15, 15)
 		ri.damageAtlas = C.db["UFs"]["ShowRoleMode"] == 3 and ""
 
-		if ri and NDuiPlusDB["RoleStyle"]["Enable"] then
+		if NDuiPlusDB["RoleStyle"]["Enable"] then
 			local roleList = P.RoleList[NDuiPlusDB["RoleStyle"]["Index"]]
 			ri.tankAtlas = roleList.TANK
 			ri.healerAtlas = roleList.HEALER
@@ -86,13 +86,6 @@ function UF:Configure_RoleIcon(frame)
 			roleIcon:SetPoint(unpack(roleIcon.__orig.point))
 			roleIcon:SetSize(roleIcon.__orig.width, roleIcon.__orig.height)
 		end
-	end
-
-	if roleIcon and NDuiPlusDB["RoleStyle"]["Enable"] then
-		local roleList = P.RoleList[NDuiPlusDB["RoleStyle"]["Index"]]
-		roleIcon.tankAtlas = roleList.TANK
-		roleIcon.healerAtlas = roleList.HEALER
-		roleIcon.damageAtlas = roleIcon.damageAtlas or roleList.DAMAGER
 	end
 end
 
