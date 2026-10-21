@@ -220,6 +220,23 @@ function S:Hekili()
 	end
 end
 
+function S:TomTom()
+	local frame = _G.TomTomPaste
+	if not frame then return end
+
+	B.StripTextures(frame)
+	B.SetBD(frame)
+	S:Proxy("Reskin", frame.ExportButton)
+	S:Proxy("Reskin", frame.CloseButton)
+	S:Proxy("Reskin", frame.PasteButton)
+	S:Proxy("ReskinCheck", frame.AutoCloseCheck)
+
+	if frame.EditBox then
+		frame.EditBox:HideBackdrop()
+		B.CreateBDFrame(frame.EditBox, .25)
+	end
+end
+
 S:RegisterSkin("WorldQuestsList", S.WorldQuestsList)
 S:RegisterSkin("MogPartialSets", S.MogPartialSets)
 S:RegisterSkin("BigWigs", S.BigWigs, true)
@@ -231,6 +248,7 @@ S:RegisterSkin("BuyEmAll", S.BuyEmAll)
 S:RegisterSkin("OmniCD", S.OmniCD)
 S:RegisterSkin("WarpDeplete", S.WarpDeplete)
 S:RegisterSkin("Hekili", S.Hekili, true)
+S:RegisterSkin("TomTom", S.TomTom)
 
 -- Hide Toggle Button
 S.ToggleFrames = {}
