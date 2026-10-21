@@ -77,7 +77,7 @@ local function rowOnLeave(self)
 	self.bg:SetBackdropBorderColor(0, 0, 0)
 end
 
-local function ReskinNotificationRow(self)
+local function ReskinDropNotificationRow(self)
 	if not self.rowPool then
 		return
 	end
@@ -100,6 +100,20 @@ local function ReskinNotificationRow(self)
 
 			row.styled = true
 		end
+	end
+end
+
+local function ReskinMythicPlusNotification(self)
+	B.ReskinPortraitFrame(self)
+
+	local Card = self.Card
+	if Card then
+		B.StripTextures(Card)
+		Card.bg = B.CreateBDFrame(Card, .25)
+		Card:HookScript("OnEnter", rowOnEnter)
+		Card:HookScript("OnLeave", rowOnLeave)
+		S:Proxy("ReskinIcon", Card.Icon)
+		Card.Error:SetAtlas("icons_16x16_important")
 	end
 end
 
@@ -130,6 +144,15 @@ function S:KeystoneLoot()
 		CatalystFrame.bg:SetInside()
 	end
 
+	local CustomItemFrame = frame.CustomItemFrame
+	if CustomItemFrame then
+		CustomItemFrame:ClearAllPoints()
+		CustomItemFrame:SetPoint("TOPRIGHT", frame, "TOPLEFT", 0, -40)
+		S:Proxy("StripTextures", CustomItemFrame.Border)
+		CustomItemFrame.bg = B.SetBD(CustomItemFrame)
+		CustomItemFrame.bg:SetInside()
+	end
+
 	P:SecureHook("KeystoneLootLootIconButtonMixin", "Init", ReskinIconButton)
 	P:SecureHook("KeystoneLootDungeonsFrameMixin", "OnLoad", ReskinSubFrame)
 	P:SecureHook("KeystoneLootRaidBlockMixin", "OnLoad", ReskinSubFrame)
@@ -144,11 +167,17 @@ function S:KeystoneLoot()
 	P:SecureHook("KeystoneLootReminderSpecMixin", "OnLoad", ReskinReminderSpec)
 	P:SecureHook("KeystoneLootReminderIconMixin", "Init", ReskinReminderIcon)
 
-	-- NotificationFrame
-	local NotificationFrame = _G.KeystoneLootDropNotificationFrame
-	if NotificationFrame then
-		B.ReskinPortraitFrame(NotificationFrame)
-		P:SecureHook(NotificationFrame, "Refresh", ReskinNotificationRow)
+	-- DropNotificationFrame
+	local DropNotificationFrame = _G.KeystoneLootDropNotificationFrame
+	if DropNotificationFrame then
+		B.ReskinPortraitFrame(DropNotificationFrame)
+		P:SecureHook(DropNotificationFrame, "Refresh", ReskinDropNotificationRow)
+	end
+
+	-- MythicPlusNotificationFrame
+	local MythicPlusNotificationFrame = _G.KeystoneLootMythicPlusNotificationFrame
+	if MythicPlusNotificationFrame then
+		ReskinMythicPlusNotification(MythicPlusNotificationFrame)
 	end
 
 	-- KSLMenu
