@@ -41,7 +41,8 @@ P.DefaultSettings = {
 		Bar7 = false,
 		Bar8 = false,
 		PetBar = false,
-		StanceBar = false
+		StanceBar = false,
+		Micromenu = false
 	},
 	UnitFrames= {
 		Fader = false,
