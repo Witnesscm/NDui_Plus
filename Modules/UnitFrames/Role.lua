@@ -52,11 +52,7 @@ function NUF:CreateIcons(self)
 	end
 
 	local li = self:CreateTexture(nil, "OVERLAY")
-	if mystyle == "raid" then
-		li:SetPoint("BOTTOM", self, 0, 0)
-	else
-		li:SetPoint("TOPLEFT", self, 0, 8)
-	end
+	li:SetPoint("TOPLEFT", self, -1, 8)
 	li:SetSize(12, 12)
 	self.LeaderIndicator = li
 
