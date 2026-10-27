@@ -69,8 +69,8 @@ local function updateUFsRole()
 	P:GetModule("UnitFrames"):UpdateRoleIcons()
 end
 
-local function updateFocusMarkerMacro()
-	P:GetModule("FocusMarker"):UpdateMacroText()
+local function updateQuickFocus()
+	P:GetModule("QuickFocus"):UpdateMacroText()
 end
 
 local function updateUFsFader()
@@ -179,11 +179,14 @@ G.OptionList = { -- type, key, value, name, horizon, data, callback, tooltip, sc
 		{1, "UnitFrames", "RolePos", L["Role Icon"].."*", nil, setupUFsRole, updateUFsRole},
 	},
 	[3] = {
-		{1, "FocusMarker", "Enable", IsNew..HeaderTag..L["FocusMarkerEnable"].."*", nil, nil, updateFocusMarkerMacro, L["FocusMarkerTip"]},
-		{1, "FocusMarker", "AnnounceMarker", L["AnnounceMarker"].."*", nil, nil, nil, L["AnnounceMarkerTip"]},
-		{1, "FocusMarker", "DisableInRaid", L["Disable Marker In Raid"].."*", nil, nil, updateFocusMarkerMacro},
-		{4, "FocusMarker", "MarkerIndex", L["Marker"].."*", true, G.TargetMarker, updateFocusMarkerMacro},
-		{1, "FocusMarker", "KeepExistingMarker", L["Keep Existing Marker"].."*", nil, nil, updateFocusMarkerMacro},
+		{1, "QuickFocus", "Enable", HeaderTag..L["QuickFocus"], nil, nil, nil, L["QuickFocusTip"]},
+		{4, "QuickFocus", "Modifier", L["Modifier Key"], nil, {"SHIFT", "CTRL", "ALT"}},
+		{4, "QuickFocus", "Button", L["Mouse Button"], true, {KEY_BUTTON1, KEY_BUTTON2, KEY_BUTTON3, KEY_BUTTON4, KEY_BUTTON5}},
+		{1, "QuickFocus", "SetMarker", HeaderTag..L["SetMark"].."*", nil, nil, updateQuickFocus, L["SetMarkTip"]},
+		{1, "QuickFocus", "AnnounceMarker", L["AnnounceMarker"].."*", nil, nil, nil, L["AnnounceMarkerTip"]},
+		{4, "QuickFocus", "MarkerIndex", L["Marker"].."*", true, G.TargetMarker, updateQuickFocus},
+		{1, "QuickFocus", "KeepExistingMarker", L["Keep Existing Marker"].."*", nil, nil, updateQuickFocus},
+		{1, "QuickFocus", "DisableInRaid", L["Disable Marker In Raid"].."*", true, nil, updateQuickFocus},
 	},
 	[4] = {
 		{1, "Chat", "Emote", L["ChatEmote"], nil, nil, nil, L["ChatEmoteTip"]},

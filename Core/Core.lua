@@ -9,6 +9,7 @@ local modules, initQueue, addonsToLoad, addonsToLoadEarly = {}, {}, {}, {}
 
 P.DefaultSettings = {
 	Debug = false,
+	DBVersion = 0,
 	Changelog = {
 		Version = "",
 	},
@@ -151,8 +152,11 @@ P.DefaultSettings = {
 		ExitPhaseDiving = true,
 		DisplayItemSetsTab = true,
 	},
-	FocusMarker = {
-		Enable = false,
+	QuickFocus = {
+		Enable = true,
+		Modifier = 1,
+		Button = 1,
+		SetMarker = false,
 		MarkerIndex = 1,
 		AnnounceMarker = true,
 		DisableInRaid = true,
@@ -189,6 +193,48 @@ function P:InitialSettings(source, target, fullClean)
 				end
 			end
 		end
+	end
+end
+
+function P:MigrateDB(oldDB, newDB, keys)
+	if not oldDB then return end
+
+	for oldKey, newKey in pairs(keys) do
+		if oldDB[oldKey] ~= nil then
+			newDB[newKey] = oldDB[oldKey]
+		end
+	end
+end
+
+function P:UpdateDB()
+	local DBVersion = NDuiPlusDB.DBVersion or 0
+	if DBVersion < 1 then
+		NDuiPlusDB["QuickFocus"] = NDuiPlusDB["QuickFocus"] or {}
+
+		P:MigrateDB(NDuiPlusDB["FocusMarker"], NDuiPlusDB["QuickFocus"], {
+			Enable = "SetMarker",
+			MarkerIndex = "MarkerIndex",
+			AnnounceMarker = "AnnounceMarker",
+			DisableInRaid = "DisableInRaid",
+			KeepExistingMarker = "KeepExistingMarker",
+		})
+	end
+
+	NDuiPlusDB.DBVersion = P.DBVersion
+end
+
+function P:CheckConflictingFeature(targetDB, targetKey, myDB, myKey)
+	if targetDB[targetKey] and myDB[myKey] then
+		targetDB[targetKey] = false
+		return true
+	end
+
+	return false
+end
+
+function P:CheckCompatibility()
+	if P:CheckConflictingFeature(C.db["Misc"], "Focuser", NDuiPlusDB["QuickFocus"], "Enable") then
+		P:Print(format(L["Feature conflict detected. NDui's <%s> module has been disabled."], L["QuickFocus"]))
 	end
 end
 
@@ -402,8 +448,10 @@ loader:RegisterEvent("PLAYER_LOGIN")
 loader:SetScript("OnEvent", function(self, event, addon)
 	if event == "ADDON_LOADED" then
 		if addon == "NDui_Plus" then
+			P:UpdateDB()
 			P:InitialSettings(P.DefaultSettings, NDuiPlusDB, true)
 			P:InitialSettings(P.CharacterSettings, NDuiPlusCharDB)
+			P:CheckCompatibility()
 
 			for _, module in next, initQueue do
 				module.db = NDuiPlusDB[module.name]
