@@ -38,6 +38,7 @@
 	<Script file="tdBattlePetScript.lua"/>
 	<Script file="tdGUI.lua"/>
 	<Script file="TinyInspect.lua"/>
+	<Script file="TomTom.lua"/>
 	<Script file="ToyBoxEnhanced.lua"/>
 	<Script file="TradeLog.lua"/>
 	<Script file="WeakAuras.lua"/>
