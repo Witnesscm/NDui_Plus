@@ -338,7 +338,7 @@ end
 function AB:GlobalFade()
 	if not AB.db["GlobalFade"] then return end
 
-	AB.fadeParent = CreateFrame("Frame", "NDuiPlus_Fader", _G.UIParent)
+	AB.fadeParent = CreateFrame("Frame", "NDuiPlus_ABFader", _G.UIParent)
 	AB.fadeParent:SetAlpha(AB.db["Alpha"])
 	AB.fadeParent:RegisterEvent("ACTIONBAR_SHOWGRID")
 	AB.fadeParent:RegisterEvent("ACTIONBAR_HIDEGRID")

@@ -133,7 +133,9 @@ local function updateABFaderAlpha()
 	local AB = P:GetModule("ActionBar")
 	if not AB.fadeParent then return end
 
-	AB.fadeParent:SetAlpha(AB.db["Alpha"])
+	if not AB.fadeParent.mouseLock then
+		AB.fadeParent:SetAlpha(AB.db["Alpha"])
+	end
 end
 
 local function updateABFaderSettings()
