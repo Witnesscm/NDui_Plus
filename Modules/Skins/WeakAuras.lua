@@ -341,6 +341,11 @@ local function SkinWeakAurasOptions()
 		P.ReskinFrame(textCodesFrame)
 	end
 
+	local OptionsPrivate = _G.WASYNC_OPTIONS_PRIVATE
+	if OptionsPrivate then
+		S:Proxy("ReskinTrimScroll", OptionsPrivate.ScrollBox and OptionsPrivate.ScrollBox.registeredScrollBar)
+	end
+
 	frame.styled = true
 end
 
@@ -503,8 +508,11 @@ function S:WeakAurasDisplayButton(widget)
 	widget:DisableExpand()
 	widget.expand:SetPushedTexture(0)
 	widget.expand.SetPushedTexture = B.Dummy
-	B.ReskinInput(widget.renamebox)
 	button.group.texture:SetTexture(P.RotationRightTex)
+
+	if widget.renamebox then
+		B.ReskinInput(widget.renamebox)
+	end
 
 	widget.icon:ClearAllPoints()
 	widget.icon:SetPoint("LEFT", widget.frame, "LEFT", 1, 0)
@@ -631,7 +639,7 @@ function S:WeakAurasSpinBox(widget)
 end
 
 function S:WeakAurasSnippetButton(widget)
-	B.ReskinInput(widget.renameEditBox)
+	S:Proxy("ReskinInput", widget.renameEditBox)
 	widget.renameEditBox.__bg:SetPoint("TOPLEFT", -2, 2)
 	widget.renameEditBox.__bg:SetPoint("BOTTOMRIGHT", 0, -2)
 end
