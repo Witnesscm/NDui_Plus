@@ -123,12 +123,17 @@ function S:TalentLoadoutsEx()
 		local presetPopup = frame.PresetPopupFrame and frame.PresetPopupFrame.Main
 		if presetPopup then
 			ReskinPopupFrame(frame.PresetPopupFrame)
-			S:Proxy("ReskinDropDown", presetPopup.AddonDropDownMenu)
+			S:Proxy("ReskinCheck", presetPopup.CombineCheckButton)
 
-			local configFrame = presetPopup.AddonConfigFrame1
-			if configFrame then
-				S:Proxy("ReskinDropDown", configFrame.ModeOptionFrame and configFrame.ModeOptionFrame.DropDownMenu)
-				S:Proxy("ReskinCheck", configFrame.CombineOptionFrame and configFrame.CombineOptionFrame.CheckButton)
+			if type(presetPopup.PresetAddons) == "table" then
+				for _, addonFrame in pairs(presetPopup.PresetAddons) do
+					for _, child in pairs {addonFrame:GetChildren()} do
+						local objType = child:GetObjectType()
+						if objType == "CheckButton" and child.CheckButtonText then
+							B.ReskinCheck(child)
+						end
+					end
+				end
 			end
 		end
 

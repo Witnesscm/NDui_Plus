@@ -180,24 +180,29 @@ function S:WorldQuestTab()
 		P.ReskinTooltip(_G.WQT_ShoppingTooltip1)
 		P.ReskinTooltip(_G.WQT_ShoppingTooltip2)
 	end
+
+	local WQT_QuestMapTab = _G.WQT_QuestMapTab
+	if WQT_QuestMapTab then
+		WQT_QuestMapTab.Icon:SetSize(29, 29)
+		WQT_QuestMapTab.SetChecked = function(self, checked)
+			SidePanelTabButtonMixin.SetChecked(self, checked)
+
+			if (checked) then
+				WQT_QuestMapTab.Icon:SetSize(29, 29)
+				WQT_QuestMapTab.Icon:SetAlpha(1)
+			else
+				WQT_QuestMapTab.Icon:SetAlpha(0.5)
+				WQT_QuestMapTab.Icon:SetSize(29, 29)
+			end
+		end
+	end
 end
 
 S:RegisterSkin("WorldQuestTab", S.WorldQuestTab)
 
 local function ReskinTabs(lib)
 	for _, tab in ipairs(lib.tabs) do
-		if not tab.bg then
-			B.StripTextures(tab, 2)
-			tab.bg = B.SetBD(tab)
-			tab.bg:SetInside(nil, 2, 2)
-			local hl = tab:CreateTexture(nil, "HIGHLIGHT")
-			hl:SetColorTexture(1, 1, 1, .25)
-			hl:SetInside(tab.bg)
-
-			tab.SelectedTexture:SetDrawLayer("BACKGROUND")
-			tab.SelectedTexture:SetColorTexture(DB.r, DB.g, DB.b, .25)
-			tab.SelectedTexture:SetInside(tab.bg)
-		end
+		B.ReskinSideTab(tab)
 	end
 end
 

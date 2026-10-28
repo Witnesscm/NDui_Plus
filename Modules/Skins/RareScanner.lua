@@ -75,7 +75,7 @@ function S:RareScanner()
 
 	-- RSSearch
 	for _, child in pairs({_G.WorldMapFrame:GetChildren()}) do
-		if child:GetObjectType() == "Frame" and child.EditBox and child.RefreshPOIs then
+		if child:GetObjectType() == "Frame" and child.EditBox and child.EditBox.RefreshAll then
 			child:ClearAllPoints()
 			child:SetPoint("TOP", _G.WorldMapFrame:GetCanvasContainer(), "TOP", 0, 0)
 			child.EditBox:DisableDrawLayer("BACKGROUND")
