@@ -71,8 +71,7 @@ T.RaidData = {
 			{ 63535, 63539, 63553, 63556, 63559, 63562, 63565, 63568 },
 			{ 63536, 63540, 63554, 63557, 63560, 63563, 63566, 63569 }
 		}
-	}
-	,
+	},
 	[7] = {
 		abbr = L["[ABBR] The Unbinding of Kith'ix"],
 		seasonID = 37,
@@ -427,6 +426,20 @@ end
 do
 	if NT.OnTooltipSetUnit then
 		hooksecurefunc(NT, "OnTooltipSetUnit", T.AddProgression)
+	end
+end
+
+-- fix refresh tooltip when pressing Shift
+do
+	function NT:ResetUnit(btn)
+		if GameTooltip:IsForbidden() then return end
+
+		local unit = NT.GetUnit(GameTooltip) or "mouseover"
+		if B:IsSecretValue(unit) then return end
+
+		if GameTooltip:IsShown() and btn == "LSHIFT" and NT:UnitExists(unit) then
+			GameTooltip:RefreshData()
+		end
 	end
 end
 
