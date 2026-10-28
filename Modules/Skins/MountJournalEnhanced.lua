@@ -89,7 +89,7 @@ local styled
 local function ReskinMJEnhanced()
 	if CollectionsJournal.selectedTab == COLLECTIONS_JOURNAL_TAB_INDEX_MOUNTS and not styled then
 		P.WaitFor(function()
-			return _G.MJEMountSpecialButtonToolTip and _G.MJEStatisticsHelpToolTip and _G.MJEDisplayHelpToolTip
+			return _G.MJEStatisticsHelpToolTip and _G.MJEDisplayHelpToolTip
 		end, function()
 			for _, child in pairs({_G.MountJournal:GetChildren()}) do
 				local objType = child:GetObjectType()
@@ -148,9 +148,15 @@ local function ReskinMJEnhanced()
 
 			hooksecurefunc("MountJournal_InitMountButton", updateButtonBorder)
 
-			P.ReskinTooltip(_G.MJEMountSpecialButtonToolTip)
 			P.ReskinTooltip(_G.MJEStatisticsHelpToolTip)
 			P.ReskinTooltip(_G.MJEDisplayHelpToolTip)
+
+			local SpecialButton = _G.MJEMountSpecialButton
+			if SpecialButton then
+				SpecialButton:HookScript("OnEnter", function(self)
+					P.ReskinTooltip(_G.MJEMountSpecialButtonToolTip)
+				end)
+			end
 
 			local controlFrame = MountJournal.MountDisplay.ModelScene.ControlFrame
 			for _, child in pairs({controlFrame:GetChildren()}) do
