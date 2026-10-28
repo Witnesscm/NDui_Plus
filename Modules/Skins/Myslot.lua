@@ -6,9 +6,11 @@ local S = P:GetModule("Skins")
 --------------------------
 function S:Myslot()
 	local Myslot = LibStub("Myslot-5.0", true)
-	if not Myslot then return end
+	local frame = Myslot and Myslot.MainFrame
+	if not frame then
+		return
+	end
 
-	local frame = Myslot.MainFrame
 	B.StripTextures(frame)
 	B.SetBD(frame)
 
@@ -33,6 +35,8 @@ function S:Myslot()
 				P.ReskinDropDown(child)
 				child.Button:SetSize(20, 20)
 			end
+		elseif objType == "EditBox" then
+			B.ReskinInput(child)
 		end
 	end
 end
