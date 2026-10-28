@@ -112,6 +112,16 @@ function AB:FlyoutButton_OnLeave()
 	AB.SpellFlyout_OnLeave(bar)
 end
 
+function AB:MicroButton_OnEnter()
+	local bar = self.__owner and self.__owner:GetParent() or self:GetParent()
+	if bar then AB.Bar_OnEnter(bar) end
+end
+
+function AB:MicroButton_OnLeave()
+	local bar = self.__owner and self.__owner:GetParent() or self:GetParent()
+	if bar then AB.Bar_OnLeave(bar) end
+end
+
 local function CanGlide()
 	local isGliding, canGlide = C_PlayerInfo.GetGlidingInfo()
 	return isGliding or canGlide
@@ -270,6 +280,10 @@ function AB:UpdateFaderState()
 			bar:SetParent(AB.db[key] and AB.fadeParent or UIParent)
 		end
 	end
+
+	if AB.MicroMenu then
+		AB.MicroMenu:SetParent(AB.db["MicroMenu"] and AB.fadeParent or UIParent)
+	end
 end
 
 function AB:SetupFlyoutButton(button)
@@ -294,6 +308,33 @@ function AB:SetupLABFlyout()
 	LAB:RegisterCallback("OnFlyoutButtonCreated", AB.LAB_FlyoutCreated)
 end
 
+do
+	if type(Bar.MicroButton_Create) == "function" then
+		hooksecurefunc(Bar, "MicroButton_Create", function(_, parent)
+			if not AB.MicroMenu then
+				AB.MicroMenu = parent
+			end
+		end)
+	end
+end
+
+function AB:SetupMicroMenu()
+	if not AB.MicroMenu then
+		return
+	end
+
+	AB.MicroMenu:HookScript("OnEnter", AB.Bar_OnEnter)
+	AB.MicroMenu:HookScript("OnLeave", AB.Bar_OnLeave)
+
+	for _, child in pairs({ AB.MicroMenu:GetChildren() }) do
+		if child ~= AB.MicroMenu.mover then
+			local button = child:GetChildren() or child
+			button:HookScript("OnEnter", AB.MicroButton_OnEnter)
+			button:HookScript("OnLeave", AB.MicroButton_OnLeave)
+		end
+	end
+end
+
 function AB:GlobalFade()
 	if not AB.db["GlobalFade"] then return end
 
@@ -305,6 +346,7 @@ function AB:GlobalFade()
 
 	AB:SetupActionBar()
 	AB:SetupLABFlyout()
+	AB:SetupMicroMenu()
 	AB:UpdateFaderSettings()
 	AB:UpdateFaderState()
 end
