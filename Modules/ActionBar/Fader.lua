@@ -26,9 +26,16 @@ local function DelayFadeOut(frame, timeToFade, startAlpha, endAlpha)
 	end
 end
 
+local blings = {}
 function AB:FadeBlingTexture(cooldown, alpha)
 	if not cooldown then return end
-	cooldown:SetBlingTexture(alpha > 0.5 and [[Interface\Cooldown\star4]] or P.Blank)
+
+	local texture = (alpha and alpha > 0.5) and 131010 or P.Blank
+	if blings[cooldown] ~= texture then
+		cooldown:SetBlingTexture(texture)
+
+		blings[cooldown] = texture
+	end
 end
 
 function AB:FadeBlings(alpha)
@@ -37,37 +44,72 @@ function AB:FadeBlings(alpha)
 	end
 end
 
-function AB:Button_OnEnter()
-	if not AB.fadeParent.mouseLock then
+function AB:Bar_OnEnter()
+	if self:GetParent() == AB.fadeParent and not AB.fadeParent.mouseLock then
 		ClearTimers(AB.fadeParent)
 		P:UIFrameFadeIn(AB.fadeParent, .2, AB.fadeParent:GetAlpha(), 1)
 		AB:FadeBlings(1)
 	end
+	AB.fadeParent.mouseover = true
 end
 
-function AB:Button_OnLeave()
-	if not AB.fadeParent.mouseLock then
+function AB:Bar_OnLeave()
+	if self:GetParent() == AB.fadeParent and not AB.fadeParent.mouseLock then
 		DelayFadeOut(AB.fadeParent, .38, AB.fadeParent:GetAlpha(), AB.db["Alpha"])
 		AB:FadeBlings(AB.db["Alpha"])
 	end
+	AB.fadeParent.mouseover = false
 end
 
-local function flyoutButtonAnchor(frame)
-	local parent = frame:GetParent()
-	local _, parentAnchorButton = parent:GetPoint()
-	if not AB.handledbuttons[parentAnchorButton] then return end
+function AB:Bar3R_OnEnter()
+	local bar = self:GetParent()
+	if self.mover and self.mover.isDisable == false then
+		AB.Bar_OnEnter(bar)
+	end
+end
 
-	return parentAnchorButton
+function AB:Bar3R_OnLeave()
+	local bar = self:GetParent()
+	if self.mover and self.mover.isDisable == false then
+		AB.Bar_OnLeave(bar)
+	end
+end
+
+function AB:Button_OnEnter()
+	local bar = self:GetParent()
+	AB.Bar_OnEnter(bar)
+end
+
+function AB:Button_OnLeave()
+	local bar = self:GetParent()
+	AB.Bar_OnLeave(bar)
+end
+
+local function SpellFlyoutAnchor(frame)
+	local _, anchorButton = frame:GetPoint()
+	if not AB.handledbuttons[anchorButton] then return end
+
+	return anchorButton:GetParent()
+end
+
+function AB:SpellFlyout_OnEnter()
+	local anchor = SpellFlyoutAnchor(self)
+	if anchor then AB.Bar_OnEnter(anchor) end
+end
+
+function AB:SpellFlyout_OnLeave()
+	local anchor = SpellFlyoutAnchor(self)
+	if anchor then AB.Bar_OnLeave(anchor) end
 end
 
 function AB:FlyoutButton_OnEnter()
-	local anchor = flyoutButtonAnchor(self)
-	if anchor then AB.Button_OnEnter(anchor) end
+	local bar = self:GetParent()
+	AB.SpellFlyout_OnEnter(bar)
 end
 
 function AB:FlyoutButton_OnLeave()
-	local anchor = flyoutButtonAnchor(self)
-	if anchor then AB.Button_OnLeave(anchor) end
+	local bar = self:GetParent()
+	AB.SpellFlyout_OnLeave(bar)
 end
 
 local function CanGlide()
@@ -90,14 +132,18 @@ function AB:FadeParent_OnEvent(event, arg)
 		(AB.db["Vehicle"] and UnitHasVehicleUI("player")) or
 		(AB.db["DynamicFlight"] and (canGlide or CanGlide()))
 	then
-		self.mouseLock = true
-		ClearTimers(AB.fadeParent)
-		P:UIFrameFadeIn(self, .2, self:GetAlpha(), 1)
-		AB:FadeBlings(1)
-	else
+		if not self.mouseLock then
+			self.mouseLock = true
+			ClearTimers(AB.fadeParent)
+			P:UIFrameFadeIn(self, .2, self:GetAlpha(), 1)
+			AB:FadeBlings(1)
+		end
+	elseif self.mouseLock then
 		self.mouseLock = false
-		DelayFadeOut(self, .38, self:GetAlpha(), AB.db["Alpha"])
-		AB:FadeBlings(AB.db["Alpha"])
+		if not self.mouseover then
+			DelayFadeOut(self, .38, self:GetAlpha(), AB.db["Alpha"])
+			AB:FadeBlings(AB.db["Alpha"])
+		end
 	end
 end
 
@@ -178,6 +224,35 @@ local NDui_ActionBar = {
 	["StanceBar"] = "NDui_ActionBarStance",
 }
 
+function AB:SetupActionBar()
+	for key, name in pairs(NDui_ActionBar) do
+		local bar = _G[name]
+		if bar then
+			if key == "StanceBar" then
+				local hitInset = C.Bars.margin / 2
+				for _, button in pairs(bar.buttons) do
+					button:SetHitRectInsets(-hitInset, -hitInset, -hitInset, -hitInset)
+				end
+			else
+				bar:HookScript("OnEnter", AB.Bar_OnEnter)
+				bar:HookScript("OnLeave", AB.Bar_OnLeave)
+
+				if bar.child then
+					bar.child:HookScript("OnEnter", AB.Bar3R_OnEnter)
+					bar.child:HookScript("OnLeave", AB.Bar3R_OnLeave)
+				end
+			end
+		end
+	end
+
+	for _, button in ipairs(Bar.buttons) do
+		button:HookScript("OnEnter", AB.Button_OnEnter)
+		button:HookScript("OnLeave", AB.Button_OnLeave)
+
+		AB.handledbuttons[button] = true
+	end
+end
+
 local function updateAfterCombat(event)
 	AB:UpdateFaderState()
 	B:UnregisterEvent(event, updateAfterCombat)
@@ -195,17 +270,6 @@ function AB:UpdateFaderState()
 			bar:SetParent(AB.db[key] and AB.fadeParent or UIParent)
 		end
 	end
-
-	if not AB.isHooked then
-		for _, button in ipairs(Bar.buttons) do
-			button:HookScript("OnEnter", AB.Button_OnEnter)
-			button:HookScript("OnLeave", AB.Button_OnLeave)
-
-			AB.handledbuttons[button] = true
-		end
-
-		AB.isHooked = true
-	end
 end
 
 function AB:SetupFlyoutButton(button)
@@ -222,20 +286,25 @@ function AB:SetupLABFlyout()
 		AB:SetupFlyoutButton(button)
 	end
 
+	if LAB.flyoutHandler then
+		LAB.flyoutHandler:HookScript("OnEnter", AB.SpellFlyout_OnEnter)
+		LAB.flyoutHandler:HookScript("OnLeave", AB.SpellFlyout_OnLeave)
+	end
+
 	LAB:RegisterCallback("OnFlyoutButtonCreated", AB.LAB_FlyoutCreated)
 end
 
 function AB:GlobalFade()
 	if not AB.db["GlobalFade"] then return end
 
-	AB.fadeParent = CreateFrame("Frame", "NDuiPlus_Fader", _G.UIParent, "SecureHandlerStateTemplate")
-	RegisterStateDriver(AB.fadeParent, "visibility", "[petbattle] hide; show")
+	AB.fadeParent = CreateFrame("Frame", "NDuiPlus_Fader", _G.UIParent)
 	AB.fadeParent:SetAlpha(AB.db["Alpha"])
 	AB.fadeParent:RegisterEvent("ACTIONBAR_SHOWGRID")
 	AB.fadeParent:RegisterEvent("ACTIONBAR_HIDEGRID")
 	AB.fadeParent:SetScript("OnEvent", AB.FadeParent_OnEvent)
 
+	AB:SetupActionBar()
+	AB:SetupLABFlyout()
 	AB:UpdateFaderSettings()
 	AB:UpdateFaderState()
-	AB:SetupLABFlyout()
 end
