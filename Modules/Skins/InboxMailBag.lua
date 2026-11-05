@@ -11,10 +11,11 @@ function S:InboxMailBag()
 	_G.MailFrame:HookScript("OnShow", function()
 		if styled then return end
 
-		local index = 3
-		while _G["MailFrameTab"..index] do
-			B.ReskinTab(_G["MailFrameTab"..index])
-			index = index + 1
+		for i = 3, _G.MailFrame.numTabs do
+			local tab = _G["MailFrameTab"..i]
+			B.ReskinTab(tab)
+			tab:ClearAllPoints()
+			tab:SetPoint("TOPLEFT", _G["MailFrameTab"..(i-1)], "TOPRIGHT", -15, 0)
 		end
 
 		styled = true
@@ -30,7 +31,7 @@ function S:InboxMailBag()
 	for i = 1, num do
 		local bu = _G["InboxMailbagFrameItem"..i]
 
-		bu:SetNormalTexture(0)
+		bu.NormalTexture:SetAlpha(0)
 		bu:SetPushedTexture(0)
 		bu:GetHighlightTexture():SetColorTexture(1, 1, 1, .25)
 		bu.bg = B.ReskinIcon(bu.icon)

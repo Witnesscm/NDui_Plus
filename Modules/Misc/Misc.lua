@@ -48,7 +48,7 @@ do
 
 		button:SetScript("OnClick", function()
 			for i = 1, GetNumTrainerServices() do
-				if select(3, GetTrainerServiceInfo(i)) == "available" then
+				if select(2, GetTrainerServiceInfo(i)) == "available" then
 					BuyTrainerService(i)
 				end
 			end
@@ -67,14 +67,12 @@ do
 
 		if C.db["Skins"]["BlizzardSkins"] then
 			B.Reskin(button)
-			if button.LeftSeparator then button.LeftSeparator:SetAlpha(0) end
-			if button.RightSeparator then button.RightSeparator:SetAlpha(0) end
 		end
 
 		hooksecurefunc("ClassTrainerFrame_Update",function()
 			local sum, total = 0, 0
 			for i = 1, GetNumTrainerServices() do
-				if select(3, GetTrainerServiceInfo(i)) == "available" then
+				if select(2, GetTrainerServiceInfo(i)) == "available" then
 					sum = sum + 1
 					total = total + GetTrainerServiceCost(i)
 				end
@@ -99,13 +97,7 @@ do
 			local text = self.Text:GetText()
 			local title = text and strmatch(text, titleString)
 			if title then
-				title = gsub(title, " %- ", ".")
-
-				if ChatEdit_GetActiveWindow() then
-					ChatEdit_InsertLink(title)
-				else
-					ChatFrame_OpenChat(title, SELECTED_DOCK_FRAME)
-				end
+				ChatFrameUtil.OpenChat(gsub(title, " %- ", "."), SELECTED_DOCK_FRAME)
 			end
 		end)
 
@@ -120,90 +112,14 @@ do
 	P:AddCallbackForAddon("Blizzard_DebugTools", M.Blizzard_TableInspector)
 end
 
--- Scale FlightMap
+-- remove <Right click for Frame Settings>
 do
-	function M:UpdateFlightMapScale()
-		if not C.db["Skins"]["BlizzardSkins"] then return end
-
-		local scale = M.db["FlightMapScale"]
-		_G.TAXI_MAP_WIDTH = 316*scale
-		_G.TAXI_MAP_HEIGHT = 352*scale
-		_G.TaxiFrame:SetSize(384 + (scale - 1)*316, 512 + (scale - 1)*352)
-		_G.TaxiMap:SetSize(_G.TAXI_MAP_WIDTH, _G.TAXI_MAP_HEIGHT)
-		_G.TaxiRouteMap:SetSize(_G.TAXI_MAP_WIDTH, _G.TAXI_MAP_HEIGHT)
-	end
-
-	M:RegisterMisc("FlightMapScale", M.UpdateFlightMapScale)
-end
-
--- Show/Hide Helm and Cloak
-do
-	local Settings = {
-		[1] = {
-			Point = {"BOTTOMLEFT", _G.CharacterHeadSlot, "BOTTOMRIGHT", 4, -2},
-			GetValue = function()
-				return ShowingHelm()
-			end,
-			SetValue = function(value)
-				ShowHelm(value)
-			end,
-			Tooltip = SHOW_HELM
-		},
-		[2] = {
-			Point = {"BOTTOMLEFT", _G.CharacterBackSlot, "BOTTOMRIGHT", 4, -2},
-			GetValue = function()
-				return ShowingCloak()
-			end,
-			SetValue = function(value)
-				ShowCloak(value)
-			end,
-			Tooltip = SHOW_CLOAK
-		}
-	}
-
-	local CheckBoxes = {}
-	local function IsMouseOverAnyBox()
-		for _, box in ipairs(CheckBoxes) do
-			if box:IsMouseOver() then
-				return true
-			end
-		end
-		return false
-	end
-
-	local function Model_OnEnter()
-		for _, box in ipairs(CheckBoxes) do
-			P:UIFrameFadeIn(box, 0.5, box:GetAlpha(), 1)
+	function UnitFrame_UpdateTooltip(self)
+		GameTooltip_SetDefaultAnchor(GameTooltip, self)
+		if GameTooltip:SetUnit(self.unit, self.hideStatusOnTooltip) then
+			self.UpdateTooltip = UnitFrame_UpdateTooltip
+		else
+			self.UpdateTooltip = nil
 		end
 	end
-
-	local function Model_OnLeave()
-		if not IsMouseOverAnyBox() then
-			for _, box in ipairs(CheckBoxes) do
-				P:UIFrameFadeOut(box, 0.5, box:GetAlpha(), 0)
-			end
-		end
-	end
-
-	function M:GearAppearanceToggle()
-		if not M.db["GearAppearanceToggle"] then return end
-
-		for _, setting in ipairs(Settings) do
-			local box = B.CreateCheckBox(_G.PaperDollItemsFrame)
-			box:SetSize(22, 22)
-			box:SetPoint(unpack(setting.Point))
-			box:SetChecked(setting.GetValue())
-			box:SetScript("OnClick", function(self)
-				setting.SetValue(self:GetChecked())
-			end)
-			B.AddTooltip(box, "ANCHOR_RIGHT", setting.Tooltip, "info")
-			box:SetAlpha(0)
-			tinsert(CheckBoxes, box)
-		end
-
-		_G.CharacterModelFrame:HookScript("OnEnter", Model_OnEnter)
-		_G.CharacterModelFrame:HookScript("OnLeave", Model_OnLeave)
-	end
-
-	M:RegisterMisc("GearAppearanceToggle", M.GearAppearanceToggle)
 end

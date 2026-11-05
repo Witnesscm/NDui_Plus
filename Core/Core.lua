@@ -9,6 +9,7 @@ local modules, initQueue, addonsToLoad, addonsToLoadEarly = {}, {}, {}, {}
 
 P.DefaultSettings = {
 	Debug = false,
+	DBVersion = 0,
 	Changelog = {
 		Version = "",
 	},
@@ -16,6 +17,10 @@ P.DefaultSettings = {
 		Enable = false,
 		Texture = "NDui_Plus",
 		Index = 0,
+	},
+	RoleStyle = {
+		Enable = false,
+		Index = 1,
 	},
 	ActionBar = {
 		FinisherGlow = true,
@@ -31,12 +36,14 @@ P.DefaultSettings = {
 		Bar3 = false,
 		Bar4 = false,
 		Bar5 = false,
-		CustomBar = false,
+		Bar6 = false,
+		Bar7 = false,
+		Bar8 = false,
 		PetBar = false,
 		StanceBar = false,
 		AspectBar = false,
+		MicroMenu = false,
 		MageBarFade = false,
-		RuneBarFade = false,
 		MageBar = true,
 		MageBarVertical = false,
 		MageBarSize = 34,
@@ -45,9 +52,6 @@ P.DefaultSettings = {
 		MageBarFood = false,
 		MageBarWater = false,
 		MageBarGem = false,
-		RuneBar = true,
-		RuneBarVertical = false,
-		RuneBarSize = 34,
 	},
 	Bags = {
 		OfflineBag = true,
@@ -66,11 +70,17 @@ P.DefaultSettings = {
 		Smooth = .4,
 		MinAlpha = .1,
 		MaxAlpha = 1,
+		RolePos = false,
+		RolePoint = 1,
+		RoleXOffset = 0,
+		RoleYOffset = 1,
+		RoleSize = 14,
 	},
 	Chat = {
-		Emote = false,
+		Emote = true,
 		ClassColor = true,
 		RaidIndex = false,
+		Role = false,
 		Icon = true,
 		ChatHide = true,
 		AutoShow = false,
@@ -92,8 +102,8 @@ P.DefaultSettings = {
 		Height = 28,
 		Style = 2,
 		Direction = 2,
-		ItemLevel = false,
-		ItemQuality = false,
+		ItemLevel = true,
+		ItemQuality = true,
 	},
 	AFK = {
 		Enable = true,
@@ -127,21 +137,12 @@ P.DefaultSettings = {
 		WhisperPop = true,
 		WIM = true,
 		HideToggle = false,
-		CategoryArrow = false,
 	},
 	Misc = {
-		ExtTrainerUI = true,
-		GuildExpand = false,
-		ExtGuildUI = true,
-		ExtTalentUI = true,
-		TalentExpand = true,
-		ExtVendorUI = true,
-		ExtMacroUI =  false,
 		IconSearch = true,
-		FlightMapScale = 1.2,
+		ExtVendorUI = true,
+		ExtMacroUI = true,
 		TrainAll = true,
-		EngravingUI = true,
-		GearAppearanceToggle = true,
 	},
 }
 
@@ -181,6 +182,35 @@ function P:InitialSettings(source, target, fullClean)
 			end
 		end
 	end
+end
+
+function P:MigrateDB(oldDB, newDB, keys)
+	if not oldDB then return end
+
+	for oldKey, newKey in pairs(keys) do
+		if oldDB[oldKey] ~= nil then
+			newDB[newKey] = oldDB[oldKey]
+		end
+	end
+end
+
+function P:UpdateDB()
+	local DBVersion = NDuiPlusDB.DBVersion or 0
+
+	NDuiPlusDB.DBVersion = P.DBVersion
+end
+
+function P:CheckConflictingFeature(targetDB, targetKey, myDB, myKey)
+	if targetDB[targetKey] and myDB[myKey] then
+		targetDB[targetKey] = false
+		return true
+	end
+
+	return false
+end
+
+function P:CheckCompatibility()
+
 end
 
 function P.IsRetail()
@@ -393,8 +423,10 @@ loader:RegisterEvent("PLAYER_LOGIN")
 loader:SetScript("OnEvent", function(self, event, addon)
 	if event == "ADDON_LOADED" then
 		if addon == "NDui_Plus" then
+			P:UpdateDB()
 			P:InitialSettings(P.DefaultSettings, NDuiPlusDB, true)
 			P:InitialSettings(P.CharacterSettings, NDuiPlusCharDB)
+			P:CheckCompatibility()
 
 			for _, module in next, initQueue do
 				module.db = NDuiPlusDB[module.name]

@@ -125,7 +125,7 @@ function G:SetupChangelog(parent)
 	fs:SetPoint("TOPLEFT", 10, -10)
 	fs:SetPoint("TOPRIGHT", -10, -10)
 	fs:SetJustifyH("LEFT")
-	fs:SetSpacing(10) 
+	fs:SetSpacing(10)
 	fs:SetText(P.Changelog)
 end
 
@@ -133,7 +133,9 @@ local function updateABFaderAlpha()
 	local AB = P:GetModule("ActionBar")
 	if not AB.fadeParent then return end
 
-	AB.fadeParent:SetAlpha(AB.db["Alpha"])
+	if not AB.fadeParent.mouseLock then
+		AB.fadeParent:SetAlpha(AB.db["Alpha"])
+	end
 end
 
 local function updateABFaderSettings()
@@ -141,7 +143,6 @@ local function updateABFaderSettings()
 	if not AB.fadeParent then return end
 
 	AB:UpdateFaderSettings()
-	AB.fadeParent:SetAlpha(AB.db["Alpha"])
 end
 
 function G:SetupABFader(parent)
@@ -160,10 +161,10 @@ function G:SetupABFader(parent)
 	createOptionTitle(frame, L["Fade Condition"], -offset)
 
 	local options = {
-		[1] = {"Combat", L["Combat"]},
-		[2] = {"Target", L["Target"]},
-		[3] = {"Health", L["Health"]},
-		[4] = {"Casting", L["Casting"]},
+		{"Combat", L["Combat"]},
+		{"Target", L["Target"]},
+		-- {"Health", L["Health"]},
+		{"Casting", L["Casting"]},
 	}
 
 	offset = offset + 40
@@ -195,11 +196,11 @@ function G:SetupMageBar(parent)
 	local offset = 20
 
 	local options = {
-		[1] = {"MageBarTeleport", L["Teleport"]},
-		[2] = {"MageBarPortal", L["Portal"]},
-		[3] = {"MageBarFood", L["Food"]},
-		[4] = {"MageBarWater", L["Water"]},
-		[5] = {"MageBarGem", L["Mana Gem"]},
+		{"MageBarTeleport", L["Teleport"]},
+		{"MageBarPortal", L["Portal"]},
+		{"MageBarFood", L["Food"]},
+		{"MageBarWater", L["Water"]},
+		{"MageBarGem", L["Mana Gem"]},
 	}
 
 	for _, option in ipairs(options) do
@@ -237,12 +238,12 @@ function G:SetupUFsFader(parent)
 	createOptionTitle(frame, L["Fade Condition"], -offset)
 
 	local options = {
-		[1] = {"Hover", L["Hover"]},
-		[2] = {"Combat", L["Combat"]},
-		[3] = {"Target", L["Target"]},
-		[4] = {"Focus", L["Focus"]},
-		[5] = {"Health", L["Health"]},
-		[6] = {"Casting", L["Casting"]},
+		{"Hover", L["Hover"]},
+		{"Combat", L["Combat"]},
+		{"Target", L["Target"]},
+		{"Focus", L["Focus"]},
+		-- {"Health", L["Health"]},
+		{"Casting", L["Casting"]},
 	}
 
 	offset = offset + 40
@@ -261,6 +262,25 @@ function G:SetupUFsFader(parent)
 	local blank = CreateFrame("Frame", nil, frame)
 	blank:SetSize(20, 20)
 	blank:SetPoint("TOPLEFT", 20, -offset)
+end
+
+local function updateUFsRole()
+	P:GetModule("UnitFrames"):UpdateRoleIcons()
+end
+
+function G:SetupUFsRole(parent)
+	local guiName = "NDuiPlusGUI_UFsRole"
+	toggleExtraGUI(guiName)
+	if extraGUIs[guiName] then return end
+
+	local panel = createExtraGUI(parent, guiName, L["Role Icon Settings"].."*", true)
+	local frame = panel.scroll.child
+
+	local offset = -10
+	createOptionDropDown(frame, -offset-60, L["Point"], "UnitFrames", "RolePoint", G.Points, updateUFsRole)
+	createOptionSlider(frame, L["X Offset"], -100, 100, 1, 20, -offset-130, "UnitFrames", "RoleXOffset", updateUFsRole)
+	createOptionSlider(frame, L["Y Offset"], -100, 100, 1, 20, -offset-200, "UnitFrames", "RoleYOffset", updateUFsRole)
+	createOptionSlider(frame, L["Icon Size"], 8, 50, 1, 20, -offset-270, "UnitFrames", "RoleSize", updateUFsRole)
 end
 
 local function updateChatAutoShow()

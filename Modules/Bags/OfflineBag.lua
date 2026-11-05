@@ -253,7 +253,7 @@ end
 
 local function CreateItemButton(bag, slot)
 	local name = GenerateName()
-	local button = CreateFrame("Button", name, nil, "ItemButtonTemplate")
+	local button = CreateFrame("ItemButton", name)
 	local iconSize = module.db["IconSize"]
 
 	button:SetNormalTexture(0)
@@ -318,10 +318,9 @@ end
 
 local function UpdateName()
 	local ownerDB = getOwnerDB(Owner)
-	local class = ownerDB.class
-	local r, g, b = DB.ClassColors[class].r, DB.ClassColors[class].g, DB.ClassColors[class].b
+	local color = RAID_CLASS_COLORS[ownerDB.class or "PRIEST"]
 	bagFrame.Name:SetText(Owner)
-	bagFrame.Name:SetTextColor(r, g, b)
+	bagFrame.Name:SetTextColor(color.r, color.g, color.b)
 end
 
 local function FreeAllButtons()

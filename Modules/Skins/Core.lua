@@ -54,10 +54,3 @@ function S:OnLogin()
 		self.nonAddonsToLoad[name] = nil
 	end
 end
-
--- Reskin Blizzard UIs
-tinsert(C.defaultThemes, function()
-	if _G.InterfaceOptionsFrameAddOnsListScrollBar then
-		B.ReskinScroll(_G.InterfaceOptionsFrameAddOnsListScrollBar)
-	end
-end)

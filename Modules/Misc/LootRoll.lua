@@ -24,6 +24,7 @@ local GameTooltip_ShowCompareItem = GameTooltip_ShowCompareItem
 local ITEM_QUALITY_COLORS = ITEM_QUALITY_COLORS
 local GREED, NEED, PASS = GREED, NEED, PASS
 local ROLL_DISENCHANT = ROLL_DISENCHANT
+local TRANSMOGRIFICATION = TRANSMOGRIFICATION
 
 local enableDisenchant = false
 
@@ -37,7 +38,9 @@ local GenerateName = P.NameGenerator(addonName.."_LootRoll")
 local rolltypes = {[1] = "need", [2] = "greed", [3] = "disenchant", [4] = "transmog", [0] = "pass"}
 
 local function ClickRoll(button)
-	RollOnLoot(button.parent.rollID, button.rolltype)
+	if button.parent.rollID and button.rolltype then
+		RollOnLoot(button.parent.rollID, button.rolltype)
+	end
 end
 
 local function SetTip(button)
@@ -45,9 +48,7 @@ local function SetTip(button)
 	GameTooltip:AddLine(button.tiptext)
 
 	local rollID = button.parent.rollID
-	if not rollID then return end
-
-	local rolls = cachedRolls[rollID] and cachedRolls[rollID][button.rolltype]
+	local rolls = rollID and cachedRolls[rollID] and cachedRolls[rollID][button.rolltype]
 	if rolls then
 		for _, rollerInfo in next, rolls do
 			local playerName, className = unpack(rollerInfo)
@@ -111,9 +112,10 @@ end
 
 local iconCoords = {
 	[0] = {-0.05, 1.05, -0.05, 1.05}, -- pass
-	[1] = {0, 1, -0.05, 0.95}, -- need
-	[2] = {0, 1, -0.025, 0.85}, -- greed
-	[3] = {0, 1, -0.05, 0.95}, -- disenchant
+	[1] = {0.025, 1.025, -0.05, 0.95}, -- need
+	[2] = {0, 1, 0.05, 0.95}, -- greed
+	[3] = {0, 1, 0, 1},  -- disenchant
+	[4] = {0, 1, 0, 1}, -- transmog
 }
 
 local function RollTexCoords(button, icon, minX, maxX, minY, maxY)
@@ -230,10 +232,11 @@ function LR:CreateRollBar(name)
 	status.parent = bar
 	bar.status = status
 
-	bar.need = CreateRollButton(bar, [[Interface\Buttons\UI-GroupLoot-Dice]], 1, NEED, {"LEFT", bar.button, "RIGHT", 6, 0})
-	bar.greed = CreateRollButton(bar, [[Interface\Buttons\UI-GroupLoot-Coin]], 2, GREED, {"LEFT", bar.need, "RIGHT", 3, 0})
-	bar.disenchant = enableDisenchant and CreateRollButton(bar, [[Interface\Buttons\UI-GroupLoot-DE]], 3, ROLL_DISENCHANT, {"LEFT", bar.greed, "RIGHT", 3, 0})
-	bar.pass = CreateRollButton(bar, [[Interface\Buttons\UI-GroupLoot-Pass]], 0, PASS, {"LEFT", bar.disenchant or bar.greed, "RIGHT", 3, 0})
+	bar.need = CreateRollButton(bar, [[lootroll-toast-icon-need]], 1, NEED, {"LEFT", bar.button, "RIGHT", 6, 0}, true)
+	bar.transmog = CreateRollButton(bar, [[lootroll-toast-icon-transmog]], 4, TRANSMOGRIFICATION, {"LEFT", bar.need, "RIGHT", 3, 0}, true)
+	bar.greed = CreateRollButton(bar, [[lootroll-toast-icon-greed]], 2, GREED, {"LEFT", bar.need, "RIGHT", 3, 0}, true)
+	bar.disenchant = enableDisenchant and CreateRollButton(bar, [[lootroll-toast-icon-disenchant]], 3, ROLL_DISENCHANT, {"LEFT", bar.greed, "RIGHT", 3, 0}, true)
+	bar.pass = CreateRollButton(bar, [[lootroll-toast-icon-pass]], 0, PASS, {"LEFT", bar.disenchant or bar.greed, "RIGHT", 3, 0}, true)
 
 	local bind = bar:CreateFontString()
 	bind:SetPoint("LEFT", bar.pass, "RIGHT", 3, 0)
@@ -273,15 +276,8 @@ local function GetFrame()
 	return bar
 end
 
-local function GetItemLevel(link)
-	local name, _, rarity, level, _, _, _, _, _, _, _, classID = C_Item.GetItemInfo(link)
-	if name and level and rarity > 1 and (classID == Enum.ItemClass.Weapon or classID == Enum.ItemClass.Armor) then
-		return level
-	end
-end
-
 function LR:LootRoll_Start(rollID, rollTime)
-	local texture, name, count, quality, bop, canNeed, canGreed, canDisenchant, reasonNeed, reasonGreed, reasonDisenchant, deSkillRequired = GetLootRollItemInfo(rollID)
+	local texture, name, count, quality, bop, canNeed, canGreed, canDisenchant, reasonNeed, reasonGreed, reasonDisenchant, deSkillRequired, canTransmog = GetLootRollItemInfo(rollID)
 
 	if not name then
 		for _, rollBar in next, LR.RollBars do
@@ -294,7 +290,7 @@ function LR:LootRoll_Start(rollID, rollTime)
 	end
 
 	local link = GetLootRollItemLink(rollID)
-	local level = GetItemLevel(link)
+	local level = B.GetItemLevel(link)
 	local color = ITEM_QUALITY_COLORS[quality]
 
 	local bar = GetFrame()
@@ -315,21 +311,26 @@ function LR:LootRoll_Start(rollID, rollTime)
 		bar.button.bg:SetBackdropBorderColor(0, 0, 0)
 	end
 
-	bar.need.text:SetText(0)
+	bar.need.text:SetText("")
 	bar.need:SetEnabled(canNeed)
 	bar.need.tiptext = canNeed and NEED or _G["LOOT_ROLL_INELIGIBLE_REASON"..reasonNeed]
 
-	bar.greed.text:SetText(0)
+	bar.transmog.text:SetText("")
+	bar.transmog:SetShown(not not canTransmog)
+	bar.transmog:SetEnabled(canTransmog)
+
+	bar.greed.text:SetText("")
+	bar.greed:SetShown(not canTransmog)
 	bar.greed:SetEnabled(canGreed)
 	bar.greed.tiptext = canGreed and GREED or _G["LOOT_ROLL_INELIGIBLE_REASON"..reasonGreed]
 
 	if bar.disenchant then
-		bar.disenchant.text:SetText(0)
+		bar.disenchant.text:SetText("")
 		bar.disenchant:SetEnabled(canDisenchant)
-		bar.disenchant.tiptext = canDisenchant and ROLL_DISENCHANT or _G["LOOT_ROLL_INELIGIBLE_REASON"..reasonDisenchant] and format(_G["LOOT_ROLL_INELIGIBLE_REASON"..reasonDisenchant], deSkillRequired)
+		bar.disenchant.tiptext = canDisenchant and ROLL_DISENCHANT or format(_G["LOOT_ROLL_INELIGIBLE_REASON"..reasonDisenchant], deSkillRequired)
 	end
 
-	bar.pass.text:SetText(0)
+	bar.pass.text:SetText("")
 
 	bar.fsbind:SetText(bop and "BoP" or "BoE")
 	bar.fsbind:SetVertexColor(bop and 1 or .3, bop and .3 or 1, bop and .1 or .3)
@@ -345,30 +346,6 @@ function LR:LootRoll_Start(rollID, rollTime)
 	if cachedInfo then
 		for rollType in pairs(cachedInfo) do
 			bar[rolltypes[rollType]].text:SetText(#cachedInfo[rollType])
-		end
-	end
-end
-
-local function GetRollBarByID(rollID)
-	for _, bar in next, LR.RollBars do
-		if bar.rollID == rollID then
-			return bar
-		end
-	end
-end
-
-function LR:LootRoll_Update(itemIdx, playerIdx)
-	local rollID = C_LootHistory.GetItem(itemIdx)
-	local name, class, rollType = C_LootHistory.GetPlayerInfo(itemIdx, playerIdx)
-
-	if rollID and name and rollType then
-		cachedRolls[rollID] = cachedRolls[rollID] or {}
-		cachedRolls[rollID][rollType] = cachedRolls[rollID][rollType] or {}
-		tinsert(cachedRolls[rollID][rollType], {name, class})
-
-		local bar = GetRollBarByID(rollID)
-		if bar then
-			bar[rolltypes[rollType]].text:SetText(#cachedRolls[rollID][rollType])
 		end
 	end
 end
@@ -390,11 +367,10 @@ function LR:OnLogin()
 	B.Mover(parentFrame, L["teksLoot LootRoll"], "teksLoot", {"TOP", UIParent, 0, -200})
 	fontSize = LR.db["Height"] / 2
 
-	B:RegisterEvent("LOOT_HISTORY_ROLL_CHANGED", self.LootRoll_Update)
 	B:RegisterEvent("START_LOOT_ROLL", self.LootRoll_Start)
 
-	_G.UIParent:UnregisterEvent("START_LOOT_ROLL")
-	_G.UIParent:UnregisterEvent("CANCEL_LOOT_ROLL")
+	GameEvent.UnregisterInternalEvent("START_LOOT_ROLL")
+	GameEvent.UnregisterInternalEvent("CANCEL_LOOT_ROLL")
 end
 
 local testFrame
@@ -419,12 +395,15 @@ function LR:LootRollTest()
 	testFrame:Show()
 	testFrame:SetPoint("TOP", parentFrame, "TOP")
 	testFrame.need:SetScript("OnClick", OnClick_Hide)
+	testFrame.transmog:SetScript("OnClick", OnClick_Hide)
 	testFrame.greed:SetScript("OnClick", OnClick_Hide)
+	testFrame.greed:Hide()
 	if testFrame.disenchant then testFrame.disenchant:SetScript("OnClick", OnClick_Hide) end
 	testFrame.pass:SetScript("OnClick", OnClick_Hide)
 
-	local itemID = 17103
+	local itemID = 19019
 	local bop = 1
+	local canTransmog = true
 	local item = Item:CreateFromItemID(itemID)
 	item:ContinueOnItemLoad(function()
 		local name, link, quality, itemLevel, _, _, _, _, _, icon = C_Item.GetItemInfo(itemID)
@@ -434,6 +413,9 @@ function LR:LootRollTest()
 		testFrame.fsloot:SetText(name)
 		testFrame.fsbind:SetText(bop and "BoP" or "BoE")
 		testFrame.fsbind:SetVertexColor(bop and 1 or .3, bop and .3 or 1, bop and .1 or .3)
+
+		testFrame.transmog:SetShown(not not canTransmog)
+		testFrame.greed:SetShown(not canTransmog)
 
 		testFrame.status:SetStatusBarColor(color.r, color.g, color.b, .7)
 		testFrame.status:SetMinMaxValues(0, 100)
@@ -457,7 +439,6 @@ function LR:UpdateLootRollTest()
 
 	if not testFrame then
 		LR:LootRollTest()
-		return
 	end
 
 	local width, height = LR.db["Width"], LR.db["Height"]
@@ -467,12 +448,14 @@ function LR:UpdateLootRollTest()
 	testFrame.fsbind:SetFont(DB.Font[1], height / 2, DB.Font[3])
 	testFrame.fsloot:SetFont(DB.Font[1], height / 2, DB.Font[3])
 	testFrame.need:SetSize(height-4, height-4)
+	testFrame.transmog:SetSize(height-4, height-4)
 	testFrame.greed:SetSize(height-4, height-4)
 	if testFrame.disenchant then testFrame.disenchant:SetSize(height-4, height-4) end
 	testFrame.pass:SetSize(height-4, height-4)
 	testFrame.status:SetPoint("TOPLEFT", C.mult, -(LR.db["Style"] == 2 and testFrame:GetHeight() / 1.6 or C.mult))
 
-	local itemLevel, color = testFrame.button.itemLevel, testFrame.button.color
+	local itemLevel = testFrame.button.itemLevel or 29
+	local color = testFrame.button.color or DB.QualityColors[Enum.ItemQuality.Epic]
 	testFrame.button.ilvl:SetText(LR.db["ItemLevel"] and itemLevel or "")
 	testFrame.button.ilvl:SetFont(DB.Font[1], height / 2 - 2, DB.Font[3])
 

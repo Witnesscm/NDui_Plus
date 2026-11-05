@@ -4,14 +4,13 @@ local AB = P:GetModule("ActionBar")
 
 local ipairs, tinsert, tremove, sort  = ipairs, table.insert, table.remove, table.sort
 local CooldownFrame_Set = CooldownFrame_Set
-local GetSpellInfo, GetSpellCount, GetSpellCooldown, IsUsableSpell = GetSpellInfo, GetSpellCount, GetSpellCooldown, IsUsableSpell
 
 local margin, padding = C.Bars.margin, C.Bars.padding
 
 local mageSpellData = {
 	[1] = {
 		name = "Teleport",
-		spell = {3561, 3562, 3567, 3563, 3565, 3566, 32271, 32272, 49359, 49358, 33690, 35715}
+		spell = {3561, 3562, 3567, 3563, 3565, 3566, 32271, 32272, 49359, 49358, 33690, 35715, 1297659}
 	},
 	[2] = {
 		name = "Portal",
@@ -73,7 +72,7 @@ function AB:MageButton_UpdateSpell(spellID)
 end
 
 function AB:MageButton_UpdateCount()
-	local count = GetSpellCount(self.spellID)
+	local count = C_Spell.GetSpellCastCount(self.spellID)
 	if count and count > 0 then
 		self.Count:SetText(count)
 	else
@@ -82,7 +81,11 @@ function AB:MageButton_UpdateCount()
 end
 
 function AB:MageButton_UpdateCooldown()
-	local start, duration, enabled = GetSpellCooldown(self.spellID)
+	local start, duration, enabled
+	local cooldownInfo = C_Spell.GetSpellCooldown(self.spellID)
+	if cooldownInfo then
+		start, duration, enabled = cooldownInfo.startTime, cooldownInfo.duration, cooldownInfo.isEnabled
+	end
 	if (start and duration and enabled and start > 0 and duration > 0) then
 		CooldownFrame_Set(self.cooldown, start, duration, enabled)
 		self.cooldown:SetSwipeColor(0, 0, 0);
@@ -94,7 +97,7 @@ function AB:MageButton_UpdateCooldown()
 end
 
 function AB:MageButton_UpdateUsable()
-	local isUsable, notEnoughMana = IsUsableSpell(self.spellID)
+	local isUsable, notEnoughMana = C_Spell.IsSpellUsable(self.spellID)
 	if isUsable then
 		self.icon:SetVertexColor(1.0, 1.0, 1.0)
 	elseif notEnoughMana then

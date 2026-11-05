@@ -164,7 +164,6 @@ local function ReskinBindingFrame(self)
 	local CatalogWindow = self.CatalogWindow and self.CatalogWindow.frame
 	if CatalogWindow then
 		B.StripTextures(CatalogWindow)
-		S:Proxy("StripTextures", CatalogWindow.TitleContainer)
 		B.SetBD(CatalogWindow)
 		CatalogWindow:ClearAllPoints()
 		CatalogWindow:SetPoint("LEFT", frame, "RIGHT", 2, 0)
@@ -193,4 +192,4 @@ function S:Clique()
 	P:SecureHook(config, "InitializeLayout", ReskinBindingFrame)
 end
 
-S:RegisterSkin("Clique", S.Clique, true)
+S:RegisterSkin("Clique", S.Clique)

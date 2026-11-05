@@ -42,3 +42,68 @@ if B.SetupUIScale then
 		end
 	end)
 end
+
+-- Role
+P.RoleList = {
+	[1] = {
+		TANK = Texture.."LynUI\\Tank",
+		HEALER = Texture.."LynUI\\Healer",
+		DAMAGER = Texture.."LynUI\\DPS",
+	},
+	[2] = {
+		TANK = Texture.."ElvUI\\Tank",
+		HEALER = Texture.."ElvUI\\Healer",
+		DAMAGER = Texture.."ElvUI\\DPS",
+	},
+	[3] = {
+		TANK = Texture.."ToxiUI\\WhiteTank",
+		HEALER = Texture.."ToxiUI\\WhiteHeal",
+		DAMAGER = Texture.."ToxiUI\\WhiteDPS",
+	},
+	[4] = {
+		TANK = Texture.."ToxiUI\\NewTank",
+		HEALER = Texture.."ToxiUI\\NewHeal",
+		DAMAGER = Texture.."ToxiUI\\NewDPS",
+	},
+	[5] = {
+		TANK = Texture.."ToxiUI\\StylizedTank",
+		HEALER = Texture.."ToxiUI\\StylizedHeal",
+		DAMAGER = Texture.."ToxiUI\\StylizedDPS",
+	}
+}
+
+function P:BuildRoleTable()
+	local roleTable = {}
+	for _, icons in ipairs(P.RoleList) do
+		local str = ""
+		str = str .. P.TextureString(icons.TANK) .. " "
+		str = str .. P.TextureString(icons.HEALER) .. " "
+		str = str .. P.TextureString(icons.DAMAGER) .. " "
+		tinsert(roleTable, str)
+	end
+
+	return roleTable
+end
+
+local roleCache = {}
+do
+	hooksecurefunc(B, "ReskinSmallRole", function(icon, role)
+		roleCache[icon] = role
+	end)
+end
+
+local function ReskinSmallRole(icon, role)
+	if role == "DPS" then role = "DAMAGER" end
+	icon:SetTexCoord(0, 1, 0, 1)
+	icon:SetTexture(P.RoleList[NDuiPlusDB["RoleStyle"]["Index"]][role])
+end
+
+B:RegisterEvent("PLAYER_LOGIN", function()
+	if not NDuiPlusDB["RoleStyle"]["Enable"] then return end
+
+	for icon, role in pairs(roleCache) do
+		ReskinSmallRole(icon, role)
+	end
+
+	B.ReskinSmallRole = ReskinSmallRole
+end)

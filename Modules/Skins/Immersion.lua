@@ -165,11 +165,6 @@ function S:Immersion()
 		local honorFrame = rewardsFrame.HonorFrame
 		if honorFrame then
 			reskinItemButton(honorFrame)
-
-			-- Classic honor icon
-			local icon = honorFrame.Icon
-			icon:SetTexture(format("Interface\\TargetingFrame\\UI-PVP-%s", (DB.MyFaction or "Horde")))
-			icon:SetTexCoord(0, .66, 0, .66)
 		end
 
 		-- Title Rewards

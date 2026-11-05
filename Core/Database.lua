@@ -2,7 +2,8 @@ local addonName, ns = ...
 local B, C, L, DB, P = unpack(ns)
 
 P.Version = C_AddOns.GetAddOnMetadata(addonName, "Version")
-P.SupportVersion = "1.46.2"
+P.SupportVersion = "0.0.6"
+P.DBVersion = 0
 P.isNewPatch = select(4, GetBuildInfo()) >= 11504 -- 1.15.4
 
 -- Colors

@@ -49,6 +49,12 @@ if IsMacClient() then
 	printKeys[_G.KEY_PRINTSCREEN_MAC] = true
 end
 
+function AFK:UnitIsAFK(unit)
+	local afk = UnitIsAFK(unit)
+
+	return not issecretvalue(afk) and afk or nil
+end
+
 function AFK:UpdateTimer()
 	local today = C_DateAndTime_GetCurrentCalendarTime()
 	local w, m, d, y = today.weekday, today.month, today.monthDay, today.year
@@ -143,7 +149,7 @@ function AFK.OnEvent(event, ...)
 		return
 	end
 
-	AFK:SetAFK(UnitIsAFK("player"))
+	AFK:SetAFK(AFK:UnitIsAFK("player"))
 end
 
 function AFK:Toggle()

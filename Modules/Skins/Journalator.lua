@@ -87,13 +87,13 @@ local function reskinListHeader(frame)
 end
 
 local function reskinTabDisplay(self)
-	if self.ResultsListingInset then self.ResultsListingInset:SetAlpha(0) end
+	S:Proxy("StripTextures", self.ResultsListingInset)
 	reskinListHeader(self.ResultsListing)
 end
 
 local function reskinInfoDisplay(self)
 	if not self.styled then
-		if self.Inset then self.Inset:SetAlpha(0) end
+		S:Proxy("StripTextures", self.Inset)
 		B.CreateBDFrame(self, .25)
 		S:Proxy("Reskin", self.OptionsButton)
 

@@ -3,5 +3,5 @@
 	<Script file="ChatEmote.lua"/>
 	<Script file="ChatHide.lua"/>
 	<Script file="ChatLink.lua"/>
-	<Script file="ChatRaidIndex.lua"/>
+	<Script file="LFGRoleFlags.lua"/>
 </Ui>

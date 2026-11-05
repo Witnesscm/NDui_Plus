@@ -27,6 +27,11 @@ function M:ExtVendor_UpdateMerchantPositions()
 			end
 		end
 	end
+
+	if not CanMerchantRepair() then
+		_G.MerchantSellAllJunkButton:ClearAllPoints()
+		_G.MerchantSellAllJunkButton:SetPoint("RIGHT", _G.MerchantBuyBackItem, "LEFT", -36, 0)
+	end
 end
 
 function M:ExtVendor_UpdateBuybackPositions()
@@ -51,7 +56,8 @@ function M:ExtVendor_UpdateBuybackPositions()
 end
 
 function M:ExtVendorUI()
-	if C_AddOns.IsAddOnLoaded("ExtVendorUI_Classic") then return end
+	if C_AddOns.IsAddOnLoaded("Krowi_ExtendedVendorUI") then return end
+	if C_AddOns.IsAddOnLoaded("CompactVendor") then return end
 	if not M.db["ExtVendorUI"] then return end
 
 	_G.MERCHANT_ITEMS_PER_PAGE = 20
@@ -65,7 +71,7 @@ function M:ExtVendorUI()
 	end
 
 	_G.MerchantBuyBackItem:ClearAllPoints()
-	_G.MerchantBuyBackItem:SetPoint("TOPLEFT", _G.MerchantItem10, "BOTTOMLEFT", -14, -20)
+	_G.MerchantBuyBackItem:SetPoint("TOPLEFT", _G.MerchantItem10, "BOTTOMLEFT", 10, -20)
 	_G.MerchantPrevPageButton:ClearAllPoints()
 	_G.MerchantPrevPageButton:SetPoint("CENTER", _G.MerchantFrame, "BOTTOM", 30, 55)
 	_G.MerchantPageText:ClearAllPoints()

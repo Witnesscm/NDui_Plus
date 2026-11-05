@@ -54,16 +54,34 @@ do
 	end
 end
 
+-- Elements
+UF.smoothbars = {}
+function UF:SmoothBar(bar)
+	bar.smoothing = NDuiADB["SmoothBars"] and Enum.StatusBarInterpolation.ExponentialEaseOut or Enum.StatusBarInterpolation.Immediate
+	UF.smoothbars[bar] = true
+end
+
 local function UpdateHealthColorByIndex(health, index)
-	health.colorClass = (index == 2)
-	health.colorTapping = (index == 2)
-	health.colorReaction = (index == 2)
-	health.colorDisconnected = (index == 2)
+	local useClassGradient = index == 5
+	health.colorClass = (index == 2) or useClassGradient
+	health.colorReaction = (index == 2) or useClassGradient
+	health:SetStatusBarTexture(useClassGradient and DB.classGradientTex or DB.normTex)
+	if health.SetColorTapping then
+		health:SetColorTapping(index == 2)
+	else
+		health.colorTapping = (index == 2)
+	end
+	if health.SetColorDisconnected then
+		health:SetColorDisconnected(index == 2)
+	else
+		health.colorDisconnected = (index == 2)
+	end
 	health.colorSmooth = (index == 3)
-	health.colorHappiness = (DB.MyClass == "HUNTER" and index == 2)
 	if index == 1 then
 		health:SetStatusBarColor(.1, .1, .1)
 		health.bg:SetVertexColor(.6, .6, .6)
+	elseif index == 2 or index == 3 then
+		health.bg:SetVertexColor(0, 0, 0, .7)
 	elseif index == 4 then
 		health:SetStatusBarColor(0, 0, 0, 0)
 	end
@@ -81,28 +99,22 @@ function UF:UpdateHealthBarColor(self, force)
 	end
 end
 
+local bgCurve = C_CurveUtil.CreateColorCurve()
+bgCurve:SetType(Enum.LuaCurveType.Linear)
+bgCurve:AddPoint(0.0, CreateColor(1, 0, 0))
+bgCurve:AddPoint(0.5, CreateColor(1, .7, 0))
+bgCurve:AddPoint(1, CreateColor(.7, 1, 0))
+
 function UF.HealthPostUpdate(element, unit, cur, max)
 	local self = element.__owner
 	local mystyle = self.mystyle
-	local useGradient, useGradientClass
+	local useGradient
 	if mystyle == "tank" then
 		useGradient = C.db["UFs"]["RaidHealthColor"] > 3
-		useGradientClass = C.db["UFs"]["RaidHealthColor"] == 5
 	end
 	if useGradient then
-		self.Health.bg:SetVertexColor(self:ColorGradient(cur or 1, max or 1, 1,0,0, 1,.7,0, .7,1,0))
-	end
-	if useGradientClass then
-		local color
-		if UnitIsPlayer(unit) then
-			local _, class = UnitClass(unit)
-			color = self.colors.class[class]
-		elseif UnitReaction(unit, "player") then
-			color = self.colors.reaction[UnitReaction(unit, "player")]
-		end
-		if color then
-			element:GetStatusBarTexture():SetGradientAlpha("HORIZONTAL", color[1],color[2],color[3], .75, 0,0,0, .25)
-		end
+		local color = UnitHealthPercent(unit, true, bgCurve)
+		element.bg:SetVertexColor(color:GetRGB())
 	end
 end
 
@@ -111,6 +123,7 @@ function UF:CreateHealthBar(self)
 	local health = CreateFrame("StatusBar", nil, self)
 	health:SetPoint("TOPLEFT", self)
 	health:SetPoint("TOPRIGHT", self)
+	UF:SmoothBar(health)
 	local healthHeight
 	if mystyle == "tank" then
 		healthHeight = UF.db["TankHeight"]
@@ -118,21 +131,20 @@ function UF:CreateHealthBar(self)
 	health:SetHeight(healthHeight)
 	health:SetStatusBarTexture(DB.normTex)
 	health:SetStatusBarColor(.1, .1, .1)
-	health:SetFrameLevel(self:GetFrameLevel() - 2)
+	health:SetFrameLevel(max(self:GetFrameLevel() - 2, 0))
+
 	self.backdrop = B.SetBD(health, 0)
 	if self.backdrop.__shadow then
-		self.backdrop.__shadow:SetOutside(self, 4+C.mult, 4+C.mult)
+		self.backdrop.__shadow:SetOutside(self, 4 + C.mult, 4 + C.mult)
 		self.backdrop.__shadow:SetFrameLevel(0)
 		self.backdrop.__shadow = nil
 	end
-	B:SmoothBar(health)
 
 	local bg = self:CreateTexture(nil, "BACKGROUND")
 	bg:SetPoint("TOPLEFT", health:GetStatusBarTexture(), "TOPRIGHT", 0, 0)
 	bg:SetPoint("BOTTOMRIGHT", health)
 	bg:SetTexture(DB.bdTex)
 	bg:SetVertexColor(.6, .6, .6)
-	bg.multiplier = .25
 
 	self.Health = health
 	self.Health.bg = bg
@@ -155,7 +167,6 @@ local function UpdatePowerColorByIndex(power, index)
 	else
 		power.colorDisconnected = (index ~= 2)
 	end
-	power.colorHappiness = (DB.MyClass == "HUNTER" and index ~= 2)
 end
 
 function UF:UpdatePowerBarColor(self, force)
@@ -176,20 +187,20 @@ function UF:CreatePowerBar(self)
 	power:SetStatusBarTexture(DB.normTex)
 	power:SetPoint("BOTTOMLEFT", self)
 	power:SetPoint("BOTTOMRIGHT", self)
+	UF:SmoothBar(power)
 	local powerHeight
 	if mystyle == "tank" then
 		powerHeight = UF.db["TankPowerHeight"]
 	end
 	power:SetHeight(powerHeight)
 	power.wasHidden = powerHeight == 0
-	power:SetFrameLevel(self:GetFrameLevel() - 2)
+	power:SetFrameLevel(max(self:GetFrameLevel() - 2, 0))
 	power.backdrop = B.CreateBDFrame(power, 0)
-	B:SmoothBar(power)
 
 	local bg = power:CreateTexture(nil, "BACKGROUND")
 	bg:SetAllPoints()
 	bg:SetTexture(DB.normTex)
-	bg.multiplier = .25
+	bg:SetVertexColor(0, 0, 0, .7)
 
 	self.Power = power
 	self.Power.bg = bg
@@ -212,6 +223,7 @@ function UF:UpdateRaidTextScale()
 	local scale = C.db["UFs"]["RaidTextScale"]
 	for _, frame in pairs(oUF.objects) do
 		if frame.mystyle == "tank" then
+			UF.UpdateRaidNameAnchor(frame, frame.nameText)
 			frame.nameText:SetScale(scale)
 			frame.healthValue:SetScale(scale)
 			frame.healthValue:UpdateTag()
@@ -219,6 +231,7 @@ function UF:UpdateRaidTextScale()
 			UF:UpdateHealthBarColor(frame, true)
 			UF:UpdatePowerBarColor(frame, true)
 			UF.UpdateFrameNameTag(frame)
+			frame.disableTooltip = C.db["UFs"]["HideTip"]
 		end
 	end
 end
@@ -266,34 +279,110 @@ function UF:UpdateTankSize()
 	end
 end
 
+local RAID_DEBUFF_BLACKLIST = {
+	[57723] = true, -- 筋疲力尽 / Exhaustion
+	[57724] = true, -- 心满意足 / Sated
+	[80354] = true, -- 时空错位 / Temporal Displacement
+	[95809] = true, -- 疯狂 / Insanity
+	[160455] = true, -- 疲倦 / Fatigued
+	[264689] = true, -- 疲倦 / Fatigued
+	[390435] = true, -- 筋疲力尽 / Exhaustion
+	[26013] = true, -- 逃亡者 / Deserter
+	[71041] = true, -- 地下城逃亡者 / Dungeon Deserter
+	[1313593] = true, -- 逃亡者 / Deserter
+	[206151] = true, -- 挑战者的负担 / Challenger's Burden
+	[308312] = true, -- 限时试炼练习 / Time Trial Practice
+	[1254550] = true, -- 奥术强化 / Arcane Empowerment
+}
+
+local RAID_DEBUFF_GROUPS = {
+	{ -- Boss and role auras
+		filter = "HARMFUL",
+		candidateFilters = {
+			isBossOrRoleAura = true,
+			isFromPlayerOrPlayerPet = false,
+		},
+	},
+	{ -- Other priority auras
+		filter = "HARMFUL",
+		candidateFilters = {
+			isBossOrRoleAura = false,
+			isPriorityAura = true,
+			isFromPlayerOrPlayerPet = false,
+		},
+	},
+	{ -- Dispellable auras
+		filter = "HARMFUL|DISPELLABLE",
+		candidateFilters = {
+			isBossOrRoleAura = false,
+			isPriorityAura = false,
+		},
+	},
+	{ -- Other regular auras
+		filter = "HARMFUL|!DISPELLABLE",
+		candidateFilters = {
+			isBossOrRoleAura = false,
+			isPriorityAura = false,
+			isFromPlayerOrPlayerPet = false,
+			excludeSpellIDs = RAID_DEBUFF_BLACKLIST,
+		},
+	},
+}
+
+local function CreateAuraElement(self, options)
+	local element = self:CreateAuras({
+		initialAnchor = options.initialAnchor,
+		growthX = options.growthX,
+		growthY = options.growthY,
+		layout = AnchorUtil.FlowLayoutAxis.Horizontal,
+		layoutLimit = self:GetWidth(),
+	})
+
+	element.__groups = {}
+	element.__value = options.value
+	element.spacing = options.spacing or 0
+	element.groupSpacing = options.groupSpacing
+	element.fontSize = options.fontSize
+	element.hideDuration = options.hideDuration
+	element.sizeRatio = options.sizeRatio or 1
+	element.disableMouse = options.disableMouse
+	element.showDebuffBorder = options.showDebuffBorder
+	element.showCount = true
+	element.showDuration = false
+	element.showStealableBorder = true
+	element.PostCreateButton = UF.PostCreateButton
+	return element
+end
+
 function UF:CreateDebuffs(self)
 	local mystyle = self.mystyle
-	local bu = CreateFrame("Frame", nil, self)
-	bu.spacing = 3
-	bu.initialAnchor = "TOPRIGHT"
-	bu["growth-x"] = "LEFT"
-	bu["growth-y"] = "DOWN"
-	bu.tooltipAnchor = "ANCHOR_BOTTOMLEFT"
-	bu.showDebuffType = true
-	if mystyle == "tank" then
-		bu.initialAnchor = "BOTTOMLEFT"
-		bu["growth-x"] = "RIGHT"
-		bu:SetPoint("BOTTOMLEFT", self.Health, C.mult, C.mult)
-		bu.num = C.db["UFs"]["ShowRaidDebuff"] and 3 or 0
-		bu.size = C.db["UFs"]["RaidDebuffSize"]
-		bu.CustomFilter = NUF.RaidDebuffFilter
-		bu.disableMouse = true
-		bu.fontSize = C.db["UFs"]["RaidDebuffSize"]-2
-	end
+	local value = "Raid"
+	local bu = CreateAuraElement(self, {
+		initialAnchor = "BOTTOMRIGHT",
+		growthX = "LEFT",
+		growthY = "UP",
+		spacing = 2,
+		value = value,
+		disableMouse = true,
+	})
+	bu.__auraType = "debuffs"
+	bu:SetPoint("BOTTOMRIGHT", self.Health, "BOTTOMRIGHT", -2, 2)
 
-	NUF:UpdateAuraContainer(self, bu, bu.num)
-	bu.PostCreateIcon = NUF.PostCreateIcon
-	bu.PostUpdateIcon = NUF.PostUpdateIcon
+	UF:ConfigureBuffAndDebuff(bu, true)
+	if mystyle == "raid" and bu.__filterType == 2 then
+		for index, group in ipairs(RAID_DEBUFF_GROUPS) do
+			AddAuraGroup(bu, RAID_DEBUFF_GROUP_NAME..index, group.filter, bu.num, index, group.candidateFilters, AuraContainerSortMethod.Default)
+		end
+	else
+		AddAuraGroup(bu, "Debuffs", bu.filter, bu.num, 1)
+	end
+	UF:UpdateAuraContainer(self, bu)
 
 	self.Debuffs = bu
 end
 
 function UF:OnLogin()
-	UF:SetupTankFrame()
+	-- UF:SetupTankFrame()
+	UF:UpdateRoleIcons()
 	UF:UpdateUFsFader()
 end

@@ -7,6 +7,7 @@ local CH = P:RegisterModule("Chat")
 CH.GuidCache = {}
 CH.ClassNames = {}
 CH.GroupNames = {}
+CH.GroupRoles = {}
 
 CH.ChatEvents = {
 	"CHAT_MSG_BATTLEGROUND",
@@ -28,11 +29,15 @@ CH.ChatEvents = {
 	"CHAT_MSG_WHISPER",
 	"CHAT_MSG_WHISPER_INFORM",
 	"CHAT_MSG_YELL",
-	"CHAT_MSG_LOOT"
+	"CHAT_MSG_LOOT",
+	"CHAT_MSG_CURRENCY",
 }
+
+local PLAYER_REALM = gsub(DB.MyRealm, "[%s%-]", "")
 
 local isCalling = false
 function CH:GetPlayerInfoByGUID(guid)
+	if issecretvalue(guid) then return end
 	if isCalling then return end
 
 	local data = CH.GuidCache[guid]
@@ -46,7 +51,7 @@ function CH:GetPlayerInfoByGUID(guid)
 		if realm == "" then realm = nil end
 		local nameWithRealm
 		if name and name ~= "" then
-			nameWithRealm = (realm and name.."-"..realm) or name.."-"..DB.MyRealm
+			nameWithRealm = (realm and name .. "-" .. realm) or name .. "-" .. PLAYER_REALM
 		end
 
 		data = {
@@ -141,10 +146,13 @@ function CH:ChatClassColor()
 	end)
 end
 
+function CH:OnInitialize()
+	CH:ChatLinkIcon()
+	CH:LFGRoleFlags()
+end
+
 function CH:OnLogin()
 	self:ChatEmote()
 	self:ChatClassColor()
-	self:ChatRaidIndex()
-	self:ChatLinkIcon()
 	self:ChatHide()
 end

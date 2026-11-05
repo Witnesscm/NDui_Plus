@@ -10,40 +10,15 @@ do
 	-- AceTimer
 	_G.LibStub("AceTimer-3.0"):Embed(P)
 
-	function P:WaitFunc(elapse)
-		local i = 1
-		while i <= #P.WaitTable do
-			local data = P.WaitTable[i]
-			if data[1] > elapse then
-				data[1], i = data[1] - elapse, i + 1
-			else
-				tremove(P.WaitTable, i)
-				data[2](unpack(data[3]))
-
-				if #P.WaitTable == 0 then
-					P.WaitFrame:Hide()
-				end
-			end
-		end
+	local function CreateClosure(func, data)
+		return function() func(unpack(data)) end
 	end
 
-	P.WaitTable = {}
-	P.WaitFrame = CreateFrame("Frame", "NDuiPlus_WaitFrame", _G.UIParent)
-	P.WaitFrame:SetScript("OnUpdate", P.WaitFunc)
-
 	function P:Delay(delay, func, ...)
-		if type(delay) ~= "number" or type(func) ~= "function" then
-			return false
-		end
+		if type(delay) ~= 'number' or type(func) ~= 'function' then return false end
 
-		if delay < 0.01 then delay = 0.01 end
-
-		if select("#", ...) <= 0 then
-			C_Timer.After(delay, func)
-		else
-			tinsert(P.WaitTable,{delay,func,{...}})
-			P.WaitFrame:Show()
-		end
+		local args = { ... }
+		C_Timer.After(delay < 0.01 and 0.01 or delay, (#args <= 0 and func) or CreateClosure(func, args))
 
 		return true
 	end
@@ -67,7 +42,22 @@ end
 
 -- UI widgets
 do
-	P.EasyMenu = CreateFrame("Frame", "NDuiPlus_EasyMenu", UIParent, "UIDropDownMenuTemplate")
+	local function EasyMenu_Initialize(_, level, menuList)
+		for index = 1, #menuList do
+			local value = menuList[index]
+			if value.text then
+				value.index = index
+				UIDropDownMenu_AddButton(value, level)
+			end
+		end
+	end
+
+	local MenuFrame = CreateFrame("Frame", "NDuiPlus_EasyMenu", UIParent, "UIDropDownMenuTemplate")
+
+	function P:EasyMenu(menuList, anchor, x, y)
+		UIDropDownMenu_Initialize(MenuFrame, EasyMenu_Initialize, "MENU", nil, menuList)
+		ToggleDropDownMenu(1, nil, MenuFrame, anchor or "cursor", x or 0, y or 0, menuList)
+	end
 
 	function P:SetupBackdrop()
 		Mixin(self, BackdropTemplateMixin)
@@ -167,11 +157,8 @@ do
 	end
 
 	local function updateCollapseTexture(texture, collapsed)
-		if collapsed then
-			texture:SetTexCoord(0, .4375, 0, .4375)
-		else
-			texture:SetTexCoord(.5625, 1, 0, .4375)
-		end
+		local atlas = collapsed and "Soulbinds_Collection_CategoryHeader_Expand" or "Soulbinds_Collection_CategoryHeader_Collapse"
+		texture:SetAtlas(atlas, true)
 	end
 
 	local function resetCollapseTexture(self, texture)
@@ -198,9 +185,9 @@ do
 			return
 		end
 
+		self:SetNormalTexture(0)
 		self:SetHighlightTexture(0)
 		self:SetPushedTexture(0)
-		self:SetDisabledTexture(0)
 
 		local bg = B.CreateBDFrame(self, .25, true)
 		bg:ClearAllPoints()
@@ -210,8 +197,6 @@ do
 
 		self.__texture = bg:CreateTexture(nil, "OVERLAY")
 		self.__texture:SetPoint("CENTER")
-		self.__texture:SetSize(7, 7)
-		self.__texture:SetTexture("Interface\\Buttons\\UI-PlusMinus-Buttons")
 		self.__texture.DoCollapse = updateCollapseTexture
 
 		self:HookScript("OnEnter", B.Texture_OnEnter)
@@ -337,6 +322,17 @@ do
 			self.bg = B.SetBD(self, .7)
 			self.bg:SetInside(self)
 
+			local header = self.CompareHeader
+			if header then
+				B.StripTextures(header)
+				local bg = header:CreateTexture(nil, "ARTWORK")
+				bg:SetTexture("Interface\\LFGFrame\\UI-LFG-SEPARATOR")
+				bg:SetTexCoord(0, .66, 0, .31)
+				bg:SetVertexColor(cr, cg, cb, .8)
+				bg:SetPoint("BOTTOM", 0, -4)
+				bg:SetSize(100, 30)
+			end
+
 			self.tipStyled = true
 		end
 	end
@@ -361,24 +357,10 @@ do
 		self.__bg:SetBackdropBorderColor(0, 0, 0)
 	end
 
-	function P:RemoveBD()
-		for _, child in pairs {self:GetChildren()} do
-			if child.backdropInfo and (child.backdropInfo.bgFile == DB.bdTex and child.backdropInfo.edgeSize == C.mult) then
-				child:Hide()
-				child:SetAlpha(0)
-				break
-			end
-		end
-	end
-
-	-- Temporary fix
 	do
 		hooksecurefunc(B, "ReskinPortraitFrame", function(self)
 			if self.PortraitContainer then
 				self.PortraitContainer:SetAlpha(0)
-			end
-			if self.portrait then
-				self.portrait:SetAlpha(0)
 			end
 		end)
 	end
@@ -447,32 +429,6 @@ do
 
 	function P.AtlasString(atlas, data)
 		return format("|A:%s:%s|a", atlas, data or "16:16")
-	end
-
-	function P.CopyTable(tbl)
-		local copy = {}
-		for k, v in pairs(tbl) do
-			if type(v) == "table" then
-				copy[k] = P.CopyTable(v)
-			else
-				copy[k] = v
-			end
-		end
-		return copy
-	end
-
-	function P.Memorize(func)
-		local cache = {}
-
-		return function(k, ...)
-			if not k then
-				return
-			end
-			if not cache[k] then
-				cache[k] = func(k, ...)
-			end
-			return cache[k]
-		end
 	end
 
 	function P:SecureHook(object, method, handler)

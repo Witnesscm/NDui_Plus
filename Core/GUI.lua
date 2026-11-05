@@ -2,6 +2,7 @@ local addonName, ns = ...
 local B, C, L, DB, P = unpack(ns)
 local G = P:RegisterModule("GUI")
 
+local cr, cg, cb = DB.r, DB.g, DB.b
 local guiTab, guiPage, gui = {}, {}
 
 G.TextureList = {}
@@ -31,6 +32,10 @@ local function setupUFsFader()
 	G:SetupUFsFader(guiPage[3])
 end
 
+local function setupUFsRole()
+	G:SetupUFsRole(guiPage[3])
+end
+
 local function setupChatAutoShow()
 	G:SetupChatAutoShow(guiPage[4])
 end
@@ -40,7 +45,6 @@ local function updateABFaderState()
 	if not AB.fadeParent then return end
 
 	AB:UpdateFaderState()
-	AB.fadeParent:SetAlpha(AB.db["Alpha"])
 end
 
 local function toggleMageBar()
@@ -55,20 +59,12 @@ local function updateMageBarSize()
 	P:GetModule("ActionBar"):MageBar_UpdateSize()
 end
 
-local function toggleRuneBar()
-	P:GetModule("ActionBar"):RuneBar_Toggle()
-end
-
-local function updateRuneBar()
-	P:GetModule("ActionBar"):RuneBar_Update()
-end
-
-local function updateRuneBarSize()
-	P:GetModule("ActionBar"):RuneBar_UpdateSize()
-end
-
 local function openKeyBindingFrame()
 	Settings.OpenToCategory(Settings.KEYBINDINGS_CATEGORY_ID)
+end
+
+local function updateUFsRole()
+	P:GetModule("UnitFrames"):UpdateRoleIcons()
 end
 
 local function updateUFsFader()
@@ -95,10 +91,6 @@ local function updateToggleVisible()
 	P:GetModule("Skins"):UpdateToggleVisible()
 end
 
-local function updateArrowVisible()
-	P:GetModule("Skins"):UpdateArrowVisible()
-end
-
 local function hideLootRoll()
 	if _G.NDuiPlus_LootRoll then _G.NDuiPlus_LootRoll:Hide() end
 end
@@ -109,10 +101,6 @@ end
 
 local function updateAFKMode()
 	P:GetModule("AFK"):Toggle()
-end
-
-local function updateFlightMapScale()
-	P:GetModule("Misc"):UpdateFlightMapScale()
 end
 
 local function setupTexStyle()
@@ -155,25 +143,23 @@ G.OptionList = { -- type, key, value, name, horizon, data, callback, tooltip, sc
 		{1, "ActionBar", "FinisherGlow", NewTag..HeaderTag..L["FinisherGlow"], nil, nil, nil, L["FinisherGlowTip"]},
 		{},
 		{1, "ActionBar", "GlobalFade", HeaderTag..L["GlobalFadeEnable"], nil, setupABFader},
-		{1, "ActionBar", "Bar1", L["Bar1"].."*", nil, nil, updateABFaderState},
-		{1, "ActionBar", "Bar2", L["Bar2"].."*", true, nil, updateABFaderState},
-		{1, "ActionBar", "Bar3", L["Bar3"].."*", nil, nil, updateABFaderState},
-		{1, "ActionBar", "Bar4", L["Bar4"].."*", true, nil, updateABFaderState},
-		{1, "ActionBar", "Bar5", L["Bar5"].."*", nil, nil, updateABFaderState},
-		{1, "ActionBar", "CustomBar", L["CustomBar"].."*", true, nil, updateABFaderState},
+		{1, "ActionBar", "Bar1", L["Bar"].."1*", nil, nil, updateABFaderState},
+		{1, "ActionBar", "Bar2", L["Bar"].."2*", true, nil, updateABFaderState},
+		{1, "ActionBar", "Bar3", L["Bar"].."3*", nil, nil, updateABFaderState},
+		{1, "ActionBar", "Bar4", L["Bar"].."4*", true, nil, updateABFaderState},
+		{1, "ActionBar", "Bar5", L["Bar"].."5*", nil, nil, updateABFaderState},
+		{1, "ActionBar", "Bar6", L["Bar"].."6*", true, nil, updateABFaderState},
+		{1, "ActionBar", "Bar7", L["Bar"].."7*", nil, nil, updateABFaderState},
+		{1, "ActionBar", "Bar8", L["Bar"].."8*", true, nil, updateABFaderState},
 		{1, "ActionBar", "PetBar", L["PetBar"].."*", nil, nil, updateABFaderState},
 		{1, "ActionBar", "StanceBar", L["StanceBar"].."*", true, nil, updateABFaderState},
 		{1, "ActionBar", "AspectBar", L["AspectBar"].."*", nil, nil, updateABFaderState},
 		{1, "ActionBar", "MageBarFade", L["MageBar"].."*", true, nil, updateABFaderState},
-		{1, "ActionBar", "RuneBarFade", L["RuneBar"].."*", nil, nil, updateABFaderState},
+		{1, "ActionBar", "MicroMenu", L["MicroMenu"].."*", nil, nil, updateABFaderState},
 		{},
 		{1, "ActionBar", "MageBar", HeaderTag..L["MageBar"].."*", nil, setupMageBar, toggleMageBar, L["MageBarTip"]},
 		{1, "ActionBar", "MageBarVertical", L["Vertical"].."*", nil, nil, updateMageBar},
 		{3, "ActionBar", "MageBarSize", L["BarSize"].."*", true, {24, 60, 1}, updateMageBarSize},
-		{},
-		{1, "ActionBar", "RuneBar", NewTag..HeaderTag..L["RuneBar"].."*", nil, nil, toggleRuneBar},
-		{1, "ActionBar", "RuneBarVertical", L["Vertical"].."*", nil, nil, updateRuneBar},
-		{3, "ActionBar", "RuneBarSize", L["BarSize"].."*", true, {24, 60, 1}, updateRuneBarSize},
 	},
 	[2] = {
 		{1, "Bags", "OfflineBag", HeaderTag..L["OfflineBagEnable"], nil, nil, nil, L["OfflineBagTip"]},
@@ -185,19 +171,22 @@ G.OptionList = { -- type, key, value, name, horizon, data, callback, tooltip, sc
 	[3] = {
 		{1, "UnitFrames", "Fader", HeaderTag..L["UnitFramesFader"].."*", nil, setupUFsFader, updateUFsFader, L["UnitFramesFaderTip"]},
 		{},
-		{1, "C:UnitFrames", "TankFrame", HeaderTag..L["TankFrame"]},
-		{1, "C:UnitFrames", "TankTarget", L["Target Frame"]},
-		{4, "C:UnitFrames", "TankFilter", FILTER.."*", true, {TANK, MAINTANK}, updateTankHeaders},
-		{3, "C:UnitFrames", "TankWidth", L["Frame Width"].."*", nil, {60, 200, 1}, updateTankSize},
-		{4, "C:UnitFrames", "TankDirec", L["Growth Direction"], true, {L["GO_DOWN"], L["GO_UP"], L["GO_RIGHT"], L["GO_LEFT"]}},
-		{3, "C:UnitFrames", "TankHeight", L["Frame Height"].."*", nil, {25, 60, 1}, updateTankSize},
-		{3, "C:UnitFrames", "TankPowerHeight", L["Power Height"].."*", true, {0, 20, 1}, updateTankSize},
+		{1, "UnitFrames", "RolePos", L["Role Icon"].."*", nil, setupUFsRole, updateUFsRole},
+		-- {},
+		-- {1, "C:UnitFrames", "TankFrame", HeaderTag..L["TankFrame"]},
+		-- {1, "C:UnitFrames", "TankTarget", L["Target Frame"]},
+		-- {4, "C:UnitFrames", "TankFilter", FILTER.."*", true, {TANK, MAINTANK}, updateTankHeaders},
+		-- {3, "C:UnitFrames", "TankWidth", L["Frame Width"].."*", nil, {60, 200, 1}, updateTankSize},
+		-- {4, "C:UnitFrames", "TankDirec", L["Growth Direction"], true, {L["GO_DOWN"], L["GO_UP"], L["GO_RIGHT"], L["GO_LEFT"]}},
+		-- {3, "C:UnitFrames", "TankHeight", L["Frame Height"].."*", nil, {25, 60, 1}, updateTankSize},
+		-- {3, "C:UnitFrames", "TankPowerHeight", L["Power Height"].."*", true, {0, 20, 1}, updateTankSize},
 	},
 	[4] = {
 		{1, "Chat", "Emote", L["ChatEmote"], nil, nil, nil, L["ChatEmoteTip"]},
 		{1, "Chat", "ClassColor", L["ChatClassColor"], true, nil, nil, L["ChatClassColorTip"]},
 		{1, "Chat", "RaidIndex", L["ChatRaidIndex"].."*", nil, nil, nil, L["ChatRaidIndexTip"]},
-		{1, "Chat", "Icon", L["ChatLinkIcon"].."*", true},
+		{1, "Chat", "Role", L["ChatRole"].."*", true, nil, nil, L["ChatRoleTip"]},
+		{1, "Chat", "Icon", L["ChatLinkIcon"].."*"},
 		{},
 		{1, "Chat", "ChatHide", HeaderTag..L["ChatHide"], nil, nil, nil, L["ChatHideTip"]},
 		{1, "Chat", "AutoShow", L["AutoShow"].."*", nil, setupChatAutoShow, updateChatAutoShow, L["AutoShowTip"]},
@@ -207,10 +196,12 @@ G.OptionList = { -- type, key, value, name, horizon, data, callback, tooltip, sc
 	[5] = {
 		{1, "TexStyle", "Enable", HeaderTag..L["ReplaceTexture"], nil, nil, nil, L["ReplaceTextureTip"]},
 		{4, "TexStyle", "Index", L["Texture Style"], nil, {}, toggleTexStyle},
+		{},
+		{1, "RoleStyle", "Enable", HeaderTag..L["ReplaceRoleTexture"]},
+		{4, "RoleStyle", "Index", L["Role Style"], nil, {}},
 		{L["Addon Skin"]},
 		{},
 		{1, "Skins", "HideToggle", L["HideToggle"].."*", nil, nil, updateToggleVisible},
-		{1, "Skins", "CategoryArrow", L["CategoryArrow"].."*", true, nil, updateArrowVisible},
 	},
 	[6] = {
 		{1, "Loot", "Enable", HeaderTag..L["LootEnhancedEnable"], nil, nil, nil, L["LootEnhancedTip"]},
@@ -226,17 +217,11 @@ G.OptionList = { -- type, key, value, name, horizon, data, callback, tooltip, sc
 		{3, "LootRoll", "Width", L["Frame Width"], false, {200, 500, 1}, updateLootRoll},
 		{3, "LootRoll", "Height", L["Frame Height"], true, {20, 50, 1}, updateLootRoll},
 		{},
-		{1, "Misc", "ExtTrainerUI", L["ExtTrainerUI"]},
-		{1, "Misc", "TrainAll", L["TrainAll"], true, nil, nil, L["TrainAllTip"]},
-		{1, "Misc", "ExtGuildUI", L["ExtGuildUI"], nil, nil, nil, L["ExtendedUITip"]},
-		{1, "Misc", "ExtTalentUI", L["ExtTalentUI"], true, nil, nil, L["ExtendedUITip"]},
+		{1, "AFK", "Enable", L["AFK Mode"].."*", nil, nil, updateAFKMode},
+		{1, "Misc", "IconSearch", L["IconSearch"], true, nil, nil, L["IconSearchGUITip"]},
 		{1, "Misc", "ExtVendorUI", L["ExtVendorUI"]},
 		{1, "Misc", "ExtMacroUI", L["ExtMacroUI"], true},
-		{1, "Misc", "IconSearch", L["IconSearch"], nil, nil, nil, L["IconSearchGUITip"]},
-		{1, "Misc", "GearAppearanceToggle", L["GearAppearanceToggle"], true, nil, nil, L["GearAppearanceToggleTip"]},
-		{1, "AFK", "Enable", L["AFK Mode"].."*", nil, nil, updateAFKMode},
-		{1, "Misc", "EngravingUI", NewTag..L["EnhancedEngravingUI"], nil, nil, nil, L["EnhancedEngravingUITip"]},
-		{3, "Misc", "FlightMapScale", L["FlightMap Scale"].."*", true, {1, 2, .1}, updateFlightMapScale},
+		{1, "Misc", "TrainAll", L["TrainAll"], nil, nil, nil, L["TrainAllTip"]},
 	},
 }
 
@@ -272,7 +257,7 @@ local AddonSkins = {
 
 for i, value in ipairs(AddonSkins) do
 	local key, name = unpack(value)
-	tinsert(G.OptionList[5], 3 + i, {1, "Skins", key, name, (i % 2 == 0) and true})
+	tinsert(G.OptionList[5], 6 + i, {1, "Skins", key, name, (i % 2 == 0) and true})
 end
 
 function G.Variable(key, value, newValue)
@@ -304,7 +289,7 @@ end
 local function SelectTab(i)
 	for num = 1, #G.TabList do
 		if num == i then
-			guiTab[num]:SetBackdropColor(DB.r, DB.g, DB.b, .25)
+			guiTab[num]:SetBackdropColor(cr, cg, cb, .25)
 			guiTab[num].checked = true
 			guiPage[num]:Show()
 		else
@@ -322,7 +307,7 @@ end
 
 local function tabOnEnter(self)
 	if self.checked then return end
-	self:SetBackdropColor(DB.r, DB.g, DB.b, .25)
+	self:SetBackdropColor(cr, cg, cb, .25)
 end
 
 local function tabOnLeave(self)
@@ -428,6 +413,8 @@ local function CreateOption(i)
 			if key == "TexStyle" then
 				setupTexStyle()
 				data = G.TextureList
+			elseif key == "RoleStyle" then
+				data = P:BuildRoleTable()
 			end
 
 			local dd = B.CreateDropDown(parent, 180, 28, data)
@@ -437,7 +424,9 @@ local function CreateOption(i)
 				dd:SetPoint("TOPLEFT", 25, -offset - 25)
 				offset = offset + 70
 			end
-			dd.Text:SetText(data[G.Variable(key, value)])
+			dd:HookScript("OnShow", function()
+				dd.Text:SetText(data[G.Variable(key, value)])
+			end)
 
 			local opt = dd.options
 			dd.button:HookScript("OnClick", function()

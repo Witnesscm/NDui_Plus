@@ -91,7 +91,7 @@ local function Update(self, event, unit)
 
 	-- try to get the unit from the parent
 	if event == 'PLAYER_IS_GLIDING_CHANGED' or not unit then
-		unit = self.unit
+		unit = self.__unit
 	end
 
 	-- range fader
@@ -119,8 +119,8 @@ local function Update(self, event, unit)
 		(element.PlayerTarget and UnitExists('target')) or
 		(element.UnitTarget and UnitExists(unit..'target')) or
 		(element.Focus and not P.IsClassic() and UnitExists('focus')) or
-		(element.Health and UnitHealth(unit) < UnitHealthMax(unit)) or
-		(element.Power and (PowerTypesFull[powerType] and UnitPower(unit) < UnitPowerMax(unit))) or
+		-- (element.Health and UnitHealth(unit) < UnitHealthMax(unit)) or
+		-- (element.Power and (PowerTypesFull[powerType] and UnitPower(unit) < UnitPowerMax(unit))) or
 		(element.Vehicle and (not P.IsClassic()) and UnitHasVehicleUI(unit)) or
 		(element.DynamicFlight and P.IsRetail() and not CanGlide()) or
 		(element.Hover and GetMouseFocus() == (self.__faderobject or self))
@@ -139,7 +139,7 @@ local function Update(self, event, unit)
 end
 
 local function ForceUpdate(element)
-	return Update(element.__owner, "ForceUpdate", element.__owner.unit)
+	return Update(element.__owner, "ForceUpdate", element.__owner.__unit)
 end
 
 local function onRangeUpdate(frame, elapsed)
