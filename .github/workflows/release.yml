@@ -24,7 +24,7 @@ jobs:
       - name: Create Mainline Package
         uses: BigWigsMods/packager@master
         with:
-          args: -g classic
+          args: -g forever
 
       - name: Upload Github Actions
         uses: actions/upload-artifact@v4
