@@ -62,8 +62,8 @@ function S:Atlas()
 	local SearchEditBox = _G.AtlasSearchEditBox
 	if SearchEditBox then
 		B.ReskinInput(SearchEditBox)
-		SearchEditBox.bg:SetPoint("TOPLEFT", -2, -4)
-		SearchEditBox.bg:SetPoint("BOTTOMRIGHT", 0, 4)
+		SearchEditBox.__bg:SetPoint("TOPLEFT", -2, -4)
+		SearchEditBox.__bg:SetPoint("BOTTOMRIGHT", 0, 4)
 	end
 
 	local TopInset = _G.AtlasFrameTopInset

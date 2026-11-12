@@ -154,8 +154,8 @@ function S:SkilletClassic()
 		SkilletRecipeGroupOperations:SetPoint("LEFT", SkilletRecipeGroupDropdownButton, "RIGHT", 2, 0)
 
 		B.ReskinInput(SkilletSearchBox)
-		SkilletSearchBox.bg:SetPoint("TOPLEFT", -8, 0)
-		SkilletSearchBox.bg:SetPoint("BOTTOMRIGHT", -1, 1)
+		SkilletSearchBox.__bg:SetPoint("TOPLEFT", -8, 0)
+		SkilletSearchBox.__bg:SetPoint("BOTTOMRIGHT", -1, 1)
 		--B.ReskinClose(SkilletSearchClear, "LEFT", SkilletSearchBox, "RIGHT", 0, 0)
 
 		B.ReskinArrow(SkilletSortAscButton, "up")
