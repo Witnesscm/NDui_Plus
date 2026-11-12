@@ -215,8 +215,8 @@ function S:AtlasLootClassic()
 	frame.contentFrame.downBG:Hide()
 	frame.contentFrame.itemBG:Hide()
 	B.ReskinInput(frame.contentFrame.searchBox)
-	frame.contentFrame.searchBox.bg:SetPoint("TOPLEFT", -2, -6)
-	frame.contentFrame.searchBox.bg:SetPoint("BOTTOMRIGHT", -2, 6)
+	frame.contentFrame.searchBox.__bg:SetPoint("TOPLEFT", -2, -6)
+	frame.contentFrame.searchBox.__bg:SetPoint("BOTTOMRIGHT", -2, 6)
 	B.ReskinArrow(frame.contentFrame.prevPageButton, "left")
 	frame.contentFrame.prevPageButton:SetSize(20, 20)
 	B.ReskinArrow(frame.contentFrame.nextPageButton, "right")
@@ -258,8 +258,8 @@ function S:AtlasLootClassic()
 	hooksecurefunc(Set, "ShowToolTipFrame", function()
 		local tip = Set.tooltipFrame
 		if tip and not tip.styled then
-			tip.modelFrame:HideBackdrop()
-			tip.bonusDataFrame:HideBackdrop()
+			tip.modelFrame:SetBackdrop(nil)
+			tip.bonusDataFrame:SetBackdrop(nil)
 			B.SetBD(tip.modelFrame)
 			B.SetBD(tip.bonusDataFrame)
 			tip.styled = true
@@ -298,6 +298,28 @@ function S:AtlasLootClassic()
 			extraFrame:SetBackdropBorderColor(.6, .6, .6, .9)
 			extraFrame.styled = true
 		end
+	end)
+
+	-- AtlasLoot Classic Forever
+	local styled
+	frame:HookScript("OnShow", function()
+		if styled then
+			return
+		end
+
+		local bisContainer = _G.AtlasLoot_BiSPhaseDropdown and _G.AtlasLoot_BiSPhaseDropdown:GetParent()
+		if bisContainer then
+			P.ReskinDropDown(_G.AtlasLoot_BiSPhaseDropdown)
+
+			for _, child in pairs {bisContainer:GetChildren()} do
+				local objType = child:GetObjectType()
+				if objType == "CheckButton" then
+					B.ReskinCheck(child)
+				end
+			end
+		end
+
+		styled = true
 	end)
 end
 
