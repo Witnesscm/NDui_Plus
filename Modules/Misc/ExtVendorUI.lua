@@ -66,7 +66,10 @@ function M:ExtVendorUI()
 	for i = 1, _G.MERCHANT_ITEMS_PER_PAGE do
 		if not _G["MerchantItem" .. i] then
 			CreateFrame("Frame", "MerchantItem" .. i, _G.MerchantFrame, "MerchantItemTemplate")
-			S:ExtVendor_SkinButton(i)
+
+			if C.db["Skins"]["BlizzardSkins"] then
+				S:ExtVendor_SkinButton(i)
+			end
 		end
 	end
 

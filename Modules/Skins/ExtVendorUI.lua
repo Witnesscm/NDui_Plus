@@ -14,6 +14,7 @@ function S:ExtVendor_SkinButton(i)
 	B.StripTextures(item)
 	B.CreateBDFrame(item, .25)
 
+	if button.Mask then button.Mask:Hide() end
 	B.StripTextures(button)
 	button:ClearAllPoints()
 	button:SetPoint("LEFT", item, 4, 0)
@@ -22,10 +23,13 @@ function S:ExtVendor_SkinButton(i)
 	hl:SetInside()
 
 	icon:SetInside()
+	B:ResetTexCoord(icon)
 	button.bg = B.ReskinIcon(icon)
 	B.ReskinIconBorder(button.IconBorder)
+	button.IconOverlay:SetInside()
+	button.IconOverlay2:SetInside()
 
-	name:SetFontObject(Game12Font)
+	name:SetFontObject(Number12Font)
 	name:SetPoint("LEFT", button, "RIGHT", 2, 9)
 	moneyFrame:SetPoint("BOTTOMLEFT", button, "BOTTOMRIGHT", 3, 0)
 
