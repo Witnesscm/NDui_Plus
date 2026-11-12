@@ -159,6 +159,27 @@ function S:BuyEmAllClassic()
 	B.CreateMF(BuyEmAllFrame)
 end
 
+function S:BuyEmAllForeverFix()
+	local frame = _G.BuyEmAllForeverFixFrame
+	if not frame then
+		return
+	end
+
+	B.StripTextures(frame)
+	B.SetBD(frame, nil, 0, 0, 0, 0)
+
+	for _, child in pairs {frame:GetChildren()} do
+		local objType = child:GetObjectType()
+		if objType == "Button" and child.Text then
+			B.Reskin(child)
+		elseif objType == "EditBox" then
+			B.ReskinInput(child)
+			child.__bg:SetPoint("TOPLEFT", -2, -2)
+			child.__bg:SetPoint("BOTTOMRIGHT", 0, 2)
+		end
+	end
+end
+
 function S:Hemlock()
 	local Hemlock = _G.Hemlock
 	if not Hemlock then return end
@@ -398,6 +419,7 @@ S:RegisterSkin("Accountant_Classic", S.Accountant)
 S:RegisterSkin("FeatureFrame", S.FeatureFrame)
 S:RegisterSkin("BuffomatClassicTBC", S.buffOmat)
 S:RegisterSkin("BuyEmAllClassic", S.BuyEmAllClassic)
+S:RegisterSkin("BuyEmAllForeverFix", S.BuyEmAllForeverFix)
 S:RegisterSkin("Hemlock", S.Hemlock)
 S:RegisterSkin("TotemTimers", S.TotemTimers)
 S:RegisterSkin("BigWigs_Options", S.BigWigs_Options)
