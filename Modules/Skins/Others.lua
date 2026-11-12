@@ -412,6 +412,21 @@ function S:Hekili()
 	end
 end
 
+function S:WaylaidHelper()
+	local styled
+	B:RegisterEvent("AUCTION_HOUSE_SHOW", function()
+		if not styled then
+			P.WaitFor(function()
+				return not not _G.WaylaidHelperAHTab
+			end, function()
+				B.ReskinTab(_G.WaylaidHelperAHTab)
+			end)
+
+			styled = true
+		end
+	end)
+end
+
 S:RegisterSkin("HandyNotes_NPCs (Classic)", S.HandyNotes_NPCs)
 S:RegisterSkin("HandyNotes_NPCs (Burning Crusade Classic)", S.HandyNotes_NPCs)
 S:RegisterSkin("BattleInfo", S.BattleInfo)
@@ -431,6 +446,7 @@ S:RegisterSkin("OmniCD", S.OmniCD)
 S:RegisterSkin("Ranker", S.Ranker)
 S:RegisterSkin("LibExtraTip")
 S:RegisterSkin("Hekili", S.Hekili, true)
+S:RegisterSkin("WaylaidHelper", S.WaylaidHelper)
 
 -- Hide Toggle Button
 S.ToggleFrames = {}
