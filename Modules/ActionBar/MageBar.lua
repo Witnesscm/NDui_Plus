@@ -3,7 +3,6 @@ local B, C, L, DB, P = unpack(ns)
 local AB = P:GetModule("ActionBar")
 
 local ipairs, tinsert, tremove, sort  = ipairs, table.insert, table.remove, table.sort
-local CooldownFrame_Set = CooldownFrame_Set
 
 local margin, padding = C.Bars.margin, C.Bars.padding
 
@@ -81,16 +80,13 @@ function AB:MageButton_UpdateCount()
 end
 
 function AB:MageButton_UpdateCooldown()
-	local start, duration, enabled
-	local cooldownInfo = C_Spell.GetSpellCooldown(self.spellID)
-	if cooldownInfo then
-		start, duration, enabled = cooldownInfo.startTime, cooldownInfo.duration, cooldownInfo.isEnabled
-	end
-	if (start and duration and enabled and start > 0 and duration > 0) then
-		CooldownFrame_Set(self.cooldown, start, duration, enabled)
-		self.cooldown:SetSwipeColor(0, 0, 0);
+	local duration = C_Spell.GetSpellCooldownDuration(self.spellID)
+
+	if duration then
+		self.cooldown:SetCooldownFromDurationObject(duration)
+		self.cooldown:SetSwipeColor(0, 0, 0)
 	else
-		CooldownFrame_Set(self.cooldown, 0, 0, 0)
+		self.cooldown:Clear()
 	end
 
 	AB.MageButton_UpdateCount(self)
