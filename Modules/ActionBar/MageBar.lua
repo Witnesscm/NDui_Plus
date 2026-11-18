@@ -71,12 +71,8 @@ function AB:MageButton_UpdateSpell(spellID)
 end
 
 function AB:MageButton_UpdateCount()
-	local count = C_Spell.GetSpellCastCount(self.spellID)
-	if count and count > 0 then
-		self.Count:SetText(count)
-	else
-		self.Count:SetText("")
-	end
+	local count = C_Spell.GetSpellDisplayCount(self.spellID)
+	self.Count:SetText(count)
 end
 
 function AB:MageButton_UpdateCooldown()
@@ -84,7 +80,6 @@ function AB:MageButton_UpdateCooldown()
 
 	if duration then
 		self.cooldown:SetCooldownFromDurationObject(duration)
-		self.cooldown:SetSwipeColor(0, 0, 0)
 	else
 		self.cooldown:Clear()
 	end
