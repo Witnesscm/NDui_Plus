@@ -65,7 +65,7 @@ P.DefaultSettings = {
 		RoleSize = 14,
 	},
 	Chat = {
-		Emote = false,
+		Emote = true,
 		ClassColor = true,
 		RaidIndex = false,
 		Role = false,
