@@ -2,10 +2,11 @@ local _, ns = ...
 local B, C, L, DB, P = unpack(ns)
 local AB = P:GetModule("ActionBar")
 local Bar = B:GetModule("Actionbar")
+local LAB = LibStub("LibActionButton-1.0-NDui")
 -----------------
 -- Credit: ElvUI
 -----------------
-local LAB = LibStub("LibActionButton-1.0-NDui")
+local margin, padding = C.Bars.margin, C.Bars.padding
 
 AB.handledbuttons = {}
 
@@ -75,16 +76,6 @@ function AB:Bar3R_OnLeave()
 	end
 end
 
-function AB:Button_OnEnter()
-	local bar = self:GetParent()
-	AB.Bar_OnEnter(bar)
-end
-
-function AB:Button_OnLeave()
-	local bar = self:GetParent()
-	AB.Bar_OnLeave(bar)
-end
-
 local function SpellFlyoutAnchor(frame)
 	local _, anchorButton = frame:GetPoint()
 	if not AB.handledbuttons[anchorButton] then return end
@@ -100,26 +91,6 @@ end
 function AB:SpellFlyout_OnLeave()
 	local anchor = SpellFlyoutAnchor(self)
 	if anchor then AB.Bar_OnLeave(anchor) end
-end
-
-function AB:FlyoutButton_OnEnter()
-	local bar = self:GetParent()
-	AB.SpellFlyout_OnEnter(bar)
-end
-
-function AB:FlyoutButton_OnLeave()
-	local bar = self:GetParent()
-	AB.SpellFlyout_OnLeave(bar)
-end
-
-function AB:MicroButton_OnEnter()
-	local bar = self.__owner and self.__owner:GetParent() or self:GetParent()
-	if bar then AB.Bar_OnEnter(bar) end
-end
-
-function AB:MicroButton_OnLeave()
-	local bar = self.__owner and self.__owner:GetParent() or self:GetParent()
-	if bar then AB.Bar_OnLeave(bar) end
 end
 
 local function CanGlide()
@@ -234,32 +205,49 @@ local NDui_ActionBar = {
 	["StanceBar"] = "NDui_ActionBarStance",
 }
 
+function AB:UpdateStanceBar()
+	if InCombatLockdown() then return end
+
+	local frame = _G["NDui_ActionBarStance"]
+	if not frame then return end
+
+	local num = GetNumShapeshiftForms()
+	local size = C.db["Actionbar"]["BarStanceSize"]
+	local perRow = C.db["Actionbar"]["BarStancePerRow"]
+
+	local column = min(num, perRow)
+	local rows = ceil(num / perRow)
+	frame:SetWidth(column * size + (column - 1) * margin + 2 * padding)
+	frame:SetHeight(size * rows + (rows - 1) * margin + 2 * padding)
+end
+
+do
+	if type(Bar.UpdateStanceBar) == "function" then
+		hooksecurefunc(Bar, "UpdateStanceBar", AB.UpdateStanceBar)
+	end
+end
+
 function AB:SetupActionBar()
-	for key, name in pairs(NDui_ActionBar) do
+	for _, name in pairs(NDui_ActionBar) do
 		local bar = _G[name]
 		if bar then
-			if key == "StanceBar" then
-				local hitInset = C.Bars.margin / 2
-				for _, button in pairs(bar.buttons) do
-					button:SetHitRectInsets(-hitInset, -hitInset, -hitInset, -hitInset)
-				end
-			else
-				bar:HookScript("OnEnter", AB.Bar_OnEnter)
-				bar:HookScript("OnLeave", AB.Bar_OnLeave)
+			bar:HookScript("OnEnter", AB.Bar_OnEnter)
+			bar:HookScript("OnLeave", AB.Bar_OnLeave)
+			bar:SetMouseClickEnabled(false)
 
-				if bar.child then
-					bar.child:HookScript("OnEnter", AB.Bar3R_OnEnter)
-					bar.child:HookScript("OnLeave", AB.Bar3R_OnLeave)
+			if bar.child then
+				bar.child:HookScript("OnEnter", AB.Bar3R_OnEnter)
+				bar.child:HookScript("OnLeave", AB.Bar3R_OnLeave)
+				bar.child:SetMouseClickEnabled(false)
+			end
+
+			if bar.buttons then
+				for _, button in ipairs(bar.buttons) do
+					button:SetPropagateMouseMotion(true)
+					AB.handledbuttons[button] = true
 				end
 			end
 		end
-	end
-
-	for _, button in ipairs(Bar.buttons) do
-		button:HookScript("OnEnter", AB.Button_OnEnter)
-		button:HookScript("OnLeave", AB.Button_OnLeave)
-
-		AB.handledbuttons[button] = true
 	end
 end
 
@@ -287,8 +275,7 @@ function AB:UpdateFaderState()
 end
 
 function AB:SetupFlyoutButton(button)
-	button:HookScript("OnEnter", AB.FlyoutButton_OnEnter)
-	button:HookScript("OnLeave", AB.FlyoutButton_OnLeave)
+	button:SetPropagateMouseMotion(true)
 end
 
 function AB:LAB_FlyoutCreated(button)
@@ -303,6 +290,7 @@ function AB:SetupLABFlyout()
 	if LAB.flyoutHandler then
 		LAB.flyoutHandler:HookScript("OnEnter", AB.SpellFlyout_OnEnter)
 		LAB.flyoutHandler:HookScript("OnLeave", AB.SpellFlyout_OnLeave)
+		LAB.flyoutHandler:SetMouseClickEnabled(false)
 	end
 
 	LAB:RegisterCallback("OnFlyoutButtonCreated", AB.LAB_FlyoutCreated)
@@ -325,12 +313,12 @@ function AB:SetupMicroMenu()
 
 	AB.MicroMenu:HookScript("OnEnter", AB.Bar_OnEnter)
 	AB.MicroMenu:HookScript("OnLeave", AB.Bar_OnLeave)
+	AB.MicroMenu:SetMouseClickEnabled(false)
 
 	for _, child in pairs({ AB.MicroMenu:GetChildren() }) do
 		if child ~= AB.MicroMenu.mover then
 			local button = child:GetChildren() or child
-			button:HookScript("OnEnter", AB.MicroButton_OnEnter)
-			button:HookScript("OnLeave", AB.MicroButton_OnLeave)
+			button:SetPropagateMouseMotion(true)
 		end
 	end
 end
