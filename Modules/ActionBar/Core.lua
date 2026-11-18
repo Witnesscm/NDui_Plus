@@ -350,8 +350,6 @@ function AB:StyleActionButton(button, cfg)
 		autoCastable:SetInside()
 	end
 
-	--ButtonRange:RegisterButtonRange(button)
-
 	button.__styled = true
 end
 
