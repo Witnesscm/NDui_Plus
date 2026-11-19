@@ -148,7 +148,7 @@ local function buttonOnEnter(self)
 	GameTooltip:Show()
 
 	if AB.fadeParent then
-		AB.Button_OnEnter(self)
+		AB.Bar_OnEnter(AB.MageBar)
 	end
 end
 
@@ -156,7 +156,7 @@ local function buttonOnLeave(self)
 	GameTooltip:Hide()
 
 	if AB.fadeParent then
-		AB.Button_OnLeave(self)
+		AB.Bar_OnLeave(AB.MageBar)
 	end
 end
 
